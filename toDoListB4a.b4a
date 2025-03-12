@@ -1,4 +1,4 @@
-﻿Build1=Default,b4a.example
+﻿Build1=Default,com.cm.todolist
 File1=Layout.bal
 FileGroup1=Default Group
 Group=Default Group
@@ -12,7 +12,7 @@ NumberOfModules=1
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
-	#ApplicationLabel: B4A Example
+	#ApplicationLabel: To Do List
 	#VersionCode: 1
 	#VersionName: 
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
@@ -33,10 +33,13 @@ End Sub
 
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
+	Private ToDoList As ListView
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("Layout")
+	
+	
 End Sub
 
 Sub Activity_Resume
@@ -49,4 +52,16 @@ End Sub
 
 Sub Button1_Click
 	xui.MsgboxAsync("Hello earth!", "B4X")
+End Sub
+
+Private Sub btnAdd_Click
+	
+End Sub
+
+Private Sub ToDoList_ItemClick (Position As Int, Value As Object)
+	
+End Sub
+
+Private Sub ToDoList_ItemLongClick (Position As Int, Value As Object)
+	
 End Sub
