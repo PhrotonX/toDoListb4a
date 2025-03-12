@@ -1,1 +1,8 @@
+# Prevent compilation files from being committed into the repository.
 /Objects/
+
+# Prevent backup files from being committed into the repository.
+/AutoBackups/
+
+# Prevent other automatically generated files from being committed into the repository.
+*.meta
