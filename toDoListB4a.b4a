@@ -48,5 +48,5 @@ Sub Activity_Pause (UserClosed As Boolean)
 End Sub
 
 Sub Button1_Click
-	xui.MsgboxAsync("Hello sampel!", "B4X")
+	xui.MsgboxAsync("Hello earth!", "B4X")
 End Sub
