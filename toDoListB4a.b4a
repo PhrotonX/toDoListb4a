@@ -9,7 +9,7 @@ Module1=Starter
 NumberOfFiles=1
 NumberOfLibraries=2
 NumberOfModules=1
-Version=9.9
+Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: B4A Example
@@ -48,5 +48,5 @@ Sub Activity_Pause (UserClosed As Boolean)
 End Sub
 
 Sub Button1_Click
-	xui.MsgboxAsync("Hello world!", "B4X")
+	xui.MsgboxAsync("Hello sampel!", "B4X")
 End Sub
