@@ -37,12 +37,14 @@ End Sub
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	Private ToDoList As ListView
+	
+	Private Const PACKAGE_NAME As String = "com.cm.todolist"
+	Private Const EXTRA_EDIT As String = PACKAGE_NAME & ".EXTRA_EDIT"
+	Private Const EXTRA_CREATE As String = PACKAGE_NAME & ".EXTRA_CREATE"
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("Layout")
-	
-	
 End Sub
 
 Sub Activity_Resume
@@ -53,12 +55,15 @@ Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
-Sub Button1_Click
-	xui.MsgboxAsync("Hello earth!", "B4X")
-End Sub
-
 Private Sub btnAdd_Click
+	Dim intent As Intent
 	
+	intent.Initialize(intent.ACTION_MAIN, "")
+	intent.SetPackage(PACKAGE_NAME)
+	intent.SetType("*/*")
+	intent.PutExtra(EXTRA_CREATE, EXTRA_CREATE)
+	
+	StartActivity(EditorActivity)
 End Sub
 
 Private Sub ToDoList_ItemClick (Position As Int, Value As Object)
