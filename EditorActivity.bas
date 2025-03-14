@@ -27,16 +27,19 @@ Sub Activity_Create(FirstTime As Boolean)
 	Dim mode As String
 	
 	' Retrieve the data to check the editor mode.
-	mode = Starter.DataMap.Get(Starter.EDITOR_MODE)
+	mode = Starter.InstanceState.Get(Starter.EDITOR_MODE)
 	
 	' Check the editor mode to set the appropriate EditorActivity functionalities.
-	If mode == Starter.EXTRA_CREATE Then
+	If mode == Starter.EXTRA_EDITOR_CREATE Then
 		MsgboxAsync("Current editor mode is create mode." & CRLF & _
 		 mode , "Alert")
-	Else If mode == Starter.EXTRA_EDIT Then
+	Else If mode == Starter.EXTRA_EDITOR_EDIT Then
 		MsgboxAsync("Current editor mode is edit mode." & CRLF & _
 		 mode , "Alert")
 	End If
+	
+	' Remove the key into the bundle to avoid some potential application state-related bugs.
+	Starter.InstanceState.Remove(Starter.EDITOR_MODE)
 End Sub
 
 Sub Activity_Resume
@@ -49,7 +52,13 @@ End Sub
 
 
 Private Sub btnSave_Click
+	' Add the current editor result into the instance state.
+	Starter.InstanceState.Put(Starter.EDITOR_RESULT, Starter.EXTRA_EDITOR_RESULT_SAVE)
 	
+	' @TODO: Add code for saving...
+	
+	' Close the activity after saving
+	Activity.Finish
 End Sub
 
 Private Sub btnPriorityClear_Click
@@ -57,5 +66,11 @@ Private Sub btnPriorityClear_Click
 End Sub
 
 Private Sub btnCancel_Click
+	' Add the current editor result into the instance state.
+	Starter.InstanceState.Put(Starter.EDITOR_RESULT, Starter.EXTRA_EDITOR_RESULT_CANCEL)
 	
+	' @TODO: Add code for saving...
+	
+	' Close the activity after saving
+	Activity.Finish
 End Sub
