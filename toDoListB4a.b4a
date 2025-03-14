@@ -41,24 +41,46 @@ End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("Layout")
-	
-	
 End Sub
 
 Sub Activity_Resume
-
+	CheckInstanceState
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
-Sub Button1_Click
-	xui.MsgboxAsync("Hello earth!", "B4X")
+Sub CheckInstanceState
+	' Check for instance states.
+	Dim editorResult As String = Starter.InstanceState.Get(Starter.EDITOR_RESULT)
+	
+	If editorResult <> Null Then
+		Select editorResult:
+			Case Null:
+				' Do nothing if no result has been found.
+				MsgboxAsync("Result of EditorActivity: " & CRLF & _
+			editorResult, "Alert!")
+			Case Starter.EXTRA_EDITOR_RESULT_SAVE:
+				MsgboxAsync("Result of EditorActivity: " & CRLF & _
+			Starter.EXTRA_EDITOR_RESULT_SAVE, "Alert!")
+			Case Starter.EXTRA_EDITOR_RESULT_CANCEL:
+				MsgboxAsync("Result of EditorActivity: " & CRLF & _
+			Starter.EXTRA_EDITOR_RESULT_CANCEL, "Alert!")
+			Case Else:
+				MsgboxAsync("Invalid result!" & CRLF & _
+			Starter.InstanceState.Get(Starter.EDITOR_RESULT), "Alert!")
+		End Select
+	
+		' Remove the editor result extra from the bundle to avoid application state-related issues.
+		Starter.InstanceState.Remove(Starter.EDITOR_RESULT)
+	End If
 End Sub
 
 Private Sub btnAdd_Click
+	Starter.InstanceState.Put(Starter.EDITOR_MODE, Starter.EXTRA_EDITOR_CREATE)
 	
+	StartActivity(EditorActivity)
 End Sub
 
 Private Sub ToDoList_ItemClick (Position As Int, Value As Object)
