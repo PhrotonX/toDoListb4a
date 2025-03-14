@@ -13,6 +13,14 @@ Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
 
+	' Global DataMap to mimic Android's Bundles for Intents in Java/Kotlin.
+	Public DataMap As Map
+	
+	' Global variables used for passing extras
+	Public Const PACKAGE_NAME As String = "com.cm.todolist"
+	Public Const EDITOR_MODE As String = "EDITOR_MODE"
+	Public Const EXTRA_EDIT As String = PACKAGE_NAME & ".EXTRA_EDIT"
+	Public Const EXTRA_CREATE As String = PACKAGE_NAME & ".EXTRA_CREATE"
 End Sub
 
 Sub Service_Create

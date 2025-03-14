@@ -24,9 +24,18 @@ Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("EditorLayout")
 	
-	If Activity.GetStartingIntent.Action = "com.cm.todolist.EXTRA_CREATE" Then
-		MsgboxAsync("Extra Received: " & CRLF & _
-		 "com.cm.todolist.EXTRA_CREATE" , "Alert")
+	Dim mode As String
+	
+	' Retrieve the data to check the editor mode.
+	mode = Starter.DataMap.Get(Starter.EDITOR_MODE)
+	
+	' Check the editor mode to set the appropriate EditorActivity functionalities.
+	If mode == Starter.EXTRA_CREATE Then
+		MsgboxAsync("Current editor mode is create mode." & CRLF & _
+		 mode , "Alert")
+	Else If mode == Starter.EXTRA_EDIT Then
+		MsgboxAsync("Current editor mode is edit mode." & CRLF & _
+		 mode , "Alert")
 	End If
 End Sub
 

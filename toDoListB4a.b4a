@@ -37,10 +37,6 @@ End Sub
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	Private ToDoList As ListView
-	
-	Private Const PACKAGE_NAME As String = "com.cm.todolist"
-	Private Const EXTRA_EDIT As String = PACKAGE_NAME & ".EXTRA_EDIT"
-	Private Const EXTRA_CREATE As String = PACKAGE_NAME & ".EXTRA_CREATE"
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -48,7 +44,7 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-
+	
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -56,12 +52,8 @@ Sub Activity_Pause (UserClosed As Boolean)
 End Sub
 
 Private Sub btnAdd_Click
-	Dim intent As Intent
-	
-	intent.Initialize(intent.ACTION_MAIN, "")
-	intent.SetPackage(PACKAGE_NAME)
-	intent.SetType("*/*")
-	intent.PutExtra(EXTRA_CREATE, EXTRA_CREATE)
+	Starter.DataMap.Initialize
+	Starter.DataMap.Put(Starter.EDITOR_MODE, Starter.EXTRA_CREATE) 
 	
 	StartActivity(EditorActivity)
 End Sub
