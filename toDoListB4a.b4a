@@ -41,13 +41,10 @@ End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("Layout")
-	
-	CheckInstanceState
-	
 End Sub
 
 Sub Activity_Resume
-	
+	CheckInstanceState
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -62,6 +59,8 @@ Sub CheckInstanceState
 		Select editorResult:
 			Case Null:
 				' Do nothing if no result has been found.
+				MsgboxAsync("Result of EditorActivity: " & CRLF & _
+			editorResult, "Alert!")
 			Case Starter.EXTRA_EDITOR_RESULT_SAVE:
 				MsgboxAsync("Result of EditorActivity: " & CRLF & _
 			Starter.EXTRA_EDITOR_RESULT_SAVE, "Alert!")
