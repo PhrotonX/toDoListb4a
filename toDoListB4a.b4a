@@ -1,24 +1,28 @@
 ﻿Build1=Default,com.cm.todolist
 File1=EditorLayout.bal
 File2=Layout.bal
+File3=ToDoListItemLayout.bal
 FileGroup1=Default Group
 FileGroup2=Default Group
+FileGroup3=Default Group
 Group=Default Group
 Library1=core
 Library2=xui
+Library3=xcustomlistview
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
 Module1=EditorActivity
 Module2=Starter
 Module3=ToDo
-NumberOfFiles=2
-NumberOfLibraries=2
-NumberOfModules=3
+Module4=ToDoViewHolder
+NumberOfFiles=3
+NumberOfLibraries=3
+NumberOfModules=4
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 1
-	#VersionName: 
+	#VersionName: v0.1.0.1 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -37,11 +41,18 @@ End Sub
 
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
-	Private ToDoList As ListView
+	Private ToDoList As CustomListView
+	Private chkToDoItem As CheckBox
+	Private toDoItemInfo As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("Layout")
+	
+	' Remove all items to update data and avoid data duplication.
+	' ToDoList.Clear
+
+	LoadItems
 End Sub
 
 Sub Activity_Resume
@@ -84,10 +95,62 @@ Private Sub btnAdd_Click
 	StartActivity(EditorActivity)
 End Sub
 
-Private Sub ToDoList_ItemClick (Position As Int, Value As Object)
+Private Sub toDoList_ItemClick (Index As Int, Value As Object)
 	
 End Sub
 
-Private Sub ToDoList_ItemLongClick (Position As Int, Value As Object)
+Private Sub toDoList_ItemLongClick (Index As Int, Value As Object)
 	
+End Sub
+
+Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub CreateItem(todoItem As ToDo, todoItemView As ToDoViewHolder) As B4XView
+	Dim panel As B4XView = xui.CreatePanel("")
+	
+	panel.SetLayoutAnimated(0, 0, 0, 100%x, 60dip)
+	panel.LoadLayout("ToDoListItemLayout")
+	
+	todoItemView.ToDoCheckbox = chkToDoItem
+	todoItemView.ToDoInfo = toDoItemInfo
+	
+	' Bind the sample data
+	todoItemView.ToDoCheckbox.Text = todoItem.GetTitle
+	todoItemView.ToDoInfo.Text = "Due Today"
+	
+	Return panel
+End Sub
+
+' Load ToDo items.
+Private Sub LoadItems()
+	' Sample data for testing
+	
+	' Declare ToDo variables
+	Dim sampleItem1 As ToDo
+	Dim sampleItem2 As ToDo
+	Dim sampleItem3 As ToDo
+	
+	' Initialize the ToDo objects
+	sampleItem1.Initialize
+	sampleItem2.Initialize
+	sampleItem3.Initialize
+	
+	' Set title for sample to do items
+	sampleItem1.SetTitle("Item 1")
+	sampleItem2.SetTitle("Item 2")
+	sampleItem3.SetTitle("Item 3")
+	
+	Dim viewHolder1 As ToDoViewHolder
+	Dim viewHolder2 As ToDoViewHolder
+	Dim viewHolder3 As ToDoViewHolder
+	
+	viewHolder1.Initialize
+	viewHolder2.Initialize
+	viewHolder3.Initialize
+	
+	ToDoList.Add(CreateItem(sampleItem1, viewHolder1), viewHolder1)
+	ToDoList.Add(CreateItem(sampleItem2, viewHolder2), viewHolder2)
+	ToDoList.Add(CreateItem(sampleItem3, viewHolder3), viewHolder3)
 End Sub
