@@ -50,9 +50,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("Layout")
 	
 	' Remove all items to update data and avoid data duplication.
-	If ToDoList.Size > 0 Then
-		ToDoList.Clear
-	End If
+	' ToDoList.Clear
 
 	LoadItems
 End Sub
@@ -112,6 +110,7 @@ End Sub
 Private Sub CreateItem(todoItem As ToDo, todoItemView As ToDoViewHolder) As B4XView
 	Dim panel As B4XView = xui.CreatePanel("")
 	
+	panel.SetLayoutAnimated(0, 0, 0, 100%x, 60dip)
 	panel.LoadLayout("ToDoListItemLayout")
 	
 	todoItemView.ToDoCheckbox = chkToDoItem
@@ -154,7 +153,4 @@ Private Sub LoadItems()
 	ToDoList.Add(CreateItem(sampleItem1, viewHolder1), viewHolder1)
 	ToDoList.Add(CreateItem(sampleItem2, viewHolder2), viewHolder2)
 	ToDoList.Add(CreateItem(sampleItem3, viewHolder3), viewHolder3)
-	
-	' Redraw the activity
-	Activity.Invalidate
 End Sub
