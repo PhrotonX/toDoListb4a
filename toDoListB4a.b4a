@@ -7,16 +7,18 @@ FileGroup2=Default Group
 FileGroup3=Default Group
 Group=Default Group
 Library1=core
-Library2=xui
-Library3=xcustomlistview
+Library2=xcustomlistview
+Library3=xui
+Library4=sql
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
 Module1=EditorActivity
 Module2=Starter
 Module3=ToDo
-Module4=ToDoViewHolder
+Module4=ToDoDatabase
+Module5=ToDoViewHolder
 NumberOfFiles=3
-NumberOfLibraries=3
-NumberOfModules=4
+NumberOfLibraries=4
+NumberOfModules=5
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
