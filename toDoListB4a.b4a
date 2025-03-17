@@ -14,12 +14,13 @@ ManifestCode='This code will be applied to the manifest file during compilation.
 Module1=EditorActivity
 Module2=Starter
 Module3=TaskRepository
-Module4=ToDo
-Module5=ToDoDatabase
-Module6=ToDoViewHolder
+Module4=TaskViewModel
+Module5=ToDo
+Module6=ToDoDatabase
+Module7=ToDoViewHolder
 NumberOfFiles=3
 NumberOfLibraries=4
-NumberOfModules=6
+NumberOfModules=7
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
