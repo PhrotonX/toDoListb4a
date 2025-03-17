@@ -29,7 +29,7 @@ Sub Process_Globals
 	Public Const EXTRA_EDITOR_RESULT_SAVE As String = PACKAGE_NAME & ".EXTRA_EDITOR_RESULT_SAVE"
 	Public Const EXTRA_EDITOR_RESULT_CANCEL As String = PACKAGE_NAME & ".EXTRA_EDITOR_RESULT_CANCEL"
 	
-	Public TaskViewModel As TaskViewModel
+	Public TaskViewModelInstance As TaskViewModel
 End Sub
 
 Sub Service_Create
@@ -38,7 +38,7 @@ Sub Service_Create
 
 	InstanceState.Initialize
 	
-	TaskViewModel
+	TaskViewModelInstance.Initialize
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)
