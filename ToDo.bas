@@ -9,12 +9,15 @@ Sub Class_Globals
 	Private m_title As String
 	Private m_notes As String
 	Private m_priority As Int
-	Private m_repeat As List
+	Private m_repeat(7) As Boolean
+	Public Done As Boolean
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize
-	
+	For Each repeat As Boolean In m_repeat
+		repeat = False
+	Next
 End Sub
 
 Public Sub GetId As Long
@@ -37,7 +40,7 @@ Public Sub GetPriority As Int
 End Sub
 
 ' Encapsulate repeat value
-Public Sub GetRepeat As List
+Public Sub GetRepeat As Boolean(7)
 	Return m_repeat
 End Sub
 
@@ -53,8 +56,8 @@ Public Sub SetNotes(notes As String)
 	m_notes = notes
 End Sub
 
-Public Sub SetRepeat(repeat As List)
-	m_repeat = repeat
+Public Sub SetRepeat(day As Int, repeat As Boolean)
+	m_repeat(day) = repeat
 End Sub
 
 Public Sub SetPriority(priority As Int)
