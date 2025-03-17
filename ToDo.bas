@@ -5,6 +5,7 @@ Type=Class
 Version=13.1
 @EndOfDesignText@
 Sub Class_Globals
+	Private m_id As Long
 	Private m_title As String
 	Private m_notes As String
 	Private m_priority As Int
@@ -14,6 +15,10 @@ End Sub
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize
 	
+End Sub
+
+Public Sub GetId As Long
+	Return m_id
 End Sub
 
 ' Encapsulate title value
@@ -34,6 +39,10 @@ End Sub
 ' Encapsulate repeat value
 Public Sub GetRepeat As List
 	Return m_repeat
+End Sub
+
+Public Sub SetId(id As String)
+	m_id = id
 End Sub
 
 Public Sub SetTitle(title As String)
