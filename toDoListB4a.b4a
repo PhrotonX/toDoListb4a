@@ -1,23 +1,34 @@
 ﻿Build1=Default,com.cm.todolist
 File1=EditorLayout.bal
 File2=Layout.bal
-File3=ToDoListItemLayout.bal
+File3=SettingsAbout.bal
+File4=settingshelp.bal
+File5=SettingsLayout.bal
+File6=sviewLayout.bal
+File7=ToDoListItemLayout.bal
 FileGroup1=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
+FileGroup4=Default Group
+FileGroup5=Default Group
+FileGroup6=Default Group
+FileGroup7=Default Group
 Group=Default Group
 Library1=core
 Library2=xui
 Library3=xcustomlistview
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
 Module1=EditorActivity
-Module2=Starter
-Module3=ToDo
-Module4=ToDoViewHolder
-NumberOfFiles=3
+Module2=SettingsAbout
+Module3=SettingsActivity
+Module4=SettingsHelp
+Module5=Starter
+Module6=ToDo
+Module7=ToDoViewHolder
+NumberOfFiles=7
 NumberOfLibraries=3
-NumberOfModules=4
-Version=13.1
+NumberOfModules=7
+Version=10.2
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
@@ -44,6 +55,7 @@ Sub Globals
 	Private ToDoList As CustomListView
 	Private chkToDoItem As CheckBox
 	Private toDoItemInfo As Label
+	Private settingsBtn As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -153,4 +165,8 @@ Private Sub LoadItems()
 	ToDoList.Add(CreateItem(sampleItem1, viewHolder1), viewHolder1)
 	ToDoList.Add(CreateItem(sampleItem2, viewHolder2), viewHolder2)
 	ToDoList.Add(CreateItem(sampleItem3, viewHolder3), viewHolder3)
+End Sub
+
+Sub settingsBtn_Click
+	StartActivity(SettingsActivity)
 End Sub
