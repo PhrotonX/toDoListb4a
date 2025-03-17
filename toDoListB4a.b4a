@@ -13,12 +13,13 @@ Library4=sql
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
 Module1=EditorActivity
 Module2=Starter
-Module3=ToDo
-Module4=ToDoDatabase
-Module5=ToDoViewHolder
+Module3=TaskRepository
+Module4=ToDo
+Module5=ToDoDatabase
+Module6=ToDoViewHolder
 NumberOfFiles=3
 NumberOfLibraries=4
-NumberOfModules=5
+NumberOfModules=6
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
