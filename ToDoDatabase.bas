@@ -12,7 +12,7 @@ End Sub
 Public Sub Initialize
 	sql.Initialize(File.DirInternal, "todo_db.db", True)
 	
-	Create_Table
+	CreateTable
 End Sub
 
 Public Sub CreateTable
@@ -25,7 +25,7 @@ Public Sub CreateTable
 	"PRIMARY KEY(todo_id)" & CRLF &  _
 	");"
 	
-	Dim query_repeat As String = "CREATE TABLE IF NOT EXISTS repeat_table(" & CRLF & _
+	Dim query_days_of_the_week As String = "CREATE TABLE IF NOT EXISTS days_of_the_week(" & CRLF & _
 	"day_id LONG Not Null AUTO_INCREMENT," & CRLF & _
 	"days_of_the_week VARCHAR(10)," & CRLF & _
 	"PRIMARY KEY(day_id)" & CRLF & _
@@ -40,7 +40,7 @@ Public Sub CreateTable
 	sql.BeginTransaction
 	Try
 		sql.ExecNonQuery(query_todo)
-		sql.ExecNonQuery(query_repeat)
+		sql.ExecNonQuery(query_days_of_the_week)
 		sql.ExecNonQuery(query_todo_repeat)
 	Catch
 		Log(LastException.Message)
@@ -50,13 +50,13 @@ End Sub
 
 Public Sub DropTable
 	Dim query_todo As String = "DROP TABLE IF EXISTS todo;"
-	Dim query_repeat As String = "DROP TABLE IF EXISTS repeat;"
+	Dim query_days_of_the_week As String = "DROP TABLE IF EXISTS days_of_the_week;"
 	Dim query_todo_repeat As String = "DROP TABLE IF EXISTS todo_repeat;"
 	
 	sql.BeginTransaction
 	Try
 		sql.ExecNonQuery(query_todo)
-		sql.ExecNonQuery(query_repeat)
+		sql.ExecNonQuery(query_days_of_the_week)
 		sql.ExecNonQuery(query_todo_repeat)
 	Catch
 		Log(LastException.Message)
