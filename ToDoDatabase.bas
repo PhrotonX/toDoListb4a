@@ -19,7 +19,7 @@ Public Sub CreateTable
 	Dim query_task As String = "CREATE TABLE IF NOT EXISTS task( " & CRLF & _
 	"task_id BIGINT NOT NULL AUTO_INCREMENT," & CRLF & _
 	"title VARCHAR(255) NOT NULL," & CRLF & _
-	"notes VARCHAR(255)," & CRLF & _
+	"notes TEXT," & CRLF & _
 	"priority INTEGER NOT NULL," & CRLF & _
 	"due_date DATE," & CRLF & _
 	"done BOOLEAN NOT NULL DEFAULT 0," & CRLF & _
@@ -94,7 +94,7 @@ Public Sub InsertTask(item As ToDo)
 		Dim id As Long = sql.ExecQuerySingleResult("SELECT last_insert_rowid();")
 		
 		' Insert each item's repeat value
-		Dim i As Int = 0
+		Dim i As Long = 0
 		For Each repeat As Boolean In item.GetRepeat
 			sql.ExecNonQuery("INSERT INTO task_repeat(task_id, day_id, enabled)" & CRLF & _
 			"VALUES("&id&", '"&i&"', "&repeat&");")
@@ -157,10 +157,59 @@ Public Sub GetTask(id As Long) As ToDo
 		item.SetPriority(sql.ExecQuerySingleResult("SELECT priority FROM task WHERE task_id" = id))
 		item.Done = sql.ExecQuerySingleResult("SELECT done FROM task WHERE task_id" = id)
 		
-		
+		' Get all values for task_repeat.
+		Dim Cursor As Cursor
+		Cursor = sql.ExecQuery("SELECT * FROM task_repeat WHERE task_id = " & id)
+		For i = 0 To Cursor.RowCount - 1
+			Cursor.Position = i
+			item.SetRepeat(0, Cursor.GetInt("enabled"))
+		Next
 
 	Catch
-		Log(LastException)
+		Log(LastException.Message)
 	End Try
 	sql.EndTransaction
+	
+	Return item
+End Sub
+
+Public Sub GetAllTasks() As List
+	Dim list As List
+	
+	sql.BeginTransaction
+	Try
+		' Iterate over all tasks and add it into the list.
+		Dim cursorTask As Cursor
+		cursorTask = sql.ExecQuery("SELECT * FROM task")
+		For i = 0 To cursorTask.RowCount - 1
+			cursorTask.Position = i
+			
+			' Declare and initialize the item.
+			Dim item As ToDo
+			item.Initialize
+			
+			' Get all values for task.
+			item.SetId(cursorTask.GetLong("task_id"))
+			item.SetTitle(cursorTask.GetString("title"))
+			item.SetNotes(cursorTask.GetString("notes"))
+			item.SetPriority(cursorTask.GetInt("priority"))
+			item.Done = cursorTask.GetInt("done")
+			
+			' Get all values for task_repeat.
+			Dim cursorRepeat As Cursor
+			cursorRepeat = sql.ExecQuery("SELECT * FROM task_repeat WHERE task_id = " & item.GetId)
+			For i = 0 To cursorRepeat.RowCount - 1
+				cursorRepeat.Position = i
+				item.SetRepeat(0, cursorRepeat.GetInt("enabled"))
+			Next
+			
+			' Add the item into the list
+			list.Add(item)
+		Next
+	Catch
+		Log(LastException.Message)
+	End Try
+	sql.EndTransaction
+	
+	Return list
 End Sub
