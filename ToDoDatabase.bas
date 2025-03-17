@@ -15,7 +15,7 @@ Public Sub Initialize
 	Create_Table
 End Sub
 
-Public Sub Create_Table
+Public Sub CreateTable
 	Dim query_todo As String = "CREATE TABLE IF NOT EXISTS todo( " & CRLF & _
 	"todo_id LONG NOT NULL AUTO_INCREMENT," & CRLF & _
 	"title VARCHAR(255) NOT NULL," & CRLF & _
@@ -48,7 +48,7 @@ Public Sub Create_Table
 	sql.EndTransaction
 End Sub
 
-Public Sub Drop_Table
+Public Sub DropTable
 	Dim query_todo As String = "DROP TABLE IF EXISTS todo;"
 	Dim query_repeat As String = "DROP TABLE IF EXISTS repeat;"
 	Dim query_todo_repeat As String = "DROP TABLE IF EXISTS todo_repeat;"
