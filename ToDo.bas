@@ -8,7 +8,9 @@ Sub Class_Globals
 	Private m_id As Long
 	Private m_title As String
 	Private m_notes As String
+	' 0 represents the least critical task while 3 represents most critical task.
 	Private m_priority As Int
+	' Index 0 represents Sunday while index 6 represents Saturday.
 	Private m_repeat(7) As Boolean
 	Public Done As Boolean
 End Sub
