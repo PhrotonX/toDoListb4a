@@ -18,6 +18,8 @@ End Sub
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
+	Private editNotes As EditText
+	Private editTitle As EditText
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -55,7 +57,7 @@ Private Sub btnSave_Click
 	' Add the current editor result into the instance state.
 	Starter.InstanceState.Put(Starter.EDITOR_RESULT, Starter.EXTRA_EDITOR_RESULT_SAVE)
 	
-	' @TODO: Add code for saving...
+	
 	
 	' Close the activity after saving
 	Activity.Finish
@@ -69,8 +71,52 @@ Private Sub btnCancel_Click
 	' Add the current editor result into the instance state.
 	Starter.InstanceState.Put(Starter.EDITOR_RESULT, Starter.EXTRA_EDITOR_RESULT_CANCEL)
 	
-	' @TODO: Add code for saving...
+	' @TODO: Add code for cancelling...
 	
-	' Close the activity after saving
+	' Close the activity after cancelling
 	Activity.Finish
+End Sub
+
+Private Sub checkRepeatWed_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub checkRepeatTue_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub checkRepeatThu_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub checkRepeatSun_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub checkRepeatSat_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub checkRepeatMon_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub checkRepeatFri_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioPriorityMedium_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioPriorityLow_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioPriorityHigh_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioPriorityCritical_CheckedChange(Checked As Boolean)
+	
 End Sub
