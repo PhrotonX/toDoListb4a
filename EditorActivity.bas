@@ -66,7 +66,10 @@ Private Sub btnSave_Click
 	' Add the current editor result into the instance state.
 	Starter.InstanceState.Put(Starter.EDITOR_RESULT, Starter.EXTRA_EDITOR_RESULT_SAVE)
 	
+	m_task.SetTitle(editTitle.Text)
+	m_task.SetNotes(editNotes.Text)
 	
+	Starter.TaskViewModelInstance.InsertTask(m_task)
 	
 	' Close the activity after saving
 	Activity.Finish
