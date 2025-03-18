@@ -28,6 +28,8 @@ Sub Process_Globals
 	Public Const EDITOR_RESULT As String = "EDITOR_RESULT"
 	Public Const EXTRA_EDITOR_RESULT_SAVE As String = PACKAGE_NAME & ".EXTRA_EDITOR_RESULT_SAVE"
 	Public Const EXTRA_EDITOR_RESULT_CANCEL As String = PACKAGE_NAME & ".EXTRA_EDITOR_RESULT_CANCEL"
+	
+	Public TaskViewModelInstance As TaskViewModel
 End Sub
 
 Sub Service_Create
@@ -35,6 +37,8 @@ Sub Service_Create
 	'This is a good place to load resources that are not specific to a single activity.
 
 	InstanceState.Initialize
+	
+	TaskViewModelInstance.Initialize
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)
@@ -47,9 +51,10 @@ End Sub
 
 'Return true to allow the OS default exceptions handler to handle the uncaught exception.
 Sub Application_Error (Error As Exception, StackTrace As String) As Boolean
+	TaskViewModelInstance.Release
 	Return True
 End Sub
 
 Sub Service_Destroy
-
+	TaskViewModelInstance.Release
 End Sub
