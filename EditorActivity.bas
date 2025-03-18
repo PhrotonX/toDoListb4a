@@ -20,11 +20,16 @@ Sub Globals
 	'These variables can only be accessed from this module.
 	Private editNotes As EditText
 	Private editTitle As EditText
+	
+	Private m_task As ToDo
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("EditorLayout")
+	
+	' Initialize variables
+	m_task.Initialize
 	
 	Dim mode As String
 	
@@ -77,46 +82,46 @@ Private Sub btnCancel_Click
 	Activity.Finish
 End Sub
 
-Private Sub checkRepeatWed_CheckedChange(Checked As Boolean)
-	
-End Sub
-
-Private Sub checkRepeatTue_CheckedChange(Checked As Boolean)
-	
-End Sub
-
-Private Sub checkRepeatThu_CheckedChange(Checked As Boolean)
-	
-End Sub
-
 Private Sub checkRepeatSun_CheckedChange(Checked As Boolean)
-	
-End Sub
-
-Private Sub checkRepeatSat_CheckedChange(Checked As Boolean)
-	
+	m_task.SetRepeat(0, Checked)
 End Sub
 
 Private Sub checkRepeatMon_CheckedChange(Checked As Boolean)
-	
+	m_task.SetRepeat(1, Checked)
+End Sub
+
+Private Sub checkRepeatTue_CheckedChange(Checked As Boolean)
+	m_task.SetRepeat(2, Checked)
+End Sub
+
+Private Sub checkRepeatWed_CheckedChange(Checked As Boolean)
+	m_task.SetRepeat(3, Checked)
+End Sub
+
+Private Sub checkRepeatThu_CheckedChange(Checked As Boolean)
+	m_task.SetRepeat(4, Checked)
 End Sub
 
 Private Sub checkRepeatFri_CheckedChange(Checked As Boolean)
-	
+	m_task.SetRepeat(5, Checked)
+End Sub
+
+Private Sub checkRepeatSat_CheckedChange(Checked As Boolean)
+	m_task.SetRepeat(6, Checked)
 End Sub
 
 Private Sub radioPriorityMedium_CheckedChange(Checked As Boolean)
-	
+	m_task.SetPriority(1)
 End Sub
 
 Private Sub radioPriorityLow_CheckedChange(Checked As Boolean)
-	
+	m_task.SetPriority(0)
 End Sub
 
 Private Sub radioPriorityHigh_CheckedChange(Checked As Boolean)
-	
+	m_task.SetPriority(2)
 End Sub
 
 Private Sub radioPriorityCritical_CheckedChange(Checked As Boolean)
-	
+	m_task.SetPriority(3)
 End Sub
