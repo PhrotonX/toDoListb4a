@@ -104,7 +104,7 @@ Public Sub InsertTask(item As ToDo)
 			"VALUES("&id&", '"&i&"', "&repeat&");")
 			i = i + 1
 		Next
-		
+		sql.TransactionSuccessful
 	Catch
 		Log(LastException)
 	End Try
