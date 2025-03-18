@@ -1,4 +1,4 @@
-﻿Build1=Default,com.cm.todolist
+Build1=Default,com.cm.todolist
 File1=EditorLayout.bal
 File2=Layout.bal
 File3=SettingsAbout.bal
@@ -15,20 +15,24 @@ FileGroup6=Default Group
 FileGroup7=Default Group
 Group=Default Group
 Library1=core
-Library2=xui
-Library3=xcustomlistview
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
+Library2=xcustomlistview
+Library3=xui
+Library4=sql
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true"~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetApplicationAttribute(android:debuggable, "true")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
 Module1=EditorActivity
 Module2=SettingsAbout
 Module3=SettingsActivity
 Module4=SettingsHelp
 Module5=Starter
-Module6=ToDo
-Module7=ToDoViewHolder
-NumberOfFiles=7
+Module6=TaskRepository
+Module7=TaskViewModel
+Module8=ToDo
+Module9=ToDoDatabase
+Module10=ToDoViewHolder
+NumberOfFiles=10
 NumberOfLibraries=3
 NumberOfModules=7
-Version=10.2
+Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
