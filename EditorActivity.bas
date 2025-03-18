@@ -22,6 +22,10 @@ Sub Globals
 	Private editTitle As EditText
 	
 	Private m_task As ToDo
+	Private radioPriorityCritical As RadioButton
+	Private radioPriorityHigh As RadioButton
+	Private radioPriorityLow As RadioButton
+	Private radioPriorityMedium As RadioButton
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -69,7 +73,10 @@ Private Sub btnSave_Click
 End Sub
 
 Private Sub btnPriorityClear_Click
-	
+	radioPriorityCritical.Checked = False
+	radioPriorityHigh.Checked = False
+	radioPriorityLow.Checked = False
+	radioPriorityMedium.Checked = False
 End Sub
 
 Private Sub btnCancel_Click
