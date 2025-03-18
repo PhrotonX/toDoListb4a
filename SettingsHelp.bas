@@ -18,21 +18,22 @@ End Sub
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
-
+	Private helpBack As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	'Activity.LoadLayout("Layout1")
 	Activity.LoadLayout("settingshelp")
+	button_design
+
+
 End Sub
 
-Sub Activity_Resume
-
-End Sub
-
-Sub Activity_Pause (UserClosed As Boolean)
-
+Sub button_design
+	Dim transparentBg As ColorDrawable
+	transparentBg.Initialize(Colors.Transparent, 0)
+	helpBack.Background = transparentBg
 End Sub
 
 Sub helpBack_Click

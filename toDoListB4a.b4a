@@ -45,7 +45,7 @@ Version=13.1
 
 #Region  Activity Attributes 
 	#FullScreen: False
-	#IncludeTitle: True
+	#IncludeTitle: False
 #End Region
 
 Sub Process_Globals
@@ -59,6 +59,8 @@ Sub Globals
 	Private ToDoList As CustomListView
 	Private chkToDoItem As CheckBox
 	Private toDoItemInfo As Label
+	Private settingsBtn As Button
+	Private btnAdd As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -68,6 +70,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	' ToDoList.Clear
 
 	LoadItems
+	buttons_layout
 End Sub
 
 Sub Activity_Resume
@@ -125,8 +128,10 @@ End Sub
 Private Sub CreateItem(todoItem As ToDo, todoItemView As ToDoViewHolder) As B4XView
 	Dim panel As B4XView = xui.CreatePanel("")
 	
-	panel.SetLayoutAnimated(0, 0, 0, 100%x, 60dip)
+	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
 	panel.LoadLayout("ToDoListItemLayout")
+	panel.SetColorAndBorder(Colors.White, 5dip, Colors.White, 20dip)
+
 	
 	todoItemView.ToDoCheckbox = chkToDoItem
 	todoItemView.ToDoInfo = toDoItemInfo
@@ -168,4 +173,19 @@ Private Sub LoadItems()
 	ToDoList.Add(CreateItem(sampleItem1, viewHolder1), viewHolder1)
 	ToDoList.Add(CreateItem(sampleItem2, viewHolder2), viewHolder2)
 	ToDoList.Add(CreateItem(sampleItem3, viewHolder3), viewHolder3)
+End Sub
+
+Sub settingsBtn_Click
+	StartActivity(SettingsActivity)
+End Sub
+
+Sub buttons_layout
+	'btnAdd design
+	btnAdd.Top = Activity.Height - btnAdd.Height - 20dip
+	btnAdd.Left = (Activity.Width - btnAdd.Width) / 2
+	
+	'settingsBtn design
+	Dim bgTransparent As ColorDrawable
+	bgTransparent.Initialize(Colors.Transparent, 0)
+	settingsBtn.Background = bgTransparent
 End Sub
