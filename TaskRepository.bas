@@ -34,3 +34,8 @@ End Sub
 Public Sub GetAllTasks() As List
 	Return database.GetAllTasks
 End Sub
+
+' Calls closure of database,
+Public Sub Release
+	database.CloseDatabase
+End Sub

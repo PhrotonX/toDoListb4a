@@ -34,3 +34,8 @@ End Sub
 Public Sub GetAllTasks() As List
 	Return repository.GetAllTasks
 End Sub
+
+' Releases data handled by Repository
+Public Sub Release
+	repository.Release
+End Sub

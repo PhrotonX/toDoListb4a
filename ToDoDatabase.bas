@@ -13,11 +13,14 @@ Public Sub Initialize
 	sql.Initialize(File.DirInternal, "todo_db.db", True)
 	
 	CreateTable
+	
+	CopyDatabase
 End Sub
 
-Public Sub CreateTable
+' Creates tables for Database in SQL syntax, not MySQL.
+Public Sub CreateTable	
 	Dim query_task As String = "CREATE TABLE IF NOT EXISTS task( " & CRLF & _
-	"task_id BIGINT NOT NULL AUTO_INCREMENT," & CRLF & _
+	"task_id BIGINT IDENTITY(1,1) NOT NULL," & CRLF & _
 	"title VARCHAR(255) NOT NULL," & CRLF & _
 	"notes TEXT," & CRLF & _
 	"priority INTEGER NOT NULL," & CRLF & _
@@ -39,26 +42,22 @@ Public Sub CreateTable
 	"PRIMARY KEY(task_id, day_id)" & CRLF & _
 	");"
 	
-	Dim query_create_procedure As String = "CREATE PROCEDURE IF NOT EXISTS PopulateDaysOfTheWeek" & CRLF & _
-	"AS" & CRLF & _
-	"IF SELECT COUNT(*) FROM days_of_the_week = 0 THEN" & CRLF & _
-	"INSERT INTO days_of_the_week(day_of_the_week, day_id) VALUES('Sunday', 0);" & CRLF & _
-	"INSERT INTO days_of_the_week(day_of_the_week, day_id) VALUES('Monday', 1);" & CRLF & _
-	"INSERT INTO days_of_the_week(day_of_the_week, day_id) VALUES('Tuesday', 2);" & CRLF & _
-	"INSERT INTO days_of_the_week(day_of_the_week, day_id) VALUES('Wednesday', 3);" & CRLF & _
-	"INSERT INTO days_of_the_week(day_of_the_week, day_id) VALUES('Thursday', 4);" & CRLF & _
-	"INSERT INTO days_of_the_week(day_of_the_week, day_id) VALUES('Friday', 5);" & CRLF & _
-	"INSERT INTO days_of_the_week(day_of_the_week, day_id) VALUES('Saturday', 6);" & CRLF & _
-	"GO;" & CRLF & _
-	"END IF;" & CRLF & _
-	"EXEC PopulateDaysOfTheWeek;"
+	Dim query_populate_days As String = "INSERT INTO days_of_the_week (day_of_the_week, day_id)" & CRLF & _
+	"SELECT 'Sunday', 0 UNION ALL" & CRLF & _
+	"SELECT 'Monday', 1 UNION ALL" & CRLF & _
+	"SELECT 'Tuesday', 2 UNION ALL" & CRLF & _
+	"SELECT 'Wednesday', 3 UNION ALL" & CRLF & _
+	"SELECT 'Thursday', 4 UNION ALL" & CRLF & _
+	"SELECT 'Friday', 5 UNION ALL" & CRLF & _ 
+	"SELECT 'Saturday', 6" & CRLF & _
+	"WHERE NOT EXISTS (SELECT 1 FROM days_of_the_week);"
 	
 	sql.BeginTransaction
 	Try
 		sql.ExecNonQuery(query_task)
 		sql.ExecNonQuery(query_days_of_the_week)
 		sql.ExecNonQuery(query_task_repeat)
-		sql.ExecNonQuery(query_create_procedure)
+		sql.ExecNonQuery(query_populate_days)
 	Catch
 		Log(LastException.Message)
 	End Try
@@ -212,4 +211,22 @@ Public Sub GetAllTasks() As List
 	sql.EndTransaction
 	
 	Return list
+End Sub
+
+' Closes the database
+Public Sub CloseDatabase()
+	sql.Close
+End Sub
+
+Public Sub CopyDatabase()
+	' FOR TESTING ONLY! REMOVE LATER
+	Dim source As String = File.DirInternal & "/todo_db.db"
+	Dim dest As String = File.DirRootExternal & "/Download/todo_db.db"
+
+	If File.Exists(source, "") Then
+		File.Copy(source, "", dest, "")
+		ToastMessageShow("Database copied to /Download/", True)
+	Else
+		ToastMessageShow("Database not found!", True)
+	End If
 End Sub

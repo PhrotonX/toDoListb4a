@@ -51,9 +51,10 @@ End Sub
 
 'Return true to allow the OS default exceptions handler to handle the uncaught exception.
 Sub Application_Error (Error As Exception, StackTrace As String) As Boolean
+	TaskViewModelInstance.Release
 	Return True
 End Sub
 
 Sub Service_Destroy
-
+	TaskViewModelInstance.Release
 End Sub
