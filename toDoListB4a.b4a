@@ -18,7 +18,7 @@ Library1=core
 Library2=xcustomlistview
 Library3=xui
 Library4=sql
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true"~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetApplicationAttribute(android:debuggable, "true")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true"~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetApplicationAttribute(android:debuggable, "true")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~~\n~AddPermission(android.permission.READ_EXTERNAL_STORAGE)~\n~AddPermission(android.permission.WRITE_EXTERNAL_STORAGE)~\n~'End of default text.~\n~
 Module1=EditorActivity
 Module10=ToDoViewHolder
 Module2=SettingsAbout
@@ -67,7 +67,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Remove all items to update data and avoid data duplication.
 	' ToDoList.Clear
 
-	LoadItems
+	
 End Sub
 
 Sub Activity_Resume
@@ -105,6 +105,7 @@ Sub CheckInstanceState
 End Sub
 
 Private Sub btnAdd_Click
+	LoadItems
 	Starter.InstanceState.Put(Starter.EDITOR_MODE, Starter.EXTRA_EDITOR_CREATE)
 	
 	StartActivity(EditorActivity)
@@ -139,33 +140,16 @@ Private Sub CreateItem(todoItem As ToDo, todoItemView As ToDoViewHolder) As B4XV
 End Sub
 
 ' Load ToDo items.
-Private Sub LoadItems()
-	' Sample data for testing
+Private Sub LoadItems()	
+	Dim items As List
+	items.Initialize
+	items = Starter.TaskViewModelInstance.GetAllTasks
 	
-	' Declare ToDo variables
-	Dim sampleItem1 As ToDo
-	Dim sampleItem2 As ToDo
-	Dim sampleItem3 As ToDo
-	
-	' Initialize the ToDo objects
-	sampleItem1.Initialize
-	sampleItem2.Initialize
-	sampleItem3.Initialize
-	
-	' Set title for sample to do items
-	sampleItem1.SetTitle("Item 1")
-	sampleItem2.SetTitle("Item 2")
-	sampleItem3.SetTitle("Item 3")
-	
-	Dim viewHolder1 As ToDoViewHolder
-	Dim viewHolder2 As ToDoViewHolder
-	Dim viewHolder3 As ToDoViewHolder
-	
-	viewHolder1.Initialize
-	viewHolder2.Initialize
-	viewHolder3.Initialize
-	
-	ToDoList.Add(CreateItem(sampleItem1, viewHolder1), viewHolder1)
-	ToDoList.Add(CreateItem(sampleItem2, viewHolder2), viewHolder2)
-	ToDoList.Add(CreateItem(sampleItem3, viewHolder3), viewHolder3)
+	If items.IsInitialized Then
+		For Each item As ToDo In items
+			Dim itemHolder As ToDoViewHolder
+			itemHolder.Initialize
+			ToDoList.Add(CreateItem(item, itemHolder), itemHolder)
+		Next
+	End If
 End Sub
