@@ -166,7 +166,12 @@ Public Sub GetTask(id As Long) As ToDo
 		item.SetTitle(sql.ExecQuerySingleResult("SELECT title FROM task WHERE task_id = " & id))
 		item.SetNotes(sql.ExecQuerySingleResult("SELECT notes FROM task WHERE task_id = " & id))
 		item.SetPriority(sql.ExecQuerySingleResult("SELECT priority FROM task WHERE task_id = " & id))
-		item.Done = sql.ExecQuerySingleResult("SELECT done FROM task WHERE task_id = " & id)
+		
+		If sql.ExecQuerySingleResult("SELECT done FROM task WHERE task_id = " & id) == "1" Then
+			item.Done = True	
+		Else
+			item.Done = False
+		End If
 		
 		' Get all values for task_repeat.
 		Dim Cursor As Cursor
