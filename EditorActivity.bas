@@ -21,6 +21,7 @@ Sub Globals
 	Private editNotes As EditText
 	Private editTitle As EditText
 	
+	Private m_mode As String
 	Private m_task As ToDo
 	Private radioPriorityCritical As RadioButton
 	Private radioPriorityHigh As RadioButton
@@ -42,13 +43,11 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Initialize variables
 	m_task.Initialize
 	
-	Dim mode As String
-	
 	' Retrieve the data to check the editor mode.
-	mode = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_MODE)
+	m_mode = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_MODE)
 	
 	' Check the editor mode to set the appropriate EditorActivity functionalities.
-	If mode == Starter.EDITOR_MODE_EDIT Then
+	If m_mode == Starter.EDITOR_MODE_EDIT Then
 		
 		' Retrieve the stored ID that is sent from MainActivity.
 		Dim itemId As Int = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_TASK_ID)
@@ -110,7 +109,13 @@ Private Sub btnSave_Click
 	m_task.SetTitle(editTitle.Text)
 	m_task.SetNotes(editNotes.Text)
 	
-	Starter.TaskViewModelInstance.InsertTask(m_task)
+	' Check the editor mode to set the appropriate EditorActivity saving functionalities.
+	If m_mode == Starter.EDITOR_MODE_EDIT Then
+		Starter.TaskViewModelInstance.UpdateTask(m_task)
+	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
+		Starter.TaskViewModelInstance.InsertTask(m_task)
+	End If
+	
 	
 	' Close the activity after saving
 	Activity.Finish
