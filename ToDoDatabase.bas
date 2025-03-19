@@ -14,7 +14,7 @@ Public Sub Initialize
 	
 	CreateTable
 	
-	'CopyDatabase
+	CopyDatabase
 End Sub
 
 ' Creates tables for Database in SQL syntax, not MySQL.
@@ -218,3 +218,15 @@ Public Sub CloseDatabase()
 	sql.Close
 End Sub
 
+Public Sub CopyDatabase()
+	' FOR TESTING ONLY! REMOVE LATER
+	Dim source As String = File.DirInternal & "/todo_db.db"
+	Dim dest As String = File.DirRootExternal & "/Download/todo_db.db"
+
+	If File.Exists(source, "") Then
+		File.Copy(source, "", dest, "")
+		ToastMessageShow("Database copied to /Download/", True)
+	Else
+		ToastMessageShow("Database not found!", True)
+	End If
+End Sub
