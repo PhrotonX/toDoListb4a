@@ -21,7 +21,7 @@ Sub Class_Globals
 	
 	Public Const REPEAT_SUNDAY As Int = 0
 	Public Const REPEAT_MONDAY As Int = 1
-	Public Const REPEAT_TUEDAY As Int = 2
+	Public Const REPEAT_TUESDAY As Int = 2
 	Public Const REPEAT_WEDNESDAY As Int = 3
 	Public Const REPEAT_THURSDAY As Int = 4
 	Public Const REPEAT_FRIDAY As Int = 5
