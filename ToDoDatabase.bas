@@ -205,14 +205,25 @@ Public Sub GetAllTasks() As List
 			item.SetTitle(cursorTask.GetString("title"))
 			item.SetNotes(cursorTask.GetString("notes"))
 			item.SetPriority(cursorTask.GetInt("priority"))
-			item.Done = cursorTask.GetInt("done")
+			If cursorTask.GetInt("done") == 1 Then
+				item.Done = True
+			Else
+				item.Done = False
+			End If
+			
 			
 			' Get all values for task_repeat.
 			Dim cursorRepeat As Cursor
 			cursorRepeat = sql.ExecQuery("SELECT * FROM task_repeat WHERE task_id = " & item.GetId)
-			For i = 0 To cursorRepeat.RowCount - 1
-				cursorRepeat.Position = i
-				item.SetRepeat(0, cursorRepeat.GetInt("enabled"))
+			For j = 0 To cursorRepeat.RowCount - 1
+				cursorRepeat.Position = j
+				Dim enabledStatus As Boolean
+				If cursorRepeat.GetInt("enabled") == 1 Then
+					enabledStatus = True
+				Else
+					enabledStatus = False
+				End If
+				item.SetRepeat(j, enabledStatus)
 			Next
 			
 			' Add the item into the list
