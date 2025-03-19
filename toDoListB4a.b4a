@@ -146,25 +146,39 @@ Private Sub CreateItem(todoItem As ToDo, viewHolder As TaskViewHolder) As B4XVie
 End Sub
 
 ' Load ToDo items.
-Private Sub LoadItems()	
+Private Sub LoadItems()
+	' Initialize a list.
 	Dim items As List
 	items.Initialize
+	' Obtain all tasks from the database.
 	items = Starter.TaskViewModelInstance.GetAllTasks
 	
+	' Null check the list.
 	If items.IsInitialized Then
+		' Iterate each item.
 		For Each item As ToDo In items
+			' Initialize a ViewHolder
 			Dim viewHolder As TaskViewHolder
 			viewHolder.Initialize
+			
+			' Add items into the list view by binding the viewholder and the data.
 			ToDoList.Add(CreateItem(item, viewHolder), viewHolder)
 		Next
 	End If
 End Sub
 
+' Opens EditorActivity to edit a clicked task.
 Private Sub pnlClickArea_Click
+	' Obtain the index of the clicked item from the ListView.
 	Dim index As Int = ToDoList.GetItemFromView(Sender)
+	
+	' Obtain the viewHlder that is bound into the view.
 	Dim viewHolder As TaskViewHolder = ToDoList.GetValue(index)
 	
+	' Retrieve the task_id bound into the viewHolder and set that ID into the extras.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, viewHolder.ID)
+	' Set the EditorActivity mode into edit mode.
+	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_EDIT)
 	
 	StartActivity(EditorActivity)
 End Sub
