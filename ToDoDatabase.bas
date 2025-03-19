@@ -178,7 +178,11 @@ Public Sub GetTask(id As Long) As ToDo
 		Cursor = sql.ExecQuery("SELECT * FROM task_repeat WHERE task_id = " & id)
 		For i = 0 To Cursor.RowCount - 1
 			Cursor.Position = i
-			item.SetRepeat(i, Cursor.GetInt("enabled"))
+			If Cursor.GetInt("enabled") == 1 Then
+				item.SetRepeat(i, True)
+			Else
+				item.SetRepeat(i, False)
+			End If
 		Next
 		sql.TransactionSuccessful
 	Catch
@@ -222,13 +226,11 @@ Public Sub GetAllTasks() As List
 			cursorRepeat = sql.ExecQuery("SELECT * FROM task_repeat WHERE task_id = " & item.GetId)
 			For j = 0 To cursorRepeat.RowCount - 1
 				cursorRepeat.Position = j
-				Dim enabledStatus As Boolean
 				If cursorRepeat.GetInt("enabled") == 1 Then
-					enabledStatus = True
+					item.SetRepeat(j, True)
 				Else
-					enabledStatus = False
+					item.SetRepeat(j, False)
 				End If
-				item.SetRepeat(j, enabledStatus)
 			Next
 			
 			' Add the item into the list
