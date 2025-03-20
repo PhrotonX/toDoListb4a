@@ -18,6 +18,7 @@ Library1=core
 Library2=xcustomlistview
 Library3=xui
 Library4=sql
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21"~\n~android:targetSdkVersion="34" />~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddPermission(android.permission.READ_EXTERNAL_STORAGE)~\n~AddPermission(android.permission.WRITE_EXTERNAL_STORAGE)~\n~'End of default text.~\n~
 Module1=EditorActivity
 Module10=ToDoDatabase
 Module2=SettingsAbout
@@ -130,7 +131,7 @@ Private Sub CreateItem(todoItem As ToDo, viewHolder As TaskViewHolder) As B4XVie
 	Dim panel As B4XView = xui.CreatePanel("")
 	
 	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
-	panel.LoadLayout("ToDoListItemLayout")
+	panel.LoadLayout("TaskItemLayout")
 	panel.SetColorAndBorder(Colors.White, 5dip, Colors.White, 20dip)
 
 	' panel.LoadLayout("TaskItemLayout")

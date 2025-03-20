@@ -73,7 +73,7 @@ Sub Activity_Create(FirstTime As Boolean)
 				radioPriorityMedium.Checked = True
 			Case m_task.PRIORITY_HIGH:
 				radioPriorityHigh.Checked = True
-			Case m_task.PRIORITY_MEDIUM:
+			Case m_task.PRIORITY_CRITICAL:
 				radioPriorityCritical.Checked = True
 		End Select
 		
