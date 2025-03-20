@@ -18,7 +18,6 @@ Library1=core
 Library2=xcustomlistview
 Library3=xui
 Library4=sql
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true"~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetApplicationAttribute(android:debuggable, "true")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~~\n~AddPermission(android.permission.READ_EXTERNAL_STORAGE)~\n~AddPermission(android.permission.WRITE_EXTERNAL_STORAGE)~\n~'End of default text.~\n~
 Module1=EditorActivity
 Module10=ToDoDatabase
 Module2=SettingsAbout
@@ -45,7 +44,7 @@ Version=13.1
 
 #Region  Activity Attributes 
 	#FullScreen: False
-	#IncludeTitle: True
+	#IncludeTitle: False
 #End Region
 
 Sub Process_Globals
@@ -59,6 +58,8 @@ Sub Globals
 	Private ToDoList As CustomListView
 	Private chkToDoItem As CheckBox
 	Private toDoItemInfo As Label
+	Private settingsBtn As Button
+	Private btnAdd As Button
 	Private pnlClickArea As Panel
 End Sub
 
@@ -68,7 +69,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Remove all items to update data and avoid data duplication.
 	' ToDoList.Clear
 
-	
+	LoadItems
+	buttons_layout
 End Sub
 
 Sub Activity_Resume
@@ -127,8 +129,11 @@ End Sub
 Private Sub CreateItem(todoItem As ToDo, viewHolder As TaskViewHolder) As B4XView
 	Dim panel As B4XView = xui.CreatePanel("")
 	
-	panel.SetLayoutAnimated(0, 0, 0, 100%x, 60dip)
-	panel.LoadLayout("TaskItemLayout")
+	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
+	panel.LoadLayout("ToDoListItemLayout")
+	panel.SetColorAndBorder(Colors.White, 5dip, Colors.White, 20dip)
+
+	' panel.LoadLayout("TaskItemLayout")
 	
 	viewHolder.TaskCheckbox = chkToDoItem
 	viewHolder.TaskInfo = toDoItemInfo
@@ -147,7 +152,8 @@ End Sub
 
 ' Load ToDo items.
 Private Sub LoadItems()
-	' Initialize a list.
+
+' Initialize a list.
 	Dim items As List
 	items.Initialize
 	' Obtain all tasks from the database.
@@ -165,6 +171,21 @@ Private Sub LoadItems()
 			ToDoList.Add(CreateItem(item, viewHolder), viewHolder)
 		Next
 	End If
+End Sub
+
+Sub settingsBtn_Click
+	StartActivity(SettingsActivity)
+End Sub
+
+Sub buttons_layout
+	'btnAdd design
+	btnAdd.Top = Activity.Height - btnAdd.Height - 20dip
+	btnAdd.Left = (Activity.Width - btnAdd.Width) / 2
+	
+	'settingsBtn design
+	Dim bgTransparent As ColorDrawable
+	bgTransparent.Initialize(Colors.Transparent, 0)
+	settingsBtn.Background = bgTransparent	
 End Sub
 
 ' Opens EditorActivity to edit a clicked task.

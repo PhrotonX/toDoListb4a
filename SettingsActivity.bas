@@ -21,6 +21,8 @@ Sub Globals
 
 	Private Label1 As Label
 	Private svMain As ScrollView
+	Private btnBack, help, about As Button
+
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -29,35 +31,33 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	Activity.LoadLayout("settingslayout")
 	svMain.Panel.LoadLayout("sviewlayout")
+	button_design
 End Sub
 
-Sub Activity_Resume
+Sub button_design
+	'Makes the bg, border of the buttons transparent
+	
+	Dim transparentBg As ColorDrawable
+	
+	transparentBg.Initialize(Colors.Transparent, 0)
+	btnBack.Background = transparentBg
+	
+	Dim whiteBg As ColorDrawable
+	
+	whiteBg.Initialize(Colors.White, 8)
+	help.Background = whiteBg
+	about.Background = whiteBg
+	
 
 End Sub
-
-Sub Activity_Pause (UserClosed As Boolean)
-
-End Sub
-
 
 Sub btnBack_Click
 	Activity.Finish
 End Sub
 
-
-
-Sub helpArrow2_Click
-	StartActivity(SettingsAbout)
-End Sub
-
-Sub helpArrow_Click
-	
-	StartActivity(SettingsHelp)
-End Sub
-
 Sub help_Click
 	StartActivity(SettingsHelp)
-End Sub
+End Sub	
 
 Sub about_Click
 	StartActivity(SettingsAbout)
