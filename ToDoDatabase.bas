@@ -166,14 +166,23 @@ Public Sub GetTask(id As Long) As ToDo
 		item.SetTitle(sql.ExecQuerySingleResult("SELECT title FROM task WHERE task_id = " & id))
 		item.SetNotes(sql.ExecQuerySingleResult("SELECT notes FROM task WHERE task_id = " & id))
 		item.SetPriority(sql.ExecQuerySingleResult("SELECT priority FROM task WHERE task_id = " & id))
-		item.Done = sql.ExecQuerySingleResult("SELECT done FROM task WHERE task_id = " & id)
+		
+		If sql.ExecQuerySingleResult("SELECT done FROM task WHERE task_id = " & id) == "1" Then
+			item.Done = True	
+		Else
+			item.Done = False
+		End If
 		
 		' Get all values for task_repeat.
 		Dim Cursor As Cursor
 		Cursor = sql.ExecQuery("SELECT * FROM task_repeat WHERE task_id = " & id)
 		For i = 0 To Cursor.RowCount - 1
 			Cursor.Position = i
-			item.SetRepeat(i, Cursor.GetInt("enabled"))
+			If Cursor.GetInt("enabled") == 1 Then
+				item.SetRepeat(i, True)
+			Else
+				item.SetRepeat(i, False)
+			End If
 		Next
 		sql.TransactionSuccessful
 	Catch
@@ -217,13 +226,11 @@ Public Sub GetAllTasks() As List
 			cursorRepeat = sql.ExecQuery("SELECT * FROM task_repeat WHERE task_id = " & item.GetId)
 			For j = 0 To cursorRepeat.RowCount - 1
 				cursorRepeat.Position = j
-				Dim enabledStatus As Boolean
 				If cursorRepeat.GetInt("enabled") == 1 Then
-					enabledStatus = True
+					item.SetRepeat(j, True)
 				Else
-					enabledStatus = False
+					item.SetRepeat(j, False)
 				End If
-				item.SetRepeat(j, enabledStatus)
 			Next
 			
 			' Add the item into the list
