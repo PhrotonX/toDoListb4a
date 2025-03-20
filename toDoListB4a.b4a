@@ -5,7 +5,7 @@ File3=settingsabout.bal
 File4=settingshelp.bal
 File5=settingslayout.bal
 File6=sviewlayout.bal
-File7=ToDoListItemLayout.bal
+File7=TaskItemLayout.bal
 FileGroup1=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
@@ -15,20 +15,19 @@ FileGroup6=Default Group
 FileGroup7=Default Group
 Group=Default Group
 Library1=core
-Library2=sql
-Library3=xcustomlistview
-Library4=xui
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true"~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~SetApplicationAttribute(android:debuggable, "true")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
+Library2=xcustomlistview
+Library3=xui
+Library4=sql
 Module1=EditorActivity
-Module10=ToDoViewHolder
+Module10=ToDoDatabase
 Module2=SettingsAbout
 Module3=SettingsActivity
 Module4=SettingsHelp
 Module5=Starter
 Module6=TaskRepository
-Module7=TaskViewModel
-Module8=ToDo
-Module9=ToDoDatabase
+Module7=TaskViewHolder
+Module8=TaskViewModel
+Module9=ToDo
 NumberOfFiles=7
 NumberOfLibraries=4
 NumberOfModules=10
@@ -61,6 +60,7 @@ Sub Globals
 	Private toDoItemInfo As Label
 	Private settingsBtn As Button
 	Private btnAdd As Button
+	Private pnlClickArea As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -83,7 +83,7 @@ End Sub
 
 Sub CheckInstanceState
 	' Check for instance states.
-	Dim editorResult As String = Starter.InstanceState.Get(Starter.EDITOR_RESULT)
+	Dim editorResult As String = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_RESULT)
 	
 	If editorResult <> Null Then
 		Select editorResult:
@@ -91,24 +91,25 @@ Sub CheckInstanceState
 				' Do nothing if no result has been found.
 				MsgboxAsync("Result of EditorActivity: " & CRLF & _
 			editorResult, "Alert!")
-			Case Starter.EXTRA_EDITOR_RESULT_SAVE:
+			Case Starter.EDITOR_RESULT_SAVE:
 				MsgboxAsync("Result of EditorActivity: " & CRLF & _
-			Starter.EXTRA_EDITOR_RESULT_SAVE, "Alert!")
-			Case Starter.EXTRA_EDITOR_RESULT_CANCEL:
+			Starter.EDITOR_RESULT_SAVE, "Alert!")
+			Case Starter.EDITOR_RESULT_CANCEL:
 				MsgboxAsync("Result of EditorActivity: " & CRLF & _
-			Starter.EXTRA_EDITOR_RESULT_CANCEL, "Alert!")
+			Starter.EDITOR_RESULT_CANCEL, "Alert!")
 			Case Else:
 				MsgboxAsync("Invalid result!" & CRLF & _
-			Starter.InstanceState.Get(Starter.EDITOR_RESULT), "Alert!")
+			Starter.InstanceState.Get(Starter.EXTRA_EDITOR_RESULT), "Alert!")
 		End Select
 	
 		' Remove the editor result extra from the bundle to avoid application state-related issues.
-		Starter.InstanceState.Remove(Starter.EDITOR_RESULT)
+		Starter.InstanceState.Remove(Starter.EXTRA_EDITOR_RESULT)
 	End If
 End Sub
 
 Private Sub btnAdd_Click
-	Starter.InstanceState.Put(Starter.EDITOR_MODE, Starter.EXTRA_EDITOR_CREATE)
+	LoadItems
+	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_CREATE)
 	
 	StartActivity(EditorActivity)
 End Sub
@@ -125,54 +126,51 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 	
 End Sub
 
-Private Sub CreateItem(todoItem As ToDo, todoItemView As ToDoViewHolder) As B4XView
+Private Sub CreateItem(todoItem As ToDo, viewHolder As TaskViewHolder) As B4XView
 	Dim panel As B4XView = xui.CreatePanel("")
 	
 	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
 	panel.LoadLayout("ToDoListItemLayout")
 	panel.SetColorAndBorder(Colors.White, 5dip, Colors.White, 20dip)
 
+	' panel.LoadLayout("TaskItemLayout")
 	
-	todoItemView.ToDoCheckbox = chkToDoItem
-	todoItemView.ToDoInfo = toDoItemInfo
+	viewHolder.TaskCheckbox = chkToDoItem
+	viewHolder.TaskInfo = toDoItemInfo
 	
-	' Bind the sample data
-	todoItemView.ToDoCheckbox.Text = todoItem.GetTitle
-	todoItemView.ToDoInfo.Text = "Due Today"
+	' Bind the data and the view
+	viewHolder.TaskCheckbox.Text = todoItem.GetTitle
+	' To be updated later...
+	viewHolder.TaskInfo.Text = "Due Today"
+	' Make a reference to the task_id in the database.
+	viewHolder.ID = todoItem.GetId
+	' Bind the panel into the view holder.
+	viewHolder.TaskPanel = pnlClickArea
 	
 	Return panel
 End Sub
 
 ' Load ToDo items.
 Private Sub LoadItems()
-	' Sample data for testing
+
+' Initialize a list.
+	Dim items As List
+	items.Initialize
+	' Obtain all tasks from the database.
+	items = Starter.TaskViewModelInstance.GetAllTasks
 	
-	' Declare ToDo variables
-	Dim sampleItem1 As ToDo
-	Dim sampleItem2 As ToDo
-	Dim sampleItem3 As ToDo
-	
-	' Initialize the ToDo objects
-	sampleItem1.Initialize
-	sampleItem2.Initialize
-	sampleItem3.Initialize
-	
-	' Set title for sample to do items
-	sampleItem1.SetTitle("Item 1")
-	sampleItem2.SetTitle("Item 2")
-	sampleItem3.SetTitle("Item 3")
-	
-	Dim viewHolder1 As ToDoViewHolder
-	Dim viewHolder2 As ToDoViewHolder
-	Dim viewHolder3 As ToDoViewHolder
-	
-	viewHolder1.Initialize
-	viewHolder2.Initialize
-	viewHolder3.Initialize
-	
-	ToDoList.Add(CreateItem(sampleItem1, viewHolder1), viewHolder1)
-	ToDoList.Add(CreateItem(sampleItem2, viewHolder2), viewHolder2)
-	ToDoList.Add(CreateItem(sampleItem3, viewHolder3), viewHolder3)
+	' Null check the list.
+	If items.IsInitialized Then
+		' Iterate each item.
+		For Each item As ToDo In items
+			' Initialize a ViewHolder
+			Dim viewHolder As TaskViewHolder
+			viewHolder.Initialize
+			
+			' Add items into the list view by binding the viewholder and the data.
+			ToDoList.Add(CreateItem(item, viewHolder), viewHolder)
+		Next
+	End If
 End Sub
 
 Sub settingsBtn_Click
@@ -187,5 +185,21 @@ Sub buttons_layout
 	'settingsBtn design
 	Dim bgTransparent As ColorDrawable
 	bgTransparent.Initialize(Colors.Transparent, 0)
-	settingsBtn.Background = bgTransparent
+	settingsBtn.Background = bgTransparent	
+End Sub
+
+' Opens EditorActivity to edit a clicked task.
+Private Sub pnlClickArea_Click
+	' Obtain the index of the clicked item from the ListView.
+	Dim index As Int = ToDoList.GetItemFromView(Sender)
+	
+	' Obtain the viewHlder that is bound into the view.
+	Dim viewHolder As TaskViewHolder = ToDoList.GetValue(index)
+	
+	' Retrieve the task_id bound into the viewHolder and set that ID into the extras.
+	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, viewHolder.ID)
+	' Set the EditorActivity mode into edit mode.
+	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_EDIT)
+	
+	StartActivity(EditorActivity)
 End Sub
