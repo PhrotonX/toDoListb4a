@@ -21,7 +21,7 @@ Sub Globals
 
 	Private Label1 As Label
 	Private svMain As ScrollView
-	Private btnBack, help, about, helpArrow, aboutArrow As Button
+	Private btnBack, help, about As Button
 
 End Sub
 
@@ -38,31 +38,26 @@ Sub button_design
 	'Makes the bg, border of the buttons transparent
 	
 	Dim transparentBg As ColorDrawable
-	transparentBg.Initialize(Colors.Transparent, 0)
 	
+	transparentBg.Initialize(Colors.Transparent, 0)
 	btnBack.Background = transparentBg
-	helpArrow.Background = transparentBg
-	aboutArrow.Background = transparentBg
+	
+	Dim whiteBg As ColorDrawable
+	
+	whiteBg.Initialize(Colors.White, 8)
+	help.Background = whiteBg
+	about.Background = whiteBg
+	
+
 End Sub
 
 Sub btnBack_Click
 	Activity.Finish
 End Sub
 
-
-
-Sub aboutArrow_Click
-	StartActivity(SettingsAbout)
-End Sub
-
-Sub helpArrow_Click
-	
-	StartActivity(SettingsHelp)
-End Sub
-
 Sub help_Click
 	StartActivity(SettingsHelp)
-End Sub
+End Sub	
 
 Sub about_Click
 	StartActivity(SettingsAbout)
