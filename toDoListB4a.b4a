@@ -66,15 +66,15 @@ End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("Layout")
-	
-	' Remove all items to update data and avoid data duplication.
-	' ToDoList.Clear
-
-	LoadItems
-	buttons_layout
 End Sub
 
 Sub Activity_Resume
+	' Remove all items to update data and avoid data duplication.
+	ToDoList.Clear
+	
+	LoadItems
+	buttons_layout
+	
 	CheckInstanceState
 End Sub
 
