@@ -43,7 +43,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Initialize variables
 	m_task.Initialize
 	
-	' Retrieve the data to check the editor mode.
+	' Retrieve the data sent by MainActivity to check the editor mode.
 	m_mode = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_MODE)
 	
 	' Check the editor mode to set the appropriate EditorActivity functionalities.
@@ -180,4 +180,12 @@ End Sub
 
 Private Sub radioPriorityCritical_CheckedChange(Checked As Boolean)
 	m_task.SetPriority(3)
+End Sub
+
+Private Sub btnDelete_Click
+	
+End Sub
+
+Private Sub btnClearAll_Click
+	
 End Sub
