@@ -1,20 +1,43 @@
-﻿Build1=Default,b4a.example
-File1=Layout.bal
+﻿Build1=Default,com.cm.todolist
+File1=EditorLayout.bal
+File2=Layout.bal
+File3=settingsabout.bal
+File4=settingshelp.bal
+File5=settingslayout.bal
+File6=sviewlayout.bal
+File7=TaskItemLayout.bal
 FileGroup1=Default Group
+FileGroup2=Default Group
+FileGroup3=Default Group
+FileGroup4=Default Group
+FileGroup5=Default Group
+FileGroup6=Default Group
+FileGroup7=Default Group
 Group=Default Group
 Library1=core
-Library2=xui
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.LightTheme)~\n~'End of default text.~\n~
-Module1=Starter
-NumberOfFiles=1
-NumberOfLibraries=2
-NumberOfModules=1
+Library2=xcustomlistview
+Library3=xui
+Library4=sql
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21"~\n~android:targetSdkVersion="34" />~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddPermission(android.permission.READ_EXTERNAL_STORAGE)~\n~AddPermission(android.permission.WRITE_EXTERNAL_STORAGE)~\n~'End of default text.~\n~
+Module1=EditorActivity
+Module10=ToDoDatabase
+Module2=SettingsAbout
+Module3=SettingsActivity
+Module4=SettingsHelp
+Module5=Starter
+Module6=TaskRepository
+Module7=TaskViewHolder
+Module8=TaskViewModel
+Module9=ToDo
+NumberOfFiles=7
+NumberOfLibraries=4
+NumberOfModules=10
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
-	#ApplicationLabel: B4A Example
+	#ApplicationLabel: To Do List
 	#VersionCode: 1
-	#VersionName: 
+	#VersionName: v0.1.0.1 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -22,7 +45,7 @@ Version=13.1
 
 #Region  Activity Attributes 
 	#FullScreen: False
-	#IncludeTitle: True
+	#IncludeTitle: False
 #End Region
 
 Sub Process_Globals
@@ -33,6 +56,12 @@ End Sub
 
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
+	Private ToDoList As CustomListView
+	Private chkToDoItem As CheckBox
+	Private toDoItemInfo As Label
+	Private settingsBtn As Button
+	Private btnAdd As Button
+	Private pnlClickArea As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -40,13 +69,132 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-
+	' Remove all items to update data and avoid data duplication.
+	ToDoList.Clear
+	
+	LoadItems
+	buttons_layout
+	
+	CheckInstanceState
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
-Sub Button1_Click
-	xui.MsgboxAsync("Hello earth!", "B4X")
+Sub CheckInstanceState
+	' Check for instance states.
+	Dim editorResult As String = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_RESULT)
+	
+	If editorResult <> Null Then
+		Select editorResult:
+			Case Null:
+				' Do nothing if no result has been found.
+			Case Starter.EDITOR_RESULT_SAVE:
+			Case Starter.EDITOR_RESULT_CANCEL:
+			Case Else:
+				MsgboxAsync("Invalid result!" & CRLF & _
+			Starter.InstanceState.Get(Starter.EXTRA_EDITOR_RESULT), "Alert!")
+		End Select
+	
+		' Remove the editor result extra from the bundle to avoid application state-related issues.
+		Starter.InstanceState.Remove(Starter.EXTRA_EDITOR_RESULT)
+	End If
+End Sub
+
+Private Sub btnAdd_Click
+	LoadItems
+	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_CREATE)
+	
+	StartActivity(EditorActivity)
+End Sub
+
+Private Sub toDoList_ItemClick (Index As Int, Value As Object)
+	
+End Sub
+
+Private Sub toDoList_ItemLongClick (Index As Int, Value As Object)
+	
+End Sub
+
+Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub CreateItem(todoItem As ToDo, viewHolder As TaskViewHolder) As B4XView
+	Dim panel As B4XView = xui.CreatePanel("")
+	
+	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
+	panel.LoadLayout("TaskItemLayout")
+	panel.SetColorAndBorder(Colors.White, 5dip, Colors.White, 20dip)
+
+	' panel.LoadLayout("TaskItemLayout")
+	
+	viewHolder.TaskCheckbox = chkToDoItem
+	viewHolder.TaskInfo = toDoItemInfo
+	
+	' Bind the data and the view
+	viewHolder.TaskCheckbox.Text = todoItem.GetTitle
+	' To be updated later...
+	viewHolder.TaskInfo.Text = "Due Today"
+	' Make a reference to the task_id in the database.
+	viewHolder.ID = todoItem.GetId
+	' Bind the panel into the view holder.
+	viewHolder.TaskPanel = pnlClickArea
+	
+	Return panel
+End Sub
+
+' Load ToDo items.
+Private Sub LoadItems()
+
+' Initialize a list.
+	Dim items As List
+	items.Initialize
+	' Obtain all tasks from the database.
+	items = Starter.TaskViewModelInstance.GetAllTasks
+	
+	' Null check the list.
+	If items.IsInitialized Then
+		' Iterate each item.
+		For Each item As ToDo In items
+			' Initialize a ViewHolder
+			Dim viewHolder As TaskViewHolder
+			viewHolder.Initialize
+			
+			' Add items into the list view by binding the viewholder and the data.
+			ToDoList.Add(CreateItem(item, viewHolder), viewHolder)
+		Next
+	End If
+End Sub
+
+Sub settingsBtn_Click
+	StartActivity(SettingsActivity)
+End Sub
+
+Sub buttons_layout
+	'btnAdd design
+	btnAdd.Top = Activity.Height - btnAdd.Height - 20dip
+	btnAdd.Left = (Activity.Width - btnAdd.Width) / 2
+	
+	'settingsBtn design
+	Dim bgTransparent As ColorDrawable
+	bgTransparent.Initialize(Colors.Transparent, 0)
+	settingsBtn.Background = bgTransparent	
+End Sub
+
+' Opens EditorActivity to edit a clicked task.
+Private Sub pnlClickArea_Click
+	' Obtain the index of the clicked item from the ListView.
+	Dim index As Int = ToDoList.GetItemFromView(Sender)
+	
+	' Obtain the viewHlder that is bound into the view.
+	Dim viewHolder As TaskViewHolder = ToDoList.GetValue(index)
+	
+	' Retrieve the task_id bound into the viewHolder and set that ID into the extras.
+	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, viewHolder.ID)
+	' Set the EditorActivity mode into edit mode.
+	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_EDIT)
+	
+	StartActivity(EditorActivity)
 End Sub
