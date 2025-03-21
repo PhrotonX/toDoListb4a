@@ -106,8 +106,22 @@ Private Sub btnSave_Click
 	' Add the current editor result into the instance state.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_RESULT, Starter.EDITOR_RESULT_SAVE)
 	
+	' Validation
+	If editTitle.Text == "" Then
+		MsgboxAsync("Title cannot be empty!", "Error")
+		Return
+	End If
+	
+	If radioPriorityCritical.Checked == False And radioPriorityHigh.Checked == False _
+	And radioPriorityMedium.Checked == False And radioPriorityLow.Checked == False Then
+		MsgboxAsync("Priority cannot be empty!", "Error")
+		Return
+	End If
+	
 	m_task.SetTitle(editTitle.Text)
 	m_task.SetNotes(editNotes.Text)
+	
+	' Priority and Repeat values arer already set once the buttons are clicked.
 	
 	' Check the editor mode to set the appropriate EditorActivity saving functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
@@ -115,7 +129,6 @@ Private Sub btnSave_Click
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		Starter.TaskViewModelInstance.InsertTask(m_task)
 	End If
-	
 	
 	' Close the activity after saving
 	Activity.Finish
@@ -131,8 +144,6 @@ End Sub
 Private Sub btnCancel_Click
 	' Add the current editor result into the instance state.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_RESULT, Starter.EDITOR_RESULT_CANCEL)
-	
-	' @TODO: Add code for cancelling...
 	
 	' Close the activity after cancelling
 	Activity.Finish
