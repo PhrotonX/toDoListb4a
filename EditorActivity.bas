@@ -21,8 +21,14 @@ Sub Globals
 	Private editNotes As EditText
 	Private editTitle As EditText
 	
+	' This variable is used to determine the current mode of editor such as EDITOR_MODe_CREATE or
+	' EDITOR_MODE_EDIT.
 	Private m_mode As String
+	
+	' This variable is responsible for handling the current data that can be used for performing
+	' CRUD into the database.
 	Private m_task As ToDo
+	
 	Private radioPriorityCritical As RadioButton
 	Private radioPriorityHigh As RadioButton
 	Private radioPriorityLow As RadioButton
@@ -34,6 +40,7 @@ Sub Globals
 	Private checkRepeatThu As CheckBox
 	Private checkRepeatTue As CheckBox
 	Private checkRepeatWed As CheckBox
+	Private btnDelete As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -43,7 +50,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Initialize variables
 	m_task.Initialize
 	
-	' Retrieve the data to check the editor mode.
+	' Retrieve the data sent by MainActivity to check the editor mode.
 	m_mode = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_MODE)
 	
 	' Check the editor mode to set the appropriate EditorActivity functionalities.
@@ -61,10 +68,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		
 		' Determine the priority value that was saved. But first, initialize all radio buttons
 		' into False in order to avoid redundnacy within the Select statement.
-		radioPriorityLow.Checked = False
-		radioPriorityMedium.Checked = False
-		radioPriorityHigh.Checked = False
-		radioPriorityCritical.Checked = False
+		ClearPriorityField
 		
 		Select m_task.GetPriority
 			Case m_task.PRIORITY_LOW:
@@ -86,6 +90,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		checkRepeatFri.Checked = m_task.GetRepeat(m_task.REPEAT_FRIDAY)
 		checkRepeatSat.Checked = m_task.GetRepeat(m_task.REPEAT_SATURDAY)
 		
+	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
+		' Disable the delete button if the editor mode is EDITOR_MODE_CREATE
+		btnDelete.Visible = False
 	End If
 	
 	' Remove the keys from the bundle to avoid some potential application state-related bugs.
@@ -101,13 +108,27 @@ Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
-
 Private Sub btnSave_Click
 	' Add the current editor result into the instance state.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_RESULT, Starter.EDITOR_RESULT_SAVE)
 	
+	' Validation
+	If editTitle.Text == "" Then
+		MsgboxAsync("Title cannot be empty!", "Error")
+		Return
+	End If
+	
+	If radioPriorityCritical.Checked == False And radioPriorityHigh.Checked == False _
+	And radioPriorityMedium.Checked == False And radioPriorityLow.Checked == False Then
+		MsgboxAsync("Priority cannot be empty!", "Error")
+		Return
+	End If
+	
+	' Set values into m_task.
 	m_task.SetTitle(editTitle.Text)
 	m_task.SetNotes(editNotes.Text)
+	
+	' Priority and Repeat values arer already set once the buttons are clicked.
 	
 	' Check the editor mode to set the appropriate EditorActivity saving functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
@@ -116,23 +137,17 @@ Private Sub btnSave_Click
 		Starter.TaskViewModelInstance.InsertTask(m_task)
 	End If
 	
-	
 	' Close the activity after saving
 	Activity.Finish
 End Sub
 
 Private Sub btnPriorityClear_Click
-	radioPriorityCritical.Checked = False
-	radioPriorityHigh.Checked = False
-	radioPriorityLow.Checked = False
-	radioPriorityMedium.Checked = False
+	ClearPriorityField
 End Sub
 
 Private Sub btnCancel_Click
 	' Add the current editor result into the instance state.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_RESULT, Starter.EDITOR_RESULT_CANCEL)
-	
-	' @TODO: Add code for cancelling...
 	
 	' Close the activity after cancelling
 	Activity.Finish
@@ -180,4 +195,41 @@ End Sub
 
 Private Sub radioPriorityCritical_CheckedChange(Checked As Boolean)
 	m_task.SetPriority(3)
+End Sub
+
+Private Sub btnDelete_Click
+	Msgbox2Async("Do you really want to delete this task?", "Alert", "Yes", "Cancel", "No", Null, False)
+	Wait For Msgbox_Result (Result As Int)
+	If Result = DialogResponse.POSITIVE Then
+		Starter.TaskViewModelInstance.DeleteTask(m_task)
+	End If
+	
+	' Close the editor after deleting,
+	Activity.Finish
+End Sub
+
+Private Sub btnClearAll_Click
+	editTitle.Text = ""
+	editNotes.Text = ""
+	ClearPriorityField
+	ClearRadioButtons
+	
+	editTitle.RequestFocus
+End Sub
+
+Private Sub ClearPriorityField
+	radioPriorityCritical.Checked = False
+	radioPriorityHigh.Checked = False
+	radioPriorityLow.Checked = False
+	radioPriorityMedium.Checked = False
+End Sub
+
+Private Sub ClearRadioButtons
+	checkRepeatSun.Checked = False
+	checkRepeatMon.Checked = False
+	checkRepeatTue.Checked = False
+	checkRepeatWed.Checked = False
+	checkRepeatThu.Checked = False
+	checkRepeatFri.Checked = False
+	checkRepeatSat.Checked = False
 End Sub
