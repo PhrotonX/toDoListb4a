@@ -90,14 +90,8 @@ Sub CheckInstanceState
 		Select editorResult:
 			Case Null:
 				' Do nothing if no result has been found.
-				MsgboxAsync("Result of EditorActivity: " & CRLF & _
-			editorResult, "Alert!")
 			Case Starter.EDITOR_RESULT_SAVE:
-				MsgboxAsync("Result of EditorActivity: " & CRLF & _
-			Starter.EDITOR_RESULT_SAVE, "Alert!")
 			Case Starter.EDITOR_RESULT_CANCEL:
-				MsgboxAsync("Result of EditorActivity: " & CRLF & _
-			Starter.EDITOR_RESULT_CANCEL, "Alert!")
 			Case Else:
 				MsgboxAsync("Invalid result!" & CRLF & _
 			Starter.InstanceState.Get(Starter.EXTRA_EDITOR_RESULT), "Alert!")
