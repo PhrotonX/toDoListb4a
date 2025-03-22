@@ -281,7 +281,7 @@ Sub pnlViewArea_Touch (Action As Int, X As Float, Y As Float)
 			End If
 		
 		Case 3
-			' only processes if touch has not moved yet
+			' only processes if touch has not moved yet 
 			If Not(hasMoved) Then
 				hasMoved = True
 				viewHolder.TaskCheckbox.SetColorAnimated(50, Colors.Gray, Colors.White)
