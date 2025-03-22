@@ -87,11 +87,14 @@ Sub CheckInstanceState
 	Dim editorResult As String = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_RESULT)
 	
 	If editorResult <> Null Then
+		' Select statement for error-checking.
 		Select editorResult:
 			Case Null:
 				' Do nothing if no result has been found.
+				' Ignore results from SAVE and CANCEL
 			Case Starter.EDITOR_RESULT_SAVE:
 			Case Starter.EDITOR_RESULT_CANCEL:
+				' Display an error if a result other than SAVE and CANCEL has been received.
 			Case Else:
 				MsgboxAsync("Invalid result!" & CRLF & _
 			Starter.InstanceState.Get(Starter.EXTRA_EDITOR_RESULT), "Alert!")
@@ -103,14 +106,13 @@ Sub CheckInstanceState
 End Sub
 
 Private Sub btnAdd_Click
-	LoadItems
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_CREATE)
 	
 	StartActivity(EditorActivity)
 End Sub
 
 Private Sub toDoList_ItemClick (Index As Int, Value As Object)
-	
+
 End Sub
 
 Private Sub toDoList_ItemLongClick (Index As Int, Value As Object)
@@ -118,34 +120,77 @@ Private Sub toDoList_ItemLongClick (Index As Int, Value As Object)
 End Sub
 
 Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
+	' Cancel the function if Sender is null.
+	If Sender == Null Then
+		Return
+	End If
 	
+	' Retrieve the index of item clicked.
+	Dim index As Int = ToDoList.GetItemFromView(Sender)
+	
+	' Retrieve the viewHolder of item clicked based on the index value.
+	Dim viewHolder As TaskViewHolder = ToDoList.GetValue(index)
+	
+	' Retrieve the item from the database based on the DB-based ID stored in the viewHolder.
+	Dim item As ToDo = Starter.TaskViewModelInstance.GetTask(viewHolder.ID)
+	
+	' Update the checked value of the task.
+	item.Done = Checked
+	
+	' Since the item has been changed, update the database.
+	Starter.TaskViewModelInstance.UpdateTask(item)
+	
+	' Add visual indicator that the task has been changed
+	If Checked == True Then
+		' Make the items looks slightly lighter after task completion.
+		viewHolder.TaskCheckbox.TextColor = Colors.ARGB(255, 128, 128, 128)
+		viewHolder.TaskInfo.TextColor = Colors.ARGB(255, 128, 128, 128)
+		viewHolder.Root.Color = Colors.ARGB(255, 235, 235, 235)
+	Else
+		' Make the items return to its original look if the task is marked as incomplete.
+		viewHolder.TaskCheckbox.TextColor = Colors.ARGB(255, 0, 0, 0)
+		viewHolder.TaskInfo.TextColor = Colors.ARGB(255, 0, 0, 0)
+		viewHolder.Root.Color = Colors.ARGB(255, 255, 255, 255)
+	End If
 End Sub
 
-Private Sub CreateItem(todoItem As ToDo, viewHolder As TaskViewHolder) As B4XView
+' Creates and returns a panel for items loaded into the ToDoList.
+Private Sub CreateItem(viewHolder As TaskViewHolder) As B4XView
+	' Create a root panel
 	Dim panel As B4XView = xui.CreatePanel("")
 	
+	' Set properties into the root panel
 	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
 	panel.LoadLayout("TaskItemLayout")
-	panel.SetColorAndBorder(Colors.White, 5dip, Colors.White, 20dip)
-
-	' panel.LoadLayout("TaskItemLayout")
+	panel.SetColorAndBorder(Colors.White, 0, Colors.White, 0)
 	
-	viewHolder.TaskCheckbox = chkToDoItem
-	viewHolder.TaskInfo = toDoItemInfo
-	
-	' Bind the data and the view
-	viewHolder.TaskCheckbox.Text = todoItem.GetTitle
-	' To be updated later...
-	viewHolder.TaskInfo.Text = "Due Today"
-	' Make a reference to the task_id in the database.
-	viewHolder.ID = todoItem.GetId
-	' Bind the panel into the view holder.
-	viewHolder.TaskPanel = pnlClickArea
+	' Bind the root panel
+	viewHolder.Root = panel
 	
 	Return panel
 End Sub
 
-' Load ToDo items.
+' Binds task data into the task view.
+Private Sub BindItem(item As ToDo, viewHolder As TaskViewHolder)
+	' Bind the checkbox
+	viewHolder.TaskCheckbox = chkToDoItem
+	' Bind the view for task info
+	viewHolder.TaskInfo = toDoItemInfo
+	' Bind the task title
+	viewHolder.TaskCheckbox.Text = item.GetTitle
+	' To be updated later...
+	viewHolder.TaskInfo.Text = "Due Today"
+	' Make a reference to the task_id from the database.
+	viewHolder.ID = item.GetId
+	' Bind the panel into the view holder.
+	viewHolder.TaskPanel = pnlClickArea
+	
+	' Bind the checked value. Must be placed in this part in order since this
+	' triggers the chkToDoItem_CheckedChange event.
+	viewHolder.TaskCheckbox.Checked = item.Done
+End Sub
+
+' Loads the items.
 Private Sub LoadItems()
 
 ' Initialize a list.
@@ -163,11 +208,16 @@ Private Sub LoadItems()
 			viewHolder.Initialize
 			
 			' Add items into the list view by binding the viewholder and the data.
-			ToDoList.Add(CreateItem(item, viewHolder), viewHolder)
+			ToDoList.Add(CreateItem(viewHolder), viewHolder)
+			
+			' Bind the currently referenced vieHolder that ToDoList points to into there
+			' currently iterated data.
+			BindItem(item, viewHolder)
 		Next
 	End If
 End Sub
 
+' Adds functionality to move into another activity.
 Sub settingsBtn_Click
 	StartActivity(SettingsActivity)
 End Sub
