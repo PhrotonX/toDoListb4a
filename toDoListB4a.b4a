@@ -6,6 +6,7 @@ File4=settingshelp.bal
 File5=settingslayout.bal
 File6=sviewlayout.bal
 File7=TaskItemLayout.bal
+File8=taskviewlayout.bal
 FileGroup1=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
@@ -13,6 +14,7 @@ FileGroup4=Default Group
 FileGroup5=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
+FileGroup8=Default Group
 Group=Default Group
 Library1=core
 Library2=xcustomlistview
@@ -31,7 +33,7 @@ Module6=Starter
 Module7=TaskRepository
 Module8=TaskViewHolder
 Module9=TaskViewModel
-NumberOfFiles=7
+NumberOfFiles=8
 NumberOfLibraries=4
 NumberOfModules=12
 Version=10.2
@@ -64,6 +66,7 @@ Sub Globals
 	Private settingsBtn As Button
 	Private btnAdd As Button
 	Private pnlClickArea As Panel
+	Private hasMoved As Boolean
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -251,6 +254,40 @@ Private Sub pnlClickArea_Click
 	StartActivity(EditorActivity)
 End Sub
 
-Sub pnlViewArea_Click
-	StartActivity(viewActivity)
+
+Sub pnlViewArea_Touch (Action As Int, X As Float, Y As Float)
+	' Obtains the index of the clciked
+	Dim index As Int = ToDoList.GetItemFromView(Sender)
+	' gets the viewholder
+	Dim viewHolder As TaskViewHolder = ToDoList.GetValue(index)
+	
+	
+	Select Action
+		Case Activity.ACTION_DOWN ' sets bgcolor of pnl to gray if held
+			hasMoved = False
+			viewHolder.TaskCheckbox.SetColorAnimated(50, Colors.White, Colors.Gray)
+            
+		Case Activity.ACTION_MOVE 'sets bgcolor of pnl to white if touch is held and moved
+			If Not(hasMoved) Then
+				hasMoved = True
+					viewHolder.TaskCheckbox.SetColorAnimated(100, Colors.Gray, Colors.White)
+			End If
+            
+		Case Activity.ACTION_UP 'starts activity if touch is released
+			If Not(hasMoved) Then
+				hasMoved = True
+				viewHolder.TaskCheckbox.SetColorAnimated(50, Colors.Gray, Colors.White)
+				StartActivity(viewActivity)
+			End If
+		
+		Case 3
+			' only processes if touch has not moved yet
+			If Not(hasMoved) Then
+				hasMoved = True
+				viewHolder.TaskCheckbox.SetColorAnimated(50, Colors.Gray, Colors.White)
+			End If
+			
+		
+       End Select
+	
 End Sub
