@@ -22,6 +22,7 @@ ManifestCode='This code will be applied to the manifest file during compilation.
 Module1=DaysOfTheWeek
 Module10=ToDo
 Module11=ToDoDatabase
+Module12=viewActivity
 Module2=EditorActivity
 Module3=SettingsAbout
 Module4=SettingsActivity
@@ -32,8 +33,8 @@ Module8=TaskViewHolder
 Module9=TaskViewModel
 NumberOfFiles=7
 NumberOfLibraries=4
-NumberOfModules=11
-Version=13.1
+NumberOfModules=12
+Version=10.2
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
@@ -248,4 +249,8 @@ Private Sub pnlClickArea_Click
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_EDIT)
 	
 	StartActivity(EditorActivity)
+End Sub
+
+Sub pnlViewArea_Click
+	StartActivity(viewActivity)
 End Sub
