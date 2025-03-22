@@ -106,14 +106,13 @@ Sub CheckInstanceState
 End Sub
 
 Private Sub btnAdd_Click
-	LoadItems
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_CREATE)
 	
 	StartActivity(EditorActivity)
 End Sub
 
 Private Sub toDoList_ItemClick (Index As Int, Value As Object)
-	
+
 End Sub
 
 Private Sub toDoList_ItemLongClick (Index As Int, Value As Object)
@@ -153,7 +152,6 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 		viewHolder.TaskInfo.TextColor = Colors.ARGB(255, 0, 0, 0)
 		viewHolder.Root.Color = Colors.ARGB(255, 255, 255, 255)
 	End If
-	
 End Sub
 
 ' Creates and returns a panel for items loaded into the ToDoList.
