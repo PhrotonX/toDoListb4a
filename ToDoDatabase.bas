@@ -89,10 +89,10 @@ End Sub
 
 Public Sub InsertTask(item As ToDo)
 	sql.BeginTransaction
-	Try
+	Try		
 		' Insert the task without the repeat data.
 		sql.ExecNonQuery("INSERT INTO task(title, notes, priority, done)" & CRLF & _ 
-		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", "&item.Done&");")
+		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", "&BoolToInt(item.Done)&");")
 		
 		' Get the ID if the last inserted row.In this case, it is the previous INSERT INTO TASK.
 		Dim id As Int = sql.ExecQuerySingleResult("SELECT last_insert_rowid();")
@@ -100,8 +100,9 @@ Public Sub InsertTask(item As ToDo)
 		' Insert each item's repeat value
 		Dim i As Int = 0
 		For Each repeat As Boolean In item.GetRepeat
+			' Insert the task without the repeat data.
 			sql.ExecNonQuery("INSERT INTO task_repeat(task_id, day_id, enabled)" & CRLF & _
-			"VALUES("&id&", '"&i&"', "&repeat&");")
+			"VALUES("&id&", '"&i&"', "&BoolToInt(repeat)&");")
 			i = i + 1
 		Next
 		sql.TransactionSuccessful
@@ -136,15 +137,20 @@ Public Sub UpdateTask(item As ToDo)
 		sql.ExecNonQuery("UPDATE task SET title = '"&item.GetTitle& "', " & CRLF & _ 
 		"notes = '" & item.GetNotes & "', " & CRLF & _
 		"priority = " & item.GetPriority & ", " & CRLF & _
-		"done = " & item.Done & CRLF & _ 
+		"done = " & BoolToInt(item.Done) & CRLF & _ 
 		"WHERE task_id = " & item.GetId & CRLF & _
 		";")
 		
 		' Update each item's repeat value
+		
+		Dim repeatItr As Int = 0
 		For Each repeat As Boolean In item.GetRepeat
 			sql.ExecNonQuery("UPDATE task_repeat SET " & CRLF & _
-			"enabled = " & repeat & CRLF & _
-			"WHERE task_id = " & item.GetId & ";")
+			"enabled = " & BoolToInt(repeat) & CRLF & _
+			"WHERE task_id = " & item.GetId & " " & CRLF & _
+			"AND day_id = " & repeatItr & ";")
+			' Iterate the day IDs from 0 to 6.
+			repeatItr = repeatItr + 1
 		Next
 		
 		sql.TransactionSuccessful
@@ -260,5 +266,15 @@ Public Sub CopyDatabase()
 		ToastMessageShow("Database copied to /Download/", True)
 	Else
 		ToastMessageShow("Database not found!", True)
+	End If
+End Sub
+
+' Converts boolean into numeric value since inserting the boolean value directly
+' into the database results into an error.
+Private Sub BoolToInt(value As Boolean) As Int
+	If value == True Then
+		Return 1
+	Else
+		Return 0
 	End If
 End Sub
