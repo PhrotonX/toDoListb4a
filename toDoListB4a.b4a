@@ -38,7 +38,7 @@ Version=13.1
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 2
-	#VersionName: v0.1.0 alpha
+	#VersionName: v1.0.0.1 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -112,14 +112,6 @@ Private Sub btnAdd_Click
 	StartActivity(EditorActivity)
 End Sub
 
-Private Sub toDoList_ItemClick (Index As Int, Value As Object)
-
-End Sub
-
-Private Sub toDoList_ItemLongClick (Index As Int, Value As Object)
-	
-End Sub
-
 Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 	' Cancel the function if Sender is null.
 	If Sender == Null Then
@@ -179,7 +171,7 @@ Private Sub BindItem(item As ToDo, viewHolder As TaskViewHolder)
 	viewHolder.TaskInfo = toDoItemInfo
 	' Bind the task title
 	viewHolder.TaskCheckbox.Text = item.GetTitle
-	' To be updated later...
+	' Bind the glance information
 	viewHolder.TaskInfo.Text = item.GetGlance
 	' Make a reference to the task_id from the database.
 	viewHolder.ID = item.GetId
