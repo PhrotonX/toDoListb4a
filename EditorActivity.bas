@@ -233,3 +233,4 @@ Private Sub ClearRadioButtons
 	checkRepeatFri.Checked = False
 	checkRepeatSat.Checked = False
 End Sub
+
