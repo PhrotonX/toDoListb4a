@@ -12,13 +12,39 @@ Version=9.9
 Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
+	
+	' Global variable for the package name that corresponds into Java packages.
+	' It is a common practice to include the package name into the EXTRAS.
+	Public Const PACKAGE_NAME As String = "com.cm.todolist"
 
+	' Global map to mimic Android's Bundles for Intents in Java/Kotlin in which
+	' a string or the name of extra is used as the key of the key and value pair.
+	Public InstanceState As Map
+	
+	' Global variables used for passing extras into EditorActivity.
+	Public Const EXTRA_EDITOR_MODE As String = "EXTRA_EDITOR_MODE"
+	Public Const EDITOR_MODE_EDIT As String = PACKAGE_NAME & ".EDITOR_MODE_EDIT"
+	Public Const EDITOR_MODE_CREATE As String = PACKAGE_NAME & ".EDITOR_MODE_CREATE"
+	
+	' Global variables used for passing extras as a result of EditorActivity.
+	Public Const EXTRA_EDITOR_RESULT As String = "EXTRA_EDITOR_RESULT"
+	Public Const EDITOR_RESULT_SAVE As String = PACKAGE_NAME & ".EDITOR_RESULT_SAVE"
+	Public Const EDITOR_RESULT_CANCEL As String = PACKAGE_NAME & ".EDITOR_RESULT_CANCEL"
+	
+	' Global variable used for identifying the current item of concern.
+	Public Const EXTRA_EDITOR_TASK_ID As String = PACKAGE_NAME & ".EXTRA_EDITOR_TASK_ID"
+	
+	' Glocal instance of TaskViewModel where the database can be accessed.
+	Public TaskViewModelInstance As TaskViewModel
 End Sub
 
 Sub Service_Create
 	'This is the program entry point.
 	'This is a good place to load resources that are not specific to a single activity.
 
+	' Initialize the variables
+	InstanceState.Initialize
+	TaskViewModelInstance.Initialize
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)
@@ -31,9 +57,12 @@ End Sub
 
 'Return true to allow the OS default exceptions handler to handle the uncaught exception.
 Sub Application_Error (Error As Exception, StackTrace As String) As Boolean
+	' Close the database
+	TaskViewModelInstance.Release
 	Return True
 End Sub
 
 Sub Service_Destroy
-
+	' Close the database
+	TaskViewModelInstance.Release
 End Sub
