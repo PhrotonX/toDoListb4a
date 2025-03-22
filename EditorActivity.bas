@@ -95,9 +95,8 @@ Sub Activity_Create(FirstTime As Boolean)
 		btnDelete.Visible = False
 	End If
 	
-	' Remove the keys from the bundle to avoid some potential application state-related bugs.
+	' Remove editor mode key from the bundle to avoid some potential application state-related bugs.
 	Starter.InstanceState.Remove(Starter.EXTRA_EDITOR_MODE)
-	Starter.InstanceState.Remove(Starter.EXTRA_EDITOR_TASK_ID)
 End Sub
 
 Sub Activity_Resume

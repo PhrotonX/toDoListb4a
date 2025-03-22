@@ -6,6 +6,8 @@ File4=settingshelp.bal
 File5=settingslayout.bal
 File6=sviewlayout.bal
 File7=TaskItemLayout.bal
+File8=TaskViewLayout.bal
+File9=TaskViewScrollLayout.bal
 FileGroup1=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
@@ -13,6 +15,8 @@ FileGroup4=Default Group
 FileGroup5=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
+FileGroup8=Default Group
+FileGroup9=Default Group
 Group=Default Group
 Library1=core
 Library2=xcustomlistview
@@ -20,21 +24,21 @@ Library3=xui
 Library4=sql
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="15"~\n~android:targetSdkVersion="34" />~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddPermission(android.permission.READ_EXTERNAL_STORAGE)~\n~AddPermission(android.permission.WRITE_EXTERNAL_STORAGE)~\n~'End of default text.~\n~
 Module1=DaysOfTheWeek
-Module10=ToDo
-Module11=ToDoDatabase
-Module12=viewActivity
+Module10=TaskViewModel
+Module11=ToDo
+Module12=ToDoDatabase
 Module2=EditorActivity
 Module3=SettingsAbout
 Module4=SettingsActivity
 Module5=SettingsHelp
 Module6=Starter
 Module7=TaskRepository
-Module8=TaskViewHolder
-Module9=TaskViewModel
-NumberOfFiles=7
+Module8=TaskViewerActivity
+Module9=TaskViewHolder
+NumberOfFiles=9
 NumberOfLibraries=4
 NumberOfModules=12
-Version=10.2
+Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
@@ -77,34 +81,11 @@ Sub Activity_Resume
 	LoadItems
 	buttons_layout
 	
-	CheckInstanceState
+	Starter.CheckInstanceState
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
 
-End Sub
-
-Sub CheckInstanceState
-	' Check for instance states.
-	Dim editorResult As String = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_RESULT)
-	
-	If editorResult <> Null Then
-		' Select statement for error-checking.
-		Select editorResult:
-			Case Null:
-				' Do nothing if no result has been found.
-				' Ignore results from SAVE and CANCEL
-			Case Starter.EDITOR_RESULT_SAVE:
-			Case Starter.EDITOR_RESULT_CANCEL:
-				' Display an error if a result other than SAVE and CANCEL has been received.
-			Case Else:
-				MsgboxAsync("Invalid result!" & CRLF & _
-			Starter.InstanceState.Get(Starter.EXTRA_EDITOR_RESULT), "Alert!")
-		End Select
-	
-		' Remove the editor result extra from the bundle to avoid application state-related issues.
-		Starter.InstanceState.Remove(Starter.EXTRA_EDITOR_RESULT)
-	End If
 End Sub
 
 Private Sub btnAdd_Click
@@ -229,6 +210,24 @@ End Sub
 
 ' Opens EditorActivity to edit a clicked task.
 Private Sub pnlClickArea_Click
+	SetIdAsExtra
+	
+	' Set the EditorActivity mode into edit mode.
+	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_EDIT)
+	
+	StartActivity(EditorActivity)
+End Sub
+
+' Opens the Task Viewer to view a task in detail.
+Sub pnlViewArea_Click
+	SetIdAsExtra
+	
+	StartActivity(TaskViewerActivity)
+End Sub
+
+' Retrieves the ID and sets the DB-based ID of the clicked task as an extra for use in other
+' activities.
+Private Sub SetIdAsExtra
 	' Obtain the index of the clicked item from the ListView.
 	Dim index As Int = ToDoList.GetItemFromView(Sender)
 	
@@ -237,12 +236,4 @@ Private Sub pnlClickArea_Click
 	
 	' Retrieve the task_id bound into the viewHolder and set that ID into the extras.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, viewHolder.ID)
-	' Set the EditorActivity mode into edit mode.
-	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_EDIT)
-	
-	StartActivity(EditorActivity)
-End Sub
-
-Sub pnlViewArea_Click
-	StartActivity(viewActivity)
 End Sub
