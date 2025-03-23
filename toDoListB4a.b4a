@@ -68,6 +68,7 @@ Sub Globals
 	Private settingsBtn As Button
 	Private btnAdd As Button
 	Private pnlClickArea As Panel
+	Private hasMoved As Boolean
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -238,4 +239,46 @@ Private Sub SetIdAsExtra
 	
 	' Retrieve the task_id bound into the viewHolder and set that ID into the extras.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, viewHolder.ID)
+
+	' Set the EditorActivity mode into edit mode.
+	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_EDIT)
+	
+	StartActivity(EditorActivity)
+End Sub
+
+
+Sub pnlViewArea_Touch (Action As Int, X As Float, Y As Float)
+	' Obtains the index of the clciked
+	Dim index As Int = ToDoList.GetItemFromView(Sender)
+	' gets the viewholder
+	Dim viewHolder As TaskViewHolder = ToDoList.GetValue(index)
+	
+	
+	Select Action
+		Case Activity.ACTION_DOWN ' sets bgcolor of pnl to gray if held
+			hasMoved = False
+			viewHolder.TaskCheckbox.SetColorAnimated(50, Colors.White, Colors.Gray)
+            
+		Case Activity.ACTION_MOVE 'sets bgcolor of pnl to white if touch is held and moved
+			If Not(hasMoved) Then
+				hasMoved = True
+					viewHolder.TaskCheckbox.SetColorAnimated(100, Colors.Gray, Colors.White)
+			End If
+            
+		Case Activity.ACTION_UP 'starts activity if touch is released
+			If Not(hasMoved) Then
+				hasMoved = True
+				viewHolder.TaskCheckbox.SetColorAnimated(50, Colors.Gray, Colors.White)
+				StartActivity(viewActivity)
+			End If
+		
+		Case 3
+			' only processes if touch has not moved yet 
+			If Not(hasMoved) Then
+				hasMoved = True
+				viewHolder.TaskCheckbox.SetColorAnimated(50, Colors.Gray, Colors.White)
+			End If
+			
+		
+       End Select
 End Sub

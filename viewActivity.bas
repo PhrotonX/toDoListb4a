@@ -18,8 +18,8 @@ End Sub
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
-
 	Private btnBack As Button
+	
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -31,6 +31,7 @@ End Sub
 
 Private Sub button_design
 	'Makes the bg, border of the buttons transparent
+	
 	
 	Dim transparentBg As ColorDrawable
 	
