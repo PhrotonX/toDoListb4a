@@ -5,7 +5,7 @@ File3=settingsabout.bal
 File4=settingshelp.bal
 File5=settingslayout.bal
 File6=sviewlayout.bal
-File7=TaskItemLayoutOld.bal
+File7=TaskItemLayout.bal
 File8=TaskViewLayout.bal
 File9=TaskViewScrollLayout.bal
 FileGroup1=Default Group
@@ -239,11 +239,6 @@ Private Sub SetIdAsExtra
 	
 	' Retrieve the task_id bound into the viewHolder and set that ID into the extras.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, viewHolder.ID)
-
-	' Set the EditorActivity mode into edit mode.
-	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_EDIT)
-	
-	StartActivity(EditorActivity)
 End Sub
 
 
@@ -269,7 +264,11 @@ Sub pnlViewArea_Touch (Action As Int, X As Float, Y As Float)
 			If Not(hasMoved) Then
 				hasMoved = True
 				viewHolder.TaskCheckbox.SetColorAnimated(50, Colors.Gray, Colors.White)
-				StartActivity(viewActivity)
+				
+				' Retrieve the task_id bound into the viewHolder and set that ID into the extras.
+				Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, viewHolder.ID)
+				
+				StartActivity(TaskViewerActivity)
 			End If
 		
 		Case 3
