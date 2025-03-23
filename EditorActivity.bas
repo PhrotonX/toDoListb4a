@@ -42,6 +42,9 @@ Sub Globals
 	Private checkRepeatWed As CheckBox
 	Private btnDelete As Button
 	Private editorScrollView As ScrollView
+	Private editDueDateYear As EditText
+	Private spinnerDueDateDay As Spinner
+	Private spinnerDueDateMonth As Spinner
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -55,6 +58,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	' Retrieve the data sent by MainActivity to check the editor mode.
 	m_mode = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_MODE)
+	
+	' Fill the due date spinners with data
+	PopulateDueDate
 	
 	' Check the editor mode to set the appropriate EditorActivity functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
@@ -236,3 +242,26 @@ Private Sub ClearRadioButtons
 	checkRepeatSat.Checked = False
 End Sub
 
+Private Sub PopulateDueDate
+	' Populate with months
+	For i = 0 To 12
+		spinnerDueDateMonth.Add(m_task.GetDueDate.GetMonthFromNum(i))
+	Next
+	
+	' Populate with days
+	For i = 0 To 31
+		spinnerDueDateDay.Add(i)
+	Next
+End Sub
+
+Private Sub spinnerDueDateMonth_ItemClick (Position As Int, Value As Object)
+	
+End Sub
+
+Private Sub spinnerDueDateDay_ItemClick (Position As Int, Value As Object)
+	
+End Sub
+
+Private Sub btnRepeatClear_Click
+	
+End Sub
