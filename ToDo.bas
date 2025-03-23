@@ -13,6 +13,7 @@ Sub Class_Globals
 	Private m_priority As Int
 	' Index 0 represents Sunday while index 6 represents Saturday.
 	Private m_repeat(7) As Boolean
+	Private m_dueDate As Date
 	Public Done As Boolean
 	
 	Public Const PRIORITY_LOW As Int = 0
@@ -32,6 +33,9 @@ End Sub
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize
 	m_dayOfTheWeek.Initialize
+	
+	' Initialize the due date with empty string.
+	m_dueDate.Initialize("", "", "")
 	
 	For Each REPEAT As Boolean In m_repeat
 		REPEAT = False
@@ -61,6 +65,10 @@ Public Sub GetGlance As String
 	
 	
 	Return priority & hyphen & repeat
+End Sub
+
+Public Sub GetDueDate As Date
+	Return m_dueDate
 End Sub
 
 Public Sub GetId As Long
@@ -165,6 +173,10 @@ Public Sub GetRepeatInfo As String
 	End Select
 
 	Return repeat
+End Sub
+
+Public Sub SetDueDate(dueDate As Date)
+	m_dueDate = dueDate
 End Sub
 
 Public Sub SetId(id As String)
