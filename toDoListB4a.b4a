@@ -89,8 +89,10 @@ Sub Activity_Pause (UserClosed As Boolean)
 End Sub
 
 Private Sub btnAdd_Click
+	' Set the editor mode by submitting the requested value into the InstanceState bundle.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_CREATE)
 	
+	' Start the activity.
 	StartActivity(EditorActivity)
 End Sub
 
