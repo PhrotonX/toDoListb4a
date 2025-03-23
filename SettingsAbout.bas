@@ -19,7 +19,7 @@ Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
 	Private aboutBack As Button
-
+	Private svAbout As ScrollView
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -27,6 +27,10 @@ Sub Activity_Create(FirstTime As Boolean)
 	'Activity.LoadLayout("Layout1")
 	
 	Activity.LoadLayout("settingsabout")
+	svAbout.Panel.LoadLayout("aboutItems")
+	
+	
+	
 	button_design
 End Sub
 
