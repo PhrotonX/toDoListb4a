@@ -38,6 +38,29 @@ Sub Process_Globals
 	Public TaskViewModelInstance As TaskViewModel
 End Sub
 
+Sub CheckInstanceState
+	' Check for instance states.
+	Dim editorResult As String = InstanceState.Get(EXTRA_EDITOR_RESULT)
+	
+	If editorResult <> Null Then
+		' Select statement for error-checking.
+		Select editorResult:
+			Case Null:
+				' Do nothing if no result has been found.
+				' Ignore results from SAVE and CANCEL
+			Case EDITOR_RESULT_SAVE:
+			Case EDITOR_RESULT_CANCEL:
+				' Display an error if a result other than SAVE and CANCEL has been received.
+			Case Else:
+				MsgboxAsync("Invalid result!" & CRLF & _
+			InstanceState.Get(EXTRA_EDITOR_RESULT), "Alert!")
+		End Select
+	
+		' Remove the editor result extra from the bundle to avoid application state-related issues.
+		InstanceState.Remove(EXTRA_EDITOR_RESULT)
+	End If
+End Sub
+
 Sub Service_Create
 	'This is the program entry point.
 	'This is a good place to load resources that are not specific to a single activity.
