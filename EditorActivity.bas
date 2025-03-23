@@ -41,11 +41,14 @@ Sub Globals
 	Private checkRepeatTue As CheckBox
 	Private checkRepeatWed As CheckBox
 	Private btnDelete As Button
+	Private editorScrollView As ScrollView
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("EditorLayout")
+	
+	editorScrollView.Panel.LoadLayout("EditorScrollLayout")
 	
 	' Initialize variables
 	m_task.Initialize
