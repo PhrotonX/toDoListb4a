@@ -45,6 +45,9 @@ Sub Globals
 	Private editDueDateYear As EditText
 	Private spinnerDueDateDay As Spinner
 	Private spinnerDueDateMonth As Spinner
+	
+	Private Const SPINNER_DUE_DATE_DAY_HINT_TEXT As String = "Select day here..."
+	Private Const SPINNER_DUE_DATE_MONTH_HINT_TEXT As String = "Select month here..."
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -99,9 +102,22 @@ Sub Activity_Create(FirstTime As Boolean)
 		checkRepeatFri.Checked = m_task.GetRepeat(m_task.REPEAT_FRIDAY)
 		checkRepeatSat.Checked = m_task.GetRepeat(m_task.REPEAT_SATURDAY)
 		
+		' Update the selected value of due date month spinner based on the numeric month that is 
+		' set on m_task.
+		spinnerDueDateMonth.SelectedIndex = m_task.GetDueDate.GetNumericMonth
+		' Update the selected value of due date day spinner based on the day that is
+		' set on m_task.
+		spinnerDueDateDay.SelectedIndex = m_task.GetDueDate.GetDay
+		editDueDateYear.Text = m_task.GetDueDate.GetYear
+		
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		' Disable the delete button if the editor mode is EDITOR_MODE_CREATE
 		btnDelete.Visible = False
+		
+		' Set the current date as the default value of due date fields.
+		spinnerDueDateDay.SelectedIndex = DateTime.GetDayOfMonth(DateTime.Now)
+		spinnerDueDateMonth.SelectedIndex = DateTime.GetMonth(DateTime.Now)
+		editDueDateYear.Text = DateTime.GetYear(DateTime.Now)
 	End If
 	
 	' Remove editor mode key from the bundle to avoid some potential application state-related bugs.
@@ -242,26 +258,63 @@ Private Sub ClearRadioButtons
 	checkRepeatSat.Checked = False
 End Sub
 
+' Fill items into the due date Spinners.
 Private Sub PopulateDueDate
-	' Populate with months
+	' Clear the spinner items to prevent potential item duplication bug.
+	spinnerDueDateDay.Clear
+	spinnerDueDateMonth.Clear
+	
+	' Populate with months. Include the 0 value or null.
 	For i = 0 To 12
+		' If i is equal to 0, then add a hint text as an option
+		If i == 0 Then
+			spinnerDueDateMonth.Add(SPINNER_DUE_DATE_MONTH_HINT_TEXT)
+			Continue
+		End If
 		spinnerDueDateMonth.Add(m_task.GetDueDate.GetMonthFromNum(i))
 	Next
 	
-	' Populate with days
+	' Populate with days. Include the 0 value or null.
 	For i = 0 To 31
+		' If i is equal to 0, then add a hint text as an option
+		If i == 0 Then
+			spinnerDueDateDay.Add(SPINNER_DUE_DATE_DAY_HINT_TEXT)
+			Continue
+		End If
 		spinnerDueDateDay.Add(i)
 	Next
 End Sub
 
 Private Sub spinnerDueDateMonth_ItemClick (Position As Int, Value As Object)
+	Dim month As String = spinnerDueDateMonth.GetItem(Position)
+	
+	If month == SPINNER_DUE_DATE_MONTH_HINT_TEXT Then
+		' If the month value that is clicked is invalid, then clear the month
+		' value that is set into m-task.
+		m_task.GetDueDate.SetMonth(0)
+	Else
+		' Set the month value into the task based on the month item that is
+		' clicked from the spinner.
+		m_task.GetDueDate.SetMonth(month)
+	End If
 	
 End Sub
 
-Private Sub spinnerDueDateDay_ItemClick (Position As Int, Value As Object)
+Private Sub spinnerDueDateDay_ItemClick (Position As Int, Value As Object)	
+	Dim day As String = spinnerDueDateDay.GetItem(Position)
+	
+	If day == SPINNER_DUE_DATE_DAY_HINT_TEXT Then
+		' If the day value that is clicked is invalid, then clear the day
+		' value that is set into m-task.
+		m_task.GetDueDate.SetDay(0)
+	Else
+		' Set the day value into the task based on the day item that is
+		' clicked from the spinner.
+		m_task.GetDueDate.SetDay(day)
+	End If
 	
 End Sub
 
 Private Sub btnRepeatClear_Click
-	
+	ClearRadioButtons
 End Sub
