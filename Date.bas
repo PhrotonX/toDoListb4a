@@ -28,6 +28,39 @@ Public Sub GetUnixTime() As Long
 	Return DateTime.DateParse(processedDate)
 End Sub
 
+
+Public Sub GetNumericMonth As Int
+	Select m_month
+		Case "January":
+			Return 1
+		Case "February":
+			Return 2
+		Case "March":
+			Return 3
+		Case "April":
+			Return 4
+		Case "May":
+			Return 5
+		Case "June":
+			Return 6
+		Case "July":
+			Return 7
+		Case "August":
+			Return 8
+		Case "September":
+			Return 9
+		Case "October":
+			Return 10
+		Case "November":
+			Return 11
+		Case "December":
+			Return 12
+		Case Else:
+			Return 0
+	End Select
+End Sub
+
+
 Private Sub GetNumericMonthStr As String
 	Select m_month
 		Case "January":
@@ -85,6 +118,7 @@ Private Sub GetNumericDayStr As String
 	End Select
 End Sub
 
+' Returns a String of January to December.
 Public Sub GetMonthFromNum(month As Int) As String
 	Select month
 		Case 1:
@@ -114,4 +148,28 @@ Public Sub GetMonthFromNum(month As Int) As String
 		Case Else:
 			Return ""
 	End Select
+End Sub
+
+Public Sub GetDay As String
+	Return m_day
+End Sub
+
+Public Sub GetMonth As String
+	Return m_month
+End Sub
+
+Public Sub GetYear As String
+	Return m_year
+End Sub
+
+Public Sub SetDay(day As String)
+	m_day = day
+End Sub
+
+Public Sub SetMonth(month As String)
+	m_month = month
+End Sub
+
+Public Sub SetYear(year As String)
+	m_year = year
 End Sub
