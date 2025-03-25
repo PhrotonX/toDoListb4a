@@ -34,9 +34,8 @@ End Sub
 Public Sub Initialize
 	m_dayOfTheWeek.Initialize
 	
-	' Initialize the due date with empty date to avoid crash when retrieving the
-	' string value.
-	m_dueDate.Initialize("0", "0", "0")
+	' Initialize the due date with empty date since the constructor requires it.
+	m_dueDate.Initialize(0, 0, 0)
 	
 	For Each REPEAT As Boolean In m_repeat
 		REPEAT = False
