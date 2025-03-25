@@ -267,6 +267,13 @@ Public Sub SetMonth(month As Int)
 	m_month = month
 End Sub
 
+' Sets the day, month, and year values based on the UNIX time.
+Public Sub SetUnixTime(time As Long)
+	m_month = DateTime.GetMonth(time)
+	m_day = DateTime.GetDayOfMonth(time)
+	m_year = DateTime.GetYear(time)
+End Sub
+
 Public Sub SetYear(year As Int)
 	m_year = year
 End Sub
