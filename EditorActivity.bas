@@ -42,6 +42,7 @@ Sub Globals
 	Private checkRepeatWed As CheckBox
 	Private btnDelete As Button
 	Private editorScrollView As ScrollView
+	Private Label1 As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -49,6 +50,16 @@ Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("EditorLayout")
 	
 	editorScrollView.Panel.LoadLayout("EditorScrollLayout")
+	
+	Dim c As Canvas
+	c.Initialize(Label1)
+	Dim borderColor As Int = Colors.RGB(209, 209, 209)
+	Dim borderHeight As Int = 1dip
+
+	
+	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, borderHeight)
+
+	Label1.Invalidate
 	
 	' Initialize variables
 	m_task.Initialize

@@ -75,6 +75,7 @@ Sub Globals
 	Private btnAdd As Button
 	Private pnlClickArea As Panel
 	Private hasMoved As Boolean
+	Private titleLabel As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -214,7 +215,17 @@ Sub buttons_layout
 	'settingsBtn design
 	Dim bgTransparent As ColorDrawable
 	bgTransparent.Initialize(Colors.Transparent, 0)
-	settingsBtn.Background = bgTransparent	
+	settingsBtn.Background = bgTransparent
+	
+	Dim c As Canvas
+	c.Initialize(titleLabel)
+	Dim borderColor As Int = Colors.RGB(209, 209, 209)
+	Dim borderHeight As Int = 1dip
+
+	
+	c.DrawLine(0, titleLabel.Height - borderHeight / 2, titleLabel.Width, titleLabel.Height - borderHeight / 2, borderColor, borderHeight)
+
+	titleLabel.Invalidate
 End Sub
 
 ' Opens EditorActivity to edit a clicked task.

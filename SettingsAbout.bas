@@ -21,6 +21,7 @@ Sub Globals
 	Private aboutBack As Button
 
 	Private svAbout As ScrollView
+	Private aboutLabel As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -40,4 +41,14 @@ Sub button_design
 	Dim transparentBg As ColorDrawable
 	transparentBg.Initialize(Colors.Transparent, 0)
 	aboutBack.Background = transparentBg
+	
+	Dim c As Canvas
+	c.Initialize(aboutLabel)
+	Dim borderColor As Int = Colors.RGB(209, 209, 209)
+	Dim borderHeight As Int = 1dip
+
+	
+	c.DrawLine(0, aboutLabel.Height - borderHeight / 2, aboutLabel.Width, aboutLabel.Height - borderHeight / 2, borderColor, borderHeight)
+
+	aboutLabel.Invalidate
 End Sub
