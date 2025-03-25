@@ -239,14 +239,15 @@ Private Sub radioPriorityCritical_CheckedChange(Checked As Boolean)
 End Sub
 
 Private Sub btnDelete_Click
-	Msgbox2Async("Do you really want to delete this task?", "Alert", "Yes", "Cancel", "No", Null, False)
+	Msgbox2Async("Do you really want to delete this task?", "Alert", "Yes", "Cancel", "No", _
+	Null, False)
 	Wait For Msgbox_Result (Result As Int)
 	If Result = DialogResponse.POSITIVE Then
 		Starter.TaskViewModelInstance.DeleteTask(m_task)
+		
+		' Close the editor after deleting,
+		Activity.Finish
 	End If
-	
-	' Close the editor after deleting,
-	Activity.Finish
 End Sub
 
 Private Sub btnClearAll_Click
