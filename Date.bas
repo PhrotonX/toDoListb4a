@@ -149,6 +149,12 @@ Public Sub GetMonthFromNum(month As Int) As String
 	End Select
 End Sub
 
+' Returns the date with the "Month DD, YYYY" format as a String based
+' on the values set on this date object.
+Public Sub GetFormattedDate As String
+	Return GetMonthFromNum(m_month) & " " & m_day & ", " & m_year
+End Sub
+
 Public Sub GetDay As Int
 	Return m_day
 End Sub
