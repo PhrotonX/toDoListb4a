@@ -75,12 +75,15 @@ Public Sub CreateTable
 	sql.EndTransaction
 End Sub
 
+' Inserts task into the database.
 Public Sub InsertTask(item As ToDo)
 	sql.BeginTransaction
+	' Exception handling to catch errors for debuggings, if possible.
 	Try		
 		' Insert the task without the repeat data.
-		sql.ExecNonQuery("INSERT INTO task(title, notes, priority, done)" & CRLF & _ 
-		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", "&BoolToInt(item.Done)&");")
+		sql.ExecNonQuery("INSERT INTO task(title, notes, priority, done, due_date)" & CRLF & _
+		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", " & CRLF & _
+		item.GetDueDate.GetUnixTime&", "&BoolToInt(item.Done)&");")
 		
 		' Get the ID if the last inserted row.In this case, it is the previous INSERT INTO TASK.
 		Dim id As Int = sql.ExecQuerySingleResult("SELECT last_insert_rowid();")
@@ -116,6 +119,7 @@ Public Sub DeleteTask(item As ToDo)
 	sql.EndTransaction
 End Sub
 
+' Updates task from the database
 Public Sub UpdateTask(item As ToDo)
 	sql.BeginTransaction
 	Try
@@ -124,6 +128,7 @@ Public Sub UpdateTask(item As ToDo)
 		"notes = '" & item.GetNotes & "', " & CRLF & _
 		"priority = " & item.GetPriority & ", " & CRLF & _
 		"done = " & BoolToInt(item.Done) & CRLF & _ 
+		"due_date = " & item.GetDueDate.GetUnixTime & CRLF & _
 		"WHERE task_id = " & item.GetId & CRLF & _
 		";")
 		
