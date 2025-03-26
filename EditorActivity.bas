@@ -179,10 +179,10 @@ Private Sub btnSave_Click
 	If editDueDateYear.Text.Trim = "" Then
 		MsgboxAsync("Due date year cannot be empty!", "Error")
 		Return
+	Else
+		' Save the due date year value.
+		m_task.GetDueDate.SetYear(editDueDateYear.Text)
 	End If
-	
-	' Save the due date year value.
-	m_task.GetDueDate.SetYear(editDueDateYear.Text)
 	
 	' Validate the due date values
 	If validateDueDate == False Then
@@ -363,12 +363,14 @@ Private Sub btnRepeatClear_Click
 End Sub
 
 ' Validates if the date input is valid, ranging from January 1, 1970 until February 18, 2038.
+' and is not unset.
 Private Sub validateDueDate As Boolean
 	Dim dateObj As Date = m_task.GetDueDate
 	
-	' Check if the date is unset. Unset values may be considered as a valid option.
+	' Check if the date is unset. Unset values cannot be valid.
 	If dateObj.IsUnset Then
-		Return True
+		MsgboxAsync("Due date cannot be empty", "Error")
+		Return False
 	End If
 	
 	' Check if the year input is valid. The input only supports from years 1970 until 2038.
