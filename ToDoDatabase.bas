@@ -81,7 +81,7 @@ Public Sub InsertTask(item As ToDo)
 	' Exception handling to catch errors for debuggings, if possible.
 	Try		
 		' Insert the task without the repeat data.
-		sql.ExecNonQuery("INSERT INTO task(title, notes, priority, done, due_date)" & CRLF & _
+		sql.ExecNonQuery("INSERT INTO task(title, notes, priority, due_date, done)" & CRLF & _
 		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", " & CRLF & _
 		item.GetDueDate.GetUnixTime&", "&BoolToInt(item.Done)&");")
 		
