@@ -44,19 +44,12 @@ End Sub
 
 ' Retrieves the glance information to be displayed on TaskItemLayout.
 Public Sub GetGlance As String
-	Dim priorityLabel As String = "Priority: "
-	Dim priority As String = priorityLabel & GetPriorityInfo
+	Dim dueDate As String = m_dueDate.GetFormattedDate2
 	Dim repeat As String = GetRepeatInfo
 	
-	' Separate variable for hyphen is used to toggle it if either priority or repeat is not
+	' Separate variable for hyphen is used to toggle it if either repeat is not
 	' available.
 	Dim hyphen As String = " - "
-	
-	' Remove glance info for priority if the value is medium since it is the default value.
-	If priority == priorityLabel & "Medium" Then
-		priority = ""
-		hyphen = ""
-	End If
 	
 	' Remove hyphen for if repeat information is not available.
 	If repeat == "" Then
@@ -64,7 +57,7 @@ Public Sub GetGlance As String
 	End If
 	
 	
-	Return priority & hyphen & repeat
+	Return dueDate & hyphen & repeat
 End Sub
 
 Public Sub GetDueDate As Date

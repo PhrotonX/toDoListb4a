@@ -24,7 +24,7 @@ End Sub
 ' Returns the UNIX variant of the date values set into this object. May result into an error
 ' if the date is less than January 1, 1970 or greater than January 19, 2038.
 Public Sub GetUnixTime() As Long
-	Dim processedDate As String = GetMonthWithLeadingZero & "/" & GetNumericDayStr & "/" & m_year
+	Dim processedDate As String = GetFormattedDate2
 	
 	Return DateTime.DateParse(processedDate)
 End Sub
@@ -156,6 +156,12 @@ End Sub
 ' on the values set on this date object.
 Public Sub GetFormattedDate As String
 	Return GetMonthFromNum(m_month) & " " & m_day & ", " & m_year
+End Sub
+
+' Returns the date with the "Month DD, YYYY" format as a String based
+' on the values set on this date object.
+Public Sub GetFormattedDate2 As String
+	Return GetMonthWithLeadingZero & "/" & GetNumericDayStr & "/" & m_year
 End Sub
 
 ' Returns the day set into this object.
