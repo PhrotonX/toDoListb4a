@@ -41,13 +41,12 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Add the TaskViewScrollLayout as the view of taskView of the ScrollView in TaskViewLayout.
 	taskView.Panel.LoadLayout("TaskViewScrollLayout")
 	
-	
+	' Other supplementary code for UI design.
 	Dim c As Canvas
 	c.Initialize(Label1)
 	Dim borderColor As Int = Colors.RGB(209, 209, 209)
 	Dim borderHeight As Int = 1dip
 
-	
 	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, borderHeight)
 
 	Label1.Invalidate	
@@ -70,9 +69,11 @@ Sub Activity_Resume
 	' Retrieve the task sent by MainActivity.
 	m_task = Starter.TaskViewModelInstance.GetTask(Starter.InstanceState.Get(Starter.EXTRA_EDITOR_TASK_ID))
 	
-	' Validate if the task exists.
-	If m_task == Null Then
-		MsgboxAsync("Error retrieving task!", "Fatal Error")
+	' Validate if the task exists by checking some of the required values. Else,
+	' Return back to MainActivity.
+	' There cannot be a task with an ID of zero, empty title (EditorActivity
+	' validation disallows it) or empty repeat value (same case as task title).
+	If m_task.GetId == 0 Then
 		Activity.Finish
 	End If
 	
@@ -89,11 +90,14 @@ Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
+' Return back to MainActivity if back button is clicked.
 Sub btnBack_Click
 	Activity.Finish
 End Sub
 
+' Open editor activity.
 Private Sub btnEdit_Click
+	' Send the task ID into EditorActivity.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, m_task.GetId)
 	
 	' Set the EditorActivity mode into edit mode.
@@ -103,6 +107,7 @@ Private Sub btnEdit_Click
 	StartActivity(EditorActivity)
 End Sub
 
+' Make update transactions into the database if checkbox tick occured.
 Private Sub viewTitle_CheckedChange(Checked As Boolean)
 	' Toggle the completions status of the task
 	m_task.Done = Checked
