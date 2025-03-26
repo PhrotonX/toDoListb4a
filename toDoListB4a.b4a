@@ -1,20 +1,22 @@
 ﻿Build1=Default,com.cm.todolist
 File1=aboutitems.bal
-File10=TaskItemLayout.bal
-File11=taskviewlayout.bal
-File12=taskviewscrolllayout.bal
+File10=sviewlayout.bal
+File11=TaskItemLayout.bal
+File12=taskviewlayout.bal
+File13=taskviewscrolllayout.bal
 File2=EditorLayout.bal
 File3=EditorScrollLayout.bal
 File4=helpitems.bal
-File5=Layout.bal
-File6=settingsabout.bal
-File7=settingshelp.bal
-File8=settingslayout.bal
-File9=sviewlayout.bal
+File5=ic_launcher.png
+File6=Layout.bal
+File7=settingsabout.bal
+File8=settingshelp.bal
+File9=settingslayout.bal
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
 FileGroup12=Default Group
+FileGroup13=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
 FileGroup4=Default Group
@@ -42,7 +44,7 @@ Module6=SettingsHelp
 Module7=Starter
 Module8=TaskRepository
 Module9=TaskViewerActivity
-NumberOfFiles=12
+NumberOfFiles=13
 NumberOfLibraries=4
 NumberOfModules=13
 Version=13.1
@@ -50,7 +52,7 @@ Version=13.1
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 2
-	#VersionName: v1.0.0.2 alpha
+	#VersionName: v1.0.0.3 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -318,7 +320,7 @@ Sub pnlViewArea_Touch (Action As Int, X As Float, Y As Float)
 End Sub
 
 ' Used to process the click style of panels above the checkbox of tasks.
-Public Sub OnChkboxViewAreaClick(percentage as Int, viewHolder as TaskViewHolder)
+Public Sub OnChkboxViewAreaClick(percentage As Int, viewHolder As TaskViewHolder)
 	' Touch color differs whether the item is marked as complete or not.
 	If viewHolder.TaskCheckbox.Checked Then
 		' Execute if task is marked as complete
