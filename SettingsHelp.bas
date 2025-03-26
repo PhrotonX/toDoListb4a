@@ -19,12 +19,15 @@ Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
 	Private helpBack As Button
+	Private svHelp As ScrollView
+	Private helpLabel As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	'Activity.LoadLayout("Layout1")
 	Activity.LoadLayout("settingshelp")
+	svHelp.Panel.LoadLayout("helpItems")
 	button_design
 
 
@@ -34,6 +37,17 @@ Sub button_design
 	Dim transparentBg As ColorDrawable
 	transparentBg.Initialize(Colors.Transparent, 0)
 	helpBack.Background = transparentBg
+	
+	
+	Dim c As Canvas
+	c.Initialize(helpLabel)
+	Dim borderColor As Int = Colors.RGB(209, 209, 209)
+	Dim borderHeight As Int = 1dip
+
+	
+	c.DrawLine(0, helpLabel.Height - borderHeight / 2, helpLabel.Width, helpLabel.Height - borderHeight / 2, borderColor, borderHeight)
+
+	helpLabel.Invalidate
 End Sub
 
 Sub helpBack_Click

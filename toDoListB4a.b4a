@@ -1,16 +1,20 @@
-﻿Build1=Default,com.cm.todolist
-File1=EditorLayout.bal
-File10=TaskViewScrollLayout.bal
-File2=EditorScrollLayout.bal
-File3=Layout.bal
-File4=settingsabout.bal
-File5=settingshelp.bal
-File6=settingslayout.bal
-File7=sviewlayout.bal
-File8=TaskItemLayout.bal
-File9=TaskViewLayout.bal
+Build1=Default,com.cm.todolist
+File1=aboutitems.bal
+File10=TaskItemLayout.bal
+File11=TaskViewLayout.bal
+File12=TaskViewScrollLayout.bal
+File2=EditorLayout.bal
+File3=EditorScrollLayout.bal
+File4=helpitems.bal
+File5=Layout.bal
+File6=settingsabout.bal
+File7=settingshelp.bal
+File8=settingslayout.bal
+File9=sviewlayout.bal
 FileGroup1=Default Group
 FileGroup10=Default Group
+FileGroup11=Default Group
+FileGroup12=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
 FileGroup4=Default Group
@@ -72,6 +76,7 @@ Sub Globals
 	Private btnAdd As Button
 	Private pnlClickArea As Panel
 	Private hasMoved As Boolean
+	Private titleLabel As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -211,7 +216,17 @@ Sub buttons_layout
 	'settingsBtn design
 	Dim bgTransparent As ColorDrawable
 	bgTransparent.Initialize(Colors.Transparent, 0)
-	settingsBtn.Background = bgTransparent	
+	settingsBtn.Background = bgTransparent
+	
+	Dim c As Canvas
+	c.Initialize(titleLabel)
+	Dim borderColor As Int = Colors.RGB(209, 209, 209)
+	Dim borderHeight As Int = 1dip
+
+	
+	c.DrawLine(0, titleLabel.Height - borderHeight / 2, titleLabel.Width, titleLabel.Height - borderHeight / 2, borderColor, borderHeight)
+
+	titleLabel.Invalidate
 End Sub
 
 ' Opens EditorActivity to edit a clicked task.

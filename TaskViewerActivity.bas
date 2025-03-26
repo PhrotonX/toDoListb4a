@@ -30,6 +30,7 @@ Sub Globals
 	' This variable is responsible for handling the current data that can be used for performing
 	' CRUD into the database.
 	Private m_task As ToDo
+	Private Label1 As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -39,6 +40,17 @@ Sub Activity_Create(FirstTime As Boolean)
 
 	' Add the TaskViewScrollLayout as the view of taskView of the ScrollView in TaskViewLayout.
 	taskView.Panel.LoadLayout("TaskViewScrollLayout")
+	
+	
+	Dim c As Canvas
+	c.Initialize(Label1)
+	Dim borderColor As Int = Colors.RGB(209, 209, 209)
+	Dim borderHeight As Int = 1dip
+
+	
+	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, borderHeight)
+
+	Label1.Invalidate	
 End Sub
 
 Private Sub button_design

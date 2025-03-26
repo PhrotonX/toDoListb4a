@@ -48,6 +48,16 @@ Sub button_design
 	help.Background = whiteBg
 	about.Background = whiteBg
 	
+	
+	Dim c As Canvas
+	c.Initialize(Label1)
+	Dim borderColor As Int = Colors.RGB(209, 209, 209)
+	Dim borderHeight As Int = 1dip
+
+	
+	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, borderHeight)
+
+	Label1.Invalidate
 
 End Sub
 
