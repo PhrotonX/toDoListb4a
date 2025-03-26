@@ -69,10 +69,8 @@ Sub Activity_Resume
 	' Retrieve the task sent by MainActivity.
 	m_task = Starter.TaskViewModelInstance.GetTask(Starter.InstanceState.Get(Starter.EXTRA_EDITOR_TASK_ID))
 	
-	' Validate if the task exists by checking some of the required values. Else,
-	' Return back to MainActivity.
-	' There cannot be a task with an ID of zero, empty title (EditorActivity
-	' validation disallows it) or empty repeat value (same case as task title).
+	' Validate if the task exists by checking the task ID which cannot be zero on
+	' the database. Else, return back to MainActivity.
 	If m_task.GetId == 0 Then
 		Activity.Finish
 	End If
