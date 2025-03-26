@@ -1,4 +1,4 @@
-B4A=true
+﻿B4A=true
 Group=Default Group
 ModulesStructureVersion=1
 Type=Activity
@@ -173,6 +173,13 @@ Private Sub btnSave_Click
 	
 	' Priority, Due Date Day, Due date Month, and Repeat values are already set once the
 	' buttons are clicked.
+	
+	' Primarily validate the due date year field if null before taking another validation if
+	' the date is a valid date.
+	If editDueDateYear.Text.Trim = "" Then
+		MsgboxAsync("Due date year cannot be empty!", "Error")
+		Return
+	End If
 	
 	' Save the due date year value.
 	m_task.GetDueDate.SetYear(editDueDateYear.Text)
@@ -382,7 +389,16 @@ Private Sub validateDueDate As Boolean
 End Sub
 
 Public Sub ClearDueDate()
+	' Clear the due date-related spinners and edit texts.
 	spinnerDueDateDay.SelectedIndex = 0
 	spinnerDueDateMonth.SelectedIndex = 0
 	editDueDateYear.Text = ""
+	
+	' Also call the Unset() function on the task model to avoid
+	' errors.
+	m_task.GetDueDate.Unset()
+End Sub
+
+Private Sub btnClearDueDate_Click
+	ClearDueDate
 End Sub
