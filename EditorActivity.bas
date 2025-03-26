@@ -1,4 +1,4 @@
-B4A=true
+﻿B4A=true
 Group=Default Group
 ModulesStructureVersion=1
 Type=Activity
@@ -174,8 +174,15 @@ Private Sub btnSave_Click
 	' Priority, Due Date Day, Due date Month, and Repeat values are already set once the
 	' buttons are clicked.
 	
-	' Save the due date year value.
-	m_task.GetDueDate.SetYear(editDueDateYear.Text)
+	' Primarily validate the due date year field if null before taking another validation if
+	' the date is a valid date.
+	If editDueDateYear.Text.Trim = "" Then
+		MsgboxAsync("Due date year cannot be empty!", "Error")
+		Return
+	Else
+		' Save the due date year value.
+		m_task.GetDueDate.SetYear(editDueDateYear.Text)
+	End If
 	
 	' Validate the due date values
 	If validateDueDate == False Then
@@ -356,12 +363,14 @@ Private Sub btnRepeatClear_Click
 End Sub
 
 ' Validates if the date input is valid, ranging from January 1, 1970 until February 18, 2038.
+' and is not unset.
 Private Sub validateDueDate As Boolean
 	Dim dateObj As Date = m_task.GetDueDate
 	
-	' Check if the date is unset. Unset values may be considered as a valid option.
+	' Check if the date is unset. Unset values cannot be valid.
 	If dateObj.IsUnset Then
-		Return True
+		MsgboxAsync("Due date cannot be empty", "Error")
+		Return False
 	End If
 	
 	' Check if the year input is valid. The input only supports from years 1970 until 2038.
@@ -382,7 +391,16 @@ Private Sub validateDueDate As Boolean
 End Sub
 
 Public Sub ClearDueDate()
+	' Clear the due date-related spinners and edit texts.
 	spinnerDueDateDay.SelectedIndex = 0
 	spinnerDueDateMonth.SelectedIndex = 0
 	editDueDateYear.Text = ""
+	
+	' Also call the Unset() function on the task model to avoid
+	' errors.
+	m_task.GetDueDate.Unset()
+End Sub
+
+Private Sub btnClearDueDate_Click
+	ClearDueDate
 End Sub
