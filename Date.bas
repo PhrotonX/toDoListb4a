@@ -21,6 +21,8 @@ Public Sub Initialize(month As Int, day As Int, year As Int)
 	m_year = year
 End Sub
 
+' Returns the UNIX variant of the date values set into this object. May result into an error
+' if the date is less than January 1, 1970 or greater than January 19, 2038.
 Public Sub GetUnixTime() As Long
 	Dim processedDate As String = GetMonthWithLeadingZero & "/" & GetNumericDayStr & "/" & m_year
 	
@@ -59,7 +61,8 @@ Public Sub GetNumericMonth(month As String) As Int
 	End Select
 End Sub
 
-
+' Returns month value with leading zero as a string based on the month value set
+' into this object.
 Private Sub GetMonthWithLeadingZero As String
 	Select m_month
 		Case 1:
@@ -155,14 +158,17 @@ Public Sub GetFormattedDate As String
 	Return GetMonthFromNum(m_month) & " " & m_day & ", " & m_year
 End Sub
 
+' Returns the day set into this object.
 Public Sub GetDay As Int
 	Return m_day
 End Sub
 
+' Returns the month of type int set into this object.
 Public Sub GetMonth As Int
 	Return m_month
 End Sub
 
+' Returns the year set into this object.
 Public Sub GetYear As Int
 	Return m_year
 End Sub
@@ -284,7 +290,7 @@ Public Sub SetYear(year As Int)
 	m_year = year
 End Sub
 
-' Sets the day as unset.
+' Sets the date as unset.
 Public Sub Unset()
 	m_month = 0
 	m_day = 0
