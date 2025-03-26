@@ -82,6 +82,7 @@ Sub Activity_Resume
 	viewNotes.Text = m_task.GetNotes
 	viewRepeat.Text = m_task.GetRepeatInfo
 	viewPriority.Text = m_task.GetPriorityInfo
+	viewDueDate.Text = m_task.GetDueDate.GetFormattedDate
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)

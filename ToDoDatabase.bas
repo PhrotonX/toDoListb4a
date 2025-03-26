@@ -75,12 +75,15 @@ Public Sub CreateTable
 	sql.EndTransaction
 End Sub
 
+' Inserts task into the database.
 Public Sub InsertTask(item As ToDo)
 	sql.BeginTransaction
+	' Exception handling to catch errors for debuggings, if possible.
 	Try		
 		' Insert the task without the repeat data.
-		sql.ExecNonQuery("INSERT INTO task(title, notes, priority, done)" & CRLF & _ 
-		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", "&BoolToInt(item.Done)&");")
+		sql.ExecNonQuery("INSERT INTO task(title, notes, priority, done, due_date)" & CRLF & _
+		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", " & CRLF & _
+		item.GetDueDate.GetUnixTime&", "&BoolToInt(item.Done)&");")
 		
 		' Get the ID if the last inserted row.In this case, it is the previous INSERT INTO TASK.
 		Dim id As Int = sql.ExecQuerySingleResult("SELECT last_insert_rowid();")
@@ -116,6 +119,7 @@ Public Sub DeleteTask(item As ToDo)
 	sql.EndTransaction
 End Sub
 
+' Updates task from the database
 Public Sub UpdateTask(item As ToDo)
 	sql.BeginTransaction
 	Try
@@ -123,7 +127,8 @@ Public Sub UpdateTask(item As ToDo)
 		sql.ExecNonQuery("UPDATE task SET title = '"&item.GetTitle& "', " & CRLF & _ 
 		"notes = '" & item.GetNotes & "', " & CRLF & _
 		"priority = " & item.GetPriority & ", " & CRLF & _
-		"done = " & BoolToInt(item.Done) & CRLF & _ 
+		"done = " & BoolToInt(item.Done) & ", " & CRLF & _ 
+		"due_date = " & item.GetDueDate.GetUnixTime & CRLF & _
 		"WHERE task_id = " & item.GetId & CRLF & _
 		";")
 		
@@ -160,6 +165,8 @@ Public Sub GetTask(id As Long) As ToDo
 		item.SetTitle(sql.ExecQuerySingleResult("SELECT title FROM task WHERE task_id = " & id))
 		item.SetNotes(sql.ExecQuerySingleResult("SELECT notes FROM task WHERE task_id = " & id))
 		item.SetPriority(sql.ExecQuerySingleResult("SELECT priority FROM task WHERE task_id = " & id))
+		' The database due_date of type DATE field requires date value in UNIX time.
+		item.GetDueDate.SetUnixTime(sql.ExecQuerySingleResult("SELECT due_date FROM task WHERE task_id = " & id))
 		
 		' Process the "done" value if the DB returns a boolean data of type String.
 		If sql.ExecQuerySingleResult("SELECT done FROM task WHERE task_id = " & id) == "1" Then
@@ -201,6 +208,7 @@ Public Sub GetAllTasks() As List
 			item.SetTitle(cursorTask.GetString("title"))
 			item.SetNotes(cursorTask.GetString("notes"))
 			item.SetPriority(cursorTask.GetInt("priority"))
+			item.GetDueDate.SetUnixTime(cursorTask.GetLong("due_date"))
 			If cursorTask.GetInt("done") == 1 Then
 				item.Done = True
 			Else
