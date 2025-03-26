@@ -77,6 +77,12 @@ Sub Globals
 	Private pnlClickArea As Panel
 	Private hasMoved As Boolean
 	Private titleLabel As Label
+	
+	Public Const TASK_CHECKED_ROOT_COLOR As Int = Colors.RGB(235, 235, 235)
+	Public Const TASK_CHECKED_TEXT_COLOR As Int = Colors.RGB(175, 175, 175)
+	Public Const TASK_UNCHECKED_TEXT_COLOR As Int = Colors.RGB(0, 0, 0)
+	Public Const TASK_UNCHECKED_ROOT_COLOR As Int = Colors.RGB(255, 255, 255)
+	
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -128,15 +134,16 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 	
 	' Add visual indicator that the task has been changed
 	If Checked == True Then
-		' Make the items looks slightly lighter after task completion.
-		viewHolder.TaskCheckbox.TextColor = Colors.ARGB(255, 128, 128, 128)
-		viewHolder.TaskInfo.TextColor = Colors.ARGB(255, 128, 128, 128)
-		viewHolder.Root.Color = Colors.ARGB(255, 235, 235, 235)
+		' Make the items return to its original look after the task is marked as
+		' incomplete.
+		viewHolder.TaskCheckbox.TextColor = TASK_CHECKED_TEXT_COLOR
+		viewHolder.TaskInfo.TextColor = TASK_CHECKED_TEXT_COLOR
+		viewHolder.Root.Color = TASK_CHECKED_ROOT_COLOR
 	Else
-		' Make the items return to its original look if the task is marked as incomplete.
-		viewHolder.TaskCheckbox.TextColor = Colors.ARGB(255, 0, 0, 0)
-		viewHolder.TaskInfo.TextColor = Colors.ARGB(255, 0, 0, 0)
-		viewHolder.Root.Color = Colors.ARGB(255, 255, 255, 255)
+		' Make the items looks slightly lighter after task completion.
+		viewHolder.TaskCheckbox.TextColor = TASK_UNCHECKED_TEXT_COLOR
+		viewHolder.TaskInfo.TextColor = TASK_UNCHECKED_TEXT_COLOR
+		viewHolder.Root.Color = TASK_UNCHECKED_ROOT_COLOR
 	End If
 End Sub
 
@@ -270,18 +277,25 @@ Sub pnlViewArea_Touch (Action As Int, X As Float, Y As Float)
 	Select Action
 		Case Activity.ACTION_DOWN ' sets bgcolor of pnl to gray if held
 			hasMoved = False
-			viewHolder.TaskCheckbox.SetColorAnimated(50, Colors.White, Colors.Gray)
+			
+			' Set the main click color.
+			viewHolder.Root.SetColorAnimated(50, Colors.White, Colors.Gray)
             
-		Case Activity.ACTION_MOVE 'sets bgcolor of pnl to white if touch is held and moved
+		Case Activity.ACTION_MOVE 'sets bgcolor of pnl to white or gray if touch is held and moved
 			If Not(hasMoved) Then
 				hasMoved = True
-					viewHolder.TaskCheckbox.SetColorAnimated(100, Colors.Gray, Colors.White)
+				
+				' Process click style.
+				OnChkboxViewAreaClick(100, viewHolder)
+				
 			End If
             
 		Case Activity.ACTION_UP 'starts activity if touch is released
 			If Not(hasMoved) Then
 				hasMoved = True
-				viewHolder.TaskCheckbox.SetColorAnimated(50, Colors.Gray, Colors.White)
+				
+				' Process click style.
+				OnChkboxViewAreaClick(100, viewHolder)
 				
 				' Retrieve the task_id bound into the viewHolder and set that ID into the extras.
 				Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, viewHolder.ID)
@@ -293,9 +307,24 @@ Sub pnlViewArea_Touch (Action As Int, X As Float, Y As Float)
 			' only processes if touch has not moved yet 
 			If Not(hasMoved) Then
 				hasMoved = True
-				viewHolder.TaskCheckbox.SetColorAnimated(50, Colors.Gray, Colors.White)
+				
+				' Process click style.
+				OnChkboxViewAreaClick(50, viewHolder)
+				
 			End If
 			
 		
        End Select
+End Sub
+
+' Used to process the click style of panels above the checkbox of tasks.
+Public Sub OnChkboxViewAreaClick(percentage as Int, viewHolder as TaskViewHolder)
+	' Touch color differs whether the item is marked as complete or not.
+	If viewHolder.TaskCheckbox.Checked Then
+		' Execute if task is marked as complete
+		viewHolder.Root.SetColorAnimated(percentage, Colors.Gray, TASK_CHECKED_ROOT_COLOR)
+	Else
+		' Execute if task is not marked as complete
+		viewHolder.Root.SetColorAnimated(percentage, Colors.Gray, TASK_UNCHECKED_ROOT_COLOR)
+	End If
 End Sub
