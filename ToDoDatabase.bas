@@ -127,7 +127,7 @@ Public Sub UpdateTask(item As ToDo)
 		sql.ExecNonQuery("UPDATE task SET title = '"&item.GetTitle& "', " & CRLF & _ 
 		"notes = '" & item.GetNotes & "', " & CRLF & _
 		"priority = " & item.GetPriority & ", " & CRLF & _
-		"done = " & BoolToInt(item.Done) & CRLF & _ 
+		"done = " & BoolToInt(item.Done) & ", " & CRLF & _ 
 		"due_date = " & item.GetDueDate.GetUnixTime & CRLF & _
 		"WHERE task_id = " & item.GetId & CRLF & _
 		";")
@@ -165,6 +165,8 @@ Public Sub GetTask(id As Long) As ToDo
 		item.SetTitle(sql.ExecQuerySingleResult("SELECT title FROM task WHERE task_id = " & id))
 		item.SetNotes(sql.ExecQuerySingleResult("SELECT notes FROM task WHERE task_id = " & id))
 		item.SetPriority(sql.ExecQuerySingleResult("SELECT priority FROM task WHERE task_id = " & id))
+		' The database due_date of type DATE field requires date value in UNIX time.
+		item.GetDueDate.SetUnixTime(sql.ExecQuerySingleResult("SELECT due_date FROM task WHERE task_id = " & id))
 		
 		' Process the "done" value if the DB returns a boolean data of type String.
 		If sql.ExecQuerySingleResult("SELECT done FROM task WHERE task_id = " & id) == "1" Then
@@ -206,6 +208,7 @@ Public Sub GetAllTasks() As List
 			item.SetTitle(cursorTask.GetString("title"))
 			item.SetNotes(cursorTask.GetString("notes"))
 			item.SetPriority(cursorTask.GetInt("priority"))
+			item.GetDueDate.SetUnixTime(cursorTask.GetLong("due_date"))
 			If cursorTask.GetInt("done") == 1 Then
 				item.Done = True
 			Else
