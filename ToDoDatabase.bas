@@ -10,6 +10,7 @@ End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize
+	' Create a database file based on SQLite
 	sql.Initialize(File.DirInternal, "todo_db.db", True)
 	
 	CreateTable
@@ -17,6 +18,7 @@ End Sub
 
 ' Creates tables for Database in SQL syntax, not MySQL.
 Public Sub CreateTable	
+	' Query for creating the task table
 	Dim query_task As String = "CREATE TABLE IF NOT EXISTS task( " & CRLF & _
 	"task_id INTEGER PRIMARY KEY AUTOINCREMENT," & CRLF & _
 	"title VARCHAR(255) NOT NULL," & CRLF & _
@@ -26,12 +28,14 @@ Public Sub CreateTable
 	"done BOOLEAN NOT NULL DEFAULT 0" & CRLF & _
 	");"
 	
+	' Query for creating the days_of_the_week table.
 	Dim query_days_of_the_week As String = "CREATE TABLE IF NOT EXISTS days_of_the_week(" & CRLF & _
 	"day_id TINYINT NOT NULL," & CRLF & _
 	"day_of_the_week VARCHAR(10) NOT NULL," & CRLF & _
 	"PRIMARY KEY(day_id)" & CRLF & _
 	");"
 	
+	' Query for creating the task_repeat table.
 	Dim query_task_repeat As String = "CREATE TABLE IF NOT EXISTS task_repeat(" & CRLF & _
 	"task_id INTEGER NOT NULL," & CRLF & _
 	"day_id TINYINT NOT NULL," & CRLF & _
@@ -39,6 +43,7 @@ Public Sub CreateTable
 	"PRIMARY KEY(task_id, day_id)" & CRLF & _
 	");"
 	
+	' Query for populating the days_of_the_week table with data.
 	Dim query_populate_days As String = "INSERT INTO days_of_the_week (day_of_the_week, day_id)" & CRLF & _
 	"SELECT 'Sunday', 0 UNION ALL" & CRLF & _
 	"SELECT 'Monday', 1 UNION ALL" & CRLF & _
@@ -49,8 +54,10 @@ Public Sub CreateTable
 	"SELECT 'Saturday', 6" & CRLF & _
 	"WHERE NOT EXISTS (SELECT 1 FROM days_of_the_week);"
 	
+	' Mark the beginning of SQL transaction.
 	sql.BeginTransaction
 	Try
+		' Execute the queries.
 		sql.ExecNonQuery(query_task)
 		sql.ExecNonQuery(query_days_of_the_week)
 		sql.ExecNonQuery(query_task_repeat)
@@ -59,40 +66,24 @@ Public Sub CreateTable
 			sql.ExecNonQuery(query_populate_days)
 		End If
 		
+		' Tell to the database that the SQL transaction is successful.
 		sql.TransactionSuccessful
 	Catch
 		Log(LastException.Message)
 	End Try
+	' Mark the end of SQL Transaction
 	sql.EndTransaction
-	' CopyDatabase
 End Sub
 
-Public Sub DropTable
-	Dim query_task As String = "DROP TABLE IF EXISTS task;"
-	Dim query_days_of_the_week As String = "DROP TABLE IF EXISTS days_of_the_week;"
-	Dim query_task_repeat As String = "DROP TABLE IF EXISTS task_repeat;"
-	Dim query_populate_days_of_the_week As String = "DROP PROCEDURE IF EXISTS PopulateDaysOfTheWeek;"
-	
-	sql.BeginTransaction
-	Try
-		sql.ExecNonQuery(query_task)
-		sql.ExecNonQuery(query_days_of_the_week)
-		sql.ExecNonQuery(query_task_repeat)
-		sql.ExecNonQuery(query_populate_days_of_the_week)
-		sql.TransactionSuccessful
-	Catch
-		Log(LastException.Message)
-	End Try
-	sql.EndTransaction
-	' CopyDatabase
-End Sub
-
+' Inserts task into the database.
 Public Sub InsertTask(item As ToDo)
 	sql.BeginTransaction
+	' Exception handling to catch errors for debuggings, if possible.
 	Try		
 		' Insert the task without the repeat data.
-		sql.ExecNonQuery("INSERT INTO task(title, notes, priority, done)" & CRLF & _ 
-		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", "&BoolToInt(item.Done)&");")
+		sql.ExecNonQuery("INSERT INTO task(title, notes, priority, due_date, done)" & CRLF & _
+		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", " & CRLF & _
+		item.GetDueDate.GetUnixTime&", "&BoolToInt(item.Done)&");")
 		
 		' Get the ID if the last inserted row.In this case, it is the previous INSERT INTO TASK.
 		Dim id As Int = sql.ExecQuerySingleResult("SELECT last_insert_rowid();")
@@ -110,7 +101,6 @@ Public Sub InsertTask(item As ToDo)
 		Log(LastException)
 	End Try
 	sql.EndTransaction
-	' CopyDatabase
 End Sub
 
 Public Sub DeleteTask(item As ToDo)
@@ -127,28 +117,30 @@ Public Sub DeleteTask(item As ToDo)
 		Log(LastException)
 	End Try
 	sql.EndTransaction
-	' CopyDatabase
 End Sub
 
+' Updates task from the database
 Public Sub UpdateTask(item As ToDo)
 	sql.BeginTransaction
 	Try
-		' Update a specific item
+		' Update a specific item and takes their new values into the query.
 		sql.ExecNonQuery("UPDATE task SET title = '"&item.GetTitle& "', " & CRLF & _ 
 		"notes = '" & item.GetNotes & "', " & CRLF & _
 		"priority = " & item.GetPriority & ", " & CRLF & _
-		"done = " & BoolToInt(item.Done) & CRLF & _ 
+		"done = " & BoolToInt(item.Done) & ", " & CRLF & _ 
+		"due_date = " & item.GetDueDate.GetUnixTime & CRLF & _
 		"WHERE task_id = " & item.GetId & CRLF & _
 		";")
 		
-		' Update each item's repeat value
-		
+		' Update each repeat value of the item iteratively.
 		Dim repeatItr As Int = 0
 		For Each repeat As Boolean In item.GetRepeat
+			' The SQL code that updates the table.
 			sql.ExecNonQuery("UPDATE task_repeat SET " & CRLF & _
 			"enabled = " & BoolToInt(repeat) & CRLF & _
 			"WHERE task_id = " & item.GetId & " " & CRLF & _
 			"AND day_id = " & repeatItr & ";")
+			
 			' Iterate the day IDs from 0 to 6.
 			repeatItr = repeatItr + 1
 		Next
@@ -158,13 +150,14 @@ Public Sub UpdateTask(item As ToDo)
 		Log(LastException)
 	End Try
 	sql.EndTransaction
-	' CopyDatabase
 End Sub
 
+' Retrieves a single task.
 Public Sub GetTask(id As Long) As ToDo
 	Dim item As ToDo
 	sql.BeginTransaction
 	Try
+		' Call the constructor
 		item.Initialize
 		
 		' Obtain items 1 by 1 since SQL library in B4A does not support multiple columns
@@ -172,33 +165,28 @@ Public Sub GetTask(id As Long) As ToDo
 		item.SetTitle(sql.ExecQuerySingleResult("SELECT title FROM task WHERE task_id = " & id))
 		item.SetNotes(sql.ExecQuerySingleResult("SELECT notes FROM task WHERE task_id = " & id))
 		item.SetPriority(sql.ExecQuerySingleResult("SELECT priority FROM task WHERE task_id = " & id))
+		' The database due_date of type DATE field requires date value in UNIX time.
+		item.GetDueDate.SetUnixTime(sql.ExecQuerySingleResult("SELECT due_date FROM task WHERE task_id = " & id))
 		
+		' Process the "done" value if the DB returns a boolean data of type String.
 		If sql.ExecQuerySingleResult("SELECT done FROM task WHERE task_id = " & id) == "1" Then
 			item.Done = True	
 		Else
 			item.Done = False
 		End If
 		
-		' Get all values for task_repeat.
-		Dim Cursor As Cursor
-		Cursor = sql.ExecQuery("SELECT * FROM task_repeat WHERE task_id = " & id)
-		For i = 0 To Cursor.RowCount - 1
-			Cursor.Position = i
-			If Cursor.GetInt("enabled") == 1 Then
-				item.SetRepeat(i, True)
-			Else
-				item.SetRepeat(i, False)
-			End If
-		Next
+		RetrieveRepeatValues(item)
+				
 		sql.TransactionSuccessful
 	Catch
 		Log(LastException.Message)
 	End Try
 	sql.EndTransaction
-	' CopyDatabase
+	
 	Return item
 End Sub
 
+' Retrieves multiple tasks.
 Public Sub GetAllTasks() As List
 	Dim list As List
 	list.Initialize
@@ -220,24 +208,14 @@ Public Sub GetAllTasks() As List
 			item.SetTitle(cursorTask.GetString("title"))
 			item.SetNotes(cursorTask.GetString("notes"))
 			item.SetPriority(cursorTask.GetInt("priority"))
+			item.GetDueDate.SetUnixTime(cursorTask.GetLong("due_date"))
 			If cursorTask.GetInt("done") == 1 Then
 				item.Done = True
 			Else
 				item.Done = False
 			End If
 			
-			
-			' Get all values for task_repeat.
-			Dim cursorRepeat As Cursor
-			cursorRepeat = sql.ExecQuery("SELECT * FROM task_repeat WHERE task_id = " & item.GetId)
-			For j = 0 To cursorRepeat.RowCount - 1
-				cursorRepeat.Position = j
-				If cursorRepeat.GetInt("enabled") == 1 Then
-					item.SetRepeat(j, True)
-				Else
-					item.SetRepeat(j, False)
-				End If
-			Next
+			RetrieveRepeatValues(item)
 			
 			' Add the item into the list
 			list.Add(item)
@@ -247,8 +225,26 @@ Public Sub GetAllTasks() As List
 		Log(LastException.Message)
 	End Try
 	sql.EndTransaction
-	' CopyDatabase
+	
 	Return list
+End Sub
+
+Public Sub RetrieveRepeatValues(item As ToDo)
+	' Get all values for task_repeat. This code uses cursor that represents a specific row
+	' from a database view.
+	Dim Cursor As Cursor
+	Cursor = sql.ExecQuery("SELECT * FROM task_repeat WHERE task_id = " & item.GetId)
+		
+	' Iterate the cursor or each rows. This iteration checks if days Sunday to Saturday have
+	' thier repeat option enabled.
+	For i = 0 To Cursor.RowCount - 1
+		Cursor.Position = i
+		If Cursor.GetInt("enabled") == 1 Then
+			item.SetRepeat(i, True)
+		Else
+			item.SetRepeat(i, False)
+		End If
+	Next
 End Sub
 
 ' Closes the database
@@ -256,8 +252,20 @@ Public Sub CloseDatabase()
 	sql.Close
 End Sub
 
+' Converts boolean into numeric value since inserting the boolean value directly
+' into the database results into an error.
+Private Sub BoolToInt(value As Boolean) As Int
+	If value == True Then
+		Return 1
+	Else
+		Return 0
+	End If
+End Sub
+
+' FOR TESTING ONLY! REMOVE LATER
+' Copies the database into the Downloads directory.
 Public Sub CopyDatabase()
-	' FOR TESTING ONLY! REMOVE LATER
+	
 	Dim source As String = File.DirInternal & "/todo_db.db"
 	Dim dest As String = File.Combine(File.DirDefaultExternal, "todo_db.db")
 
@@ -269,12 +277,23 @@ Public Sub CopyDatabase()
 	End If
 End Sub
 
-' Converts boolean into numeric value since inserting the boolean value directly
-' into the database results into an error.
-Private Sub BoolToInt(value As Boolean) As Int
-	If value == True Then
-		Return 1
-	Else
-		Return 0
-	End If
+' FOR TESTING ONLY! REMOVE LATER
+' Removes all tables. Used for testing purposes only.
+Public Sub DropTable
+	Dim query_task As String = "DROP TABLE IF EXISTS task;"
+	Dim query_days_of_the_week As String = "DROP TABLE IF EXISTS days_of_the_week;"
+	Dim query_task_repeat As String = "DROP TABLE IF EXISTS task_repeat;"
+	Dim query_populate_days_of_the_week As String = "DROP PROCEDURE IF EXISTS PopulateDaysOfTheWeek;"
+	
+	sql.BeginTransaction
+	Try
+		sql.ExecNonQuery(query_task)
+		sql.ExecNonQuery(query_days_of_the_week)
+		sql.ExecNonQuery(query_task_repeat)
+		sql.ExecNonQuery(query_populate_days_of_the_week)
+		sql.TransactionSuccessful
+	Catch
+		Log(LastException.Message)
+	End Try
+	sql.EndTransaction
 End Sub

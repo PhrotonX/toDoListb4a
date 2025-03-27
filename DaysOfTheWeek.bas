@@ -19,6 +19,7 @@ Public Sub Initialize
 	Days(6) = "Saturday"
 End Sub
 
+' Cuts the name of the day of the week into three characters
 Public Sub ShortenedDay(day As Int) As String
 	Return Days(day).SubString2(0, 3)
 End Sub
