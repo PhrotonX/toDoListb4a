@@ -78,6 +78,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	' Check the editor mode to set the appropriate EditorActivity functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
+		' Rename the activity if editing.
+		Label1.Text = "Edit Task"
 		
 		' Retrieve the stored ID that is sent from MainActivity.
 		Dim itemId As Int = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_TASK_ID)
