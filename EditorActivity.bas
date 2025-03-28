@@ -179,7 +179,7 @@ Private Sub btnSave_Click
 	' Primarily validate the due date year field if null before taking another validation if
 	' the date is a valid date.
 	If editDueDateYear.Text.Trim = "" Then
-		MsgboxAsync("Due date year cannot be empty!", "Error")
+		MsgboxAsync("Due date field cannot be empty!", "Error")
 		Return
 	Else
 		' Save the due date year value.
