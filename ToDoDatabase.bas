@@ -26,6 +26,10 @@ Public Sub CreateTable
 	"priority INTEGER NOT NULL," & CRLF & _
 	"due_date DATE," & CRLF & _
 	"done BOOLEAN NOT NULL DEFAULT 0" & CRLF & _
+	"is_deleted BOOLEAN NOT NULL DEFAULT 0" & CRLF & _
+	"created_at LONG NOT NULL DEFAULT 0" & CRLF & _
+	"updated_at LONG NOT NULL DEFAULT 0" & CRLF & _
+	"deleted_at LONG NOT NULL DEFAULT 0" & CRLF & _
 	");"
 	
 	' Query for creating the days_of_the_week table.
@@ -80,10 +84,13 @@ Public Sub InsertTask(item As ToDo)
 	sql.BeginTransaction
 	' Exception handling to catch errors for debuggings, if possible.
 	Try		
+		' Get the current date and time in ticks.
+		Dim currentDateAndTime As Long = DateTime.Now
+		
 		' Insert the task without the repeat data.
-		sql.ExecNonQuery("INSERT INTO task(title, notes, priority, due_date, done)" & CRLF & _
-		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", " & CRLF & _
-		item.GetDueDate.GetUnixTime&", "&BoolToInt(item.Done)&");")
+		sql.ExecNonQuery("INSERT INTO task(title, notes, priority, due_date, done, created_at, deleted_at)" & CRLF & _
+		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", "&item.GetDueDate.GetUnixTime& CRLF & _
+		", "&BoolToInt(item.Done)&", "&currentDateAndTime&", "&currentDateAndTime&");")
 		
 		' Get the ID if the last inserted row.In this case, it is the previous INSERT INTO TASK.
 		Dim id As Int = sql.ExecQuerySingleResult("SELECT last_insert_rowid();")
@@ -168,13 +175,12 @@ Public Sub GetTask(id As Long) As ToDo
 		item.SetPriority(sql.ExecQuerySingleResult("SELECT priority FROM task WHERE task_id = " & id))
 		' The database due_date of type DATE field requires date value in UNIX time.
 		item.GetDueDate.SetUnixTime(sql.ExecQuerySingleResult("SELECT due_date FROM task WHERE task_id = " & id))
+		item.GetCreatedAt.SetUnixTime(sql.ExecQuerySingleResult("SELECT created_at FROM task WHERE task_id = " & id))
+		item.GetUpdatedAt.SetUnixTime(sql.ExecQuerySingleResult("SELECT updated_at FROM task WHERE task_id = " & id))
+		item.GetDeletedAt.SetUnixTime(sql.ExecQuerySingleResult("SELECT deleted_at FROM task WHERE task_id = " & id))
 		
-		' Process the "done" value if the DB returns a boolean data of type String.
-		If sql.ExecQuerySingleResult("SELECT done FROM task WHERE task_id = " & id) == "1" Then
-			item.Done = True	
-		Else
-			item.Done = False
-		End If
+		item.Done = IntToBool(sql.ExecQuerySingleResult("SELECT done FROM task WHERE task_id = " & id))
+		item.SetDeleted(IntToBool(sql.ExecQuerySingleResult("SELECT is_deleted FROM task WHERE is_deleted = " & id)))
 		
 		RetrieveRepeatValues(item)
 				
@@ -210,11 +216,8 @@ Public Sub GetAllTasks() As List
 			item.SetNotes(cursorTask.GetString("notes"))
 			item.SetPriority(cursorTask.GetInt("priority"))
 			item.GetDueDate.SetUnixTime(cursorTask.GetLong("due_date"))
-			If cursorTask.GetInt("done") == 1 Then
-				item.Done = True
-			Else
-				item.Done = False
-			End If
+			item.Done = cursorTask.GetInt("done")
+			item.SetDeleted(IntToBool(cursorTask.GetInt("is_deleted")))
 			
 			RetrieveRepeatValues(item)
 			
@@ -263,23 +266,16 @@ Private Sub BoolToInt(value As Boolean) As Int
 	End If
 End Sub
 
-' FOR TESTING ONLY! REMOVE LATER
-' Copies the database into the Downloads directory.
-Public Sub CopyDatabase()
-	
-	Dim source As String = File.DirInternal & "/todo_db.db"
-	Dim dest As String = File.Combine(File.DirDefaultExternal, "todo_db.db")
-
-	If File.Exists(source, "") Then
-		File.Copy(source, "", dest, "")
-		ToastMessageShow("Database copied to /Download/", True)
+' Converts numeric into boolean value.
+Private Sub IntToBool(value As Int) As Boolean
+	If value == 1 Then
+		Return True
 	Else
-		ToastMessageShow("Database not found!", True)
+		Return False
 	End If
 End Sub
 
-' FOR TESTING ONLY! REMOVE LATER
-' Removes all tables. Used for testing purposes only.
+' Drops all table from the database.
 Public Sub DropTable
 	Dim query_task As String = "DROP TABLE IF EXISTS task;"
 	Dim query_days_of_the_week As String = "DROP TABLE IF EXISTS days_of_the_week;"
@@ -297,4 +293,19 @@ Public Sub DropTable
 		Log(LastException.Message)
 	End Try
 	sql.EndTransaction
+End Sub
+
+' FOR TESTING ONLY! REMOVE LATER
+' Copies the database into the Downloads directory.
+Public Sub CopyDatabase()
+	
+	Dim source As String = File.DirInternal & "/todo_db.db"
+	Dim dest As String = File.Combine(File.DirDefaultExternal, "todo_db.db")
+
+	If File.Exists(source, "") Then
+		File.Copy(source, "", dest, "")
+		ToastMessageShow("Database copied to /Download/", True)
+	Else
+		ToastMessageShow("Database not found!", True)
+	End If
 End Sub
