@@ -14,6 +14,10 @@ Sub Class_Globals
 	' Index 0 represents Sunday while index 6 represents Saturday.
 	Private m_repeat(7) As Boolean
 	Private m_dueDate As Date
+	Private m_createdAt As DateAndTime
+	Private m_updatedAt As DateAndTime
+	Private m_deletedAt As DateAndTime
+	Private m_isDeleted As Boolean
 	Public Done As Boolean
 	
 	Public Const PRIORITY_LOW As Int = 0
@@ -40,6 +44,18 @@ Public Sub Initialize
 	For Each REPEAT As Boolean In m_repeat
 		REPEAT = False
 	Next
+	
+	m_createdAt.Initialize
+	m_deletedAt.Initialize
+	m_updatedAt.Initialize
+End Sub
+
+Public Sub GetCreatedAt As DateAndTime
+	Return m_createdAt
+End Sub
+
+Public Sub GetDeletedAt As DateAndTime
+	Return m_deletedAt
 End Sub
 
 ' Retrieves the glance information to be displayed on TaskItemLayout.
@@ -166,6 +182,18 @@ Public Sub GetRepeatInfo As String
 	End Select
 
 	Return repeat
+End Sub
+
+Public Sub GetUpdatedAt As DateAndTime
+	Return m_updatedAt
+End Sub
+
+Public Sub IsDeleted As Boolean
+	Return m_isDeleted
+End Sub
+
+Public Sub SetDeleted(value As Boolean)
+	m_isDeleted = value
 End Sub
 
 Public Sub SetDueDate(dueDate As Date)
