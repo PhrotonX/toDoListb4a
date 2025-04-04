@@ -34,27 +34,29 @@ Library3=xui
 Library4=sql
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="15"~\n~android:targetSdkVersion="34" />~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddPermission(android.permission.READ_EXTERNAL_STORAGE)~\n~AddPermission(android.permission.WRITE_EXTERNAL_STORAGE)~\n~'End of default text.~\n~
 Module1=Date
-Module10=TaskViewHolder
-Module11=TaskViewModel
-Module12=ToDo
-Module13=ToDoDatabase
-Module2=DaysOfTheWeek
-Module3=EditorActivity
-Module4=SettingsAbout
-Module5=SettingsActivity
-Module6=SettingsHelp
-Module7=Starter
-Module8=TaskRepository
-Module9=TaskViewerActivity
+Module10=TaskViewerActivity
+Module11=TaskViewHolder
+Module12=TaskViewModel
+Module13=Time
+Module14=ToDo
+Module15=ToDoDatabase
+Module2=DateAndTime
+Module3=DaysOfTheWeek
+Module4=EditorActivity
+Module5=SettingsAbout
+Module6=SettingsActivity
+Module7=SettingsHelp
+Module8=Starter
+Module9=TaskRepository
 NumberOfFiles=14
 NumberOfLibraries=4
-NumberOfModules=13
+NumberOfModules=15
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
-	#VersionCode: 3
-	#VersionName: v2.0.0.1
+	#VersionCode: 2
+	#VersionName: v1.0.3
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False

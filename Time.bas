@@ -28,7 +28,11 @@ Private Sub Convert24HourInto12HourFormat As Int
 		If result == 0 Then
 			Return 12
 		End If
+		
+		Return result
 	End If
+	
+	Return m_hour
 End Sub
 
 ' Sets the time based on ticks of UNIX Time format.
