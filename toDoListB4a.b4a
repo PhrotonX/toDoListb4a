@@ -53,8 +53,8 @@ Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
-	#VersionCode: 2
-	#VersionName: v1.0.3
+	#VersionCode: 3
+	#VersionName: v2.0.0.1
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
