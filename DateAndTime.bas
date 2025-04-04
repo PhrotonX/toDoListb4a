@@ -31,6 +31,7 @@ Public Sub SetTime(value As Time)
 	m_time = value
 End Sub
 
+' Sets the UNIX time into date and time objects.
 Public Sub SetUnixTime(ticks As Long)
 	m_date.SetUnixTime(ticks)
 	m_time.SetUnixTime(ticks)
