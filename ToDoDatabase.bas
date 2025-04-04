@@ -216,6 +216,9 @@ Public Sub GetAllTasks() As List
 			item.SetNotes(cursorTask.GetString("notes"))
 			item.SetPriority(cursorTask.GetInt("priority"))
 			item.GetDueDate.SetUnixTime(cursorTask.GetLong("due_date"))
+			item.GetCreatedAt.SetUnixTime(cursorTask.GetLong("created_at"))
+			item.GetDeletedAt.SetUnixTime(cursorTask.GetLong("deleted_at"))
+			item.GetUpdatedAt.SetUnixTime(cursorTask.GetLong("updated_at"))
 			item.Done = cursorTask.GetInt("done")
 			item.SetDeleted(IntToBool(cursorTask.GetInt("is_deleted")))
 			
