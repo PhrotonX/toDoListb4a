@@ -26,10 +26,6 @@ Public Sub CreateTable
 	"priority INTEGER NOT NULL," & CRLF & _
 	"due_date DATE," & CRLF & _
 	"done BOOLEAN NOT NULL DEFAULT 0" & CRLF & _
-	"deleted BOOLEAN NOT NULL DEFAULT 0" & CRLF & _
-	"created_at LONG NOT NULL DEFAULT 0" & CRLF & _
-	"updated_at LONG NOT NULL DEFAULT 0" & CRLF & _
-	"deleted_at LONG" & CRLF & _
 	");"
 	
 	' Query for creating the days_of_the_week table.
@@ -84,13 +80,10 @@ Public Sub InsertTask(item As ToDo)
 	sql.BeginTransaction
 	' Exception handling to catch errors for debuggings, if possible.
 	Try		
-		' Get the current date and time in ticks.
-		Dim currentDateAndtime As Long = DateTime.Now
-		
 		' Insert the task without the repeat data.
-		sql.ExecNonQuery("INSERT INTO task(title, notes, priority, due_date, done, created_at, updated_at) " & CRLF & _ 
-		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", "&item.GetDueDate.GetUnixTime& CRLF & _
-		", "&BoolToInt(item.Done)&", "&currentDateAndtime&", " &currentDateAndtime&");")
+		sql.ExecNonQuery("INSERT INTO task(title, notes, priority, due_date, done)" & CRLF & _
+		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", " & CRLF & _
+		item.GetDueDate.GetUnixTime&", "&BoolToInt(item.Done)&");")
 		
 		' Get the ID if the last inserted row.In this case, it is the previous INSERT INTO TASK.
 		Dim id As Int = sql.ExecQuerySingleResult("SELECT last_insert_rowid();")
@@ -136,6 +129,7 @@ Public Sub UpdateTask(item As ToDo)
 		"priority = " & item.GetPriority & ", " & CRLF & _
 		"done = " & BoolToInt(item.Done) & ", " & CRLF & _ 
 		"due_date = " & item.GetDueDate.GetUnixTime & CRLF & _
+		"updated_at = " & DateTime.Now & CRLF & _
 		"WHERE task_id = " & item.GetId & CRLF & _
 		";")
 		
