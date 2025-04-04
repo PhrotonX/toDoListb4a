@@ -35,6 +35,22 @@ Public Sub GetAllTasks() As List
 	Return repository.GetAllTasks
 End Sub
 
+Public Sub GetAllTasksSortedByCreatedAt(ascending As Boolean) As List
+	Return repository.GetAllTasksSortedByCreatedAt(ascending)
+End Sub
+
+Public Sub GetAllTasksSortedByTitle(ascending As Boolean) As List
+	Return repository.GetAllTasksSortedByTitle(ascending)
+End Sub
+
+Public Sub GetAllTasksSortedByDueDate(ascending As Boolean) As List
+	Return repository.GetAllTasksSortedByDueDate(ascending)
+End Sub
+
+Public Sub GetAllTasksSortedByPriority(ascending As Boolean) As List
+	Return repository.GetAllTasksSortedByPriority(ascending)
+End Sub
+
 ' Releases data handled by Repository
 Public Sub Release
 	repository.Release

@@ -32,7 +32,39 @@ Public Sub GetTask(id As Long) As ToDo
 End Sub
 
 Public Sub GetAllTasks() As List
-	Return database.GetAllTasks
+	Return database.GetAllTasks("")
+End Sub
+
+Public Sub GetAllTasksSortedByCreatedAt(ascending As Boolean) As List
+	If ascending == True Then
+		Return database.GetAllTasks("ORDER BY created_at ASC")
+	Else
+		Return database.GetAllTasks("ORDER BY created_at DESC")
+	End If
+End Sub
+
+Public Sub GetAllTasksSortedByTitle(ascending As Boolean) As List
+	If ascending == True Then
+		Return database.GetAllTasks("ORDER BY title ASC")
+	Else
+		Return database.GetAllTasks("ORDER BY title DESC")
+	End If
+End Sub
+
+Public Sub GetAllTasksSortedByDueDate(ascending As Boolean) As List
+	If ascending == True Then
+		Return database.GetAllTasks("ORDER BY due_date ASC")
+	Else
+		Return database.GetAllTasks("ORDER BY due_date DESC")
+	End If
+End Sub
+
+Public Sub GetAllTasksSortedByPriority(ascending As Boolean) As List
+	If ascending == True Then
+		Return database.GetAllTasks("ORDER BY priority ASC")
+	Else
+		Return database.GetAllTasks("ORDER BY priority DESC")
+	End If
 End Sub
 
 ' Calls closure of database,

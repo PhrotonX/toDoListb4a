@@ -194,15 +194,21 @@ Public Sub GetTask(id As Long) As ToDo
 End Sub
 
 ' Retrieves multiple tasks.
-Public Sub GetAllTasks() As List
+' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
+Public Sub GetAllTasks(sortingQuery As String) As List
 	Dim list As List
 	list.Initialize
+	
+	' Add space into sortingQuery if it is not empty.
+	If sortingQuery <> "" Then
+		sortingQuery = " " & sortingQuery
+	End If
 	
 	sql.BeginTransaction
 	Try
 		' Iterate over all tasks and add it into the list.
 		Dim cursorTask As Cursor
-		cursorTask = sql.ExecQuery("SELECT * FROM task")
+		cursorTask = sql.ExecQuery("SELECT * FROM task" & sortingQuery)
 		For i = 0 To cursorTask.RowCount - 1
 			cursorTask.Position = i
 			
