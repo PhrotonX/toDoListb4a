@@ -196,25 +196,25 @@ End Sub
 ' Retrieves multiple tasks.
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
-Public Sub GetTasks(sortingQuery As String, searchingQuery As String) As List
+Public Sub GetTasks(searchingQuery As String, sortingQuery As String) As List
 	Dim list As List
 	list.Initialize
-	
-	' Add space into sortingQuery if it is not empty.
-	If sortingQuery <> "" Then
-		sortingQuery = " " & sortingQuery
-	End If
 	
 	' Add space into searchingQuery if it is not empty.
 	If searchingQuery <> "" Then
 		searchingQuery = " " & searchingQuery
 	End If
 	
+	' Add space into sortingQuery if it is not empty.
+	If sortingQuery <> "" Then
+		sortingQuery = " " & sortingQuery
+	End If
+	
 	sql.BeginTransaction
 	Try
 		' Iterate over all tasks and add it into the list.
 		Dim cursorTask As Cursor
-		cursorTask = sql.ExecQuery("SELECT * FROM task" & sortingQuery & searchingQuery)
+		cursorTask = sql.ExecQuery("SELECT * FROM task" & searchingQuery & sortingQuery)
 		For i = 0 To cursorTask.RowCount - 1
 			cursorTask.Position = i
 			
