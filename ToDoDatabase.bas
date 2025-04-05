@@ -25,10 +25,10 @@ Public Sub CreateTable
 	"notes TEXT," & CRLF & _
 	"priority INTEGER NOT NULL," & CRLF & _
 	"due_date DATE," & CRLF & _
-	"done BOOLEAN NOT NULL DEFAULT 0" & CRLF & _
-	"is_deleted BOOLEAN NOT NULL DEFAULT 0" & CRLF & _
-	"created_at LONG NOT NULL DEFAULT 0" & CRLF & _
-	"updated_at LONG NOT NULL DEFAULT 0" & CRLF & _
+	"done BOOLEAN NOT NULL DEFAULT 0," & CRLF & _
+	"is_deleted BOOLEAN NOT NULL DEFAULT 0," & CRLF & _
+	"created_at LONG NOT NULL DEFAULT 0," & CRLF & _
+	"updated_at LONG NOT NULL DEFAULT 0," & CRLF & _
 	"deleted_at LONG NOT NULL DEFAULT 0" & CRLF & _
 	");"
 	
@@ -135,7 +135,7 @@ Public Sub UpdateTask(item As ToDo)
 		"notes = '" & item.GetNotes & "', " & CRLF & _
 		"priority = " & item.GetPriority & ", " & CRLF & _
 		"done = " & BoolToInt(item.Done) & ", " & CRLF & _ 
-		"due_date = " & item.GetDueDate.GetUnixTime & CRLF & _
+		"due_date = " & item.GetDueDate.GetUnixTime & ", " & CRLF & _
 		"updated_at = " & DateTime.Now & CRLF & _
 		"WHERE task_id = " & item.GetId & CRLF & _
 		";")
@@ -231,7 +231,7 @@ Public Sub GetTasks(sortingQuery As String, searchingQuery As String) As List
 			item.GetCreatedAt.SetUnixTime(cursorTask.GetLong("created_at"))
 			item.GetDeletedAt.SetUnixTime(cursorTask.GetLong("deleted_at"))
 			item.GetUpdatedAt.SetUnixTime(cursorTask.GetLong("updated_at"))
-			item.Done = cursorTask.GetInt("done")
+			item.Done = IntToBool(cursorTask.GetInt("done"))
 			item.SetDeleted(IntToBool(cursorTask.GetInt("is_deleted")))
 			
 			RetrieveRepeatValues(item)
@@ -258,11 +258,7 @@ Public Sub RetrieveRepeatValues(item As ToDo)
 	' thier repeat option enabled.
 	For i = 0 To Cursor.RowCount - 1
 		Cursor.Position = i
-		If Cursor.GetInt("enabled") == 1 Then
-			item.SetRepeat(i, True)
-		Else
-			item.SetRepeat(i, False)
-		End If
+		item.SetRepeat(i, IntToBool(Cursor.GetInt("enabled")))
 	Next
 End Sub
 
