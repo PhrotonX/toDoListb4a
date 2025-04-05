@@ -195,6 +195,13 @@ Private Sub LoadItems()
 ' Initialize a list.
 	Dim items As List
 	items.Initialize
+	
+	' Testing code for item sorting and searching.
+	' items = Starter.TaskViewModelInstance.FindTasksByDueDate(DateTime.Now - 86400000, DateTime.Now + (86400000 * 2), True)
+	'Dim repeat(7) As Boolean = Array As Boolean(True, False, True, False, False, False, False)
+	
+	'items = Starter.TaskViewModelInstance.FindTasksByRepeat(repeat, True)
+	
 	' Obtain all tasks from the database.
 	items = Starter.TaskViewModelInstance.GetAllTasks()
 	

@@ -76,32 +76,28 @@ Public Sub FindTasksByRepeat(repeat As List, ascending As Boolean) As List
 	
 	' Check each task if they consist of correct repeat items.
 	For Each task As ToDo In tasks
+		' Track an iterator to also compare with the task's repeat information into the
+		' queried repeat information. ALso the iterator for the day of the week.
 		Dim i As Int = 0
-		Dim correct(7) As Int
+		Dim skip As Boolean = False
 		
-		' Identify the correct items and put their indexes into an array of correct items.
+		' Compare if the current queried repeat boolean matches with the tasks repeat boolean.
+		' If it did not match, set the skip value as true.
 		For Each item In repeat
-			correct(i) = -1
-			If task.GetRepeat(i) == item Then
-				correct(i) = i
+			If task.GetRepeat(i) <> item Then
+				skip = True
 			End If
+			
+			' Iterate into the next day of the week.
 			i = i + 1
 		Next
 		
-		' Check if the repeat items match with the correct array, then add the task into the
-		' results if none failed.
-		For Each j As Int In correct
-			If j <> -1 Then
-				If task.GetRepeat(j) == False Then
-					' Skips searching
-					j = 7
-				Else
-					' Add the task as a result.
-					result.Add(task)
-					j = 7
-				End If
-			End If
-		Next
+		' Skip the task if matching has failed. Else, add the current task as a result.
+		If skip == True Then
+			Continue
+		Else
+			result.Add(task)
+		End If
 	Next
 	
 	Return result
