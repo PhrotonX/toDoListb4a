@@ -4,7 +4,7 @@ ModulesStructureVersion=1
 Type=Class
 Version=13.1
 @EndOfDesignText@
-' This class handles the database.
+' This class handles the database and separates SQL-related code from the ViewModel.
 
 Sub Class_Globals
 	Private database As ToDoDatabase
@@ -28,42 +28,62 @@ Public Sub UpdateTask(Item As ToDo)
 End Sub
 
 Public Sub GetTask(id As Long) As ToDo
-	Return database.GetTask(id)
+	Return database.GetTasks("WHERE task_id = " & id, "").Get(0)
 End Sub
 
 Public Sub GetAllTasks() As List
-	Return database.GetAllTasks("")
+	Return database.GetTasks("", "")
 End Sub
 
-Public Sub GetAllTasksSortedByCreatedAt(ascending As Boolean) As List
-	If ascending == True Then
-		Return database.GetAllTasks("ORDER BY created_at ASC")
-	Else
-		Return database.GetAllTasks("ORDER BY created_at DESC")
-	End If
+Public Sub GetAllTasksSortedById(ascending As Boolean) As List
+	Return database.GetTasks("", "ORDER BY task_id " & IsAscending(ascending))
 End Sub
 
-Public Sub GetAllTasksSortedByTitle(ascending As Boolean) As List
-	If ascending == True Then
-		Return database.GetAllTasks("ORDER BY title ASC")
-	Else
-		Return database.GetAllTasks("ORDER BY title DESC")
-	End If
+Public Sub GetTasksSortedByCreatedAt(ascending As Boolean) As List
+	Return database.GetTasks("", "ORDER BY created_at " & IsAscending(ascending))
 End Sub
 
-Public Sub GetAllTasksSortedByDueDate(ascending As Boolean) As List
-	If ascending == True Then
-		Return database.GetAllTasks("ORDER BY due_date ASC")
-	Else
-		Return database.GetAllTasks("ORDER BY due_date DESC")
-	End If
+Public Sub GetTasksSortedByTitle(ascending As Boolean) As List
+	Return database.GetTasks("", "ORDER BY title " & IsAscending(ascending))
 End Sub
 
-Public Sub GetAllTasksSortedByPriority(ascending As Boolean) As List
+Public Sub GetTasksSortedByDueDate(ascending As Boolean) As List
+	Return database.GetTasks("", "ORDER BY due_date " & IsAscending(ascending))
+End Sub
+
+Public Sub GetTasksSortedByPriority(ascending As Boolean) As List
+	Return database.GetTasks("", "ORDER BY priority " & IsAscending(ascending))
+End Sub
+
+Public Sub FindTasksByTitle(query As String, ascending As Boolean) As List
+	Return FindTasks(query, ascending, "title")
+End Sub
+
+Public Sub FindTasksByNotes(query As String, ascending As Boolean) As List
+	Return FindTasks(query, ascending, "notes")
+End Sub
+
+Public Sub FindTasksByPriority(query As Int, ascending As Boolean) As List
+	Return FindTasks(query, ascending, "priority")
+End Sub
+
+Public Sub FindTasksByDueDate(tickBegin As Long, tickEnd As Long, ascending As Boolean) As List
+	Return database.GetTasks("WHERE due_date >= " & tickBegin & " AND due_date <= " & tickEnd, "ORDER BY due_date " & _
+	IsAscending(ascending))
+End Sub
+
+Private Sub FindTasks(query As String, ascending As Boolean, field As String) As List
+	Return database.GetTasks("WHERE "&field&" LIKE '%"&query&"%'", "ORDER BY "&field&" " & IsAscending(ascending))
+End Sub
+
+' Determines whether the ascending value is true or false, and then returns the
+' corresponding SQL keyword for querying.
+' Requires space before (and after if needed) concatenating within a query.
+Private Sub IsAscending(ascending As Boolean) As String
 	If ascending == True Then
-		Return database.GetAllTasks("ORDER BY priority ASC")
+		Return "ASC"
 	Else
-		Return database.GetAllTasks("ORDER BY priority DESC")
+		Return "DESC"
 	End If
 End Sub
 

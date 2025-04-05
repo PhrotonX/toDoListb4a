@@ -35,20 +35,72 @@ Public Sub GetAllTasks() As List
 	Return repository.GetAllTasks
 End Sub
 
-Public Sub GetAllTasksSortedByCreatedAt(ascending As Boolean) As List
-	Return repository.GetAllTasksSortedByCreatedAt(ascending)
+Public Sub GetTasksSortedByCreatedAt(ascending As Boolean) As List
+	Return repository.GetTasksSortedByCreatedAt(ascending)
 End Sub
 
-Public Sub GetAllTasksSortedByTitle(ascending As Boolean) As List
-	Return repository.GetAllTasksSortedByTitle(ascending)
+Public Sub GetTasksSortedByTitle(ascending As Boolean) As List
+	Return repository.GetTasksSortedByTitle(ascending)
 End Sub
 
-Public Sub GetAllTasksSortedByDueDate(ascending As Boolean) As List
-	Return repository.GetAllTasksSortedByDueDate(ascending)
+Public Sub GetTasksSortedByDueDate(ascending As Boolean) As List
+	Return repository.GetTasksSortedByDueDate(ascending)
 End Sub
 
-Public Sub GetAllTasksSortedByPriority(ascending As Boolean) As List
-	Return repository.GetAllTasksSortedByPriority(ascending)
+Public Sub GetTasksSortedByPriority(ascending As Boolean) As List
+	Return repository.GetTasksSortedByPriority(ascending)
+End Sub
+
+
+Public Sub FindTasksByTitle(query As String, ascending As Boolean) As List
+	Return repository.FindTasksByTitle(query, ascending)
+End Sub
+
+Public Sub FindTasksByNotes(query As String, ascending As Boolean) As List
+	Return repository.FindTasksByNotes(query, ascending)
+End Sub
+
+Public Sub FindTasksByPriority(query As Int, ascending As Boolean) As List
+	Return repository.FindTasksByPriority(query, ascending)
+End Sub
+
+Public Sub FindTasksByDueDate(tickBegin As Long, tickEnd As Long, ascending As Boolean) As List
+	Return repository.FindTasksByDueDate(tickBegin, tickEnd, ascending)
+End Sub
+
+' repeat - Expects a list of 7 boolean values.
+Public Sub FindTasksByRepeat(repeat As List, ascending As Boolean) As List
+	Dim tasks As List = repository.GetAllTasksSortedById(ascending)
+	Dim result As List
+	result.Initialize
+	
+	' Check each task if they consist of correct repeat items.
+	For Each task As ToDo In tasks
+		' Track an iterator to also compare with the task's repeat information into the
+		' queried repeat information. ALso the iterator for the day of the week.
+		Dim i As Int = 0
+		Dim skip As Boolean = False
+		
+		' Compare if the current queried repeat boolean matches with the tasks repeat boolean.
+		' If it did not match, set the skip value as true.
+		For Each item In repeat
+			If task.GetRepeat(i) <> item Then
+				skip = True
+			End If
+			
+			' Iterate into the next day of the week.
+			i = i + 1
+		Next
+		
+		' Skip the task if matching has failed. Else, add the current task as a result.
+		If skip == True Then
+			Continue
+		Else
+			result.Add(task)
+		End If
+	Next
+	
+	Return result
 End Sub
 
 ' Releases data handled by Repository

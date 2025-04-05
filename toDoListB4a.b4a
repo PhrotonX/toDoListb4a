@@ -55,7 +55,7 @@ Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
-	#VersionCode: 2
+	#VersionCode: 3
 	#VersionName: v2.0.0.1 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
@@ -195,8 +195,15 @@ Private Sub LoadItems()
 ' Initialize a list.
 	Dim items As List
 	items.Initialize
+	
+	' Testing code for item sorting and searching.
+	' items = Starter.TaskViewModelInstance.FindTasksByDueDate(DateTime.Now - 86400000, DateTime.Now + (86400000 * 2), True)
+	'Dim repeat(7) As Boolean = Array As Boolean(True, False, True, False, False, False, False)
+	
+	'items = Starter.TaskViewModelInstance.FindTasksByRepeat(repeat, True)
+	
 	' Obtain all tasks from the database.
-	items = Starter.TaskViewModelInstance.GetAllTasks
+	items = Starter.TaskViewModelInstance.GetAllTasks()
 	
 	' Null check the list.
 	If items.IsInitialized Then

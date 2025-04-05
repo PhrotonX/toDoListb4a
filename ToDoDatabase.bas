@@ -25,10 +25,10 @@ Public Sub CreateTable
 	"notes TEXT," & CRLF & _
 	"priority INTEGER NOT NULL," & CRLF & _
 	"due_date DATE," & CRLF & _
-	"done BOOLEAN NOT NULL DEFAULT 0" & CRLF & _
-	"is_deleted BOOLEAN NOT NULL DEFAULT 0" & CRLF & _
-	"created_at LONG NOT NULL DEFAULT 0" & CRLF & _
-	"updated_at LONG NOT NULL DEFAULT 0" & CRLF & _
+	"done BOOLEAN NOT NULL DEFAULT 0," & CRLF & _
+	"is_deleted BOOLEAN NOT NULL DEFAULT 0," & CRLF & _
+	"created_at LONG NOT NULL DEFAULT 0," & CRLF & _
+	"updated_at LONG NOT NULL DEFAULT 0," & CRLF & _
 	"deleted_at LONG NOT NULL DEFAULT 0" & CRLF & _
 	");"
 	
@@ -135,7 +135,7 @@ Public Sub UpdateTask(item As ToDo)
 		"notes = '" & item.GetNotes & "', " & CRLF & _
 		"priority = " & item.GetPriority & ", " & CRLF & _
 		"done = " & BoolToInt(item.Done) & ", " & CRLF & _ 
-		"due_date = " & item.GetDueDate.GetUnixTime & CRLF & _
+		"due_date = " & item.GetDueDate.GetUnixTime & ", " & CRLF & _
 		"updated_at = " & DateTime.Now & CRLF & _
 		"WHERE task_id = " & item.GetId & CRLF & _
 		";")
@@ -160,7 +160,7 @@ Public Sub UpdateTask(item As ToDo)
 	sql.EndTransaction
 End Sub
 
-' Retrieves a single task.
+' @DEPRECATED - Retrieves a single task.
 Public Sub GetTask(id As Long) As ToDo
 	Dim item As ToDo
 	sql.BeginTransaction
@@ -195,9 +195,15 @@ End Sub
 
 ' Retrieves multiple tasks.
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
-Public Sub GetAllTasks(sortingQuery As String) As List
+' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
+Public Sub GetTasks(searchingQuery As String, sortingQuery As String) As List
 	Dim list As List
 	list.Initialize
+	
+	' Add space into searchingQuery if it is not empty.
+	If searchingQuery <> "" Then
+		searchingQuery = " " & searchingQuery
+	End If
 	
 	' Add space into sortingQuery if it is not empty.
 	If sortingQuery <> "" Then
@@ -208,7 +214,7 @@ Public Sub GetAllTasks(sortingQuery As String) As List
 	Try
 		' Iterate over all tasks and add it into the list.
 		Dim cursorTask As Cursor
-		cursorTask = sql.ExecQuery("SELECT * FROM task" & sortingQuery)
+		cursorTask = sql.ExecQuery("SELECT * FROM task" & searchingQuery & sortingQuery)
 		For i = 0 To cursorTask.RowCount - 1
 			cursorTask.Position = i
 			
@@ -225,7 +231,7 @@ Public Sub GetAllTasks(sortingQuery As String) As List
 			item.GetCreatedAt.SetUnixTime(cursorTask.GetLong("created_at"))
 			item.GetDeletedAt.SetUnixTime(cursorTask.GetLong("deleted_at"))
 			item.GetUpdatedAt.SetUnixTime(cursorTask.GetLong("updated_at"))
-			item.Done = cursorTask.GetInt("done")
+			item.Done = IntToBool(cursorTask.GetInt("done"))
 			item.SetDeleted(IntToBool(cursorTask.GetInt("is_deleted")))
 			
 			RetrieveRepeatValues(item)
@@ -252,11 +258,7 @@ Public Sub RetrieveRepeatValues(item As ToDo)
 	' thier repeat option enabled.
 	For i = 0 To Cursor.RowCount - 1
 		Cursor.Position = i
-		If Cursor.GetInt("enabled") == 1 Then
-			item.SetRepeat(i, True)
-		Else
-			item.SetRepeat(i, False)
-		End If
+		item.SetRepeat(i, IntToBool(Cursor.GetInt("enabled")))
 	Next
 End Sub
 
