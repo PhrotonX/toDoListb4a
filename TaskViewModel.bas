@@ -51,6 +51,23 @@ Public Sub GetTasksSortedByPriority(ascending As Boolean) As List
 	Return repository.GetTasksSortedByPriority(ascending)
 End Sub
 
+
+Public Sub FindTasksByTitle(query As String, ascending As Boolean) As List
+	Return repository.FindTasksByTitle(query, ascending)
+End Sub
+
+Public Sub FindTasksByNotes(query As String, ascending As Boolean) As List
+	Return repository.FindTasksByNotes(query, ascending)
+End Sub
+
+Public Sub FindTasksByPriority(query As Int, ascending As Boolean) As List
+	Return repository.FindTasksByPriority(query, ascending)
+End Sub
+
+Public Sub FindTasksByDueDate(tickBegin As Long, tickEnd As Long, ascending As Boolean) As List
+	Return repository.FindTasksByDueDate(tickBegin, tickEnd, ascending)
+End Sub
+
 ' repeat - Expects a list of 7 boolean values.
 Public Sub FindTasksByRepeat(repeat As List, ascending As Boolean) As List
 	Dim tasks As List = repository.GetAllTasksSortedById(ascending)
@@ -73,13 +90,15 @@ Public Sub FindTasksByRepeat(repeat As List, ascending As Boolean) As List
 		
 		' Check if the repeat items match with the correct array, then add the task into the
 		' results if none failed.
-		For j = 0 To 6
-			If task.GetRepeat(j) <> -1 Then
+		For Each j As Int In correct
+			If j <> -1 Then
 				If task.GetRepeat(j) == False Then
 					' Skips searching
 					j = 7
 				Else
+					' Add the task as a result.
 					result.Add(task)
+					j = 7
 				End If
 			End If
 		Next
