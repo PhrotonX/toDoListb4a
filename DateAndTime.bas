@@ -19,6 +19,10 @@ Public Sub GetDay As Date
 	Return m_date
 End Sub
 
+Public Sub GetFormattedDateAndTime As String
+	Return m_date.GetFormattedDate & " " & m_time.GetFormattedTime
+End Sub
+
 Public Sub GetTime As Time
 	Return m_time
 End Sub
