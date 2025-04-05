@@ -19,7 +19,7 @@ Sub Process_Globals
 
 	' Global map to mimic Android's Bundles for Intents in Java/Kotlin in which
 	' a string or the name of extra is used as the key of the key and value pair.
-	Public InstanceState As Map
+	Public InstanceState As Maphjbhvuyvgjyvyfcvy
 	
 	' Global variables used for passing extras into EditorActivity.
 	Public Const EXTRA_EDITOR_MODE As String = "EXTRA_EDITOR_MODE"
