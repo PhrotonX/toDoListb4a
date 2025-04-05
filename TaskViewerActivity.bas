@@ -27,7 +27,7 @@ Sub Globals
 	Private viewRepeat As Label
 	Private viewTitle As CheckBox
 	Private viewCreatedAt As Label
-	Private viewModified As Label
+	Private viewModifiedAt As Label
 	
 	' This variable is responsible for handling the current data that can be used for performing
 	' CRUD into the database.
@@ -85,6 +85,8 @@ Sub Activity_Resume
 	viewRepeat.Text = m_task.GetRepeatInfo
 	viewPriority.Text = m_task.GetPriorityInfo
 	viewDueDate.Text = m_task.GetDueDate.GetFormattedDate
+	viewCreatedAt.Text = m_task.GetCreatedAt.GetFormattedDateAndTime
+	viewModifiedAt.Text = m_task.GetUpdatedAt.GetFormattedDateAndTime
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)

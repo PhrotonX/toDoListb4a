@@ -158,7 +158,7 @@ Public Sub GetFormattedDate As String
 	Return GetMonthFromNum(m_month) & " " & m_day & ", " & m_year
 End Sub
 
-' Returns the date with the "Month DD, YYYY" format as a String based
+' Returns the date with the "mm/dd/YYYY" format as a String based
 ' on the values set on this date object.
 Public Sub GetFormattedDate2 As String
 	Return GetMonthWithLeadingZero & "/" & GetNumericDayStr & "/" & m_year
