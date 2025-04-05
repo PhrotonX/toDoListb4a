@@ -26,11 +26,14 @@ Sub Globals
 	Private viewPriority As Label
 	Private viewRepeat As Label
 	Private viewTitle As CheckBox
+	Private viewCreatedAt As Label
+	Private viewModified As Label
 	
 	' This variable is responsible for handling the current data that can be used for performing
 	' CRUD into the database.
 	Private m_task As ToDo
 	Private Label1 As Label
+	
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
