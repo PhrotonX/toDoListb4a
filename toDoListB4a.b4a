@@ -55,7 +55,7 @@ Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
-	#VersionCode: 2
+	#VersionCode: 3
 	#VersionName: v2.0.0.1 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
@@ -196,7 +196,7 @@ Private Sub LoadItems()
 	Dim items As List
 	items.Initialize
 	' Obtain all tasks from the database.
-	items = Starter.TaskViewModelInstance.GetAllTasks
+	items = Starter.TaskViewModelInstance.GetAllTasks()
 	
 	' Null check the list.
 	If items.IsInitialized Then
