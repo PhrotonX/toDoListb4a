@@ -160,7 +160,7 @@ Public Sub UpdateTask(item As ToDo)
 	sql.EndTransaction
 End Sub
 
-' Retrieves a single task.
+' @DEPRECATED - Retrieves a single task.
 Public Sub GetTask(id As Long) As ToDo
 	Dim item As ToDo
 	sql.BeginTransaction
@@ -195,7 +195,8 @@ End Sub
 
 ' Retrieves multiple tasks.
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
-Public Sub GetAllTasks(sortingQuery As String) As List
+' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
+Public Sub GetTasks(sortingQuery As String, searchingQuery As String) As List
 	Dim list As List
 	list.Initialize
 	
@@ -204,11 +205,16 @@ Public Sub GetAllTasks(sortingQuery As String) As List
 		sortingQuery = " " & sortingQuery
 	End If
 	
+	' Add space into searchingQuery if it is not empty.
+	If searchingQuery <> "" Then
+		searchingQuery = " " & searchingQuery
+	End If
+	
 	sql.BeginTransaction
 	Try
 		' Iterate over all tasks and add it into the list.
 		Dim cursorTask As Cursor
-		cursorTask = sql.ExecQuery("SELECT * FROM task" & sortingQuery)
+		cursorTask = sql.ExecQuery("SELECT * FROM task" & sortingQuery & searchingQuery)
 		For i = 0 To cursorTask.RowCount - 1
 			cursorTask.Position = i
 			
