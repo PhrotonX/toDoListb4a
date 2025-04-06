@@ -16,8 +16,16 @@ End Sub
 Public Sub InsertAttachment(item As Attachment)
 	m_sql.BeginTransaction
 	Try
+		' Insert the attachment.
 		m_sql.ExecNonQuery("INSERT INTO attachment(filepath, created_at, updated_at) VALUES(" & CRLF & _
 		"'"&item.GetFilepath&"', "&DateTime.Now&", "&DateTime.Now&");")
+		
+		' Obtain the last ID of a task insert into the tasks table.
+		Dim task_id As Long = m_sql.ExecQuerySingleResult("SELECT task_id FROM task ORDER BY task_id DESC LIMIT 1")
+		
+		' Insert the attachment ID and the task ID into the associative table.
+		m_sql.ExecQuerySingleResult("INSERT INTO task_attachment(task_id, attachment_id) VALUES(" & CRLF & _
+		task_id & ", " & item.GetID() & ");")
 		
 		m_sql.TransactionSuccessful
 	Catch
