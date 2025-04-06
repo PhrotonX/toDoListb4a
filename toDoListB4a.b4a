@@ -29,9 +29,10 @@ FileGroup8=Default Group
 FileGroup9=Default Group
 Group=Default Group
 Library1=core
-Library2=xcustomlistview
-Library3=xui
-Library4=sql
+Library2=sql
+Library3=xcustomlistview
+Library4=xui
+Library5=nb6
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="15"~\n~android:targetSdkVersion="34" />~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddPermission(android.permission.READ_EXTERNAL_STORAGE)~\n~AddPermission(android.permission.WRITE_EXTERNAL_STORAGE)~\n~'End of default text.~\n~
 Module1=Date
 Module10=TaskViewerActivity
@@ -49,7 +50,7 @@ Module7=SettingsHelp
 Module8=Starter
 Module9=TaskRepository
 NumberOfFiles=14
-NumberOfLibraries=4
+NumberOfLibraries=5
 NumberOfModules=15
 Version=13.1
 @EndOfDesignText@
