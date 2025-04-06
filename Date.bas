@@ -38,18 +38,20 @@ End Sub
 
 ' Identifies date if it is a long time ago, earlier, last week, earlier this week, yesterday, today, tomorrow,
 ' this week, next, week, later, or a long time from now in a string data type.
+' This function compares dates relatively.
 Public Sub IdentifyDate() As String
 	Dim ticksSaved As Long = GetUnixTime
-	Dim ticksNowRaw As Long = DateTime.Now
-	Dim ticksNow As Long = ticksNowRaw - (ticksNowRaw Mod DAY_LENGTH)
+	Dim ticksNow As Long = DateTime.Now
+	'Dim ticksNowRaw As Long = DateTime.Now
+	'Dim ticksNow As Long = ticksNowRaw - (ticksNowRaw Mod DAY_LENGTH)
 	
 	If ticksSaved <= (ticksNow - (DAY_LENGTH * 360)) Then
 		Return DATE_A_LONG_TIME_AGO
-	Else If (ticksNow - (DAY_LENGTH * 360)) < ticksSaved And ticksSaved <= (ticksNow - (DAY_LENGTH * 14)) Then
+	Else If (ticksNow - (DAY_LENGTH * 360)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 14)) Then
 		Return DATE_EARLIER
-	Else If (ticksNow - (DAY_LENGTH * 14)) < ticksSaved And ticksSaved <= (ticksNow - (DAY_LENGTH * 7)) Then
+	Else If (ticksNow - (DAY_LENGTH * 14)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 7)) Then
 		Return DATE_LAST_WEEK
-	Else If (ticksNow - (DAY_LENGTH * 7)) < ticksSaved And ticksSaved <= (ticksNow - (DAY_LENGTH * 2)) Then
+	Else If (ticksNow - (DAY_LENGTH * 7)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 2)) Then
 		Return DATE_EARLIER_THIS_WEEK
 	Else If (ticksNow - (DAY_LENGTH * 2)) < ticksSaved And ticksSaved < (ticksNow - DAY_LENGTH) Then
 		Return DATE_YESTERDAY
@@ -57,13 +59,13 @@ Public Sub IdentifyDate() As String
 		Return DATE_TODAY
 	Else If (ticksNow + DAY_LENGTH) < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH * 2)) Then
 		Return DATE_TOMORROW
-	Else If (ticksNow + (DAY_LENGTH * 2)) <= ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH * 7)) Then
+	Else If (ticksNow + (DAY_LENGTH * 2)) < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH * 7)) Then
 		Return DATE_THIS_WEEK
-	Else If (ticksNow + (DAY_LENGTH * 7)) <= ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH * 14)) Then
+	Else If (ticksNow + (DAY_LENGTH * 7)) < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH * 14)) Then
 		Return DATE_NEXT_WEEK
-	Else If (ticksNow + (DAY_LENGTH * 14)) <= ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH * 360)) Then
+	Else If (ticksNow + (DAY_LENGTH * 14)) < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH * 360)) Then
 		Return DATE_LATER
-	Else If (ticksNow + (DAY_LENGTH * 360)) <= ticksSaved Then
+	Else If (ticksNow + (DAY_LENGTH * 360)) < ticksSaved Then
 		Return DATE_A_LONG_TIME_FROM_NOW
 	End If
 	
