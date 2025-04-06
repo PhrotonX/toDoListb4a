@@ -47,6 +47,14 @@ Public Sub CreateTable
 	"PRIMARY KEY(task_id, day_id)" & CRLF & _
 	");"
 	
+	' Query for creating the attachment table.
+	Dim query_attachment As String = "CREATE TABLE IF NOT EXISTS attachment(" & CRLF & _
+	"attachment_id INTEGER NOT NULL," & CRLF & _
+	"filepath TEXT NOT NULL" & CRLF & _
+	"created_at LONG NOT NULL DEFAULT 0" & CRLF & _
+	"PRIMARY KEY(attachment_id)" & CRLF & _
+	");"
+	
 	' Query for populating the days_of_the_week table with data.
 	Dim query_populate_days As String = "INSERT INTO days_of_the_week (day_of_the_week, day_id)" & CRLF & _
 	"SELECT 'Sunday', 0 UNION ALL" & CRLF & _
@@ -65,6 +73,7 @@ Public Sub CreateTable
 		sql.ExecNonQuery(query_task)
 		sql.ExecNonQuery(query_days_of_the_week)
 		sql.ExecNonQuery(query_task_repeat)
+		sql.ExecNonQuery(query_attachment)
 		' Check if task table is empty
 		If sql.ExecQuerySingleResult("SELECT COUNT(*) FROM days_of_the_week") == "0" Then
 			sql.ExecNonQuery(query_populate_days)
