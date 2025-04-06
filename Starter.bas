@@ -34,8 +34,14 @@ Sub Process_Globals
 	' Global variable used for identifying the current item of concern.
 	Public Const EXTRA_EDITOR_TASK_ID As String = PACKAGE_NAME & ".EXTRA_EDITOR_TASK_ID"
 	
+	Private ToDoDatabaseInstance As ToDoDatabase
+	Private taskRepo As TaskRepository
+	Private attachmentRepo As AttachmentRepository
+	
 	' Glocal instance of TaskViewModel where the database can be accessed.
 	Public TaskViewModelInstance As TaskViewModel
+	Public AttachmentViewModelInstance As AttachmentViewModel
+	
 End Sub
 
 Sub CheckInstanceState
@@ -67,7 +73,14 @@ Sub Service_Create
 
 	' Initialize the variables
 	InstanceState.Initialize
-	TaskViewModelInstance.Initialize
+	
+	ToDoDatabaseInstance.Initialize
+	
+	taskRepo.Initialize(ToDoDatabaseInstance)
+	attachmentRepo.Initialize(ToDoDatabaseInstance)
+	
+	TaskViewModelInstance.Initialize(taskRepo)
+	AttachmentViewModelInstance.Initialize(attachmentRepo)
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)
@@ -81,11 +94,11 @@ End Sub
 'Return true to allow the OS default exceptions handler to handle the uncaught exception.
 Sub Application_Error (Error As Exception, StackTrace As String) As Boolean
 	' Close the database
-	TaskViewModelInstance.Release
+	ToDoDatabaseInstance.CloseDatabase
 	Return True
 End Sub
 
 Sub Service_Destroy
 	' Close the database
-	TaskViewModelInstance.Release
+	ToDoDatabaseInstance.CloseDatabase
 End Sub
