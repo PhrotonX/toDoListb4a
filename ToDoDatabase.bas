@@ -8,6 +8,7 @@ Sub Class_Globals
 	Private sql As SQL
 	
 	Private m_taskDao As TaskDao
+	Private m_attachmentDao As AttachmentDao
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -19,6 +20,7 @@ Public Sub Initialize
 	
 	' Initialize data access objects.
 	m_taskDao.Initialize(sql)
+	m_attachmentDao.Initialize(sql)
 End Sub
 
 ' Creates tables for Database in SQL syntax, not MySQL.
@@ -104,6 +106,10 @@ End Sub
 
 Public Sub TaskDao() As TaskDao
 	Return m_taskDao
+End Sub
+
+Public Sub AttachmentDao() As AttachmentDao
+	Return m_attachmentDao
 End Sub
 
 ' Closes the database
