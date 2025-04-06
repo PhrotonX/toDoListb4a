@@ -85,6 +85,12 @@ Sub Globals
 	Private hasMoved As Boolean
 	Private titleLabel As Label
 	
+	Private m_mode As String
+	
+	Private MAIN_ACTIVITY_NORMAL_MODE As String = "MAIN_ACTIVITY_NORMAL_MODE"
+	Private MAIN_ACTIVITY_SEARCHING_MODE As String = "MAIN_ACTIVITY_SEARCHING_MODE"
+	Private MAIN_ACTIVITY_SORTING_MODE As String = "MAIN_ACTIVITY_SORTING_MODE"
+	
 	Public Const TASK_CHECKED_ROOT_COLOR As Int = Colors.RGB(235, 235, 235)
 	Public Const TASK_CHECKED_TEXT_COLOR As Int = Colors.RGB(175, 175, 175)
 	Public Const TASK_UNCHECKED_TEXT_COLOR As Int = Colors.RGB(0, 0, 0)
