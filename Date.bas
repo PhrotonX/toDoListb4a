@@ -51,11 +51,11 @@ Public Sub IdentifyDate() As String
 		Return DATE_LAST_WEEK
 	Else If (ticksNow - (DAY_LENGTH * 7)) < ticksSaved And ticksSaved <= (ticksNow - (DAY_LENGTH * 2)) Then
 		Return DATE_EARLIER_THIS_WEEK
-	Else If (ticksNow - (DAY_LENGTH * 2)) < ticksSaved And ticksSaved < ticksNow Then
+	Else If (ticksNow - (DAY_LENGTH * 2)) < ticksSaved And ticksSaved < (ticksNow - DAY_LENGTH) Then
 		Return DATE_YESTERDAY
-	Else If ticksSaved == ticksNow Then
+	Else If (ticksNow - DAY_LENGTH) < ticksSaved And ticksSaved < (ticksNow + DAY_LENGTH) Then
 		Return DATE_TODAY
-	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH * 2)) Then
+	Else If (ticksNow + DAY_LENGTH) < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH * 2)) Then
 		Return DATE_TOMORROW
 	Else If (ticksNow + (DAY_LENGTH * 2)) <= ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH * 7)) Then
 		Return DATE_THIS_WEEK
