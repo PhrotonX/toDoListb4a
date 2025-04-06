@@ -49,11 +49,11 @@ Public Sub IdentifyDate() As String
 	' E.g. day 0 is today and day 1 is tomorrow.
 	If ticksSaved <= (ticksNow - (DAY_LENGTH * 364)) Then
 		Return DATE_A_LONG_TIME_AGO
-	Else If (ticksNow - (DAY_LENGTH * 364)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 13)) Then
+	Else If (ticksNow - (DAY_LENGTH * 364)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 11)) Then
 		Return DATE_EARLIER
-	Else If (ticksNow - (DAY_LENGTH * 13)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 6)) Then
+	Else If (ticksNow - (DAY_LENGTH * 11)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 4)) Then
 		Return DATE_LAST_WEEK
-	Else If (ticksNow - (DAY_LENGTH * 6)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 2)) Then
+	Else If (ticksNow - (DAY_LENGTH * 4)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 2)) Then
 		Return DATE_EARLIER_THIS_WEEK
 	Else If (ticksNow - (DAY_LENGTH * 2)) < ticksSaved And ticksSaved < (ticksNow - DAY_LENGTH) Then
 		Return DATE_YESTERDAY
@@ -61,9 +61,9 @@ Public Sub IdentifyDate() As String
 		Return DATE_TODAY
 	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 2)) Then
 		Return DATE_TOMORROW
-	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 5)) Then
+	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 4)) Then
 		Return DATE_THIS_WEEK
-	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 13)) Then
+	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 11)) Then
 		Return DATE_NEXT_WEEK
 	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 364)) Then
 		Return DATE_LATER
@@ -72,6 +72,9 @@ Public Sub IdentifyDate() As String
 	End If
 	
 	Return "Error"
+	
+	
+	
 End Sub
 
 ' Returns the UNIX variant of the date values set into this object. May result into an error
