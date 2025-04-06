@@ -39,7 +39,7 @@ Public Sub CreateTable
 	"PRIMARY KEY(day_id)" & CRLF & _
 	");"
 	
-	' Query for creating the task_repeat table.
+	' Query for creating the associative task_repeat table.
 	Dim query_task_repeat As String = "CREATE TABLE IF NOT EXISTS task_repeat(" & CRLF & _
 	"task_id INTEGER NOT NULL," & CRLF & _
 	"day_id TINYINT NOT NULL," & CRLF & _
@@ -53,6 +53,13 @@ Public Sub CreateTable
 	"filepath TEXT NOT NULL" & CRLF & _
 	"created_at LONG NOT NULL DEFAULT 0" & CRLF & _
 	"PRIMARY KEY(attachment_id)" & CRLF & _
+	");"
+	
+	' Query for creating the associative task_attachment table.
+	Dim query_task_attachment As String = "CREATE TABLE IF NOT EXISTS task_attachment(" & CRLF & _
+	"task_id INTEGER NOT NULL," & CRLF & _
+	"attachent_id INTEGER NOT NULL," & CRLF & _
+	"PRIMARY KEY(task_id, attachment_id)" & CRLF & _
 	");"
 	
 	' Query for populating the days_of_the_week table with data.
@@ -74,6 +81,7 @@ Public Sub CreateTable
 		sql.ExecNonQuery(query_days_of_the_week)
 		sql.ExecNonQuery(query_task_repeat)
 		sql.ExecNonQuery(query_attachment)
+		sql.ExecNonQuery(query_task_attachment)
 		' Check if task table is empty
 		If sql.ExecQuerySingleResult("SELECT COUNT(*) FROM days_of_the_week") == "0" Then
 			sql.ExecNonQuery(query_populate_days)
