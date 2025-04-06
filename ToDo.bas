@@ -60,7 +60,7 @@ End Sub
 
 ' Retrieves the glance information to be displayed on TaskItemLayout.
 Public Sub GetGlance As String
-	Dim dueDate As String = m_dueDate.GetFormattedDate2
+	Dim dueDate As String = m_dueDate.IdentifyDate
 	Dim repeat As String = GetRepeatInfo
 	
 	' Separate variable for hyphen is used to toggle it if either repeat is not
