@@ -64,14 +64,7 @@ Public Sub GetAttachments(searchingQuery As String, sortingQuery As String) As R
 		Wait For (SenderFilter) SQL_QueryComplete (Success As Boolean, rs As ResultSet)
 		If Success Then
 			Do While rs.NextRow
-				Dim item As Attachment
-				
-				item.Initialize(rs.GetInt("attachment_id"))
-				item.SetFilepath(rs.GetString("filepath"))
-				item.GetCreatedAt().SetUnixTime(rs.GetLong("created_at"))
-				item.GetUpdatedAt().SetUnixTime(rs.GetLong("updated_at"))
-				
-				result.Add(item)
+				result.Add(OnGetAttachment(rs))
 			Loop
 			rs.Close
 		Else
@@ -85,6 +78,44 @@ Public Sub GetAttachments(searchingQuery As String, sortingQuery As String) As R
 	m_sql.EndTransaction
 	
 	Return result
+End Sub
+
+Public Sub GetTaskAttachments(task_id As Long) As ResumableSub
+	Dim result As List
+	
+	m_sql.BeginTransaction
+	Try
+		Dim SenderFilter As Object = m_sql.ExecQueryAsync("SQL", _
+		"SELECT attachment_id FROM task_attachment WHERE task_id = " & task_id, Null)
+		
+		Wait For (SenderFilter) SQL_QueryComplete (Success As Boolean, rs As ResultSet)
+		If Success Then
+			Do While rs.NextRow
+				result.Add(OnGetAttachment(rs))
+			Loop
+			rs.Close
+		Else
+			Log(LastException)
+		End If
+		
+		m_sql.TransactionSuccessful
+	Catch
+		Log(LastException)
+	End Try
+	m_sql.EndTransaction
+	
+	Return result
+End Sub
+
+Private Sub OnGetAttachment(rs As Cursor) As Attachment
+	Dim item As Attachment
+				
+	item.Initialize(rs.GetInt("attachment_id"))
+	item.SetFilepath(rs.GetString("filepath"))
+	item.GetCreatedAt().SetUnixTime(rs.GetLong("created_at"))
+	item.GetUpdatedAt().SetUnixTime(rs.GetLong("updated_at"))
+	
+	Return item
 End Sub
 
 Public Sub DeleteAttachment(item As Attachment)

@@ -12,7 +12,7 @@ Version=13.1
 Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
-
+	Private xui As XUI
 End Sub
 
 Sub Globals
@@ -49,6 +49,12 @@ Sub Globals
 	
 	Private Const SPINNER_DUE_DATE_DAY_HINT_TEXT As String = "Select day here..."
 	Private Const SPINNER_DUE_DATE_MONTH_HINT_TEXT As String = "Select month here..."
+	Private clvAttachments As CustomListView
+	Private btnAttachmentOpen As Button
+	Private btnAttachmentRemove As Button
+	Private imgAttachmentIcon As ImageView
+	Private lblAttachmentFileName As Label
+	Private pnlAttachmentRoot As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -297,6 +303,39 @@ Private Sub ClearRadioButtons
 	checkRepeatSat.Checked = False
 End Sub
 
+Private Sub LoadAttachments
+	' Obtain the attachments
+	ProgressDialogShow("Loading attachments...")
+	
+	Dim attachments As List
+	Wait For (Starter.AttachmentViewModelInstance.GetTaskAttachments(m_task.GetId())) Complete (attachments As List)
+	
+	ProgressDialogHide
+	
+	For Each item As Attachment In attachments
+		OnAddAttachment(item)
+	Next
+End Sub
+
+Private Sub OnAddAttachment(item As Attachment)
+	Dim panel As B4XView = xui.CreatePanel("")
+		
+	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
+	panel.LoadLayout("AttachmentItemLayout")
+	panel.SetColorAndBorder(Theme.ForegroundColor, 0, 0, Dimen.MediumBorderRadius)
+	
+	Dim viewHolder As AttachmentViewHolder
+	viewHolder.Initialize
+	viewHolder.Root = panel
+	viewHolder.Icon = imgAttachmentIcon
+	viewHolder.AttachmentLabel = lblAttachmentFileName
+	viewHolder.OpenButton = btnAttachmentOpen
+	viewHolder.DeleteButton = btnAttachmentRemove
+	viewHolder.ID = item.GetID
+	
+	clvAttachments.Add(panel, viewHolder)
+End Sub
+
 ' Fill items into the due date Spinners.
 Private Sub PopulateDueDate
 	' Clear the spinner items to prevent potential item duplication bug.
@@ -405,4 +444,49 @@ End Sub
 
 Private Sub btnClearDueDate_Click
 	ClearDueDate
+End Sub
+
+Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
+	
+End Sub
+
+Private Sub btnAttachmentRemove_Click
+	Dim index As Int = clvAttachments.GetItemFromView(Sender)
+	
+	clvAttachments.RemoveAt(index)
+End Sub
+
+Private Sub btnAttachmentOpen_Click
+	Dim index As Int = clvAttachments.GetItemFromView(Sender)
+	
+	Dim viewHolder As AttachmentViewHolder = clvAttachments.GetValue(index)
+	
+	' Sample code only!
+	Dim item As Attachment
+	
+	ProgressDialogShow("Loading attachment...")
+	
+	Wait For (Starter.AttachmentViewModelInstance.GetAttachment(viewHolder.ID)) Complete _
+	(Result As Attachment)
+	ProgressDialogHide()
+	item = Result
+	
+	
+	
+	' Sample code only!
+	If item.IsInitialized Then
+		MsgboxAsync(item.GetFilepath, "Sample Test")
+	Else
+		MsgboxAsync("Error obtaining file!", "Error")
+	End If
+End Sub
+
+Private Sub btnAddAttachment_Click
+	'SAMPLE CODE ONLY
+	Dim item As Attachment
+	
+	item.Initialize(1)
+	item.SetFilepath("Sample Attachment")
+	
+	OnAddAttachment(item)
 End Sub
