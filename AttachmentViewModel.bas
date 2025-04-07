@@ -17,8 +17,14 @@ Public Sub InsertAttachment(item As Attachment)
 	m_repository.InsertAttachment(item)
 End Sub
 
-Public Sub GetAttachments(attachment_id As Long) As ResumableSub
-	Return m_repository.GetAttachments(attachment_id)
+Public Sub GetAttachment(attachment_id As Long) As ResumableSub
+	Wait For (m_repository.GetAttachment(attachment_id)) Complete (Result As Attachment)
+	
+	Return Result
+End Sub
+
+Public Sub GetTaskAttachments(task_id As Long) As ResumableSub
+	Return m_repository.GetTaskAttachments(task_id)
 End Sub
 
 Public Sub UpdateAttachment(item As Attachment)
