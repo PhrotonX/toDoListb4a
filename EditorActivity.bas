@@ -451,7 +451,9 @@ Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
 End Sub
 
 Private Sub btnAttachmentRemove_Click
+	Dim index As Int = clvAttachments.GetItemFromView(Sender)
 	
+	clvAttachments.RemoveAt(index)
 End Sub
 
 Private Sub btnAttachmentOpen_Click
