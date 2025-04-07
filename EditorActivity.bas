@@ -29,6 +29,11 @@ Sub Globals
 	' CRUD into the database.
 	Private m_task As ToDo
 	
+	' Attachment that are pending for saving.
+	Private m_pendingAttachment As List
+	
+	'Private m_runtimePermission As RuntimePermissions
+	
 	Private radioPriorityCritical As RadioButton
 	Private radioPriorityHigh As RadioButton
 	Private radioPriorityLow As RadioButton
@@ -482,11 +487,38 @@ Private Sub btnAttachmentOpen_Click
 End Sub
 
 Private Sub btnAddAttachment_Click
-	'SAMPLE CODE ONLY
-	Dim item As Attachment
+	'm_runtimePermission.CheckAndRequest(m_runtimePermission.PERMISSION_READ_EXTERNAL_STORAGE)
 	
-	item.Initialize(1)
-	item.SetFilepath("Sample Attachment")
+	Private filepicker As ContentChooser
 	
-	OnAddAttachment(item)
+	filepicker.Initialize("filepicker")
+	filepicker.Show("*/*", "Choose file")
+End Sub
+
+Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As String)
+	If Success Then
+		MsgboxAsync("Dir: " & Dir & CRLF & "FileName: " & FileName & CRLF & _ 
+		"Internal: " & File.DirInternal & CRLF & "DefaultExternal:" & File.DirDefaultExternal _
+		& CRLF & "RootExternal: " & File.DirRootExternal & CRLF & "XUI: " & xui.DefaultFolder, "Success")
+		
+		Dim newFIleName As String = DateTime.Now & FileName
+		
+		Dim fileResolver As ContentResolver
+		fileResolver.Initialize("fileResolver")
+		
+		'Dim output As OutputStream = File.OpenOutput(File.DirInternal, newFIleName, True)
+		'Dim input As InputStream = File.OpenInut
+		
+		
+		File.Copy(Dir, FileName, File.DirInternal, FileName)
+		
+		'Dim item As Attachment
+	
+		'item.Initialize(0)
+		'item.SetFilepath(FileName)
+	
+		'OnAddAttachment(item)
+	Else
+		MsgboxAsync("Unable to retrieve attachment", "Error")
+	End If
 End Sub
