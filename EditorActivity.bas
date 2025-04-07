@@ -49,6 +49,7 @@ Sub Globals
 	
 	Private Const SPINNER_DUE_DATE_DAY_HINT_TEXT As String = "Select day here..."
 	Private Const SPINNER_DUE_DATE_MONTH_HINT_TEXT As String = "Select month here..."
+	Private clvAttachments As CustomListView
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -405,4 +406,8 @@ End Sub
 
 Private Sub btnClearDueDate_Click
 	ClearDueDate
+End Sub
+
+Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
+	
 End Sub
