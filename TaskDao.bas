@@ -141,6 +141,7 @@ Public Sub GetTasks(searchingQuery As String, sortingQuery As String) As List
 			' Add the item into the list
 			list.Add(item)
 		Next
+		cursorTask.Close
 		m_sql.TransactionSuccessful
 	Catch
 		Log(LastException.Message)
