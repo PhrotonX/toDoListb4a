@@ -501,24 +501,47 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 		"Internal: " & File.DirInternal & CRLF & "DefaultExternal:" & File.DirDefaultExternal _
 		& CRLF & "RootExternal: " & File.DirRootExternal & CRLF & "XUI: " & xui.DefaultFolder, "Success")
 		
-		Dim newFIleName As String = DateTime.Now & FileName
+		' Dim newFIleName As String = DateTime.Now & FileName
 		
 		Dim fileResolver As ContentResolver
 		fileResolver.Initialize("fileResolver")
 		
-		'Dim output As OutputStream = File.OpenOutput(File.DirInternal, newFIleName, True)
-		'Dim input As InputStream = File.OpenInut
+		Dim java As JavaObject
+		java.InitializeContext
+		
+		Dim output As OutputStream = File.OpenOutput(File.DirInternal, FileName, True)
+		Dim input As InputStream = ParseUri(Me, Dir)
 		
 		
-		File.Copy(Dir, FileName, File.DirInternal, FileName)
+		File.Copy2(input, output)
+		input.Close
+		output.Close
 		
-		'Dim item As Attachment
+		Dim item As Attachment
 	
-		'item.Initialize(0)
-		'item.SetFilepath(FileName)
+		item.Initialize(0)
+		item.SetFilepath(FileName)
 	
-		'OnAddAttachment(item)
+		OnAddAttachment(item)
 	Else
 		MsgboxAsync("Unable to retrieve attachment", "Error")
 	End If
 End Sub
+
+Private Sub ParseUri(context As Object, uriString As String) As Object
+	Dim java As JavaObject
+	Return java.RunMethod("openInputStream", Array(context, uriString))
+End Sub
+
+#If JAVA
+import android.content.Context;
+import android.net.Uri;
+import java.io.InputStream;
+
+public static InputStream openInputStream(Object contextObj, String uriString) throws Exception{
+	Context context = (Context) contextObj;
+	Uri uri = Uri.parse(uriString);
+	return context.getContentResolver().openInputStream(uri);
+}
+
+#End If
