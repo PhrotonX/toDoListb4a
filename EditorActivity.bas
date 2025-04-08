@@ -499,27 +499,12 @@ End Sub
 
 Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As String)
 	If Success Then
-		'MsgboxAsync("Dir: " & Dir & CRLF & "FileName: " & FileName & CRLF & _ 
-		'"Internal: " & File.DirInternal & CRLF & "DefaultExternal:" & File.DirDefaultExternal _
-		'& CRLF & "RootExternal: " & File.DirRootExternal & CRLF & "XUI: " & xui.DefaultFolder, "Success")
-		
-		Dim storage As ExternalStorage
 		
 		Dim input As InputStream, output As OutputStream
 		
-		Dim jo As JavaObject
-		Dim cd As String = jo.InitializeStatic("anywheresoftware.b4a.objects.streams.File").GetField("ContentDir")
-		Dim UriString As String = FileName
-		input = File.OpenInput(cd , UriString)
-		
-		Dim Cur As Cursor
-		Dim Uri1 As Uri
-		Dim cr As ContentResolver
-		cr.Initialize("")
-		
-		Uri1.Parse(UriString)
-		Cur = cr.Query(Uri1, Null, Null, Null, Null)
-		Cur.Position = 0
+		Dim javaObj As JavaObject
+		Dim contentDir As String = javaObj.InitializeStatic("anywheresoftware.b4a.objects.streams.File").GetField("ContentDir")
+		input = File.OpenInput(contentDir , FileName)
 		
 		' Save the file
 		output = File.OpenOutput(File.DirInternal, FileName, False)
@@ -528,7 +513,16 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 		output.Close
 		
 		Try
-			' Create an entity for the item.
+			' Create an entity for the item and save the information into the database.
+			Dim Uri1 As Uri
+			Uri1.Parse(FileName)
+			
+			Dim resolver As ContentResolver
+			resolver.Initialize("")
+			
+			Dim Cur As Cursor = resolver.Query(Uri1, Null, Null, Null, Null)
+			Cur.Position = 0
+			
 			Dim item As Attachment
 			item.Initialize(0)
 			
@@ -536,14 +530,14 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 			item.SetMimeType(Cur.GetString("mime_type"))
 			item.SetSize(Cur.GetString("_size"))
 			item.GetUpdatedAt.SetUnixTime(Cur.GetString("last_modified"))
-			Msgbox("Title: " & item.GetFilename, "Info")
+			MsgboxAsync("Title: " & item.GetFilename, "Info")
 			
 			OnAddAttachment(item)
+			
+			Cur.Close
 		Catch
 			Log(LastException)
 		End Try
-		
-		Cur.Close
 	Else
 		MsgboxAsync("Unable to retrieve attachment", "Error")
 	End If
