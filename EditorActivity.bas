@@ -31,6 +31,7 @@ Sub Globals
 	
 	' Attachment that are pending for saving.
 	Private m_pendingAttachment As List
+	Private m_pendingAttachmentDelete As List
 	
 	'Private m_runtimePermission As RuntimePermissions
 	
@@ -327,7 +328,7 @@ Private Sub OnAddAttachment(item As Attachment)
 		
 	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
 	panel.LoadLayout("AttachmentItemLayout")
-	panel.SetColorAndBorder(Theme.ForegroundColor, 0, 0, Dimen.MediumBorderRadius)
+	panel.SetColorAndBorder(Theme.ForegroundColor, 0, Theme.ForegroundColor, 0)
 	
 	Dim viewHolder As AttachmentViewHolder
 	viewHolder.Initialize
@@ -335,6 +336,7 @@ Private Sub OnAddAttachment(item As Attachment)
 	viewHolder.Icon = imgAttachmentIcon
 	viewHolder.AttachmentLabel = lblAttachmentFileName
 	viewHolder.OpenButton = btnAttachmentOpen
+	viewHolder.OpenButton.Visible = False
 	viewHolder.DeleteButton = btnAttachmentRemove
 	viewHolder.ID = item.GetID
 	
