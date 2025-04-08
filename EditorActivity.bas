@@ -482,7 +482,7 @@ Private Sub btnAttachmentOpen_Click
 	
 	' Sample code only!
 	If item.IsInitialized Then
-		MsgboxAsync(item.GetFilepath, "Sample Test")
+		MsgboxAsync(item.GetFilename, "Sample Test")
 	Else
 		MsgboxAsync("Error obtaining file!", "Error")
 	End If
@@ -526,11 +526,11 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 			Dim item As Attachment
 			item.Initialize(0)
 			
-			item.SetFilepath(DateTime.Now & "_" & Cur.GetString("_display_name"))
+			item.SetFilename(DateTime.Now & "_" & Cur.GetString("_display_name"))
 			item.SetMimeType(Cur.GetString("mime_type"))
 			item.SetSize(Cur.GetString("_size"))
 			item.GetUpdatedAt.SetUnixTime(Cur.GetString("last_modified"))
-			Msgbox("Title: " & item.GetFilepath, "Info")
+			Msgbox("Title: " & item.GetFilename, "Info")
 			
 			OnAddAttachment(item)
 		Catch

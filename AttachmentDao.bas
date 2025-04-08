@@ -17,9 +17,9 @@ Public Sub InsertAttachment(item As Attachment)
 	m_sql.BeginTransaction
 	Try
 		' Insert the attachment.
-		m_sql.ExecNonQuery("INSERT INTO attachment(filepath, created_at, updated_at, mime_type, size) " & CRLF & _
+		m_sql.ExecNonQuery("INSERT INTO attachment(filename, created_at, updated_at, mime_type, size)" & CRLF & _
 		"VALUES(" & CRLF & _
-		"'"&item.GetFilepath&"', "&DateTime.Now&", "&item.GetUpdatedAt.GetDay.GetUnixTime& CRLF & _
+		"'"&item.GetFilename&"', "&DateTime.Now&", "&item.GetUpdatedAt.GetDay.GetUnixTime& CRLF & _
 		", '"&item.GetMimeType&"', "&item.GetSize&");")
 		
 		' Obtain the last ID of a task insert into the tasks table.
@@ -40,7 +40,7 @@ Public Sub UpdateAttachment(item As Attachment)
 	m_sql.BeginTransaction
 	Try
 		m_sql.ExecNonQuery("UPDATE attachment SET" & CRLF & _
-		"filepath = '" & item.GetFilepath & "'," & CRLF & _ 
+		"filename = '" & item.GetFilename & "'," & CRLF & _ 
 		"mimeType = '" & item.GetMimeType & "'," & CRLF & _ 
 		"size = " & item.GetSize & "," & CRLF & _ 
 		"updated_at = " & item.GetUpdatedAt.GetDay.GetUnixTime & "," & CRLF & _ 
@@ -115,7 +115,7 @@ Private Sub OnGetAttachment(rs As Cursor) As Attachment
 	Dim item As Attachment
 				
 	item.Initialize(rs.GetInt("attachment_id"))
-	item.SetFilepath(rs.GetString("filepath"))
+	item.SetFilename(rs.GetString("filename"))
 	item.SetMimeType(rs.GetString("mime_type"))
 	item.SetSize(rs.GetLong("size"))
 	item.GetCreatedAt().SetUnixTime(rs.GetLong("created_at"))

@@ -57,7 +57,7 @@ Public Sub CreateTable
 	' Query for creating the attachment table.
 	Dim query_attachment As String = "CREATE TABLE IF NOT EXISTS attachment(" & CRLF & _
 	"attachment_id INTEGER NOT NULL," & CRLF & _
-	"filepath TEXT NOT NULL," & CRLF & _
+	"filename TEXT NOT NULL," & CRLF & _
 	"mime_type VARCHAR(255)," & CRLF & _
 	"size LONG," & CRLF & _
 	"created_at LONG NOT NULL DEFAULT 0," & CRLF & _
