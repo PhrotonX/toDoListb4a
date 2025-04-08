@@ -521,6 +521,12 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 		Cur = cr.Query(Uri1, Null, Null, Null, Null)
 		Cur.Position = 0
 		
+		' Save the file
+		output = File.OpenOutput(File.DirInternal, FileName, False)
+		File.Copy2(input, output)
+		input.Close
+		output.Close
+		
 		Try
 			' Create an entity for the item.
 			Dim item As Attachment
@@ -541,9 +547,4 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 	Else
 		MsgboxAsync("Unable to retrieve attachment", "Error")
 	End If
-End Sub
-
-Private Sub ParseUri(context As Object, uriString As String) As Object
-	Dim java As JavaObject
-	Return java.RunMethod("openInputStream", Array(context, uriString))
 End Sub
