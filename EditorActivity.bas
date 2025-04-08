@@ -30,7 +30,7 @@ Sub Globals
 	Private m_task As ToDo
 	
 	' Attachment that are pending for saving.
-	Private m_pendingAttachment As List
+	Private m_pendingAttachmentInsert As List
 	Private m_pendingAttachmentDelete As List
 	
 	'Private m_runtimePermission As RuntimePermissions
@@ -66,6 +66,9 @@ End Sub
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("EditorLayout")
+	
+	m_pendingAttachmentInsert.Initialize
+	m_pendingAttachmentDelete.Initialize
 	
 	editorScrollView.Panel.LoadLayout("EditorScrollLayout")
 	
@@ -500,27 +503,28 @@ End Sub
 Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As String)
 	If Success Then
 		
-		Dim input As InputStream, output As OutputStream
+		' Parse the filename which is a content:// uri.
+		Dim uri As Uri
+		uri.Parse(FileName)
 		
+		' Obtain an InputStream from an Android ContentResolver but through a Java object since B4A does
+		' not support an easier retrieval of an InputStream through its own ContentResolver.
 		Dim javaObj As JavaObject
-		Dim contentDir As String = javaObj.InitializeStatic("anywheresoftware.b4a.objects.streams.File").GetField("ContentDir")
-		input = File.OpenInput(contentDir , FileName)
+		javaObj.InitializeContext
 		
-		' Save the file
-		output = File.OpenOutput(File.DirInternal, FileName, False)
-		File.Copy2(input, output)
-		input.Close
-		output.Close
+		Dim input As InputStream = javaObj.RunMethodJO("getContentResolver", Null).RunMethod("openInputStream", Array(uri))
 		
+		' Obtain file information that can be stored in a database.
 		Try
-			' Create an entity for the item and save the information into the database.
-			Dim Uri1 As Uri
-			Uri1.Parse(FileName)
-			
+			' Create a content resolver that helps in querying the file information.
 			Dim resolver As ContentResolver
 			resolver.Initialize("")
 			
-			Dim Cur As Cursor = resolver.Query(Uri1, Null, Null, Null, Null)
+			' Create an entity for the item and save the information into the database, including the modified
+			' filename.
+			' This will also require a cursor since a resolver query returns a cursor that navigates results
+			' like an SQL query.
+			Dim Cur As Cursor = resolver.Query(uri, Null, Null, Null, Null)
 			Cur.Position = 0
 			
 			Dim item As Attachment
@@ -532,13 +536,29 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 			item.GetUpdatedAt.SetUnixTime(Cur.GetString("last_modified"))
 			MsgboxAsync("Title: " & item.GetFilename, "Info")
 			
+			' Add the attachment into the list.
 			OnAddAttachment(item)
 			
+			' Add the attachment into the list of pending attachments to be saved.
+			m_pendingAttachmentInsert.Add(item)
+			
+			' Close the cursor to release resorces allocated by it.
 			Cur.Close
+			
+			' Save the file
+			Dim output As OutputStream = File.OpenOutput(File.DirInternal, item.GetFilename, False)
+			File.Copy2(input, output)
+			input.Close
+			output.Close
 		Catch
 			Log(LastException)
 		End Try
 	Else
 		MsgboxAsync("Unable to retrieve attachment", "Error")
 	End If
+End Sub
+
+Public Sub ParseUri(uri As String) As Object
+	Dim r As Reflector
+	Return r.RunStaticMethod("android.net.Uri", "parse", Array As Object(uri), Array As String("java.lang.String"))
 End Sub
