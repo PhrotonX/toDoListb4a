@@ -497,32 +497,45 @@ End Sub
 
 Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As String)
 	If Success Then
-		MsgboxAsync("Dir: " & Dir & CRLF & "FileName: " & FileName & CRLF & _ 
-		"Internal: " & File.DirInternal & CRLF & "DefaultExternal:" & File.DirDefaultExternal _
-		& CRLF & "RootExternal: " & File.DirRootExternal & CRLF & "XUI: " & xui.DefaultFolder, "Success")
+		'MsgboxAsync("Dir: " & Dir & CRLF & "FileName: " & FileName & CRLF & _ 
+		'"Internal: " & File.DirInternal & CRLF & "DefaultExternal:" & File.DirDefaultExternal _
+		'& CRLF & "RootExternal: " & File.DirRootExternal & CRLF & "XUI: " & xui.DefaultFolder, "Success")
 		
-		' Dim newFIleName As String = DateTime.Now & FileName
+		Dim storage As ExternalStorage
 		
-		Dim fileResolver As ContentResolver
-		fileResolver.Initialize("fileResolver")
+		Dim input As InputStream, output As OutputStream
 		
-		Dim java As JavaObject
-		java.InitializeContext
+		Dim jo As JavaObject
+		Dim cd As String = jo.InitializeStatic("anywheresoftware.b4a.objects.streams.File").GetField("ContentDir")
+		Dim UriString As String = FileName
+		input = File.OpenInput(cd , UriString)
 		
-		Dim output As OutputStream = File.OpenOutput(File.DirInternal, FileName, True)
-		Dim input As InputStream = ParseUri(Me, Dir)
+		Dim Cur As Cursor
+		Dim Uri1 As Uri
+		Dim cr As ContentResolver
+		cr.Initialize("")
 		
+		Uri1.Parse(UriString)
+		Cur = cr.Query(Uri1, Null, Null, Null, Null)
+		Cur.Position = 0
 		
-		File.Copy2(input, output)
-		input.Close
-		output.Close
+		Try
+			' Create an entity for the item.
+			Dim item As Attachment
+			item.Initialize(0)
+			
+			item.SetFilepath(DateTime.Now & "_" & Cur.GetString("_display_name"))
+			item.SetMimeType(Cur.GetString("mime_type"))
+			item.SetSize(Cur.GetString("_size"))
+			item.GetUpdatedAt.SetUnixTime(Cur.GetString("last_modified"))
+			Msgbox("Title: " & item.GetFilepath, "Info")
+			
+			OnAddAttachment(item)
+		Catch
+			Log(LastException)
+		End Try
 		
-		Dim item As Attachment
-	
-		item.Initialize(0)
-		item.SetFilepath(FileName)
-	
-		OnAddAttachment(item)
+		Cur.Close
 	Else
 		MsgboxAsync("Unable to retrieve attachment", "Error")
 	End If
@@ -532,16 +545,3 @@ Private Sub ParseUri(context As Object, uriString As String) As Object
 	Dim java As JavaObject
 	Return java.RunMethod("openInputStream", Array(context, uriString))
 End Sub
-
-#If JAVA
-import android.content.Context;
-import android.net.Uri;
-import java.io.InputStream;
-
-public static InputStream openInputStream(Object contextObj, String uriString) throws Exception{
-	Context context = (Context) contextObj;
-	Uri uri = Uri.parse(uriString);
-	return context.getContentResolver().openInputStream(uri);
-}
-
-#End If
