@@ -138,6 +138,10 @@ Sub Activity_Create(FirstTime As Boolean)
 		spinnerDueDateDay.SelectedIndex = m_task.GetDueDate.GetDay
 		editDueDateYear.Text = m_task.GetDueDate.GetYear
 		
+		' Load the attachments
+		LoadAttachments
+		
+		
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		' Disable the delete button if the editor mode is EDITOR_MODE_CREATE
 		btnDelete.Visible = False
@@ -212,6 +216,18 @@ Private Sub btnSave_Click
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		Starter.TaskViewModelInstance.InsertTask(m_task)
 	End If
+	
+	For Each item As Attachment In m_pendingAttachmentInsert
+		If Starter.AttachmentViewModelInstance.InsertAttachment(item, m_task.GetId) == False Then
+			MsgboxAsync("Failed to insert attachment: " & item.GetFilename, "Error")
+		End If
+	Next
+	
+	For Each item As Attachment In m_pendingAttachmentDelete
+		If Starter.AttachmentViewModelInstance.DeleteAttachment(item) == False Then
+			MsgboxAsync("Failed to delete attachment: " & item.GetFilename, "Error")
+		End If
+	Next
 	
 	' Close the activity after saving
 	Activity.Finish
@@ -313,17 +329,14 @@ Private Sub ClearRadioButtons
 End Sub
 
 Private Sub LoadAttachments
-	' Obtain the attachments
-	ProgressDialogShow("Loading attachments...")
+	Dim attachments As List = Starter.AttachmentViewModelInstance.GetTaskAttachments(m_task.GetId())
 	
-	Dim attachments As List
-	Wait For (Starter.AttachmentViewModelInstance.GetTaskAttachments(m_task.GetId())) Complete (attachments As List)
+	If attachments.IsInitialized Then
+		For Each item As Attachment In attachments
+			OnAddAttachment(item)
+		Next
+	End If
 	
-	ProgressDialogHide
-	
-	For Each item As Attachment In attachments
-		OnAddAttachment(item)
-	Next
 End Sub
 
 Private Sub OnAddAttachment(item As Attachment)
@@ -457,12 +470,32 @@ Private Sub btnClearDueDate_Click
 End Sub
 
 Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
-	
+	' Temporary code only
+	For Each item As String In File.ListFiles(File.DirInternal)
+		Log(item)
+	Next
 End Sub
 
 Private Sub btnAttachmentRemove_Click
-	Dim index As Int = clvAttachments.GetItemFromView(Sender)
+	' Get the index of item from the list view that was clicked.
+	Dim index As Long = clvAttachments.GetItemFromView(Sender)
 	
+	' Get the viewHolder of the item from list view.
+	Dim viewHolder As AttachmentViewHolder = clvAttachments.GetValue(index)
+	
+	Dim itemId As Long  = viewHolder.ID
+	
+	' Check if the item ID is valid. 0 is the default ID of new attachments inserted into the database.
+	If itemId > 0 Then
+		' Create a new Attachment object that only consists of attachment ID.
+		Dim item As Attachment
+		item.Initialize(itemId)
+		
+		' Add the item into the items pending for deletion.
+		m_pendingAttachmentDelete.Add(item)
+	End If
+	
+	' Remove the item from the list view.
 	clvAttachments.RemoveAt(index)
 End Sub
 
@@ -480,8 +513,6 @@ Private Sub btnAttachmentOpen_Click
 	(Result As Attachment)
 	ProgressDialogHide()
 	item = Result
-	
-	
 	
 	' Sample code only!
 	If item.IsInitialized Then
