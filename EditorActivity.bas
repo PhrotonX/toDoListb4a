@@ -507,13 +507,6 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 		Dim uri As Uri
 		uri.Parse(FileName)
 		
-		' Obtain an InputStream from an Android ContentResolver but through a Java object since B4A does
-		' not support an easier retrieval of an InputStream through its own ContentResolver.
-		Dim javaObj As JavaObject
-		javaObj.InitializeContext
-		
-		Dim input As InputStream = javaObj.RunMethodJO("getContentResolver", Null).RunMethod("openInputStream", Array(uri))
-		
 		' Obtain file information that can be stored in a database.
 		Try
 			' Create a content resolver that helps in querying the file information.
@@ -546,6 +539,7 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 			Cur.Close
 			
 			' Save the file
+			Dim input As InputStream = File.OpenInput(Dir, FileName)
 			Dim output As OutputStream = File.OpenOutput(File.DirInternal, item.GetFilename, False)
 			File.Copy2(input, output)
 			input.Close
