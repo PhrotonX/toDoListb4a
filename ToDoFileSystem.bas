@@ -43,3 +43,9 @@ Public Sub GetCursorFromUri(FileUri As String) As Cursor
 	
 	Return cur
 End Sub
+
+' Removes file from File.DirInternal
+' Returns true if succeeded.
+Public Sub RemoveFile(FileName As String) As Boolean
+	Return File.Delete(File.DirInternal, FileName)
+End Sub
