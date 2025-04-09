@@ -16,9 +16,19 @@ Public Sub Initialize(dbRepo As AttachmentRepository, fileRepo As AttachmentFile
 End Sub
 
 ' Inserts an attachment into the database and then saves into the file system.
-Public Sub InsertAttachment(item As Attachment)
-	m_fileRepository.SaveAttachment(item)
-	m_dbRepository.InsertAttachment(item)
+' item - The attachment to be added.
+' task_id - The ID of the task associated with the attachment.
+' Returns true if the insertion succeeded.
+Public Sub InsertAttachment(item As Attachment, task_id As Long) As Boolean
+	Try
+		m_fileRepository.SaveAttachment(item)
+		m_dbRepository.InsertAttachment(item, task_id)
+		Return True
+	Catch
+		Log(LastException)
+	End Try
+	
+	Return False
 End Sub
 
 Public Sub GetAttachment(attachment_id As Long) As Attachment
@@ -29,7 +39,7 @@ Public Sub GetAttachmentsFromUri(FileUri As String) As Attachment
 	Return m_fileRepository.GetAttachmentsFromUri(FileUri).Get(0)
 End Sub
 
-Public Sub GetTaskAttachments(task_id As Long) As ResumableSub
+Public Sub GetTaskAttachments(task_id As Long) As List
 	Return m_dbRepository.GetTaskAttachments(task_id)
 End Sub
 
@@ -37,6 +47,7 @@ Public Sub UpdateAttachment(item As Attachment)
 	m_dbRepository.UpdateAttachment(item)
 End Sub
 
-Public Sub DeleteAttachment(item As Attachment)
+Public Sub DeleteAttachment(item As Attachment) As Boolean
 	m_dbRepository.DeleteAttachment(item)
+	Return m_fileRepository.RemoveAttachment(item)
 End Sub
