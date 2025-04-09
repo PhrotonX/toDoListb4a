@@ -5,32 +5,38 @@ Type=Class
 Version=13.1
 @EndOfDesignText@
 Sub Class_Globals
-	Private m_repository As AttachmentRepository
+	Private m_fileRepository As AttachmentFileRepository
+	Private m_dbRepository As AttachmentRepository
 End Sub
 
-'Initializes the object. You can add parameters to this method if needed.
-Public Sub Initialize(repository As AttachmentRepository)
-	m_repository = repository
+' Initializes the object. You can add parameters to this method if needed.
+Public Sub Initialize(dbRepo As AttachmentRepository, fileRepo As AttachmentFileRepository)
+	m_dbRepository = dbRepo
+	m_fileRepository = fileRepo
 End Sub
 
+' Inserts an attachment into the database and then saves into the file system.
 Public Sub InsertAttachment(item As Attachment)
-	m_repository.InsertAttachment(item)
+	m_fileRepository.SaveAttachment(item)
+	m_dbRepository.InsertAttachment(item)
 End Sub
 
-Public Sub GetAttachment(attachment_id As Long) As ResumableSub
-	Wait For (m_repository.GetAttachment(attachment_id)) Complete (Result As Attachment)
-	
-	Return Result
+Public Sub GetAttachment(attachment_id As Long) As Attachment
+	Return m_dbRepository.GetAttachment(attachment_id)
+End Sub
+
+Public Sub GetAttachmentsFromUri(FileUri As String) As Attachment
+	Return m_fileRepository.GetAttachmentsFromUri(FileUri).Get(0)
 End Sub
 
 Public Sub GetTaskAttachments(task_id As Long) As ResumableSub
-	Return m_repository.GetTaskAttachments(task_id)
+	Return m_dbRepository.GetTaskAttachments(task_id)
 End Sub
 
 Public Sub UpdateAttachment(item As Attachment)
-	m_repository.UpdateAttachment(item)
+	m_dbRepository.UpdateAttachment(item)
 End Sub
 
 Public Sub DeleteAttachment(item As Attachment)
-	m_repository.DeleteAttachment(item)
+	m_dbRepository.DeleteAttachment(item)
 End Sub
