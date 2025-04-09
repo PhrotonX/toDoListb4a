@@ -57,3 +57,13 @@ Public Sub SaveAttachment(item As Attachment)
 		Log(LastException)
 	End Try
 End Sub
+
+Public Sub RemoveAttachment(item As Attachment) As Boolean
+	Try
+		Return m_fileSystem.RemoveFile(item.GetFilename)
+	Catch
+		Log(LastException)
+	End Try
+	
+	Return False
+End Sub
