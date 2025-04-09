@@ -7,6 +7,7 @@ Version=13.1
 Sub Class_Globals
 	Private m_id As Long
 	Private m_filename As String
+	Private m_fileUri As String
 	Private m_mimeType As String
 	Private m_size As Long
 	Private m_createdAt As DateAndTime
@@ -27,6 +28,10 @@ End Sub
 
 Public Sub GetFilename() As String
 	Return m_filename
+End Sub
+
+Public Sub GetFileUri() As String
+	Return m_fileUri
 End Sub
 
 Public Sub GetMimeType() As String
@@ -55,4 +60,8 @@ End Sub
 
 Public Sub SetSize(size As Long)
 	m_size = size
+End Sub
+
+Public Sub SetFileUri(fileUri As String)
+	m_fileUri = fileUri
 End Sub
