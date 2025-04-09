@@ -57,23 +57,18 @@ End Sub
 ' Retrieves multiple attachments.
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
-Public Sub GetAttachments(searchingQuery As String, sortingQuery As String) As ResumableSub
+Public Sub GetAttachments(searchingQuery As String, sortingQuery As String) As List
 	Dim result As List
 	
 	m_sql.BeginTransaction
 	Try
-		Dim SenderFilter As Object = m_sql.ExecQueryAsync("SQL", "SELECT * FROM attachment " _
-		& CRLF & searchingQuery & CRLF & sortingQuery, Null)
+		Dim cur As Cursor = m_sql.ExecQuery("SELECT * FROM attachment " & CRLF & searchingQuery & CRLF & sortingQuery)
 		
-		Wait For (SenderFilter) SQL_QueryComplete (Success As Boolean, rs As ResultSet)
-		If Success Then
-			Do While rs.NextRow
-				result.Add(OnGetAttachment(rs))
-			Loop
-			rs.Close
-		Else
-			Log(LastException)
-		End If
+		For i = 0 To cur.RowCount - 1
+			result.Add(OnGetAttachment(cur))
+		Next
+		
+		cur.Close
 		
 		m_sql.TransactionSuccessful
 	Catch

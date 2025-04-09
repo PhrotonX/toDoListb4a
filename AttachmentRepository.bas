@@ -17,11 +17,8 @@ Public Sub InsertAttachment(item As Attachment)
 	m_database.AttachmentDao().InsertAttachment(item)
 End Sub
 
-Public Sub GetAttachment(attachment_id As Long) As ResumableSub
-	Wait For (m_database.AttachmentDao().GetAttachments("WHERE attachment_id = " & attachment_id, "")) _
-	Complete (Result As List)
-	
-	Return Result.Get(0)
+Public Sub GetAttachment(attachment_id As Long) As Attachment
+	Return m_database.AttachmentDao().GetAttachments("WHERE attachment_id = " & attachment_id, "").Get(0)
 End Sub
 
 Public Sub GetAllAttachments() As ResumableSub
