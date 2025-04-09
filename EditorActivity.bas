@@ -502,31 +502,11 @@ End Sub
 
 Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As String)
 	If Success Then
-		
-		' Parse the filename which is a content:// uri.
-		Dim uri As Uri
-		uri.Parse(FileName)
-		
-		' Obtain file information that can be stored in a database.
+		' Obtain file information from a Uri that can be stored in a database.
 		Try
-			' Create a content resolver that helps in querying the file information.
-			Dim resolver As ContentResolver
-			resolver.Initialize("")
+			' Obtain a list of Attachments based on the URI retrieved from ContentChooser.
+			Dim item As Attachment = Starter.AttachmentViewModelInstance.GetAttachmentsFromUri(FileName)
 			
-			' Create an entity for the item and save the information into the database, including the modified
-			' filename.
-			' This will also require a cursor since a resolver query returns a cursor that navigates results
-			' like an SQL query.
-			Dim Cur As Cursor = resolver.Query(uri, Null, Null, Null, Null)
-			Cur.Position = 0
-			
-			Dim item As Attachment
-			item.Initialize(0)
-			
-			item.SetFilename(DateTime.Now & "_" & Cur.GetString("_display_name"))
-			item.SetMimeType(Cur.GetString("mime_type"))
-			item.SetSize(Cur.GetString("_size"))
-			item.GetUpdatedAt.SetUnixTime(Cur.GetString("last_modified"))
 			MsgboxAsync("Title: " & item.GetFilename, "Info")
 			
 			' Add the attachment into the list.
@@ -535,24 +515,11 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 			' Add the attachment into the list of pending attachments to be saved.
 			m_pendingAttachmentInsert.Add(item)
 			
-			' Close the cursor to release resorces allocated by it.
-			Cur.Close
-			
-			' Save the file
-			Dim input As InputStream = File.OpenInput(Dir, FileName)
-			Dim output As OutputStream = File.OpenOutput(File.DirInternal, item.GetFilename, False)
-			File.Copy2(input, output)
-			input.Close
-			output.Close
+			' Do not save the file yet unless Save button is clicked.
 		Catch
 			Log(LastException)
 		End Try
 	Else
 		MsgboxAsync("Unable to retrieve attachment", "Error")
 	End If
-End Sub
-
-Public Sub ParseUri(uri As String) As Object
-	Dim r As Reflector
-	Return r.RunStaticMethod("android.net.Uri", "parse", Array As Object(uri), Array As String("java.lang.String"))
 End Sub
