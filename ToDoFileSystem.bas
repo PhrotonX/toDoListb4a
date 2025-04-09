@@ -14,10 +14,10 @@ Public Sub Initialize
 End Sub
 
 ' Copies file based on FIleUriinto the application's internal storage.
-Public Sub CopyFileFromUriToInternal(FileName As String, Dir As String, FileUri As String)
+Public Sub CopyFileFromUriToInternal(FileName As String, Dir As String, FileUri As String, Location As String)
 	Try
 		Dim input As InputStream = File.OpenInput(Dir, FileUri)
-		Dim output As OutputStream = File.OpenOutput(File.DirInternal, FileName, False)
+		Dim output As OutputStream = File.OpenOutput(File.DirInternal & Location, FileName, False)
 		File.Copy2(input, output)
 		input.Close
 		output.Close

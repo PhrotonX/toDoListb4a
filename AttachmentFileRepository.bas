@@ -6,11 +6,18 @@ Version=13.1
 @EndOfDesignText@
 Sub Class_Globals
 	Private m_fileSystem As ToDoFileSystem
+	
+	' Directory with forward slash as the beginning character
+	Private Const DIRECTORY As String = "/attachments/"
+	' Directory without forward slash as the beginning character
+	Private Const DIRECTORY_2 As String = "attachments/"
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize(fileSystem As ToDoFileSystem)
 	m_fileSystem = fileSystem
+	
+	File.MakeDir(File.DirInternal, DIRECTORY_2)
 End Sub
 
 ' This function currently only supports a single file.
@@ -52,7 +59,8 @@ End Sub
 
 Public Sub SaveAttachment(item As Attachment)
 	Try
-		m_fileSystem.CopyFileFromUriToInternal(item.GetFilename(), m_fileSystem.DIRECTORY, item.GetFileUri())
+		m_fileSystem.CopyFileFromUriToInternal(item.GetFilename(), m_fileSystem.DIRECTORY, item.GetFileUri(), _
+		DIRECTORY)
 	Catch
 		Log(LastException)
 	End Try
@@ -60,7 +68,7 @@ End Sub
 
 Public Sub RemoveAttachment(item As Attachment) As Boolean
 	Try
-		Return m_fileSystem.RemoveFile(item.GetFilename)
+		Return m_fileSystem.RemoveFile(DIRECTORY & item.GetFilename)
 	Catch
 		Log(LastException)
 	End Try

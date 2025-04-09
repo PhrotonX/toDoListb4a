@@ -471,7 +471,10 @@ End Sub
 
 Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
 	' Temporary code only
-	For Each item As String In File.ListFiles(File.DirInternal)
+	'For Each item As String In File.ListFiles(File.DirInternal)
+	'	Log(item)
+	'Next
+	For Each item As String In File.ListFiles(File.DirInternal & "/attachments/")
 		Log(item)
 	Next
 End Sub
