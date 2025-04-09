@@ -38,6 +38,8 @@ End Sub
 Public Sub Initialize
 	m_dayOfTheWeek.Initialize
 	
+	m_id = 0
+	
 	' Initialize the due date with empty date since the constructor requires it.
 	m_dueDate.Initialize(0, 0, 0)
 	
