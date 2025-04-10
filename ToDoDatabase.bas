@@ -56,13 +56,12 @@ Public Sub CreateTable
 	
 	' Query for creating the attachment table.
 	Dim query_attachment As String = "CREATE TABLE IF NOT EXISTS attachment(" & CRLF & _
-	"attachment_id INTEGER NOT NULL," & CRLF & _
+	"attachment_id INTEGER PRIMARY KEY AUTOINCREMENT," & CRLF & _
 	"filename TEXT NOT NULL," & CRLF & _
 	"mime_type VARCHAR(255)," & CRLF & _
 	"size LONG," & CRLF & _
 	"created_at LONG NOT NULL DEFAULT 0," & CRLF & _
-	"updated_at LONG NOT NULL DEFAULT 0," & CRLF & _
-	"PRIMARY KEY(attachment_id)" & CRLF & _
+	"updated_at LONG NOT NULL DEFAULT 0" & CRLF & _
 	");"
 	
 	' Query for creating the associative task_attachment table.

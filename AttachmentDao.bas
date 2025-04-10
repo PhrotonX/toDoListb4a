@@ -24,6 +24,8 @@ Public Sub InsertAttachment(item As Attachment, task_id As Long)
 		"'"&item.GetFilename&"', "&DateTime.Now&", "&item.GetUpdatedAt.GetDay.GetUnixTime& CRLF & _
 		", '"&item.GetMimeType&"', "&item.GetSize&");")
 		
+		Dim attachment_id As Long = m_sql.ExecQuerySingleResult("SELECT last_insert_rowid();")
+		
 		' Change the value of task_id if it is less than zero.
 		If task_id <= 0 Then
 			' Obtain the last ID of a task insert into the tasks table.
@@ -32,7 +34,7 @@ Public Sub InsertAttachment(item As Attachment, task_id As Long)
 		
 		' Insert the attachment ID and the task ID into the associative table.
 		m_sql.ExecQuerySingleResult("INSERT INTO task_attachment(task_id, attachment_id) VALUES(" & CRLF & _
-		task_id & ", " & item.GetID() & ");")
+		task_id & ", " & attachment_id & ");")
 		
 		m_sql.TransactionSuccessful
 	Catch
@@ -91,11 +93,19 @@ Public Sub GetTaskAttachments(task_id As Long) As List
 	m_sql.BeginTransaction
 	Try
 		Dim Cursor As Cursor
-		Cursor = m_sql.ExecQuery("SELECT * FROM attachment JOIN task_attachment ON task_id = " & task_id & ";")
+		Cursor = m_sql.ExecQuery("SELECT * FROM attachment " & CRLF & _
+		"JOIN task_attachment" & CRLF & _
+		"WHERE task_attachment.task_id = " & task_id)
 		For i = 0 To Cursor.RowCount - 1
 			Cursor.Position = i
 			result.Add(OnGetAttachment(Cursor))
+			
+			Log("======== task_id: " & task_id & " =========")
+			Log("attachment_id: " & Cursor.GetInt("attachment_id"))
+			Log("task_id: " & Cursor.GetInt("task_id"))
 		Next
+		
+		Cursor.Close
 		
 		m_sql.TransactionSuccessful
 	Catch
