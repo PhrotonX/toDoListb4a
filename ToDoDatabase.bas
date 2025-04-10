@@ -56,11 +56,12 @@ Public Sub CreateTable
 	
 	' Query for creating the attachment table.
 	Dim query_attachment As String = "CREATE TABLE IF NOT EXISTS attachment(" & CRLF & _
-	"attachment_id INTEGER NOT NULL," & CRLF & _
-	"filepath TEXT NOT NULL," & CRLF & _
+	"attachment_id INTEGER PRIMARY KEY AUTOINCREMENT," & CRLF & _
+	"filename TEXT NOT NULL," & CRLF & _
+	"mime_type VARCHAR(255)," & CRLF & _
+	"size LONG," & CRLF & _
 	"created_at LONG NOT NULL DEFAULT 0," & CRLF & _
-	"updated_at LONG NOT NULL DEFAULT 0," & CRLF & _
-	"PRIMARY KEY(attachment_id)" & CRLF & _
+	"updated_at LONG NOT NULL DEFAULT 0" & CRLF & _
 	");"
 	
 	' Query for creating the associative task_attachment table.
@@ -144,7 +145,7 @@ Public Sub CopyDatabase()
 	Dim source As String = File.DirInternal & "/todo_db.db"
 	Dim dest As String = File.Combine(File.DirDefaultExternal, "todo_db.db")
 
-	If File.Exists(source, "") Then
+	If File.Exists(source, "") Then 
 		File.Copy(source, "", dest, "")
 		ToastMessageShow("Database copied to /Download/", True)
 	Else

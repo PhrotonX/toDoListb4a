@@ -6,7 +6,10 @@ Version=13.1
 @EndOfDesignText@
 Sub Class_Globals
 	Private m_id As Long
-	Private m_filepath As String
+	Private m_filename As String
+	Private m_fileUri As String
+	Private m_mimeType As String
+	Private m_size As Long
 	Private m_createdAt As DateAndTime
 	Private m_updatedAt As DateAndTime
 End Sub
@@ -23,18 +26,42 @@ Public Sub GetID() As Long
 	Return m_id
 End Sub
 
-Public Sub GetFilepath() As String
-	Return m_filepath
+Public Sub GetFilename() As String
+	Return m_filename
 End Sub
 
-Public Sub SetFilepath(filepath As String)
-	m_filepath = filepath
+Public Sub GetFileUri() As String
+	Return m_fileUri
+End Sub
+
+Public Sub GetMimeType() As String
+	Return m_mimeType
 End Sub
 
 Public Sub GetCreatedAt As DateAndTime
 	Return m_createdAt
 End Sub
 
+Public Sub GetSize() As Long
+	Return m_size
+End Sub
+
 Public Sub GetUpdatedAt As DateAndTime
 	Return m_updatedAt
+End Sub
+
+Public Sub SetFilename(filename As String)
+	m_filename = filename
+End Sub
+
+Public Sub SetMimeType(mimeType As String)
+	m_mimeType = mimeType
+End Sub
+
+Public Sub SetSize(size As Long)
+	m_size = size
+End Sub
+
+Public Sub SetFileUri(fileUri As String)
+	m_fileUri = fileUri
 End Sub

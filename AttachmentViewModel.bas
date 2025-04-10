@@ -5,32 +5,49 @@ Type=Class
 Version=13.1
 @EndOfDesignText@
 Sub Class_Globals
-	Private m_repository As AttachmentRepository
+	Private m_fileRepository As AttachmentFileRepository
+	Private m_dbRepository As AttachmentRepository
 End Sub
 
-'Initializes the object. You can add parameters to this method if needed.
-Public Sub Initialize(repository As AttachmentRepository)
-	m_repository = repository
+' Initializes the object. You can add parameters to this method if needed.
+Public Sub Initialize(dbRepo As AttachmentRepository, fileRepo As AttachmentFileRepository)
+	m_dbRepository = dbRepo
+	m_fileRepository = fileRepo
 End Sub
 
-Public Sub InsertAttachment(item As Attachment)
-	m_repository.InsertAttachment(item)
-End Sub
-
-Public Sub GetAttachment(attachment_id As Long) As ResumableSub
-	Wait For (m_repository.GetAttachment(attachment_id)) Complete (Result As Attachment)
+' Inserts an attachment into the database and then saves into the file system.
+' item - The attachment to be added.
+' task_id - The ID of the task associated with the attachment.
+' Returns true if the insertion succeeded.
+Public Sub InsertAttachment(item As Attachment, task_id As Long) As Boolean
+	Try
+		m_fileRepository.SaveAttachment(item)
+		m_dbRepository.InsertAttachment(item, task_id)
+		Return True
+	Catch
+		Log(LastException)
+	End Try
 	
-	Return Result
+	Return False
 End Sub
 
-Public Sub GetTaskAttachments(task_id As Long) As ResumableSub
-	Return m_repository.GetTaskAttachments(task_id)
+Public Sub GetAttachment(attachment_id As Long) As Attachment
+	Return m_dbRepository.GetAttachment(attachment_id)
+End Sub
+
+Public Sub GetAttachmentsFromUri(FileUri As String) As Attachment
+	Return m_fileRepository.GetAttachmentsFromUri(FileUri).Get(0)
+End Sub
+
+Public Sub GetTaskAttachments(task_id As Long) As List
+	Return m_dbRepository.GetTaskAttachments(task_id)
 End Sub
 
 Public Sub UpdateAttachment(item As Attachment)
-	m_repository.UpdateAttachment(item)
+	m_dbRepository.UpdateAttachment(item)
 End Sub
 
-Public Sub DeleteAttachment(item As Attachment)
-	m_repository.DeleteAttachment(item)
+Public Sub DeleteAttachment(item As Attachment) As Boolean
+	m_dbRepository.DeleteAttachment(item)
+	Return m_fileRepository.RemoveAttachment(item)
 End Sub

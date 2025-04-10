@@ -35,8 +35,10 @@ Sub Process_Globals
 	Public Const EXTRA_EDITOR_TASK_ID As String = PACKAGE_NAME & ".EXTRA_EDITOR_TASK_ID"
 	
 	Private ToDoDatabaseInstance As ToDoDatabase
+	Private ToDoFileSystemInstance As ToDoFileSystem
 	Private taskRepo As TaskRepository
 	Private attachmentRepo As AttachmentRepository
+	Private attachmentFileRepo As AttachmentFileRepository
 	
 	' Glocal instance of TaskViewModel where the database can be accessed.
 	Public TaskViewModelInstance As TaskViewModel
@@ -75,12 +77,14 @@ Sub Service_Create
 	InstanceState.Initialize
 	
 	ToDoDatabaseInstance.Initialize
+	ToDoFileSystemInstance.Initialize
 	
 	taskRepo.Initialize(ToDoDatabaseInstance)
 	attachmentRepo.Initialize(ToDoDatabaseInstance)
+	attachmentFileRepo.Initialize(ToDoFileSystemInstance)
 	
 	TaskViewModelInstance.Initialize(taskRepo)
-	AttachmentViewModelInstance.Initialize(attachmentRepo)
+	AttachmentViewModelInstance.Initialize(attachmentRepo, attachmentFileRepo)
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)
