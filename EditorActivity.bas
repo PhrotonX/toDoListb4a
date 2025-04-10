@@ -138,6 +138,10 @@ Sub Activity_Create(FirstTime As Boolean)
 		spinnerDueDateDay.SelectedIndex = m_task.GetDueDate.GetDay
 		editDueDateYear.Text = m_task.GetDueDate.GetYear
 		
+		' Load the attachments
+		LoadAttachments
+		
+		
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		' Disable the delete button if the editor mode is EDITOR_MODE_CREATE
 		btnDelete.Visible = False
@@ -212,6 +216,19 @@ Private Sub btnSave_Click
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		Starter.TaskViewModelInstance.InsertTask(m_task)
 	End If
+	
+	For Each item As Attachment In m_pendingAttachmentInsert
+		If Starter.AttachmentViewModelInstance.InsertAttachment(item, m_task.GetId) == False Then
+			MsgboxAsync("Failed to insert attachment: " & item.GetFilename, "Error")
+		End If
+	Next
+	
+	For Each item As Attachment In m_pendingAttachmentDelete
+		Log("Pending delete:" & item.GetFilename)
+		If Starter.AttachmentViewModelInstance.DeleteAttachment(item) == False Then
+			MsgboxAsync("Failed to delete attachment: " & item.GetFilename, "Error")
+		End If
+	Next
 	
 	' Close the activity after saving
 	Activity.Finish
@@ -313,17 +330,14 @@ Private Sub ClearRadioButtons
 End Sub
 
 Private Sub LoadAttachments
-	' Obtain the attachments
-	ProgressDialogShow("Loading attachments...")
+	Dim attachments As List = Starter.AttachmentViewModelInstance.GetTaskAttachments(m_task.GetId())
 	
-	Dim attachments As List
-	Wait For (Starter.AttachmentViewModelInstance.GetTaskAttachments(m_task.GetId())) Complete (attachments As List)
+	If attachments.IsInitialized Then
+		For Each item As Attachment In attachments
+			OnAddAttachment(item)
+		Next
+	End If
 	
-	ProgressDialogHide
-	
-	For Each item As Attachment In attachments
-		OnAddAttachment(item)
-	Next
 End Sub
 
 Private Sub OnAddAttachment(item As Attachment)
@@ -457,12 +471,34 @@ Private Sub btnClearDueDate_Click
 End Sub
 
 Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
-	
+	' Temporary code only
+	'For Each item As String In File.ListFiles(File.DirInternal)
+	'	Log(item)
+	'Next
+	For Each item As String In File.ListFiles(File.DirInternal & "/attachments/")
+		Log(item)
+	Next
 End Sub
 
 Private Sub btnAttachmentRemove_Click
-	Dim index As Int = clvAttachments.GetItemFromView(Sender)
+	' Get the index of item from the list view that was clicked.
+	Dim index As Long = clvAttachments.GetItemFromView(Sender)
 	
+	' Get the viewHolder of the item from list view.
+	Dim viewHolder As AttachmentViewHolder = clvAttachments.GetValue(index)
+	
+	Dim itemId As Long  = viewHolder.ID
+	
+	' Check if the item ID is valid. 0 is the default ID of new attachments inserted into the database.
+	If itemId > 0 Then
+		' Get the item for the database for deletion of the database and the file system.
+		Dim item As Attachment = Starter.AttachmentViewModelInstance.GetAttachment(itemId)
+		
+		' Add the item into the items pending for deletion.
+		m_pendingAttachmentDelete.Add(item)
+	End If
+	
+	' Remove the item from the list view.
 	clvAttachments.RemoveAt(index)
 End Sub
 
@@ -480,8 +516,6 @@ Private Sub btnAttachmentOpen_Click
 	(Result As Attachment)
 	ProgressDialogHide()
 	item = Result
-	
-	
 	
 	' Sample code only!
 	If item.IsInitialized Then
@@ -502,31 +536,11 @@ End Sub
 
 Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As String)
 	If Success Then
-		
-		' Parse the filename which is a content:// uri.
-		Dim uri As Uri
-		uri.Parse(FileName)
-		
-		' Obtain file information that can be stored in a database.
+		' Obtain file information from a Uri that can be stored in a database.
 		Try
-			' Create a content resolver that helps in querying the file information.
-			Dim resolver As ContentResolver
-			resolver.Initialize("")
+			' Obtain a list of Attachments based on the URI retrieved from ContentChooser.
+			Dim item As Attachment = Starter.AttachmentViewModelInstance.GetAttachmentsFromUri(FileName)
 			
-			' Create an entity for the item and save the information into the database, including the modified
-			' filename.
-			' This will also require a cursor since a resolver query returns a cursor that navigates results
-			' like an SQL query.
-			Dim Cur As Cursor = resolver.Query(uri, Null, Null, Null, Null)
-			Cur.Position = 0
-			
-			Dim item As Attachment
-			item.Initialize(0)
-			
-			item.SetFilename(DateTime.Now & "_" & Cur.GetString("_display_name"))
-			item.SetMimeType(Cur.GetString("mime_type"))
-			item.SetSize(Cur.GetString("_size"))
-			item.GetUpdatedAt.SetUnixTime(Cur.GetString("last_modified"))
 			MsgboxAsync("Title: " & item.GetFilename, "Info")
 			
 			' Add the attachment into the list.
@@ -535,24 +549,11 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 			' Add the attachment into the list of pending attachments to be saved.
 			m_pendingAttachmentInsert.Add(item)
 			
-			' Close the cursor to release resorces allocated by it.
-			Cur.Close
-			
-			' Save the file
-			Dim input As InputStream = File.OpenInput(Dir, FileName)
-			Dim output As OutputStream = File.OpenOutput(File.DirInternal, item.GetFilename, False)
-			File.Copy2(input, output)
-			input.Close
-			output.Close
+			' Do not save the file yet unless Save button is clicked.
 		Catch
 			Log(LastException)
 		End Try
 	Else
 		MsgboxAsync("Unable to retrieve attachment", "Error")
 	End If
-End Sub
-
-Public Sub ParseUri(uri As String) As Object
-	Dim r As Reflector
-	Return r.RunStaticMethod("android.net.Uri", "parse", Array As Object(uri), Array As String("java.lang.String"))
 End Sub
