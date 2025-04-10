@@ -71,6 +71,23 @@ Public Sub CreateTable
 	"PRIMARY KEY(task_id, attachment_id)" & CRLF & _
 	");"
 	
+	' Query for creating the group table.
+	Dim query_group As String = "CREATE TABLE IF NOT EXISTS group(" & CRLF & _
+	"group_id INTEGER PRIMARY AUTOINCREMENT," & CRLF & _
+	"title VARCHAR(255) NOT NULL," & CRLF & _
+	"description TEXT," & CRLF & _
+	"color INTEGER," & CRLF & _
+	"created_at LONG NOT NULL DEFAULT 0," & CRLF & _
+	"modified_at LONG NOT NULL DEFAULT 0" & CRLF & _
+	");"
+	
+	' Query for creating the associative task_group table.
+	Dim query_task_group As String = "CREATE TABLE IF NOT EXISTS task_group(" & CRLF & _
+	"task_id INTEGER NOT NULL," & CRLF & _
+	"group_id INTEGER NOT NULL," & CRLF & _
+	"PRIMARY KEY(task_id, group_id)" & CRLF & _
+	");"
+	
 	' Query for populating the days_of_the_week table with data.
 	Dim query_populate_days As String = "INSERT INTO days_of_the_week (day_of_the_week, day_id)" & CRLF & _
 	"SELECT 'Sunday', 0 UNION ALL" & CRLF & _
@@ -91,6 +108,8 @@ Public Sub CreateTable
 		sql.ExecNonQuery(query_task_repeat)
 		sql.ExecNonQuery(query_attachment)
 		sql.ExecNonQuery(query_task_attachment)
+		sql.ExecNonQuery(query_group)
+		sql.ExecNonQuery(query_task_group)
 		' Check if task table is empty
 		If sql.ExecQuerySingleResult("SELECT COUNT(*) FROM days_of_the_week") == "0" Then
 			sql.ExecNonQuery(query_populate_days)
