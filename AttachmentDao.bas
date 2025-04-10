@@ -67,11 +67,14 @@ End Sub
 Public Sub GetAttachments(searchingQuery As String, sortingQuery As String) As List
 	Dim result As List
 	
+	result.Initialize
+	
 	m_sql.BeginTransaction
 	Try
 		Dim cur As Cursor = m_sql.ExecQuery("SELECT * FROM attachment " & CRLF & searchingQuery & CRLF & sortingQuery)
 		
 		For i = 0 To cur.RowCount - 1
+			cur.Position = i
 			result.Add(OnGetAttachment(cur))
 		Next
 		
@@ -92,20 +95,20 @@ Public Sub GetTaskAttachments(task_id As Long) As List
 	
 	m_sql.BeginTransaction
 	Try
-		Dim Cursor As Cursor
-		Cursor = m_sql.ExecQuery("SELECT * FROM attachment " & CRLF & _
+		Dim cur As Cursor
+		cur = m_sql.ExecQuery("SELECT * FROM attachment " & CRLF & _
 		"JOIN task_attachment ON task_attachment.attachment_id = attachment.attachment_id" & CRLF & _
 		"WHERE task_attachment.task_id = " & task_id)
-		For i = 0 To Cursor.RowCount - 1
-			Cursor.Position = i
-			result.Add(OnGetAttachment(Cursor))
+		For i = 0 To cur.RowCount - 1
+			cur.Position = i
+			result.Add(OnGetAttachment(cur))
 			
 			Log("======== task_id: " & task_id & " =========")
-			Log("attachment_id: " & Cursor.GetInt("attachment_id"))
-			Log("task_id: " & Cursor.GetInt("task_id"))
+			Log("attachment_id: " & cur.GetInt("attachment_id"))
+			Log("task_id: " & cur.GetInt("task_id"))
 		Next
 		
-		Cursor.Close
+		cur.Close
 		
 		m_sql.TransactionSuccessful
 	Catch

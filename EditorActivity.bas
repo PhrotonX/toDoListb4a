@@ -224,6 +224,7 @@ Private Sub btnSave_Click
 	Next
 	
 	For Each item As Attachment In m_pendingAttachmentDelete
+		Log("Pending delete:" & item.GetFilename)
 		If Starter.AttachmentViewModelInstance.DeleteAttachment(item) == False Then
 			MsgboxAsync("Failed to delete attachment: " & item.GetFilename, "Error")
 		End If
@@ -490,9 +491,8 @@ Private Sub btnAttachmentRemove_Click
 	
 	' Check if the item ID is valid. 0 is the default ID of new attachments inserted into the database.
 	If itemId > 0 Then
-		' Create a new Attachment object that only consists of attachment ID.
-		Dim item As Attachment
-		item.Initialize(itemId)
+		' Get the item for the database for deletion of the database and the file system.
+		Dim item As Attachment = Starter.AttachmentViewModelInstance.GetAttachment(itemId)
 		
 		' Add the item into the items pending for deletion.
 		m_pendingAttachmentDelete.Add(item)
