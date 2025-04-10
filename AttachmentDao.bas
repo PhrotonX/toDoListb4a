@@ -94,7 +94,7 @@ Public Sub GetTaskAttachments(task_id As Long) As List
 	Try
 		Dim Cursor As Cursor
 		Cursor = m_sql.ExecQuery("SELECT * FROM attachment " & CRLF & _
-		"JOIN task_attachment" & CRLF & _
+		"JOIN task_attachment ON task_attachment.attachment_id = attachment.attachment_id" & CRLF & _
 		"WHERE task_attachment.task_id = " & task_id)
 		For i = 0 To Cursor.RowCount - 1
 			Cursor.Position = i
