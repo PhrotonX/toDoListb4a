@@ -8,9 +8,9 @@ Sub Class_Globals
 	Private m_fileSystem As ToDoFileSystem
 	
 	' Directory with forward slash as the beginning character
-	Private Const DIRECTORY As String = "/attachments/"
+	Public Const DIRECTORY As String = "/attachments/"
 	' Directory without forward slash as the beginning character
-	Private Const DIRECTORY_2 As String = "attachments/"
+	Public Const DIRECTORY_2 As String = "attachments/"
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
