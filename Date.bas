@@ -10,15 +10,71 @@ Sub Class_Globals
 	Private m_month As Int
 	Private m_day As Int
 	Private m_year As Int
+	
+	' A single day in UNIX time is equal to 86,400,000 milliseconds.
+	Public Const DAY_LENGTH As Long = 86400000
+	
+	Public Const DATE_A_LONG_TIME_AGO As String = "A long time ago"
+	Public Const DATE_EARLIER As String = "Earlier"
+	Public Const DATE_LAST_WEEK As String = "Last week"
+	Public Const DATE_EARLIER_THIS_WEEK As String = "Earlier this week"
+	Public Const DATE_YESTERDAY As String = "Yesterday"
+	Public Const DATE_TODAY As String = "Today"
+	Public Const DATE_TOMORROW As String = "Tomorrow"
+	Public Const DATE_THIS_WEEK As String = "This week"
+	Public Const DATE_NEXT_WEEK As String = "Next week"
+	Public Const DATE_LATER As String = "Later"
+	Public Const DATE_A_LONG_TIME_FROM_NOW As String = "A long time from now"
 End Sub
 
 'Initializes the object.
 ' month data shall be "January" - "December"
 ' day data shall be "1" to "31" such that "1" to "9" does not have leading zeroes.
-Public Sub Initialize(month As Int, day As Int, year As Int)
+Public Sub Initialize(month As Int, DAY As Int, year As Int)
 	m_month = month
-	m_day = day
+	m_day = DAY
 	m_year = year
+End Sub
+
+' Identifies date if it is a long time ago, earlier, last week, earlier this week, yesterday, today, tomorrow,
+' this week, next, week, later, or a long time from now in a string data type.
+' This function compares dates relatively.
+Public Sub IdentifyDate() As String
+	Dim ticksSaved As Long = GetUnixTime
+	'Dim ticksNow As Long = DateTime.Now
+	Dim ticksNowRaw As Long = DateTime.Now
+	Dim ticksNow As Long = ticksNowRaw - (ticksNowRaw Mod DAY_LENGTH)
+	
+	' Compare the current UNIX tick to the saved UNIX tick. The multipled day length are d - 1.
+	' E.g. day 0 is today and day 1 is tomorrow.
+	If ticksSaved <= (ticksNow - (DAY_LENGTH * 364)) Then
+		Return DATE_A_LONG_TIME_AGO
+	Else If (ticksNow - (DAY_LENGTH * 364)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 11)) Then
+		Return DATE_EARLIER
+	Else If (ticksNow - (DAY_LENGTH * 11)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 4)) Then
+		Return DATE_LAST_WEEK
+	Else If (ticksNow - (DAY_LENGTH * 4)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 2)) Then
+		Return DATE_EARLIER_THIS_WEEK
+	Else If (ticksNow - (DAY_LENGTH * 2)) < ticksSaved And ticksSaved < (ticksNow - DAY_LENGTH) Then
+		Return DATE_YESTERDAY
+	Else If ticksNow >= ticksSaved And ticksSaved < (ticksNow + DAY_LENGTH) Then
+		Return DATE_TODAY
+	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 2)) Then
+		Return DATE_TOMORROW
+	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 4)) Then
+		Return DATE_THIS_WEEK
+	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 11)) Then
+		Return DATE_NEXT_WEEK
+	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 364)) Then
+		Return DATE_LATER
+	Else If (ticksNow + (DAY_LENGTH * 364)) < ticksSaved Then
+		Return DATE_A_LONG_TIME_FROM_NOW
+	End If
+	
+	Return "Error"
+	
+	
+	
 End Sub
 
 ' Returns the UNIX variant of the date values set into this object. May result into an error
@@ -158,7 +214,7 @@ Public Sub GetFormattedDate As String
 	Return GetMonthFromNum(m_month) & " " & m_day & ", " & m_year
 End Sub
 
-' Returns the date with the "Month DD, YYYY" format as a String based
+' Returns the date with the "mm/dd/YYYY" format as a String based
 ' on the values set on this date object.
 Public Sub GetFormattedDate2 As String
 	Return GetMonthWithLeadingZero & "/" & GetNumericDayStr & "/" & m_year

@@ -12,7 +12,7 @@ Version=13.1
 Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
-
+	Private xui As XUI
 End Sub
 
 Sub Globals
@@ -28,6 +28,12 @@ Sub Globals
 	' This variable is responsible for handling the current data that can be used for performing
 	' CRUD into the database.
 	Private m_task As ToDo
+	
+	' Attachment that are pending for saving.
+	Private m_pendingAttachmentInsert As List
+	Private m_pendingAttachmentDelete As List
+	
+	'Private m_runtimePermission As RuntimePermissions
 	
 	Private radioPriorityCritical As RadioButton
 	Private radioPriorityHigh As RadioButton
@@ -49,11 +55,20 @@ Sub Globals
 	
 	Private Const SPINNER_DUE_DATE_DAY_HINT_TEXT As String = "Select day here..."
 	Private Const SPINNER_DUE_DATE_MONTH_HINT_TEXT As String = "Select month here..."
+	Private clvAttachments As CustomListView
+	Private btnAttachmentOpen As Button
+	Private btnAttachmentRemove As Button
+	Private imgAttachmentIcon As ImageView
+	Private lblAttachmentFileName As Label
+	Private pnlAttachmentRoot As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("EditorLayout")
+	
+	m_pendingAttachmentInsert.Initialize
+	m_pendingAttachmentDelete.Initialize
 	
 	editorScrollView.Panel.LoadLayout("EditorScrollLayout")
 	
@@ -122,6 +137,10 @@ Sub Activity_Create(FirstTime As Boolean)
 		' set on m_task.
 		spinnerDueDateDay.SelectedIndex = m_task.GetDueDate.GetDay
 		editDueDateYear.Text = m_task.GetDueDate.GetYear
+		
+		' Load the attachments
+		LoadAttachments
+		
 		
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		' Disable the delete button if the editor mode is EDITOR_MODE_CREATE
@@ -197,6 +216,19 @@ Private Sub btnSave_Click
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		Starter.TaskViewModelInstance.InsertTask(m_task)
 	End If
+	
+	For Each item As Attachment In m_pendingAttachmentInsert
+		If Starter.AttachmentViewModelInstance.InsertAttachment(item, m_task.GetId) == False Then
+			MsgboxAsync("Failed to insert attachment: " & item.GetFilename, "Error")
+		End If
+	Next
+	
+	For Each item As Attachment In m_pendingAttachmentDelete
+		Log("Pending delete:" & item.GetFilename)
+		If Starter.AttachmentViewModelInstance.DeleteAttachment(item) == False Then
+			MsgboxAsync("Failed to delete attachment: " & item.GetFilename, "Error")
+		End If
+	Next
 	
 	' Close the activity after saving
 	Activity.Finish
@@ -295,6 +327,37 @@ Private Sub ClearRadioButtons
 	checkRepeatThu.Checked = False
 	checkRepeatFri.Checked = False
 	checkRepeatSat.Checked = False
+End Sub
+
+Private Sub LoadAttachments
+	Dim attachments As List = Starter.AttachmentViewModelInstance.GetTaskAttachments(m_task.GetId())
+	
+	If attachments.IsInitialized Then
+		For Each item As Attachment In attachments
+			OnAddAttachment(item)
+		Next
+	End If
+	
+End Sub
+
+Private Sub OnAddAttachment(item As Attachment)
+	Dim panel As B4XView = xui.CreatePanel("")
+		
+	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
+	panel.LoadLayout("AttachmentItemLayout")
+	panel.SetColorAndBorder(Theme.ForegroundColor, 0, Theme.ForegroundColor, 0)
+	
+	Dim viewHolder As AttachmentViewHolder
+	viewHolder.Initialize
+	viewHolder.Root = panel
+	viewHolder.Icon = imgAttachmentIcon
+	viewHolder.AttachmentLabel = lblAttachmentFileName
+	viewHolder.OpenButton = btnAttachmentOpen
+	viewHolder.OpenButton.Visible = False
+	viewHolder.DeleteButton = btnAttachmentRemove
+	viewHolder.ID = item.GetID
+	
+	clvAttachments.Add(panel, viewHolder)
 End Sub
 
 ' Fill items into the due date Spinners.
@@ -405,4 +468,92 @@ End Sub
 
 Private Sub btnClearDueDate_Click
 	ClearDueDate
+End Sub
+
+Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
+	' Temporary code only
+	'For Each item As String In File.ListFiles(File.DirInternal)
+	'	Log(item)
+	'Next
+	For Each item As String In File.ListFiles(File.DirInternal & "/attachments/")
+		Log(item)
+	Next
+End Sub
+
+Private Sub btnAttachmentRemove_Click
+	' Get the index of item from the list view that was clicked.
+	Dim index As Long = clvAttachments.GetItemFromView(Sender)
+	
+	' Get the viewHolder of the item from list view.
+	Dim viewHolder As AttachmentViewHolder = clvAttachments.GetValue(index)
+	
+	Dim itemId As Long  = viewHolder.ID
+	
+	' Check if the item ID is valid. 0 is the default ID of new attachments inserted into the database.
+	If itemId > 0 Then
+		' Get the item for the database for deletion of the database and the file system.
+		Dim item As Attachment = Starter.AttachmentViewModelInstance.GetAttachment(itemId)
+		
+		' Add the item into the items pending for deletion.
+		m_pendingAttachmentDelete.Add(item)
+	End If
+	
+	' Remove the item from the list view.
+	clvAttachments.RemoveAt(index)
+End Sub
+
+Private Sub btnAttachmentOpen_Click
+	Dim index As Int = clvAttachments.GetItemFromView(Sender)
+	
+	Dim viewHolder As AttachmentViewHolder = clvAttachments.GetValue(index)
+	
+	' Sample code only!
+	Dim item As Attachment
+	
+	ProgressDialogShow("Loading attachment...")
+	
+	Wait For (Starter.AttachmentViewModelInstance.GetAttachment(viewHolder.ID)) Complete _
+	(Result As Attachment)
+	ProgressDialogHide()
+	item = Result
+	
+	' Sample code only!
+	If item.IsInitialized Then
+		MsgboxAsync(item.GetFilename, "Sample Test")
+	Else
+		MsgboxAsync("Error obtaining file!", "Error")
+	End If
+End Sub
+
+Private Sub btnAddAttachment_Click
+	'm_runtimePermission.CheckAndRequest(m_runtimePermission.PERMISSION_READ_EXTERNAL_STORAGE)
+	
+	Private filepicker As ContentChooser
+	
+	filepicker.Initialize("filepicker")
+	filepicker.Show("*/*", "Choose file")
+End Sub
+
+Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As String)
+	If Success Then
+		' Obtain file information from a Uri that can be stored in a database.
+		Try
+			' Obtain a list of Attachments based on the URI retrieved from ContentChooser.
+			Dim item As Attachment = Starter.AttachmentViewModelInstance.GetAttachmentsFromUri(FileName)
+			
+			MsgboxAsync("Title: " & item.GetFilename, "Info")
+			
+			' Add the attachment into the list.
+			OnAddAttachment(item)
+			
+			' Add the attachment into the list of pending attachments to be saved.
+			m_pendingAttachmentInsert.Add(item)
+			
+			' Do not save the file yet unless Save button is clicked.
+		Catch
+			Log(LastException)
+		End Try
+	Else
+		MsgboxAsync("Unable to retrieve attachment", "Error")
+	End If
 End Sub
