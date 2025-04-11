@@ -1,21 +1,26 @@
-﻿Build1=Default,com.cm.todolist
-File1=3528206.png
-File10=Layout.bal
-File11=settingsabout.bal
-File12=settingshelp.bal
-File13=settingslayout.bal
-File14=sviewlayout.bal
-File15=TaskItemLayout.bal
-File16=taskviewlayout.bal
-File17=taskviewscrolllayout.bal
+Build1=Default,com.cm.todolist
+File1=486023921_623831243812785_3842496593750662642_n.jpg
+File10=ic_launcher_xl.png
+File11=Layout.bal
+File12=newFragment.bal
+File13=separatorLayout.bal
+File14=settingsabout.bal
+File15=settingshelp.bal
+File16=settingslayout.bal
+File17=Solid_white.png
+File18=sviewlayout.bal
+File19=TaskItemLayout.bal
 File2=aboutitems.bal
-File3=AttachmentItemLayout.bal
-File4=EditorLayout.bal
-File5=EditorScrollLayout.bal
-File6=folder.png
-File7=helpitems.bal
-File8=ic_launcher.png
-File9=ic_launcher_xl.png
+File20=taskviewlayout.bal
+File21=taskviewscrolllayout.bal
+File22=test.bal
+File3=drawerItems.bal
+File4=drawerLayout.bal
+File5=EditorLayout.bal
+File6=EditorScrollLayout.bal
+File7=emptyTasks.bal
+File8=helpitems.bal
+File9=ic_launcher.png
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
@@ -25,7 +30,12 @@ FileGroup14=Default Group
 FileGroup15=Default Group
 FileGroup16=Default Group
 FileGroup17=Default Group
+FileGroup18=Default Group
+FileGroup19=Default Group
 FileGroup2=Default Group
+FileGroup20=Default Group
+FileGroup21=Default Group
+FileGroup22=Default Group
 FileGroup3=Default Group
 FileGroup4=Default Group
 FileGroup5=Default Group
@@ -34,7 +44,10 @@ FileGroup7=Default Group
 FileGroup8=Default Group
 FileGroup9=Default Group
 Group=Default Group
-Library1=contentresolver
+Library1=b4xdrawer
+Library11=contentresolver
+Library12=xui views
+Library13=animation
 Library10=xui
 Library2=core
 Library3=externalstorage
@@ -102,11 +115,21 @@ Sub Globals
 	Private ToDoList As CustomListView
 	Private chkToDoItem As CheckBox
 	Private toDoItemInfo As Label
-	Private settingsBtn As Button
+	Private menuBtn As Button
 	Private btnAdd As Button
 	Private pnlClickArea As Panel
 	Private hasMoved As Boolean
 	Private titleLabel As Label
+	Private drawer As B4XDrawer
+	Private menuListView As ListView
+	Dim menuListViewItemsize As ListView
+	Private pnlMenuBgTouch As Panel
+	Private clvItems As CustomListView
+	Private lblIcon As Label
+	Private lblItemName As Label
+	Dim inMain As Boolean = True
+	Private mainFragment As Panel
+	Public lastClickTime As Long = 0
 	
 	Private m_mode As String
 	
@@ -119,18 +142,34 @@ Sub Globals
 	Public Const TASK_UNCHECKED_TEXT_COLOR As Int = Colors.RGB(0, 0, 0)
 	Public Const TASK_UNCHECKED_ROOT_COLOR As Int = Colors.RGB(255, 255, 255)
 	
+	
+	
+
+
+	
+	
+	Private pnlSearch As Panel
+	Private pnlTitleBar As Panel
+	Private searchFragment As Panel
+	Private separator As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
-	Activity.LoadLayout("Layout")
+	drawer.Initialize(Me, "Drawer", Activity, 300dip)
+	drawer.CenterPanel.LoadLayout("layout")
+	mainFragment.LoadLayout("newFragment")
+	drawer.LeftPanel.LoadLayout("drawerLayout")
+	drawerItems
+	listview_init
+	'Activity.LoadLayout("Layout")
+	
+	
 End Sub
 
 Sub Activity_Resume
 	' Remove all items to update data and avoid data duplication.
 	ToDoList.Clear
-	
 	LoadItems
-	buttons_layout
 	
 	Starter.CheckInstanceState
 End Sub
@@ -253,31 +292,55 @@ Private Sub LoadItems()
 	End If
 End Sub
 
-' Adds functionality to move into another activity.
-Sub settingsBtn_Click
-	StartActivity(SettingsActivity)
+
+Sub menuBtn_Click
+	If button_handling Then
+		pnlMenuBgTouch.BringToFront
+		menuListView.SetVisibleAnimated(250, True)
+		menuListView.BringToFront
+		menuListView.SetLayoutAnimated(250, menuListViewItemsize.Left, menuListViewItemsize.Top, menuListViewItemsize.Width, menuListViewItemsize.Height)
+	End If
 End Sub
 
-Sub buttons_layout
-	'btnAdd design
-	btnAdd.Top = Activity.Height - btnAdd.Height - 20dip
-	btnAdd.Left = (Activity.Width - btnAdd.Width) / 2
-	
-	'settingsBtn design
-	Dim bgTransparent As ColorDrawable
-	bgTransparent.Initialize(Colors.Transparent, 0)
-	settingsBtn.Background = bgTransparent
-	
-	Dim c As Canvas
-	c.Initialize(titleLabel)
-	Dim borderColor As Int = Colors.RGB(209, 209, 209)
-	Dim borderHeight As Int = 1dip
-
-	
-	c.DrawLine(0, titleLabel.Height - borderHeight / 2, titleLabel.Width, titleLabel.Height - borderHeight / 2, borderColor, borderHeight)
-
-	titleLabel.Invalidate
+Private Sub pnlMenuBgTouch_Touch (Action As Int, X As Float, Y As Float)
+	Select Action
+		Case Activity.ACTION_DOWN
+			If menuListView.Visible = True Then
+				pnlMenuBgTouch.SendToBack
+				menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
+				menuListView.SetVisibleAnimated(500, False)
+				
+			End If
+	End Select
 End Sub
+
+Private Sub menuListView_ItemClick (Position As Int, Value As Object)
+	Select Position
+		Case 0
+			ToastMessageShow("Refereshed", False)
+			pnlMenuBgTouch.SendToBack
+			menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
+			menuListView.SetVisibleAnimated(500, False)
+			
+			
+			
+		Case 1
+			ToastMessageShow("Sort", False)
+			pnlMenuBgTouch.SendToBack
+			menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
+			menuListView.SetVisibleAnimated(500, False)
+			
+			
+		Case 2
+			StartActivity(SettingsActivity)
+			pnlMenuBgTouch.SendToBack
+			menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
+			menuListView.SetVisibleAnimated(500, False)
+			
+	End Select
+End Sub
+
+
 
 ' Opens EditorActivity to edit a clicked task.
 Private Sub pnlClickArea_Click
@@ -370,4 +433,230 @@ Public Sub OnChkboxViewAreaClick(percentage As Int, viewHolder As TaskViewHolder
 		' Execute if task is not marked as complete
 		viewHolder.Root.SetColorAnimated(percentage, Colors.Gray, TASK_UNCHECKED_ROOT_COLOR)
 	End If
+End Sub
+
+Private Sub drawerButton_Click
+	If button_handling Then
+		drawer.LeftOpen = True
+	End If
+End Sub
+
+Private Sub listview_init
+		menuListView.Visible = False
+		menuListView.AddSingleLine2("	Refresh", 1)
+		menuListView.AddSingleLine2("	Sort", 2)
+		menuListView.AddSingleLine2("	Settings", 3)
+		menuListView.SingleLineLayout.Label.TextSize = 15
+		menuListView.SingleLineLayout.Label.TextColor = Colors.Black
+		menuListView.SingleLineLayout.ItemHeight = 43dip
+		
+		Dim cd As ColorDrawable
+		cd.Initialize(Colors.White, 3dip)
+		
+		menuListView.Background = cd
+		
+		
+		menuListViewItemsize.Initialize("")
+		menuListViewItemsize.SetLayout(menuListView.Left, menuListView.Top, menuListView.Width, menuListView.Height)
+		
+		menuListView.SetLayoutAnimated(200,100%x, 0%y, 0, 114dip)
+		pnlMenuBgTouch.SendToBack
+		
+		Dim javaobj As JavaObject = menuListView
+		javaobj.RunMethod("setDivider", Array(Null))
+		javaobj.RunMethod("setDividerHeight", Array(0))
+End Sub
+
+Sub drawerItems
+	clvItems.sv.ScrollViewInnerPanel.Color = xui.Color_Transparent
+	clvItems.sv.Color = xui.Color_Transparent
+	
+	Dim items As List
+	items.Initialize
+	items.Add(CreateMap("icon": "", "text": "My Day"))
+	items.Add(CreateMap("icon": "", "text": "Planned"))
+	items.Add(CreateMap("icon": "", "text": "Completed"))
+	items.Add(CreateMap("icon": "", "text": "All"))
+	items.Add(CreateMap("icon": "", "text": "Trash"))
+
+
+	For Each item As Map In items
+		Dim iconText As String = item.Get("icon")
+		Dim itemText As String = item.Get("text")
+		    
+		Dim p As B4XView = xui.CreatePanel("")
+		p.SetLayoutAnimated(0, 0, 0, 100%x, 60dip)
+		p.LoadLayout("drawerItems")
+
+		
+		Dim innerPanel As B4XView = p.GetView(0)
+		Dim icon As B4XView = innerPanel.GetView(0)
+		Dim itemName As B4XView = innerPanel.GetView(1)
+		
+
+		icon.Text = iconText
+		itemName.Text = itemText
+		
+		p.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		innerPanel.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		icon.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		itemName.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		clvItems.Add(p, itemText)
+	Next
+	
+	Dim sepPanel As B4XView = xui.CreatePanel("")
+	sepPanel.SetLayoutAnimated(0, 0, 0, 100%x, 2dip) ' 2dip height for the separator
+	Dim innerSep As B4XView = xui.CreatePanel("")
+	innerSep.SetLayoutAnimated(0, 5%x, 0, 45.56%x, 2dip) ' 80% width, centered (10% margin on each side)
+	innerSep.Color = xui.Color_LightGray
+	sepPanel.AddView(innerSep, 5%x, 0, 45.56%x, 2dip)
+	sepPanel.Enabled = False
+	innerSep.Enabled = False	
+	
+	clvItems.Add(sepPanel, "separator")
+	
+
+	Log(Activity.Width)
+	Log(drawer.LeftPanel.Width)
+	
+End Sub
+
+Private Sub clvItems_ItemClick (Index As Int, Value As Object)
+	If Value = "separator" Then
+		' Reset selection to previous item
+		clvItems.GetPanel(Index).Color = xui.Color_Transparent
+		Return
+	End If
+	Select Index
+		Case 0
+			ToastMessageShow("my day", False)
+			drawer.LeftOpen = False
+			If inMain = False Then
+				mainFragment.RemoveAllViews
+				mainFragment.LoadLayout("newFragment")
+				LoadItems
+				drawer.LeftOpen = False
+				inMain = True
+			End If
+		Case 1
+			ToastMessageShow("planned", False)
+			mainFragment.RemoveAllViews
+			mainFragment.LoadLayout("newFragment")
+			Dim p As B4XView = xui.CreatePanel("")
+			p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
+			Dim lbl As Label
+			lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
+			lbl.Text = "placeholder text for planned"
+			lbl.TextSize = 18
+			lbl.TextColor = Colors.Black
+			lbl.Gravity = Gravity.CENTER
+			p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
+			ToDoList.Add(p, "")
+			
+			
+			drawer.LeftOpen = False
+			inMain = False
+		Case 2
+			ToastMessageShow("Complete", False)
+			mainFragment.RemoveAllViews
+			mainFragment.LoadLayout("newFragment")
+			Dim p As B4XView = xui.CreatePanel("")
+			p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
+			Dim lbl As Label
+			lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
+			lbl.Text = "placeholder text for Completed"
+			lbl.TextSize = 18
+			lbl.TextColor = Colors.Black
+			lbl.Gravity = Gravity.CENTER
+			p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
+			ToDoList.Add(p, "")
+			
+			
+			drawer.LeftOpen = False
+			inMain = False
+		Case 3
+			ToastMessageShow("All", False)
+			mainFragment.RemoveAllViews
+			mainFragment.LoadLayout("newFragment")
+			Dim p As B4XView = xui.CreatePanel("")
+			p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
+			Dim lbl As Label
+			lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
+			lbl.Text = "placeholder text for All"
+			lbl.TextSize = 18
+			lbl.TextColor = Colors.Black
+			lbl.Gravity = Gravity.CENTER
+			p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
+			ToDoList.Add(p, "")
+			drawer.LeftOpen = False
+			inMain = False
+		Case 4
+			ToastMessageShow("Trash", False)
+			mainFragment.RemoveAllViews
+			mainFragment.LoadLayout("newFragment")
+			Dim p As B4XView = xui.CreatePanel("")
+			p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
+			Dim lbl As Label
+			lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
+			lbl.Text = "placeholder text for Trash"
+			lbl.TextSize = 18
+			lbl.TextColor = Colors.Black
+			lbl.Gravity = Gravity.CENTER
+			p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
+			ToDoList.Add(p, "")
+			drawer.LeftOpen = False
+			inMain = False
+	End Select
+End Sub
+
+
+
+Private Sub searchBtn_Click
+	If button_handling Then
+		pnlSearch.SetLayout(pnlTitleBar.Left, pnlTitleBar.Top, 100%x, pnlTitleBar.Height)
+		pnlSearch.SetVisibleAnimated(150, True)
+		pnlSearch.BringToFront
+		
+		searchFragment.SetLayout(mainFragment.Left, mainFragment.Top, mainFragment.Width, mainFragment.Height)
+		searchFragment.SetVisibleAnimated(150, True)
+		searchFragment.BringToFront
+		
+		mainFragment.Visible = False
+		pnlTitleBar.Visible = False
+	End If
+End Sub
+
+Private Sub backBtn_Click
+	If button_handling Then
+		Dim fadeout As Animation
+		fadeout.InitializeAlpha("fade", 1, 0)
+		fadeout.Duration = 150
+		
+		mainFragment.Visible = True
+		pnlTitleBar.Visible = True
+		
+		fadeout.Start(pnlSearch)
+		fadeout.Start(searchFragment)
+		
+		pnlSearch.Visible = False
+		searchFragment.Visible = False
+		
+		pnlSearch.SendToBack
+		searchFragment.SendToBack
+	End If
+End Sub
+
+Public Sub button_handling As Boolean
+	Dim now As Long = DateTime.Now
+	If now - lastClickTime < 500 Then
+		' Less than 300ms since last click, ignore
+		Return False
+	End If
+	lastClickTime = now ' Update the time of the last click
+	Return True
+End Sub
+
+Private Sub enterBtn_Click
+	ToastMessageShow("startactivity", False)
+	'StartActivity(searchactivity)
 End Sub
