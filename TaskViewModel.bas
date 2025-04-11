@@ -7,70 +7,69 @@ Version=13.1
 ' This class separates the data and UI layer.
 
 Sub Class_Globals
-	Private repository As TaskRepository
+	Private m_repository As TaskRepository
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
-Public Sub Initialize
-	repository.Initialize
+Public Sub Initialize(repository As TaskRepository)
+	m_repository = repository
 End Sub
 
 Public Sub InsertTask(item As ToDo)
-	repository.InsertTask(item)
+	m_repository.InsertTask(item)
 End Sub
 
 Public Sub DeleteTask(item As ToDo)
-	repository.DeleteTask(item)
+	m_repository.DeleteTask(item)
 End Sub
 
 Public Sub UpdateTask(Item As ToDo)
-	repository.UpdateTask(Item)
+	m_repository.UpdateTask(Item)
 End Sub
 
 Public Sub GetTask(id As Long) As ToDo
-	Return repository.GetTask(id)
+	Return m_repository.GetTask(id)
 End Sub
 
 Public Sub GetAllTasks() As List
-	Return repository.GetAllTasks
+	Return m_repository.GetAllTasks
 End Sub
 
 Public Sub GetTasksSortedByCreatedAt(ascending As Boolean) As List
-	Return repository.GetTasksSortedByCreatedAt(ascending)
+	Return m_repository.GetTasksSortedByCreatedAt(ascending)
 End Sub
 
 Public Sub GetTasksSortedByTitle(ascending As Boolean) As List
-	Return repository.GetTasksSortedByTitle(ascending)
+	Return m_repository.GetTasksSortedByTitle(ascending)
 End Sub
 
 Public Sub GetTasksSortedByDueDate(ascending As Boolean) As List
-	Return repository.GetTasksSortedByDueDate(ascending)
+	Return m_repository.GetTasksSortedByDueDate(ascending)
 End Sub
 
 Public Sub GetTasksSortedByPriority(ascending As Boolean) As List
-	Return repository.GetTasksSortedByPriority(ascending)
+	Return m_repository.GetTasksSortedByPriority(ascending)
 End Sub
 
-
 Public Sub FindTasksByTitle(query As String, ascending As Boolean) As List
-	Return repository.FindTasksByTitle(query, ascending)
+	Return m_repository.FindTasksByTitle(query, ascending)
 End Sub
 
 Public Sub FindTasksByNotes(query As String, ascending As Boolean) As List
-	Return repository.FindTasksByNotes(query, ascending)
+	Return m_repository.FindTasksByNotes(query, ascending)
 End Sub
 
 Public Sub FindTasksByPriority(query As Int, ascending As Boolean) As List
-	Return repository.FindTasksByPriority(query, ascending)
+	Return m_repository.FindTasksByPriority(query, ascending)
 End Sub
 
 Public Sub FindTasksByDueDate(tickBegin As Long, tickEnd As Long, ascending As Boolean) As List
-	Return repository.FindTasksByDueDate(tickBegin, tickEnd, ascending)
+	Return m_repository.FindTasksByDueDate(tickBegin, tickEnd, ascending)
 End Sub
 
 ' repeat - Expects a list of 7 boolean values.
 Public Sub FindTasksByRepeat(repeat As List, ascending As Boolean) As List
-	Dim tasks As List = repository.GetAllTasksSortedById(ascending)
+	Dim tasks As List = m_repository.GetAllTasksSortedById(ascending)
 	Dim result As List
 	result.Initialize
 	
@@ -101,9 +100,4 @@ Public Sub FindTasksByRepeat(repeat As List, ascending As Boolean) As List
 	Next
 	
 	Return result
-End Sub
-
-' Releases data handled by Repository
-Public Sub Release
-	repository.Release
 End Sub
