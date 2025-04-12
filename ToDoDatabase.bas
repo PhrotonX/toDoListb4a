@@ -108,6 +108,8 @@ Public Sub CreateTable
 	Dim query_populate_groups As String = "INSERT INTO groups (title, description)" & CRLF & _
 	"SELECT 'Shopping', 'List of tasks for shopping' UNION ALL" & CRLF & _
 	"SELECT 'Reading', 'List of tasks for reading' UNION ALL" & CRLF & _
+	"SELECT 'Hobbies', 'List of tasks for your hobbies' UNION ALL" & CRLF & _
+	"SELECT 'Studying', 'List of tasks for your studies' UNION ALL" & CRLF & _
 	"SELECT 'Others', 'List of other tasks'" & CRLF & _
 	"WHERE NOT EXISTS (SELECT 1 FROM days_of_the_week);"
 	

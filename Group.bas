@@ -16,6 +16,9 @@ End Sub
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize(id As Long)
 	m_id = id
+	
+	m_createdAt.Initialize
+	m_updatedAt.Initialize
 End Sub
 
 Public Sub GetTitle As String
