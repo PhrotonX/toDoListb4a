@@ -9,6 +9,7 @@ Sub Class_Globals
 	
 	Private m_taskDao As TaskDao
 	Private m_attachmentDao As AttachmentDao
+	Private m_groupDao As GroupDao
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -21,6 +22,7 @@ Public Sub Initialize
 	' Initialize data access objects.
 	m_taskDao.Initialize(sql)
 	m_attachmentDao.Initialize(sql)
+	m_groupDao.Initialize(sql)
 End Sub
 
 ' Creates tables for Database in SQL syntax, not MySQL.
@@ -71,6 +73,24 @@ Public Sub CreateTable
 	"PRIMARY KEY(task_id, attachment_id)" & CRLF & _
 	");"
 	
+	' Query for creating the group table. This table cannot be named "group" since it is a reserved word.
+	' In this case, use the plural "groups" insead.
+	Dim query_group As String = "CREATE TABLE IF NOT EXISTS groups(" & CRLF & _
+	"group_id INTEGER PRIMARY KEY AUTOINCREMENT," & CRLF & _
+	"title VARCHAR(255) NOT NULL," & CRLF & _
+	"description TEXT," & CRLF & _
+	"color INTEGER," & CRLF & _
+	"created_at LONG NOT NULL DEFAULT 0," & CRLF & _
+	"updated_at LONG NOT NULL DEFAULT 0" & CRLF & _
+	");"
+	
+	' Query for creating the associative task_group table.
+	Dim query_task_group As String = "CREATE TABLE IF NOT EXISTS task_group(" & CRLF & _
+	"task_id INTEGER NOT NULL," & CRLF & _
+	"group_id INTEGER NOT NULL," & CRLF & _
+	"PRIMARY KEY(task_id, group_id)" & CRLF & _
+	");"
+	
 	' Query for populating the days_of_the_week table with data.
 	Dim query_populate_days As String = "INSERT INTO days_of_the_week (day_of_the_week, day_id)" & CRLF & _
 	"SELECT 'Sunday', 0 UNION ALL" & CRLF & _
@@ -91,6 +111,8 @@ Public Sub CreateTable
 		sql.ExecNonQuery(query_task_repeat)
 		sql.ExecNonQuery(query_attachment)
 		sql.ExecNonQuery(query_task_attachment)
+		sql.ExecNonQuery(query_group)
+		sql.ExecNonQuery(query_task_group)
 		' Check if task table is empty
 		If sql.ExecQuerySingleResult("SELECT COUNT(*) FROM days_of_the_week") == "0" Then
 			sql.ExecNonQuery(query_populate_days)
@@ -111,6 +133,10 @@ End Sub
 
 Public Sub AttachmentDao() As AttachmentDao
 	Return m_attachmentDao
+End Sub
+
+Public Sub GroupDao() As GroupDao
+	Return m_groupDao
 End Sub
 
 ' Closes the database

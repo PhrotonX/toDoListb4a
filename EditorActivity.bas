@@ -475,9 +475,15 @@ Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
 	'For Each item As String In File.ListFiles(File.DirInternal)
 	'	Log(item)
 	'Next
+	
+	' For debugging only! Move this into debug mode.
 	For Each item As String In File.ListFiles(File.DirInternal & "/attachments/")
 		Log(item)
 	Next
+	
+	Dim viewHolder As AttachmentViewHolder = Value	
+
+	Starter.AttachmentViewModelInstance.OpenAttachment(viewHolder.ID)
 End Sub
 
 Private Sub btnAttachmentRemove_Click
