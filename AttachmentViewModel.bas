@@ -51,9 +51,8 @@ Public Sub OpenAttachment(attachment_id As Long) As Boolean
 	Log(filePath)
 	
 	Dim intentObj As Intent
-	intentObj.Initialize(intentObj.ACTION_VIEW, CreateFileProviderUri(File.DirInternal & m_fileRepository.DIRECTORY, _ 
-		GetAttachment(attachment_id).GetFilename))
-	
+	intentObj.Initialize(intentObj.ACTION_VIEW, "file://" & filePath)
+	intentObj.SetComponent("android/com.android.internal.app.ResolverActivity")
 	intentObj.SetType("*/*")
 	StartActivity(intentObj)
 End Sub
