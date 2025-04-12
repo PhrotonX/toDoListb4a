@@ -481,8 +481,7 @@ Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
 		Log(item)
 	Next
 	
-	Dim Index As Int = clvAttachments.GetItemFromView(Sender)
-	Dim viewHolder As AttachmentViewHolder = clvAttachments.GetValue(Index)
+	Dim viewHolder As AttachmentViewHolder = Value
 	
 	Starter.AttachmentViewModelInstance.OpenAttachment(viewHolder.ID)
 End Sub

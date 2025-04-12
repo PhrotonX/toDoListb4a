@@ -72,7 +72,7 @@ Public Sub CreateTable
 	");"
 	
 	' Query for creating the group table.
-	Dim query_group As String = "CREATE TABLE IF NOT EXISTS group(" & CRLF & _
+	Dim query_group As String = "CREATE TABLE IF NOT EXISTS groups(" & CRLF & _
 	"group_id INTEGER PRIMARY KEY AUTOINCREMENT," & CRLF & _
 	"title VARCHAR(255) NOT NULL," & CRLF & _
 	"description TEXT," & CRLF & _

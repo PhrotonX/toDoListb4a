@@ -45,9 +45,7 @@ End Sub
 
 ' Returns true if the insertion succeeded.
 Public Sub OpenAttachment(attachment_id As Long) As Boolean
-	Dim filePath As String = m_fileRepository.DIRECTORY & GetAttachment(attachment_id).GetFilename
-	
-	Msgbox(filePath, "Path")
+	Dim filePath As String = File.Combine(File.DirInternal, m_fileRepository.DIRECTORY & GetAttachment(attachment_id).GetFilename)
 	
 	Dim intentObj As Intent
 	intentObj.Initialize(intentObj.ACTION_VIEW, "file://" & filePath)
