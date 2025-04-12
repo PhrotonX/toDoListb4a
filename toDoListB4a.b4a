@@ -71,22 +71,24 @@ Module12=EditorActivity
 Module13=FileUtils
 Module14=Group
 Module15=GroupDao
-Module16=SettingsAbout
-Module17=SettingsActivity
-Module18=SettingsHelp
-Module19=Starter
+Module16=GroupRepository
+Module17=GroupViewModel
+Module18=SettingsAbout
+Module19=SettingsActivity
 Module2=AttachmentDao
-Module20=TaskDao
-Module21=TaskRepository
-Module22=TaskViewerActivity
-Module23=TaskViewHolder
-Module24=TaskViewModel
-Module25=Theme
-Module26=Time
-Module27=ToDo
-Module28=ToDoDatabase
-Module29=ToDoFileSystem
+Module20=SettingsHelp
+Module21=Starter
+Module22=TaskDao
+Module23=TaskRepository
+Module24=TaskViewerActivity
+Module25=TaskViewHolder
+Module26=TaskViewModel
+Module27=Theme
+Module28=Time
+Module29=ToDo
 Module3=AttachmentFileRepository
+Module30=ToDoDatabase
+Module31=ToDoFileSystem
 Module4=AttachmentRepository
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
@@ -95,12 +97,12 @@ Module8=Date
 Module9=DateAndTime
 NumberOfFiles=26
 NumberOfLibraries=11
-NumberOfModules=29
+NumberOfModules=31
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
-	#VersionCode: 8
+	#VersionCode: 9
 	#VersionName: v2.0.0.2 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
