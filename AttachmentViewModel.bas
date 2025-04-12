@@ -43,6 +43,18 @@ Public Sub GetTaskAttachments(task_id As Long) As List
 	Return m_dbRepository.GetTaskAttachments(task_id)
 End Sub
 
+' Returns true if the insertion succeeded.
+Public Sub OpenAttachment(attachment_id As Long) As Boolean
+	Dim filePath As String = m_fileRepository.DIRECTORY & GetAttachment(attachment_id).GetFilename
+	
+	Msgbox(filePath, "Path")
+	
+	Dim intentObj As Intent
+	intentObj.Initialize(intentObj.ACTION_VIEW, "file://" & filePath)
+	intentObj.SetType("*/*")
+	StartActivity(intentObj)
+End Sub
+
 Public Sub UpdateAttachment(item As Attachment)
 	m_dbRepository.UpdateAttachment(item)
 End Sub
