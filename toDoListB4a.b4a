@@ -150,13 +150,7 @@ Sub Globals
 	Public Const TASK_CHECKED_ROOT_COLOR As Int = Colors.RGB(235, 235, 235)
 	Public Const TASK_CHECKED_TEXT_COLOR As Int = Colors.RGB(175, 175, 175)
 	Public Const TASK_UNCHECKED_TEXT_COLOR As Int = Colors.RGB(0, 0, 0)
-	Public Const TASK_UNCHECKED_ROOT_COLOR As Int = Colors.RGB(255, 255, 255)
-	
-	
-	
-
-
-	
+	Public Const TASK_UNCHECKED_ROOT_COLOR As Int = Colors.RGB(255, 255, 255)	
 	
 	Private pnlSearch As Panel
 	Private pnlTitleBar As Panel
@@ -169,7 +163,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	drawer.CenterPanel.LoadLayout("layout")
 	mainFragment.LoadLayout("newFragment")
 	drawer.LeftPanel.LoadLayout("drawerLayout")
-	drawerItems
+	LoadDrawerItems
 	listview_init
 	'Activity.LoadLayout("Layout")
 	
@@ -300,6 +294,10 @@ Private Sub LoadItems()
 			BindItem(item, viewHolder)
 		Next
 	End If
+End Sub
+
+Private Sub LoadTaskGroups()
+	
 End Sub
 
 
@@ -477,7 +475,7 @@ Private Sub listview_init
 		javaobj.RunMethod("setDividerHeight", Array(0))
 End Sub
 
-Sub drawerItems
+Sub LoadDrawerItems
 	clvItems.sv.ScrollViewInnerPanel.Color = xui.Color_Transparent
 	clvItems.sv.Color = xui.Color_Transparent
 	
@@ -489,7 +487,34 @@ Sub drawerItems
 	items.Add(CreateMap("icon": "", "text": "All"))
 	items.Add(CreateMap("icon": "", "text": "Trash"))
 
+	OnLoadTaskGroups(items)
+	
+	
+	Dim sepPanel As B4XView = xui.CreatePanel("")
+	sepPanel.SetLayoutAnimated(0, 0, 0, 100%x, 2dip) ' 2dip height for the separator
+	Dim innerSep As B4XView = xui.CreatePanel("")
+	innerSep.SetLayoutAnimated(0, 5%x, 0, 45.56%x, 2dip) ' 80% width, centered (10% margin on each side)
+	innerSep.Color = xui.Color_LightGray
+	sepPanel.AddView(innerSep, 5%x, 0, 45.56%x, 2dip)
+	sepPanel.Enabled = False
+	innerSep.Enabled = False	
+	
+	clvItems.Add(sepPanel, "separator")
+	
+	' Load task groups from the database
+	items.Clear
+	For Each groupObj As Group In Starter.GroupViewModelInstance.GetGroups()
+		items.Add(CreateMap("icon": "", "text": groupObj.GetTitle))
+	Next
+	
+	OnLoadTaskGroups(items)
 
+	Log(Activity.Width)
+	Log(drawer.LeftPanel.Width)
+	
+End Sub
+
+Private Sub OnLoadTaskGroups(items As List)
 	For Each item As Map In items
 		Dim iconText As String = item.Get("icon")
 		Dim itemText As String = item.Get("text")
@@ -513,22 +538,6 @@ Sub drawerItems
 		itemName.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
 		clvItems.Add(p, itemText)
 	Next
-	
-	Dim sepPanel As B4XView = xui.CreatePanel("")
-	sepPanel.SetLayoutAnimated(0, 0, 0, 100%x, 2dip) ' 2dip height for the separator
-	Dim innerSep As B4XView = xui.CreatePanel("")
-	innerSep.SetLayoutAnimated(0, 5%x, 0, 45.56%x, 2dip) ' 80% width, centered (10% margin on each side)
-	innerSep.Color = xui.Color_LightGray
-	sepPanel.AddView(innerSep, 5%x, 0, 45.56%x, 2dip)
-	sepPanel.Enabled = False
-	innerSep.Enabled = False	
-	
-	clvItems.Add(sepPanel, "separator")
-	
-
-	Log(Activity.Width)
-	Log(drawer.LeftPanel.Width)
-	
 End Sub
 
 Private Sub clvItems_ItemClick (Index As Int, Value As Object)
