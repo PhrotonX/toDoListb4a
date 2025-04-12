@@ -45,10 +45,15 @@ End Sub
 
 ' Returns true if the insertion succeeded.
 Public Sub OpenAttachment(attachment_id As Long) As Boolean
-	Dim filePath As String = File.Combine(File.DirInternal, m_fileRepository.DIRECTORY & GetAttachment(attachment_id).GetFilename)
+	'Dim filePath As String = File.DirInternal & m_fileRepository.DIRECTORY & GetAttachment(attachment_id).GetFilename
+	Dim filePath As String = File.Combine(File.DirInternal & m_fileRepository.DIRECTORY, GetAttachment(attachment_id).GetFilename)
+	
+	Log(filePath)
 	
 	Dim intentObj As Intent
-	intentObj.Initialize(intentObj.ACTION_VIEW, "file://" & filePath)
+	intentObj.Initialize(intentObj.ACTION_VIEW, CreateFileProviderUri(File.DirInternal & m_fileRepository.DIRECTORY, _ 
+		GetAttachment(attachment_id).GetFilename))
+	
 	intentObj.SetType("*/*")
 	StartActivity(intentObj)
 End Sub
@@ -60,4 +65,14 @@ End Sub
 Public Sub DeleteAttachment(item As Attachment) As Boolean
 	m_dbRepository.DeleteAttachment(item)
 	Return m_fileRepository.RemoveAttachment(item)
+End Sub
+
+Sub CreateFileProviderUri (Dir As String, FileName As String) As Object
+	Dim FileProvider As JavaObject
+	Dim context As JavaObject
+	context.InitializeContext
+	FileProvider.InitializeStatic("android.support.v4.content.FileProvider")
+	Dim f As JavaObject
+	f.InitializeNewInstance("java.io.File", Array(Dir, FileName))
+	Return FileProvider.RunMethod("getUriForFile", Array(context, Application.PackageName & ".provider", f))
 End Sub
