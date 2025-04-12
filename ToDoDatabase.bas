@@ -102,6 +102,15 @@ Public Sub CreateTable
 	"SELECT 'Saturday', 6" & CRLF & _
 	"WHERE NOT EXISTS (SELECT 1 FROM days_of_the_week);"
 	
+	' Query for populating group list if and only if the days_of_the_week table has also been populated.
+	' It is guaranteed that this query will only run once since it checks if days_of_the_week table has
+	' already been made in order to be executed.
+	Dim query_populate_groups As String = "INSERT INTO groups (title, description)" & CRLF & _
+	"SELECT 'Shopping', 'List of tasks for shopping' UNION ALL" & CRLF & _
+	"SELECT 'Reading', 'List of tasks for reading' UNION ALL" & CRLF & _
+	"SELECT 'Others', 'List of other tasks'" & CRLF & _
+	"WHERE NOT EXISTS (SELECT 1 FROM days_of_the_week);"
+	
 	' Mark the beginning of SQL transaction.
 	sql.BeginTransaction
 	Try
@@ -116,6 +125,7 @@ Public Sub CreateTable
 		' Check if task table is empty
 		If sql.ExecQuerySingleResult("SELECT COUNT(*) FROM days_of_the_week") == "0" Then
 			sql.ExecNonQuery(query_populate_days)
+			sql.ExecNonQuery(query_populate_groups)
 		End If
 		
 		' Tell to the database that the SQL transaction is successful.
