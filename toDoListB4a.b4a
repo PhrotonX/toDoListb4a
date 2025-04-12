@@ -72,23 +72,24 @@ Module13=FileUtils
 Module14=Group
 Module15=GroupDao
 Module16=GroupRepository
-Module17=GroupViewModel
-Module18=SettingsAbout
-Module19=SettingsActivity
+Module17=GroupViewHolder
+Module18=GroupViewModel
+Module19=SettingsAbout
 Module2=AttachmentDao
-Module20=SettingsHelp
-Module21=Starter
-Module22=TaskDao
-Module23=TaskRepository
-Module24=TaskViewerActivity
-Module25=TaskViewHolder
-Module26=TaskViewModel
-Module27=Theme
-Module28=Time
-Module29=ToDo
+Module20=SettingsActivity
+Module21=SettingsHelp
+Module22=Starter
+Module23=TaskDao
+Module24=TaskRepository
+Module25=TaskViewerActivity
+Module26=TaskViewHolder
+Module27=TaskViewModel
+Module28=Theme
+Module29=Time
 Module3=AttachmentFileRepository
-Module30=ToDoDatabase
-Module31=ToDoFileSystem
+Module30=ToDo
+Module31=ToDoDatabase
+Module32=ToDoFileSystem
 Module4=AttachmentRepository
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
@@ -97,7 +98,7 @@ Module8=Date
 Module9=DateAndTime
 NumberOfFiles=26
 NumberOfLibraries=11
-NumberOfModules=31
+NumberOfModules=32
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
@@ -135,8 +136,7 @@ Sub Globals
 	Dim menuListViewItemsize As ListView
 	Private pnlMenuBgTouch As Panel
 	Private clvItems As CustomListView
-	Private lblIcon As Label
-	Private lblItemName As Label
+	
 	Dim inMain As Boolean = True
 	Private mainFragment As Panel
 	Public lastClickTime As Long = 0
@@ -156,6 +156,9 @@ Sub Globals
 	Private pnlTitleBar As Panel
 	Private searchFragment As Panel
 	Private separator As Panel
+	Private groupPanel As Panel
+	Private lblGroupIcon As Label
+	Private lblGroupName As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -481,11 +484,27 @@ Sub LoadDrawerItems
 	
 	Dim items As List
 	items.Initialize
-	items.Add(CreateMap("icon": "", "text": "My Day"))
-	items.Add(CreateMap("icon": "", "text": "Planned"))
-	items.Add(CreateMap("icon": "", "text": "Completed"))
-	items.Add(CreateMap("icon": "", "text": "All"))
-	items.Add(CreateMap("icon": "", "text": "Trash"))
+	
+	Dim group(5) As Group
+	
+	For Each obj As Group In group
+		obj.Initialize(0)
+	Next
+	
+	group.SetTitle("My Day")
+	group.SetIcon("")
+	
+	group.SetTitle("Planned")
+	group.SetIcon("")
+	
+	group.SetTitle("Completed")
+	group.SetIcon("")
+	
+	group.SetTitle("All")
+	group.SetIcon("")
+	
+	group.SetTitle("Trash")
+	group.SetIcon("")
 
 	OnLoadTaskGroups(items)
 	
@@ -499,12 +518,17 @@ Sub LoadDrawerItems
 	sepPanel.Enabled = False
 	innerSep.Enabled = False	
 	
-	clvItems.Add(sepPanel, "separator")
+	Dim separatorViewHolder As GroupViewHolder
+	separatorViewHolder.Initialize
+	separatorViewHolder.ID = 0
+	separatorViewHolder.IsSeparator = True
+	clvItems.Add(sepPanel, separatorViewHolder)
 	
 	' Load task groups from the database
 	items.Clear
 	For Each groupObj As Group In Starter.GroupViewModelInstance.GetGroups()
-		items.Add(CreateMap("icon": "", "text": groupObj.GetTitle))
+		groupObj.SetIcon("")
+		items.Add(groupObj)
 	Next
 	
 	OnLoadTaskGroups(items)
@@ -515,117 +539,124 @@ Sub LoadDrawerItems
 End Sub
 
 Private Sub OnLoadTaskGroups(items As List)
-	For Each item As Map In items
-		Dim iconText As String = item.Get("icon")
-		Dim itemText As String = item.Get("text")
-		    
+	For Each item As Group In items		    
 		Dim p As B4XView = xui.CreatePanel("")
 		p.SetLayoutAnimated(0, 0, 0, 100%x, 60dip)
 		p.LoadLayout("drawerItems")
+		
+		Dim viewHolder As GroupViewHolder
+		viewHolder.Initialize
+		
+		viewHolder.Root = p
+		viewHolder.ID = item.GetID
+		viewHolder.Name = lblGroupName
+		viewHolder.Icon = lblGroupIcon
+		viewHolder.BackPanel = groupPanel
+		
+		viewHolder.Name.Text = item.GetTitle
+		viewHolder.Icon.Text = item.GetIcon
 
-		
-		Dim innerPanel As B4XView = p.GetView(0)
-		Dim icon As B4XView = innerPanel.GetView(0)
-		Dim itemName As B4XView = innerPanel.GetView(1)
-		
-
-		icon.Text = iconText
-		itemName.Text = itemText
-		
-		p.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		innerPanel.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		icon.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		itemName.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		clvItems.Add(p, itemText)
+		viewHolder.Root.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		viewHolder.BackPanel.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		viewHolder.Icon.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		viewHolder.Name.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		clvItems.Add(p, viewHolder)
 	Next
 End Sub
 
 Private Sub clvItems_ItemClick (Index As Int, Value As Object)
-	If Value = "separator" Then
+	Dim viewHolder As GroupViewHolder = Value
+	
+	If viewHolder.IsSeparator == True Then
 		' Reset selection to previous item
 		clvItems.GetPanel(Index).Color = xui.Color_Transparent
 		Return
 	End If
-	Select Index
-		Case 0
-			ToastMessageShow("my day", False)
-			drawer.LeftOpen = False
-			If inMain = False Then
+	
+	' 0 ID for groups cannot exist on the database. Therefore, it is reserved
+	' for special groups such as smart lists.
+	If viewHolder.ID == 0 Then
+		Select Index
+			Case 0
+				ToastMessageShow("my day", False)
+				drawer.LeftOpen = False
+				If inMain = False Then
+					mainFragment.RemoveAllViews
+					mainFragment.LoadLayout("newFragment")
+					LoadItems
+					drawer.LeftOpen = False
+					inMain = True
+				End If
+			Case 1
+				ToastMessageShow("planned", False)
 				mainFragment.RemoveAllViews
 				mainFragment.LoadLayout("newFragment")
-				LoadItems
+				Dim p As B4XView = xui.CreatePanel("")
+				p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
+				Dim lbl As Label
+				lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
+				lbl.Text = "placeholder text for planned"
+				lbl.TextSize = 18
+				lbl.TextColor = Colors.Black
+				lbl.Gravity = Gravity.CENTER
+				p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
+				ToDoList.Add(p, "")
+			
+			
 				drawer.LeftOpen = False
-				inMain = True
-			End If
-		Case 1
-			ToastMessageShow("planned", False)
-			mainFragment.RemoveAllViews
-			mainFragment.LoadLayout("newFragment")
-			Dim p As B4XView = xui.CreatePanel("")
-			p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
-			Dim lbl As Label
-			lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
-			lbl.Text = "placeholder text for planned"
-			lbl.TextSize = 18
-			lbl.TextColor = Colors.Black
-			lbl.Gravity = Gravity.CENTER
-			p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
-			ToDoList.Add(p, "")
+				inMain = False
+			Case 2
+				ToastMessageShow("Complete", False)
+				mainFragment.RemoveAllViews
+				mainFragment.LoadLayout("newFragment")
+				Dim p As B4XView = xui.CreatePanel("")
+				p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
+				Dim lbl As Label
+				lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
+				lbl.Text = "placeholder text for Completed"
+				lbl.TextSize = 18
+				lbl.TextColor = Colors.Black
+				lbl.Gravity = Gravity.CENTER
+				p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
+				ToDoList.Add(p, "")
 			
 			
-			drawer.LeftOpen = False
-			inMain = False
-		Case 2
-			ToastMessageShow("Complete", False)
-			mainFragment.RemoveAllViews
-			mainFragment.LoadLayout("newFragment")
-			Dim p As B4XView = xui.CreatePanel("")
-			p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
-			Dim lbl As Label
-			lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
-			lbl.Text = "placeholder text for Completed"
-			lbl.TextSize = 18
-			lbl.TextColor = Colors.Black
-			lbl.Gravity = Gravity.CENTER
-			p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
-			ToDoList.Add(p, "")
-			
-			
-			drawer.LeftOpen = False
-			inMain = False
-		Case 3
-			ToastMessageShow("All", False)
-			mainFragment.RemoveAllViews
-			mainFragment.LoadLayout("newFragment")
-			Dim p As B4XView = xui.CreatePanel("")
-			p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
-			Dim lbl As Label
-			lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
-			lbl.Text = "placeholder text for All"
-			lbl.TextSize = 18
-			lbl.TextColor = Colors.Black
-			lbl.Gravity = Gravity.CENTER
-			p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
-			ToDoList.Add(p, "")
-			drawer.LeftOpen = False
-			inMain = False
-		Case 4
-			ToastMessageShow("Trash", False)
-			mainFragment.RemoveAllViews
-			mainFragment.LoadLayout("newFragment")
-			Dim p As B4XView = xui.CreatePanel("")
-			p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
-			Dim lbl As Label
-			lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
-			lbl.Text = "placeholder text for Trash"
-			lbl.TextSize = 18
-			lbl.TextColor = Colors.Black
-			lbl.Gravity = Gravity.CENTER
-			p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
-			ToDoList.Add(p, "")
-			drawer.LeftOpen = False
-			inMain = False
-	End Select
+				drawer.LeftOpen = False
+				inMain = False
+			Case 3
+				ToastMessageShow("All", False)
+				mainFragment.RemoveAllViews
+				mainFragment.LoadLayout("newFragment")
+				Dim p As B4XView = xui.CreatePanel("")
+				p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
+				Dim lbl As Label
+				lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
+				lbl.Text = "placeholder text for All"
+				lbl.TextSize = 18
+				lbl.TextColor = Colors.Black
+				lbl.Gravity = Gravity.CENTER
+				p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
+				ToDoList.Add(p, "")
+				drawer.LeftOpen = False
+				inMain = False
+			Case 4
+				ToastMessageShow("Trash", False)
+				mainFragment.RemoveAllViews
+				mainFragment.LoadLayout("newFragment")
+				Dim p As B4XView = xui.CreatePanel("")
+				p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
+				Dim lbl As Label
+				lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
+				lbl.Text = "placeholder text for Trash"
+				lbl.TextSize = 18
+				lbl.TextColor = Colors.Black
+				lbl.Gravity = Gravity.CENTER
+				p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
+				ToDoList.Add(p, "")
+				drawer.LeftOpen = False
+				inMain = False
+		End Select
+	End If
 End Sub
 
 
