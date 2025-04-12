@@ -82,26 +82,14 @@ Private Sub ResetApp_Click
 	
 End Sub
 
-Private Sub Import database_Click
+Private Sub ImportDataBase_Click
 	
 End Sub
 
-Private Sub Export database_Click
+Private Sub ExportDataBase_Click
 	
 End Sub
 
-Private Sub Debug mode_Click
-	
-End Sub
-
-Private Sub Import database_Click
-	
-End Sub
-
-Private Sub Export database_Click
-	
-End Sub
-
-Private Sub Debug mode_Click
+Private Sub DebugMode_Click
 	
 End Sub
