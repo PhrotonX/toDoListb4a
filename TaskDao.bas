@@ -23,7 +23,7 @@ Public Sub InsertTask(item As ToDo)
 		Dim currentDateAndTime As Long = DateTime.Now
 		
 		' Insert the task without the repeat data.
-		m_sql.ExecNonQuery("INSERT INTO task(title, notes, priority, due_date, done, created_at, deleted_at)" & CRLF & _
+		m_sql.ExecNonQuery("INSERT INTO task(title, notes, priority, due_date, done, created_at, updated_at)" & CRLF & _
 		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", "&item.GetDueDate.GetUnixTime& CRLF & _
 		", "&DatabaseUtils.BoolToInt(item.Done)&", "&currentDateAndTime&", "&currentDateAndTime&");")
 		
