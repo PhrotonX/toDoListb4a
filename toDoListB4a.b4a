@@ -164,9 +164,10 @@ Sub Globals
 	Private Const SMART_LIST_PLANNED As Int = 1
 	Private Const SMART_LIST_COMPLETED As Int = 2
 	Private Const SMART_LIST_ALL As Int = 3
-	Private Const SMART_LIST_TRASH As Int = 4
-	Private Const SMART_LIST_SEARCH As Int = 5
-	Private Const SMART_LIST_SORT As Int = 6
+	Private Const SMART_LIST_TASKS As Int = 5
+	Private Const SMART_LIST_TRASH As Int = 6
+	Private Const SMART_LIST_SEARCH As Int = 7
+	Private Const SMART_LIST_SORT As Int = 8
 	
 	Private Const SEARCH_BY_NONE As Int = 0
 	Private Const SEARCH_BY_TITLE As Int = 1
@@ -192,6 +193,8 @@ Sub Globals
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
+	'ToDoList.AnimationDuration = 0
+	
 	drawer.Initialize(Me, "Drawer", Activity, 300dip)
 	drawer.CenterPanel.LoadLayout("layout")
 	mainFragment.LoadLayout("newFragment")
@@ -291,8 +294,6 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 		viewHolder.TaskInfo.TextColor = TASK_UNCHECKED_TEXT_COLOR
 		viewHolder.Root.Color = TASK_UNCHECKED_ROOT_COLOR
 	End If
-	
-	ToDoList.Refresh
 End Sub
 
 ' Creates and returns a panel for items loaded into the ToDoList.
@@ -359,15 +360,17 @@ Private Sub LoadItems()
 	
 	' Null check the list.
 	If m_tasks.IsInitialized Then
+		Dim itr As String = ""
+		
 		' Iterate each item.
 		For Each item As ToDo In m_tasks
 			' Initialize a ViewHolder
 			Dim viewHolder As TaskViewHolder
 			viewHolder.Initialize
 			
+			' Create subgroups.
 			Select m_savedSmartList:
 				Case SMART_LIST_PLANNED:
-					Dim itr As String = ""
 					Dim currentDateIdentification As String = item.GetDueDate.IdentifyDate
 					
 					If itr <> currentDateIdentification And item.Done == False Then
@@ -375,11 +378,21 @@ Private Sub LoadItems()
 						
 						Dim subGroup As SubGroupViewHolder
 						subGroup.Initialize(xui)
-						subGroup.Name.Text = currentDateIdentification
+						subGroup.Name.Text = currentDateIdentification & " -"
 						
 						ToDoList.Add(subGroup.BuildView(), subGroup)
 					End If
+				Case SMART_LIST_SEARCH, SMART_LIST_SORT, SMART_LIST_COMPLETED:
 				Case Else:
+					' If the Next item Is marked As completed, Then add subGroup "Completed"
+					If item.Done == True And itr == "" Then
+						Dim subGroup As SubGroupViewHolder
+						subGroup.Initialize(xui)
+						subGroup.Name.Text = "Completed"
+						itr = "Completed"
+						
+						ToDoList.Add(subGroup.BuildView(), subGroup)
+					End If
 			End Select
 			
 			' Add items into the list view by binding the viewholder and the data.
@@ -390,6 +403,8 @@ Private Sub LoadItems()
 			BindItem(item, viewHolder)
 		Next
 	End If
+	
+	
 End Sub
 
 Sub menuBtn_Click
