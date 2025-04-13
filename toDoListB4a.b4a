@@ -79,17 +79,18 @@ Module2=AttachmentDao
 Module20=SettingsActivity
 Module21=SettingsHelp
 Module22=Starter
-Module23=TaskDao
-Module24=TaskRepository
-Module25=TaskViewerActivity
-Module26=TaskViewHolder
-Module27=TaskViewModel
-Module28=Theme
-Module29=Time
+Module23=SubGroupViewHolder
+Module24=TaskDao
+Module25=TaskRepository
+Module26=TaskViewerActivity
+Module27=TaskViewHolder
+Module28=TaskViewModel
+Module29=Theme
 Module3=AttachmentFileRepository
-Module30=ToDo
-Module31=ToDoDatabase
-Module32=ToDoFileSystem
+Module30=Time
+Module31=ToDo
+Module32=ToDoDatabase
+Module33=ToDoFileSystem
 Module4=AttachmentRepository
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
@@ -98,7 +99,7 @@ Module8=Date
 Module9=DateAndTime
 NumberOfFiles=26
 NumberOfLibraries=11
-NumberOfModules=32
+NumberOfModules=33
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
@@ -316,7 +317,7 @@ Private Sub LoadItems()
 			m_tasks = Starter.TaskViewModelInstance.GetTasksPlanned()
 		Case SMART_LIST_TRASH:
 			m_tasks = Starter.TaskViewModelInstance.GetDeletedTasks()
-		Case SMART_LIST_NONE:
+		Case Else, SMART_LIST_NONE:
 			m_tasks = Starter.TaskViewModelInstance.GetGroupedTasks(m_savedGroup.GetID)
 	End Select
 	
@@ -327,6 +328,23 @@ Private Sub LoadItems()
 			' Initialize a ViewHolder
 			Dim viewHolder As TaskViewHolder
 			viewHolder.Initialize
+			
+			Select m_savedSmartList:
+				Case SMART_LIST_PLANNED:
+					Dim itr As String = ""
+					Dim currentDateIdentification As String = item.GetDueDate.IdentifyDate
+					
+					If itr <> currentDateIdentification Then
+						itr = currentDateIdentification
+						
+						Dim subGroup As SubGroupViewHolder
+						subGroup.Initialize(xui)
+						subGroup.Name.Text = currentDateIdentification
+						
+						ToDoList.Add(subGroup.BuildView(), subGroup)
+					End If
+				Case Else:
+			End Select
 			
 			' Add items into the list view by binding the viewholder and the data.
 			ToDoList.Add(CreateItem(viewHolder), viewHolder)
