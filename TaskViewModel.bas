@@ -111,6 +111,10 @@ Public Sub GetDeletedTasks() As List
 	Return results
 End Sub
 
+Public Sub GetGroupedTasks(group_id As Long) As List
+	Return m_repository.GetGroupedTasks(group_id)
+End Sub
+
 Public Sub FindTasksByTitle(query As String, ascending As Boolean) As List
 	Return m_repository.FindTasksByTitle(query, ascending)
 End Sub

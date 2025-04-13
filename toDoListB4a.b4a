@@ -176,7 +176,7 @@ Sub Globals
 	Private Const SEARCH_BY_PRIORITY As Int = 6
 	
 	Private Const SEARCH_BY_DUE_DATE_SPECIFIC_DATE As String = "Specific Date"
-	Private Const SEARCH_BY_DUE_DATE_SPECIFIC_DATE_RANGE As Int = "Specific Date Range"
+	Private Const SEARCH_BY_DUE_DATE_SPECIFIC_DATE_RANGE As String = "Specific Date Range"
 
 	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
 	Private m_savedGroup As Group
@@ -316,6 +316,8 @@ Private Sub LoadItems()
 			m_tasks = Starter.TaskViewModelInstance.GetTasksPlanned()
 		Case SMART_LIST_TRASH:
 			m_tasks = Starter.TaskViewModelInstance.GetDeletedTasks()
+		Case SMART_LIST_NONE:
+			m_tasks = Starter.TaskViewModelInstance.GetGroupedTasks(m_savedGroup.GetID)
 	End Select
 	
 	' Null check the list.
@@ -609,17 +611,22 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	' 0 ID for groups cannot exist on the database. Therefore, it is reserved
 	' for special groups such as smart lists.
 	If viewHolder.ID == 0 Then
+		m_savedSmartList = Index
+		
 		OnLoadPage(smartLists(Index))
 	Else
+		m_savedSmartList = SMART_LIST_NONE
+		
+		' Get the associated group based on the ID stored in the clicked view holder of the nav drawer.
 		Dim groupObj As Group = Starter.GroupViewModelInstance.GetGroup(viewHolder.ID)
 		
 		OnLoadPage(groupObj)
-		
-		m_savedGroup = groupObj
 	End If
 End Sub
 
 Private Sub OnLoadPage(item As Group)
+	m_savedGroup = item
+	
 	titleLabel.Text = item.GetTitle
 	drawer.LeftOpen = False
 	mainFragment.RemoveAllViews
