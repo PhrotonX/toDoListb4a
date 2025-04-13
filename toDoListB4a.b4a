@@ -177,18 +177,7 @@ Sub Globals
 	
 	Private Const SEARCH_BY_DUE_DATE_SPECIFIC_DATE As String = "Specific Date"
 	Private Const SEARCH_BY_DUE_DATE_SPECIFIC_DATE_RANGE As Int = "Specific Date Range"
-	Private Const SEARCH_BY_DUE_DATE_A_LONG_TIME_AGO As Int = 2
-	Private Const SEARCH_BY_DUE_DATE_EARLIER As Int = 3
-	Private Const SEARCH_BY_DUE_DATE_LAST_WEEK As Int = 4
-	Private Const SEARCH_BY_DUE_DATE_EARLIER_THIS_WEEK As Int = 5
-	Private Const SEARCH_BY_DUE_DATE_YESTERDAY As Int = 6
-	Private Const SEARCH_BY_DUE_DATE_TODAY As Int = 7
-	Private Const SEARCH_BY_DUE_DATE_TOMORROW As Int = 8
-	Private Const SEARCH_BY_DUE_DATE_THIS_WEEK As Int = 9
-	Private Const SEARCH_BY_DUE_DATE_NEXT_WEEK As Int = 10
-	Private Const SEARCH_BY_DUE_DATE_LATER As Int = 11
-	Private Const SEARCH_BY_DUE_DATE_A_LONG_TIME_FROM_NOW As Int = 12
-	
+
 	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
 	Private m_savedGroup As Int = 0
 	Private m_savedSearchByDueDateIdentifer = ""
