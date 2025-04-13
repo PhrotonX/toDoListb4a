@@ -39,6 +39,10 @@ Public Sub GetAllTasksSortedById(ascending As Boolean) As List
 	Return m_database.TaskDao().GetTasks("", "ORDER BY task_id " & DatabaseUtils.IsAscending(ascending))
 End Sub
 
+Public Sub GetGroupedTasks(group_id As Long) As List
+	Return m_database.TaskDao().GetGroupedTasks(group_id, "", "")
+End Sub
+
 Public Sub GetTasksSortedByCreatedAt(ascending As Boolean) As List
 	Return m_database.TaskDao().GetTasks("", "ORDER BY created_at " & DatabaseUtils.IsAscending(ascending))
 End Sub

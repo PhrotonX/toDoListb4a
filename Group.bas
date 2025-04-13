@@ -9,13 +9,20 @@ Sub Class_Globals
 	Private m_title As String
 	Private m_description As String
 	Private m_color As Int ' Colors are stored as Int in B4X.
+	Private m_icon As String
 	Private m_createdAt As DateAndTime
 	Private m_updatedAt As DateAndTime
+	Public SpecialGroup As Boolean
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize(id As Long)
 	m_id = id
+	
+	SpecialGroup = False
+	
+	m_createdAt.Initialize
+	m_updatedAt.Initialize
 End Sub
 
 Public Sub GetTitle As String
@@ -28,6 +35,10 @@ End Sub
 
 Public Sub GetID As Long
 	Return m_id
+End Sub
+
+Public Sub GetIcon As String
+	Return m_icon
 End Sub
 
 Public Sub GetColor As Int
@@ -52,4 +63,8 @@ End Sub
 
 Public Sub SetColor(color As Int)
 	m_color = color
+End Sub
+
+Public Sub SetIcon(icon As String)
+	m_icon = icon
 End Sub
