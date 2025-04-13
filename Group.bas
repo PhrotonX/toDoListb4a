@@ -38,7 +38,7 @@ Public Sub GetID As Long
 End Sub
 
 Public Sub GetIcon As String
-	Return m_color
+	Return m_icon
 End Sub
 
 Public Sub GetColor As Int
