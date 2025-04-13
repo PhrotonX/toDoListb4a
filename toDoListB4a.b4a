@@ -257,7 +257,7 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 				Dim prevSubGroup As Object = ToDoList.GetValue(index - 1)
 				Dim nextSubGroup As Object
 				
-				If (index >= index - 2) Then
+				If (index > ToDoList.Size - 1) Then
 					nextSubGroup = Null
 				Else
 					nextSubGroup = ToDoList.GetValue(index)
@@ -279,6 +279,15 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 				ToDoList.RemoveAt(index)
 			End If
 		Case Else:
+			If Checked == True Then
+				ToDoList.RemoveAt(index)
+				viewHolder.Root.RemoveViewFromParent
+				ToDoList.Add(viewHolder.Root, viewHolder)
+			Else
+				ToDoList.RemoveAt(index)
+				viewHolder.Root.RemoveViewFromParent
+				ToDoList.InsertAt(0, viewHolder.Root, viewHolder)
+			End If
 	End Select
 	
 	' Add visual indicator that the task has been changed
@@ -378,7 +387,7 @@ Private Sub LoadItems()
 						
 						Dim subGroup As SubGroupViewHolder
 						subGroup.Initialize(xui)
-						subGroup.Name.Text = currentDateIdentification & " -"
+						subGroup.Name.Text = currentDateIdentification
 						
 						ToDoList.Add(subGroup.BuildView(), subGroup)
 					End If

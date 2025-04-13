@@ -156,8 +156,8 @@ Public Sub GetGroupedTasks(group_id As Long, searchingQuery As String, sortingQu
 	Try
 		' Iterate over all tasks and add it into the list.
 		Dim cursorTask As Cursor
-		cursorTask = m_sql.ExecQuery("SELECT * FROM task" & searchingQuery & sortingQuery & " JOIN task_group " & CRLF & _
-		"ON task_group.task_id = task.task_id WHERE group_id = " & group_id)
+		cursorTask = m_sql.ExecQuery("SELECT * FROM task JOIN task_group " & CRLF & _
+		"ON task_group.task_id = task.task_id WHERE group_id = " & group_id & searchingQuery & sortingQuery)
 		For i = 0 To cursorTask.RowCount - 1
 			cursorTask.Position = i
 			
