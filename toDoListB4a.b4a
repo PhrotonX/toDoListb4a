@@ -485,26 +485,30 @@ Sub LoadDrawerItems
 	Dim items As List
 	items.Initialize
 	
-	Dim group(5) As Group
+	Dim smartLists(5) As Group
 	
-	For Each obj As Group In group
+	For Each obj As Group In smartLists		
 		obj.Initialize(0)
 	Next
 	
-	group.SetTitle("My Day")
-	group.SetIcon("")
+	smartLists(0).SetTitle("My Day")
+	smartLists(0).SetIcon("")
 	
-	group.SetTitle("Planned")
-	group.SetIcon("")
+	smartLists(1).SetTitle("Planned")
+	smartLists(1).SetIcon("")
 	
-	group.SetTitle("Completed")
-	group.SetIcon("")
+	smartLists(2).SetTitle("Completed")
+	smartLists(2).SetIcon("")
 	
-	group.SetTitle("All")
-	group.SetIcon("")
+	smartLists(3).SetTitle("All")
+	smartLists(3).SetIcon("")
 	
-	group.SetTitle("Trash")
-	group.SetIcon("")
+	smartLists(4).SetTitle("Trash")
+	smartLists(4).SetIcon("")
+
+	For Each obj As Group In smartLists
+		items.Add(obj)
+	Next
 
 	OnLoadTaskGroups(items)
 	
