@@ -32,15 +32,15 @@ Public Sub GetTask(id As Long) As ToDo
 End Sub
 
 Public Sub GetAllTasks() As List
-	Return m_database.TaskDao().GetTasks("", "")
+	Return m_database.TaskDao().GetTasks("ORDER BY done ASC", "")
 End Sub
 
 Public Sub GetAllTasksSortedById(ascending As Boolean) As List
-	Return m_database.TaskDao().GetTasks("", "ORDER BY task_id " & DatabaseUtils.IsAscending(ascending))
+	Return m_database.TaskDao().GetTasks("", "ORDER BY task_id " & DatabaseUtils.IsAscending(ascending) & ", done ASC")
 End Sub
 
 Public Sub GetGroupedTasks(group_id As Long) As List
-	Return m_database.TaskDao().GetGroupedTasks(group_id, "", "")
+	Return m_database.TaskDao().GetGroupedTasks(group_id, "ORDER BY done ASC", "")
 End Sub
 
 Public Sub GetTasksSortedByCreatedAt(ascending As Boolean) As List
@@ -72,10 +72,11 @@ Public Sub FindTasksByPriority(query As Int, ascending As Boolean) As List
 End Sub
 
 Public Sub FindTasksByDueDate(tickBegin As Long, tickEnd As Long, ascending As Boolean) As List
-	Return m_database.TaskDao().GetTasks("WHERE due_date >= " & tickBegin & " AND due_date <= " & tickEnd, "ORDER BY due_date " & _
-	DatabaseUtils.IsAscending(ascending))
+	Return m_database.TaskDao().GetTasks("WHERE due_date >= " & tickBegin & " AND due_date <= " & tickEnd, _
+	"ORDER BY due_date " & DatabaseUtils.IsAscending(ascending))
 End Sub
 
 Private Sub FindTasks(query As String, ascending As Boolean, field As String) As List
-	Return m_database.TaskDao().GetTasks("WHERE "&field&" LIKE '%"&query&"%'", "ORDER BY "&field&" " & DatabaseUtils.IsAscending(ascending))
+	Return m_database.TaskDao().GetTasks("WHERE "&field&" LIKE '%"&query&"%'", "ORDER BY "&field&" " _
+	& DatabaseUtils.IsAscending(ascending))
 End Sub
