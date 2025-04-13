@@ -179,8 +179,12 @@ Sub Globals
 	Private Const SEARCH_BY_DUE_DATE_SPECIFIC_DATE_RANGE As Int = "Specific Date Range"
 
 	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
-	Private m_savedGroup As Int = 0
+	Private m_savedGroup As Group
 	Private m_savedSearchByDueDateIdentifer = ""
+	Private m_savedSearchByDueDateRange1 As Date
+	Private m_savedSearchByDueDateRange2 As Date
+	Private m_savedSearchByRepeat(7) As Boolean
+	Private m_savedSearchByPriority = ""
 	Private m_query As String
 	
 	Private m_tasks As List
@@ -592,6 +596,7 @@ Private Sub OnLoadTaskGroups(items As List)
 	Next
 End Sub
 
+' Function for task group click.
 Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	Dim viewHolder As GroupViewHolder = Value
 	
@@ -609,6 +614,8 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 		Dim groupObj As Group = Starter.GroupViewModelInstance.GetGroup(viewHolder.ID)
 		
 		OnLoadPage(groupObj)
+		
+		m_savedGroup = groupObj
 	End If
 End Sub
 
