@@ -1,4 +1,4 @@
-﻿Build1=Default,com.cm.todolist
+Build1=Default,com.cm.todolist
 File1=3528206.png
 File10=emptytasks.bal
 File11=folder.png
@@ -164,9 +164,10 @@ Sub Globals
 	Private Const SMART_LIST_PLANNED As Int = 1
 	Private Const SMART_LIST_COMPLETED As Int = 2
 	Private Const SMART_LIST_ALL As Int = 3
-	Private Const SMART_LIST_TRASH As Int = 4
-	Private Const SMART_LIST_SEARCH As Int = 5
-	Private Const SMART_LIST_SORT As Int = 6
+	Private Const SMART_LIST_TASKS As Int = 5
+	Private Const SMART_LIST_TRASH As Int = 6
+	Private Const SMART_LIST_SEARCH As Int = 7
+	Private Const SMART_LIST_SORT As Int = 8
 	
 	Private Const SEARCH_BY_NONE As Int = 0
 	Private Const SEARCH_BY_TITLE As Int = 1
@@ -188,10 +189,14 @@ Sub Globals
 	Private m_savedSearchByPriority = ""
 	Private m_query As String
 	
+	Private m_itemsLoaded As Boolean = False
+	
 	Private m_tasks As List
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
+	'ToDoList.AnimationDuration = 0
+	
 	drawer.Initialize(Me, "Drawer", Activity, 300dip)
 	drawer.CenterPanel.LoadLayout("layout")
 	mainFragment.LoadLayout("newFragment")
@@ -243,6 +248,55 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 	
 	' Since the item has been changed, update the database.
 	Starter.TaskViewModelInstance.UpdateTask(item)
+	
+	Select m_savedSmartList:
+		Case SMART_LIST_PLANNED:
+			If Checked == True Then
+				' Hide the completed task if the current smart list is in "Planned"				
+				ToDoList.RemoveAt(index)
+
+				' Also remove the subgroup If it exists And the subgroup Is empty.
+				Dim prevSubGroup As Object = ToDoList.GetValue(index - 1)
+				Dim nextSubGroup As Object
+				
+				If (index > ToDoList.Size - 1) Then
+					nextSubGroup = Null
+				Else
+					nextSubGroup = ToDoList.GetValue(index)
+				End If
+				
+				If prevSubGroup Is SubGroupViewHolder Then
+					If nextSubGroup == Null Then
+						ToDoList.RemoveAt(index - 1)
+					End If
+					If nextSubGroup Is SubGroupViewHolder Then
+						ToDoList.RemoveAt(index - 1)
+					End If
+				End If
+				
+			End If
+		Case SMART_LIST_COMPLETED:
+			If Checked == False Then
+				' Hide the incomplete task if the current smart list is in "Completed"
+				ToDoList.RemoveAt(index)
+			End If
+		Case Else:
+			If Checked == True Then
+				ToDoList.RemoveAt(index)
+				viewHolder.Root.RemoveViewFromParent
+				
+				If m_itemsLoaded Then
+					ToDoList.InsertAt(ToDoList.Size - 1, viewHolder.Root, viewHolder)
+				Else
+					ToDoList.Add(viewHolder.Root, viewHolder)
+					m_itemsLoaded = True
+				End If
+			Else
+				ToDoList.RemoveAt(index)
+				viewHolder.Root.RemoveViewFromParent
+				ToDoList.InsertAt(0, viewHolder.Root, viewHolder)
+			End If
+	End Select
 	
 	' Add visual indicator that the task has been changed
 	If Checked == True Then
@@ -298,7 +352,9 @@ End Sub
 ' Loads the items.
 Private Sub LoadItems()
 
-' Initialize a list.
+		m_itemsLoaded = False
+
+	' Initialize a list.
 	' Testing code for item sorting and searching.
 	' m_tasks = Starter.TaskViewModelInstance.FindTasksByDueDate(DateTime.Now - 86400000, DateTime.Now + (86400000 * 2), True)
 	'Dim repeat(7) As Boolean = Array As Boolean(True, False, True, False, False, False, False)
@@ -323,18 +379,20 @@ Private Sub LoadItems()
 	
 	' Null check the list.
 	If m_tasks.IsInitialized Then
+		Dim itr As String = ""
+		
 		' Iterate each item.
 		For Each item As ToDo In m_tasks
 			' Initialize a ViewHolder
 			Dim viewHolder As TaskViewHolder
 			viewHolder.Initialize
 			
+			' Create subgroups.
 			Select m_savedSmartList:
 				Case SMART_LIST_PLANNED:
-					Dim itr As String = ""
 					Dim currentDateIdentification As String = item.GetDueDate.IdentifyDate
 					
-					If itr <> currentDateIdentification Then
+					If itr <> currentDateIdentification And item.Done == False Then
 						itr = currentDateIdentification
 						
 						Dim subGroup As SubGroupViewHolder
@@ -343,7 +401,17 @@ Private Sub LoadItems()
 						
 						ToDoList.Add(subGroup.BuildView(), subGroup)
 					End If
+				Case SMART_LIST_SEARCH, SMART_LIST_SORT, SMART_LIST_COMPLETED:
 				Case Else:
+					' If the Next item Is marked As completed, Then add subGroup "Completed"
+					If item.Done == True And itr == "" Then
+						Dim subGroup As SubGroupViewHolder
+						subGroup.Initialize(xui)
+						subGroup.Name.Text = "Completed"
+						itr = "Completed"
+						
+						ToDoList.Add(subGroup.BuildView(), subGroup)
+					End If
 			End Select
 			
 			' Add items into the list view by binding the viewholder and the data.
@@ -354,6 +422,28 @@ Private Sub LoadItems()
 			BindItem(item, viewHolder)
 		Next
 	End If
+	
+	' Add the item count information
+	Select m_savedSmartList
+		' Planned and Completed has a unique way of counting items.
+		Case SMART_LIST_PLANNED, SMART_LIST_COMPLETED:
+			' @TODO: Add functionality here...
+		Case Else:
+			Dim subGroup As SubGroupViewHolder
+			subGroup.Initialize(xui)
+			
+			Dim count As Int = m_tasks.Size
+			
+			subGroup.Name.Text = count & " task"
+			
+			' Make the counting information plural if possible.
+			If count > 1 Then
+				subGroup.Name.Text = subGroup.Name.Text & "(s)"
+			End If
+			
+			ToDoList.Add(subGroup.BuildView(), subGroup)
+	End Select
+	
 End Sub
 
 Sub menuBtn_Click
