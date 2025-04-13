@@ -244,6 +244,40 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 	' Since the item has been changed, update the database.
 	Starter.TaskViewModelInstance.UpdateTask(item)
 	
+	Select m_savedSmartList:
+		Case SMART_LIST_PLANNED:
+			If Checked == True Then
+				' Hide the completed task if the current smart list is in "Planned"				
+				ToDoList.RemoveAt(index)
+
+				' Also remove the subgroup If it exists And the subgroup Is empty.
+				Dim prevSubGroup As Object = ToDoList.GetValue(index - 1)
+				Dim nextSubGroup As Object
+				
+				If (index >= index - 2) Then
+					nextSubGroup = Null
+				Else
+					nextSubGroup = ToDoList.GetValue(index)
+				End If
+				
+				If prevSubGroup Is SubGroupViewHolder Then
+					If nextSubGroup == Null Then
+						ToDoList.RemoveAt(index - 1)
+					End If
+					If nextSubGroup Is SubGroupViewHolder Then
+						ToDoList.RemoveAt(index - 1)
+					End If
+				End If
+				
+			End If
+		Case SMART_LIST_COMPLETED:
+			If Checked == False Then
+				' Hide the incomplete task if the current smart list is in "Completed"
+				ToDoList.RemoveAt(index)
+			End If
+		Case Else:
+	End Select
+	
 	' Add visual indicator that the task has been changed
 	If Checked == True Then
 		' Make the items return to its original look after the task is marked as
@@ -257,6 +291,8 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 		viewHolder.TaskInfo.TextColor = TASK_UNCHECKED_TEXT_COLOR
 		viewHolder.Root.Color = TASK_UNCHECKED_ROOT_COLOR
 	End If
+	
+	ToDoList.Refresh
 End Sub
 
 ' Creates and returns a panel for items loaded into the ToDoList.
@@ -334,7 +370,7 @@ Private Sub LoadItems()
 					Dim itr As String = ""
 					Dim currentDateIdentification As String = item.GetDueDate.IdentifyDate
 					
-					If itr <> currentDateIdentification Then
+					If itr <> currentDateIdentification And item.Done == False Then
 						itr = currentDateIdentification
 						
 						Dim subGroup As SubGroupViewHolder
