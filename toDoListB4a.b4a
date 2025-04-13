@@ -143,10 +143,6 @@ Sub Globals
 	
 	Private m_mode As String
 	
-	Private MAIN_ACTIVITY_NORMAL_MODE As String = "MAIN_ACTIVITY_NORMAL_MODE"
-	Private MAIN_ACTIVITY_SEARCHING_MODE As String = "MAIN_ACTIVITY_SEARCHING_MODE"
-	Private MAIN_ACTIVITY_SORTING_MODE As String = "MAIN_ACTIVITY_SORTING_MODE"
-	
 	Public Const TASK_CHECKED_ROOT_COLOR As Int = Colors.RGB(235, 235, 235)
 	Public Const TASK_CHECKED_TEXT_COLOR As Int = Colors.RGB(175, 175, 175)
 	Public Const TASK_UNCHECKED_TEXT_COLOR As Int = Colors.RGB(0, 0, 0)
@@ -159,6 +155,46 @@ Sub Globals
 	Private groupPanel As Panel
 	Private lblGroupIcon As Label
 	Private lblGroupName As Label
+	
+	Private smartLists(5) As Group
+	
+	Private Const SMART_LIST_NONE As Int = -1
+	Private Const SMART_LIST_MY_DAY As Int = 0
+	Private Const SMART_LIST_PLANNED As Int = 1
+	Private Const SMART_LIST_COMPLETED As Int = 2
+	Private Const SMART_LIST_ALL As Int = 3
+	Private Const SMART_LIST_TRASH As Int = 4
+	Private Const SMART_LIST_SEARCH As Int = 5
+	Private Const SMART_LIST_SORT As Int = 6
+	
+	Private Const SEARCH_BY_NONE As Int = 0
+	Private Const SEARCH_BY_TITLE As Int = 1
+	Private Const SEARCH_BY_DESCRIPTION As Int = 2
+	Private Const SEARCH_BY_ATTACHMENTS As Int = 3
+	Private Const SEARCH_BY_DUE_DATE As Int = 4
+	Private Const SEARCH_BY_REPEAT As Int = 5
+	Private Const SEARCH_BY_PRIORITY As Int = 6
+	
+	Private Const SEARCH_BY_DUE_DATE_SPECIFIC_DATE As String = "Specific Date"
+	Private Const SEARCH_BY_DUE_DATE_SPECIFIC_DATE_RANGE As Int = "Specific Date Range"
+	Private Const SEARCH_BY_DUE_DATE_A_LONG_TIME_AGO As Int = 2
+	Private Const SEARCH_BY_DUE_DATE_EARLIER As Int = 3
+	Private Const SEARCH_BY_DUE_DATE_LAST_WEEK As Int = 4
+	Private Const SEARCH_BY_DUE_DATE_EARLIER_THIS_WEEK As Int = 5
+	Private Const SEARCH_BY_DUE_DATE_YESTERDAY As Int = 6
+	Private Const SEARCH_BY_DUE_DATE_TODAY As Int = 7
+	Private Const SEARCH_BY_DUE_DATE_TOMORROW As Int = 8
+	Private Const SEARCH_BY_DUE_DATE_THIS_WEEK As Int = 9
+	Private Const SEARCH_BY_DUE_DATE_NEXT_WEEK As Int = 10
+	Private Const SEARCH_BY_DUE_DATE_LATER As Int = 11
+	Private Const SEARCH_BY_DUE_DATE_A_LONG_TIME_FROM_NOW As Int = 12
+	
+	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
+	Private m_savedGroup As Int = 0
+	Private m_savedSearchByDueDateIdentifer = ""
+	Private m_query As String
+	
+	Private m_tasks As List
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -170,7 +206,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	listview_init
 	'Activity.LoadLayout("Layout")
 	
-	
+	m_tasks.Initialize
 End Sub
 
 Sub Activity_Resume
@@ -269,22 +305,30 @@ End Sub
 Private Sub LoadItems()
 
 ' Initialize a list.
-	Dim items As List
-	items.Initialize
-	
 	' Testing code for item sorting and searching.
-	' items = Starter.TaskViewModelInstance.FindTasksByDueDate(DateTime.Now - 86400000, DateTime.Now + (86400000 * 2), True)
+	' m_tasks = Starter.TaskViewModelInstance.FindTasksByDueDate(DateTime.Now - 86400000, DateTime.Now + (86400000 * 2), True)
 	'Dim repeat(7) As Boolean = Array As Boolean(True, False, True, False, False, False, False)
 	
-	'items = Starter.TaskViewModelInstance.FindTasksByRepeat(repeat, True)
+	'm_tasks = Starter.TaskViewModelInstance.FindTasksByRepeat(repeat, True)
 	
-	' Obtain all tasks from the database.
-	items = Starter.TaskViewModelInstance.GetAllTasks()
+	' Obtain all tasks from the database, depending on the smart list mode.
+	Select m_savedSmartList:
+		Case SMART_LIST_MY_DAY:
+			m_tasks = Starter.TaskViewModelInstance.GetTasksToday()
+		Case SMART_LIST_ALL: 
+			m_tasks = Starter.TaskViewModelInstance.GetAllTasks()
+		Case SMART_LIST_COMPLETED:
+			m_tasks = Starter.TaskViewModelInstance.GetTasksCompleted()
+		Case SMART_LIST_PLANNED:
+			m_tasks = Starter.TaskViewModelInstance.GetTasksPlanned()
+		Case SMART_LIST_TRASH:
+			m_tasks = Starter.TaskViewModelInstance.GetDeletedTasks()
+	End Select
 	
 	' Null check the list.
-	If items.IsInitialized Then
+	If m_tasks.IsInitialized Then
 		' Iterate each item.
-		For Each item As ToDo In items
+		For Each item As ToDo In m_tasks
 			' Initialize a ViewHolder
 			Dim viewHolder As TaskViewHolder
 			viewHolder.Initialize
@@ -298,11 +342,6 @@ Private Sub LoadItems()
 		Next
 	End If
 End Sub
-
-Private Sub LoadTaskGroups()
-	
-End Sub
-
 
 Sub menuBtn_Click
 	If button_handling Then
@@ -328,7 +367,6 @@ End Sub
 Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 	Select Position
 		Case 0
-			ToastMessageShow("Refereshed", False)
 			pnlMenuBgTouch.SendToBack
 			menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
 			menuListView.SetVisibleAnimated(500, False)
@@ -336,7 +374,6 @@ Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 			
 			
 		Case 1
-			ToastMessageShow("Sort", False)
 			pnlMenuBgTouch.SendToBack
 			menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
 			menuListView.SetVisibleAnimated(500, False)
@@ -485,8 +522,6 @@ Sub LoadDrawerItems
 	Dim items As List
 	items.Initialize
 	
-	Dim smartLists(5) As Group
-	
 	For Each obj As Group In smartLists		
 		obj.Initialize(0)
 	Next
@@ -580,90 +615,22 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	' 0 ID for groups cannot exist on the database. Therefore, it is reserved
 	' for special groups such as smart lists.
 	If viewHolder.ID == 0 Then
-		Select Index
-			Case 0
-				ToastMessageShow("my day", False)
-				drawer.LeftOpen = False
-				If inMain = False Then
-					mainFragment.RemoveAllViews
-					mainFragment.LoadLayout("newFragment")
-					LoadItems
-					drawer.LeftOpen = False
-					inMain = True
-				End If
-			Case 1
-				ToastMessageShow("planned", False)
-				mainFragment.RemoveAllViews
-				mainFragment.LoadLayout("newFragment")
-				Dim p As B4XView = xui.CreatePanel("")
-				p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
-				Dim lbl As Label
-				lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
-				lbl.Text = "placeholder text for planned"
-				lbl.TextSize = 18
-				lbl.TextColor = Colors.Black
-				lbl.Gravity = Gravity.CENTER
-				p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
-				ToDoList.Add(p, "")
-			
-			
-				drawer.LeftOpen = False
-				inMain = False
-			Case 2
-				ToastMessageShow("Complete", False)
-				mainFragment.RemoveAllViews
-				mainFragment.LoadLayout("newFragment")
-				Dim p As B4XView = xui.CreatePanel("")
-				p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
-				Dim lbl As Label
-				lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
-				lbl.Text = "placeholder text for Completed"
-				lbl.TextSize = 18
-				lbl.TextColor = Colors.Black
-				lbl.Gravity = Gravity.CENTER
-				p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
-				ToDoList.Add(p, "")
-			
-			
-				drawer.LeftOpen = False
-				inMain = False
-			Case 3
-				ToastMessageShow("All", False)
-				mainFragment.RemoveAllViews
-				mainFragment.LoadLayout("newFragment")
-				Dim p As B4XView = xui.CreatePanel("")
-				p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
-				Dim lbl As Label
-				lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
-				lbl.Text = "placeholder text for All"
-				lbl.TextSize = 18
-				lbl.TextColor = Colors.Black
-				lbl.Gravity = Gravity.CENTER
-				p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
-				ToDoList.Add(p, "")
-				drawer.LeftOpen = False
-				inMain = False
-			Case 4
-				ToastMessageShow("Trash", False)
-				mainFragment.RemoveAllViews
-				mainFragment.LoadLayout("newFragment")
-				Dim p As B4XView = xui.CreatePanel("")
-				p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
-				Dim lbl As Label
-				lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
-				lbl.Text = "placeholder text for Trash"
-				lbl.TextSize = 18
-				lbl.TextColor = Colors.Black
-				lbl.Gravity = Gravity.CENTER
-				p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
-				ToDoList.Add(p, "")
-				drawer.LeftOpen = False
-				inMain = False
-		End Select
+		OnLoadPage(smartLists(Index))
+	Else
+		Dim groupObj As Group = Starter.GroupViewModelInstance.GetGroup(viewHolder.ID)
+		
+		OnLoadPage(groupObj)
 	End If
 End Sub
 
-
+Private Sub OnLoadPage(item As Group)
+	titleLabel.Text = item.GetTitle
+	drawer.LeftOpen = False
+	mainFragment.RemoveAllViews
+	mainFragment.LoadLayout("newFragment")
+	LoadItems
+	drawer.LeftOpen = False
+End Sub
 
 Private Sub searchBtn_Click
 	If button_handling Then
