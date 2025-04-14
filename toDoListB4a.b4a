@@ -109,6 +109,7 @@ Version=13.1
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
+	#MultiDex: True
 #End Region
 
 #Region  Activity Attributes 
