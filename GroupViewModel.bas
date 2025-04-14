@@ -17,6 +17,10 @@ Public Sub InsertGroup(item As Group)
 	m_dbRepository.InsertGroup(item)
 End Sub
 
+Public Sub InsertTaskGroup(task_id As Long, group_id As Long)
+	m_dbRepository.InsertTaskGroup(task_id, group_id)
+End Sub
+
 Public Sub GetGroup(group_id As Long) As Group
 	Return m_dbRepository.GetGroup(group_id)
 End Sub
@@ -35,4 +39,12 @@ End Sub
 
 Public Sub UpdateGroup(item As Group)
 	m_dbRepository.UpdateGroup(item)
+End Sub
+
+Public Sub DeleteTaskGroup(task_id As Long, group_id As Long)
+	m_dbRepository.DeleteTaskGroup(task_id, group_id)
+End Sub
+
+Public Sub UpdateTaskGroup(task_id As Long, old_group_id As Long, new_group_id As Long)
+	m_dbRepository.UpdateTaskGroup(task_id, old_group_id, new_group_id)
 End Sub

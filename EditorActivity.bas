@@ -224,10 +224,17 @@ Private Sub btnSave_Click
 	' Check the editor mode to set the appropriate EditorActivity saving functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
 		Starter.TaskViewModelInstance.UpdateTask(m_task)
+		
+		' Spinner is not zero-based index.
+		Starter.GroupViewModelInstance.UpdateTaskGroup(m_task.GetId, m_group.GetID, spnTaskGroup.SelectedIndex)
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		Starter.TaskViewModelInstance.InsertTask(m_task)
+		
+		' Spinner is not zero-based index.
+		Starter.GroupViewModelInstance.InsertTaskGroup(m_task.GetId, spnTaskGroup.SelectedIndex)
 	End If
 	
+	' Save the attachments
 	For Each item As Attachment In m_pendingAttachmentInsert
 		If Starter.AttachmentViewModelInstance.InsertAttachment(item, m_task.GetId) == False Then
 			MsgboxAsync("Failed to insert attachment: " & item.GetFilename, "Error")
@@ -307,7 +314,7 @@ Private Sub btnDelete_Click
 	Wait For Msgbox_Result (Result As Int)
 	If Result = DialogResponse.POSITIVE Then
 		Starter.TaskViewModelInstance.DeleteTask(m_task)
-		
+		Starter.GroupViewModelInstance.DeleteTaskGroup(m_task.GetId, m_group.GetID)
 		' Close the editor after deleting,
 		Activity.Finish
 	End If
