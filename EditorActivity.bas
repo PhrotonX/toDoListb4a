@@ -28,6 +28,7 @@ Sub Globals
 	' This variable is responsible for handling the current data that can be used for performing
 	' CRUD into the database.
 	Private m_task As ToDo
+	Private m_group As Group
 	
 	' Attachment that are pending for saving.
 	Private m_pendingAttachmentInsert As List
@@ -61,6 +62,7 @@ Sub Globals
 	Private imgAttachmentIcon As ImageView
 	Private lblAttachmentFileName As Label
 	Private pnlAttachmentRoot As Panel
+	Private spnTaskGroup As Spinner
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -91,6 +93,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Fill the due date spinners with data
 	PopulateDueDate
 	
+	' Load the task groups
+	LoadTaskGroup
+	
 	' Check the editor mode to set the appropriate EditorActivity functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
 		' Rename the activity if editing.
@@ -101,6 +106,11 @@ Sub Activity_Create(FirstTime As Boolean)
 		
 		' Retrieve the data stored in the database based on itemId.
 		m_task = Starter.TaskViewModelInstance.GetTask(itemId)
+		m_group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_task.GetId)
+		
+		If m_group.IsInitialized == False Then
+			m_group.Initialize(0)
+		End If
 		
 		' Update the fields to display the data retrieved from the database for editing.
 		editTitle.Text = m_task.GetTitle
@@ -141,6 +151,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		' Load the attachments
 		LoadAttachments
 		
+		spnTaskGroup.SelectedIndex = m_group.GetID
 		
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		' Disable the delete button if the editor mode is EDITOR_MODE_CREATE
@@ -338,6 +349,20 @@ Private Sub LoadAttachments
 		Next
 	End If
 	
+End Sub
+
+Private Sub LoadTaskGroup
+	Dim groups As List = Starter.GroupViewModelInstance.GetGroups()
+	
+	' Has index of 0 by default
+	spnTaskGroup.Add("Tasks")
+	spnTaskGroup.IndexOf("Tasks")
+	
+	If groups.IsInitialized Then
+		For Each item As Group In groups
+			spnTaskGroup.Add(item.GetTitle)
+		Next
+	End If
 End Sub
 
 Private Sub OnAddAttachment(item As Attachment)
@@ -562,4 +587,8 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 	Else
 		MsgboxAsync("Unable to retrieve attachment", "Error")
 	End If
+End Sub
+
+Private Sub spnTaskGroup_ItemClick (Position As Int, Value As Object)
+	
 End Sub
