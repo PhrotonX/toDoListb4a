@@ -13,7 +13,6 @@ Public Sub Initialize(sql As SQL)
 	m_sql = sql
 End Sub
 
-
 ' Inserts task into the database.
 Public Sub InsertTask(item As ToDo)
 	m_sql.BeginTransaction
@@ -99,69 +98,38 @@ End Sub
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
 Public Sub GetTasks(searchingQuery As String, sortingQuery As String) As List
-	Dim list As List
-	list.Initialize
-	
-	' Add space into searchingQuery if it is not empty.
-	If searchingQuery <> "" Then
-		searchingQuery = " " & searchingQuery
-	End If
-	
-	' Add space into sortingQuery if it is not empty.
-	If sortingQuery <> "" Then
-		sortingQuery = " " & sortingQuery
-	End If
-	
-	m_sql.BeginTransaction
-	Try
-		' Iterate over all tasks and add it into the list.
-		Dim cursorTask As Cursor
-		cursorTask = m_sql.ExecQuery("SELECT * FROM task" & searchingQuery & sortingQuery)
-		For i = 0 To cursorTask.RowCount - 1
-			cursorTask.Position = i
-			
-			Dim item As ToDo = OnGetTask(cursorTask)
-			
-			' Add the item into the list
-			list.Add(item)
-		Next
-		cursorTask.Close
-		m_sql.TransactionSuccessful
-	Catch
-		Log(LastException.Message)
-	End Try
-	m_sql.EndTransaction
-	
-	Return list
+	Return OnGetTask("SELECT * FROM task " & searchingQuery & " " & sortingQuery)
 End Sub
 
 ' Retrieves multiple tasks based on a task group
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
 Public Sub GetGroupedTasks(group_id As Long, searchingQuery As String, sortingQuery As String) As List
+	Return OnGetTask("SELECT * FROM task JOIN task_group " & CRLF & _ 
+	"ON task_group.task_id = task.task_id WHERE group_id = " & group_id & " " & searchingQuery & " " & sortingQuery)
+End Sub
+
+' Retrieves multiple tasks based on a task group
+' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
+' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
+Public Sub GetUngroupedTasks(searchingQuery As String, sortingQuery As String) As List
+	Return OnGetTask("SELECT * FROM task LEFT JOIN task_group " & CRLF & _ 
+	"ON task_group.task_id = task.task_id WHERE group_id IS NULL")
+End Sub
+
+Private Sub OnGetTask(query As String) As List
 	Dim list As List
 	list.Initialize
-	
-	' Add space into searchingQuery if it is not empty.
-	If searchingQuery <> "" Then
-		searchingQuery = " " & searchingQuery
-	End If
-	
-	' Add space into sortingQuery if it is not empty.
-	If sortingQuery <> "" Then
-		sortingQuery = " " & sortingQuery
-	End If
 	
 	m_sql.BeginTransaction
 	Try
 		' Iterate over all tasks and add it into the list.
 		Dim cursorTask As Cursor
-		cursorTask = m_sql.ExecQuery("SELECT * FROM task JOIN task_group " & CRLF & _
-		"ON task_group.task_id = task.task_id WHERE group_id = " & group_id & searchingQuery & sortingQuery)
+		cursorTask = m_sql.ExecQuery(query)
 		For i = 0 To cursorTask.RowCount - 1
 			cursorTask.Position = i
 			
-			Dim item As ToDo = OnGetTask(cursorTask)
+			Dim item As ToDo = OnBuildTask(cursorTask)
 			
 			' Add the item into the list
 			list.Add(item)
@@ -176,7 +144,7 @@ Public Sub GetGroupedTasks(group_id As Long, searchingQuery As String, sortingQu
 	Return list
 End Sub
 
-Private Sub OnGetTask(cursorTask As Cursor) As ToDo
+Private Sub OnBuildTask(cursorTask As Cursor) As ToDo
 	' Declare and initialize the item.
 	Dim item As ToDo
 	item.Initialize
