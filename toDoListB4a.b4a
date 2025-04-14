@@ -182,11 +182,11 @@ Sub Globals
 
 	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
 	Private m_savedGroup As Group
-	Private m_savedSearchByDueDateIdentifer = ""
+	Private m_savedSearchByDueDateIdentifer As String = ""
 	Private m_savedSearchByDueDateRange1 As Date
 	Private m_savedSearchByDueDateRange2 As Date
 	Private m_savedSearchByRepeat(7) As Boolean
-	Private m_savedSearchByPriority = ""
+	Private m_savedSearchByPriority As Int = -1
 	Private m_query As String
 	
 	Private m_itemsLoaded As Boolean = False
@@ -460,7 +460,7 @@ Private Sub pnlMenuBgTouch_Touch (Action As Int, X As Float, Y As Float)
 		Case Activity.ACTION_DOWN
 			If menuListView.Visible = True Then
 				pnlMenuBgTouch.SendToBack
-				menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
+				menuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
 				menuListView.SetVisibleAnimated(500, False)
 				
 			End If
@@ -471,21 +471,21 @@ Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 	Select Position
 		Case 0
 			pnlMenuBgTouch.SendToBack
-			menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
+			menuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
 			menuListView.SetVisibleAnimated(500, False)
 			
 			
 			
 		Case 1
 			pnlMenuBgTouch.SendToBack
-			menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
+			menuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
 			menuListView.SetVisibleAnimated(500, False)
 			
 			
 		Case 2
 			StartActivity(SettingsActivity)
 			pnlMenuBgTouch.SendToBack
-			menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
+			menuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
 			menuListView.SetVisibleAnimated(500, False)
 			
 	End Select
