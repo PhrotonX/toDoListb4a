@@ -30,6 +30,29 @@ Public Sub InsertGroup(item As Group)
 	m_sql.EndTransaction
 End Sub
 
+Public Sub GetGroupFromTaskId(task_id As Long) As Group
+	Dim result As Group
+	m_sql.BeginTransaction
+	Try
+		Dim Cursor As Cursor
+		Cursor = m_sql.ExecQuery("SELECT * FROM group JOIN task_group ON task_group.group_id = group.group_id" & CRLF & _
+		"WHERE task_id = " & task_id)
+		For i = 0 To Cursor.RowCount - 1
+			Cursor.Position = i
+			result = OnGetGroup(Cursor)
+			
+			' Stop the iteration. Only 1 item is needed.
+			i = Cursor.RowCount + 1
+		Next
+		m_sql.TransactionSuccessful
+	Catch
+		Log(LastException)
+	End Try
+	m_sql.EndTransaction
+	
+	Return result
+End Sub
+
 ' Returns a List of Group entities.
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
@@ -45,16 +68,7 @@ Public Sub GetGroups(searchQuery As String, sortingQuery As String) As List
 		For i = 0 To Cursor.RowCount - 1
 			Cursor.Position = i
 			
-			Dim item As Group
-			
-			item.Initialize(Cursor.GetInt("group_id"))
-			item.SetTitle(Cursor.GetString("title"))
-			item.SetDescription(Cursor.GetString("description"))
-			item.SetColor(Cursor.GetInt("color"))
-			item.CreatedAt().SetUnixTime(Cursor.GetLong("created_at"))
-			item.UpdatedAt().SetUnixTime(Cursor.GetLong("updated_at"))
-			
-			results.Add(item)
+			results.Add(OnGetGroup(Cursor))
 		Next
 		
 		Cursor.Close
@@ -65,6 +79,19 @@ Public Sub GetGroups(searchQuery As String, sortingQuery As String) As List
 	m_sql.EndTransaction
 	
 	Return results
+End Sub
+
+Public Sub OnGetGroup(Cursor As Cursor) As Group
+	Dim item As Group
+			
+	item.Initialize(Cursor.GetInt("group_id"))
+	item.SetTitle(Cursor.GetString("title"))
+	item.SetDescription(Cursor.GetString("description"))
+	item.SetColor(Cursor.GetInt("color"))
+	item.CreatedAt().SetUnixTime(Cursor.GetLong("created_at"))
+	item.UpdatedAt().SetUnixTime(Cursor.GetLong("updated_at"))
+	
+	Return item
 End Sub
 
 Public Sub DeleteGroup(group_id As Long)

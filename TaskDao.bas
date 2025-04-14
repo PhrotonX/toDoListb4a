@@ -14,7 +14,7 @@ Public Sub Initialize(sql As SQL)
 End Sub
 
 ' Inserts task into the database.
-Public Sub InsertTask(item As ToDo)
+Public Sub InsertTask(item As ToDo, group_id As Long)
 	m_sql.BeginTransaction
 	' Exception handling to catch errors for debuggings, if possible.
 	Try

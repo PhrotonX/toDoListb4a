@@ -25,6 +25,10 @@ Public Sub GetGroups() As List
 	Return m_database.GroupDao().GetGroups("", "ORDER BY title ASC")
 End Sub
 
+Public Sub GetGroupOnTaskId(task_id As Long) As Group
+	Return m_database.GroupDao().GetGroupFromTaskId(task_id)
+End Sub
+
 Public Sub DeleteGroup(group_id As Long)
 	m_database.GroupDao().DeleteGroup(group_id)
 End Sub

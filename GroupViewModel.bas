@@ -25,6 +25,10 @@ Public Sub GetGroups() As List
 	Return m_dbRepository.GetGroups()
 End Sub
 
+Public Sub GetGroupByTaskId(task_id As Long) As Group
+	Return m_dbRepository.GetGroupOnTaskId(task_id)
+End Sub
+
 Public Sub DeleteGroup(group_id As Long)
 	m_dbRepository.DeleteGroup(group_id)
 End Sub
