@@ -33,17 +33,19 @@ Sub Process_Globals
 	
 	' Global variable used for identifying the current item of concern.
 	Public Const EXTRA_EDITOR_TASK_ID As String = PACKAGE_NAME & ".EXTRA_EDITOR_TASK_ID"
+	Public Const EXTRA_EDITOR_GROUP_ID As String = PACKAGE_NAME & ".EXTRA_EDITOR_GROUP_ID"
 	
 	Private ToDoDatabaseInstance As ToDoDatabase
 	Private ToDoFileSystemInstance As ToDoFileSystem
 	Private taskRepo As TaskRepository
 	Private attachmentRepo As AttachmentRepository
 	Private attachmentFileRepo As AttachmentFileRepository
+	Private groupRepo As GroupRepository
 	
 	' Glocal instance of TaskViewModel where the database can be accessed.
 	Public TaskViewModelInstance As TaskViewModel
 	Public AttachmentViewModelInstance As AttachmentViewModel
-	
+	Public GroupViewModelInstance As GroupViewModel
 End Sub
 
 Sub CheckInstanceState
@@ -82,9 +84,11 @@ Sub Service_Create
 	taskRepo.Initialize(ToDoDatabaseInstance)
 	attachmentRepo.Initialize(ToDoDatabaseInstance)
 	attachmentFileRepo.Initialize(ToDoFileSystemInstance)
+	groupRepo.Initialize(ToDoDatabaseInstance)
 	
 	TaskViewModelInstance.Initialize(taskRepo)
 	AttachmentViewModelInstance.Initialize(attachmentRepo, attachmentFileRepo)
+	GroupViewModelInstance.Initialize(groupRepo)
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)

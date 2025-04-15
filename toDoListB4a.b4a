@@ -1,21 +1,30 @@
 ﻿Build1=Default,com.cm.todolist
 File1=3528206.png
-File10=Layout.bal
-File11=settingsabout.bal
-File12=settingshelp.bal
-File13=settingslayout.bal
-File14=sviewlayout.bal
-File15=TaskItemLayout.bal
-File16=taskviewlayout.bal
-File17=taskviewscrolllayout.bal
-File2=aboutitems.bal
-File3=AttachmentItemLayout.bal
-File4=EditorLayout.bal
-File5=EditorScrollLayout.bal
-File6=folder.png
-File7=helpitems.bal
-File8=ic_launcher.png
-File9=ic_launcher_xl.png
+File10=emptytasks.bal
+File11=folder.png
+File12=helpitems.bal
+File13=ic_launcher.png
+File14=ic_launcher_xl.png
+File15=Layout.bal
+File16=newfragment.bal
+File17=pencil.png
+File18=separatorlayout.bal
+File19=settingsabout.bal
+File2=486023921_623831243812785_3842496593750662642_n.jpg
+File20=settingshelp.bal
+File21=settingslayout.bal
+File22=solid_white.png
+File23=sviewlayout.bal
+File24=TaskItemLayout.bal
+File25=taskviewlayout.bal
+File26=taskviewscrolllayout.bal
+File3=aboutitems.bal
+File4=AttachmentItemLayout.bal
+File5=canvas.bal
+File6=draweritems.bal
+File7=drawerlayout.bal
+File8=EditorLayout.bal
+File9=EditorScrollLayout.bal
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
@@ -25,7 +34,16 @@ FileGroup14=Default Group
 FileGroup15=Default Group
 FileGroup16=Default Group
 FileGroup17=Default Group
+FileGroup18=Default Group
+FileGroup19=Default Group
 FileGroup2=Default Group
+FileGroup20=Default Group
+FileGroup21=Default Group
+FileGroup22=Default Group
+FileGroup23=Default Group
+FileGroup24=Default Group
+FileGroup25=Default Group
+FileGroup26=Default Group
 FileGroup3=Default Group
 FileGroup4=Default Group
 FileGroup5=Default Group
@@ -37,16 +55,15 @@ Group=Default Group
 Library1=animation
 Library10=xcustomlistview
 Library11=xui
-Library12=b4xdrawer
-Library2=contentresolver
-Library3=core
-Library4=externalstorage
+Library2=b4xdrawer
+Library3=contentresolver
+Library4=core
 Library5=javaobject
 Library6=nb6
 Library7=phone
 Library8=reflection
 Library9=sql
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="34" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="34" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="34" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="34" />~\n~)~\n~#AdditionalJar: com.android.support:support-core-utils~\n~'End of default text.~\n~
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="34" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="18" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="18" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="18" />~\n~)~\n~~\n~CreateResource(xml, provider_paths,~\n~    <paths xmlns:android="http://schemas.android.com/apk/res/android">~\n~    <external-path name="root" path="" />~\n~</paths>~\n~)~\n~#AdditionalJar: com.android.support:support-core-utils~\n~'End of default text.~\n~
 Module1=Attachment
 Module10=DaysOfTheWeek
 Module11=Dimen
@@ -54,40 +71,45 @@ Module12=EditorActivity
 Module13=FileUtils
 Module14=Group
 Module15=GroupDao
-Module16=SettingsAbout
-Module17=SettingsActivity
-Module18=SettingsHelp
-Module19=Starter
+Module16=GroupRepository
+Module17=GroupViewHolder
+Module18=GroupViewModel
+Module19=SettingsAbout
 Module2=AttachmentDao
-Module20=TaskDao
-Module21=TaskRepository
-Module22=TaskViewerActivity
-Module23=TaskViewHolder
-Module24=TaskViewModel
-Module25=Theme
-Module26=Time
-Module27=ToDo
-Module28=ToDoDatabase
-Module29=ToDoFileSystem
+Module20=SettingsActivity
+Module21=SettingsHelp
+Module22=Starter
+Module23=SubGroupViewHolder
+Module24=TaskDao
+Module25=TaskRepository
+Module26=TaskViewerActivity
+Module27=TaskViewHolder
+Module28=TaskViewModel
+Module29=Theme
 Module3=AttachmentFileRepository
+Module30=Time
+Module31=ToDo
+Module32=ToDoDatabase
+Module33=ToDoFileSystem
 Module4=AttachmentRepository
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
 Module7=DatabaseUtils
 Module8=Date
 Module9=DateAndTime
-NumberOfFiles=17
-NumberOfLibraries=12
-NumberOfModules=29
+NumberOfFiles=26
+NumberOfLibraries=11
+NumberOfModules=33
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
-	#VersionCode: 8
-	#VersionName: v2.0.0.1 alpha
+	#VersionCode: 10
+	#VersionName: v2.0.0.2 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
+	#MultiDex: True
 #End Region
 
 #Region  Activity Attributes 
@@ -116,45 +138,75 @@ Sub Globals
 	Dim menuListViewItemsize As ListView
 	Private pnlMenuBgTouch As Panel
 	Private clvItems As CustomListView
-	Private lblIcon As Label
-	Private lblItemName As Label
+	
 	Dim inMain As Boolean = True
 	Private mainFragment As Panel
 	Public lastClickTime As Long = 0
 	
 	Private m_mode As String
 	
-	Private MAIN_ACTIVITY_NORMAL_MODE As String = "MAIN_ACTIVITY_NORMAL_MODE"
-	Private MAIN_ACTIVITY_SEARCHING_MODE As String = "MAIN_ACTIVITY_SEARCHING_MODE"
-	Private MAIN_ACTIVITY_SORTING_MODE As String = "MAIN_ACTIVITY_SORTING_MODE"
-	
 	Public Const TASK_CHECKED_ROOT_COLOR As Int = Colors.RGB(235, 235, 235)
 	Public Const TASK_CHECKED_TEXT_COLOR As Int = Colors.RGB(175, 175, 175)
 	Public Const TASK_UNCHECKED_TEXT_COLOR As Int = Colors.RGB(0, 0, 0)
-	Public Const TASK_UNCHECKED_ROOT_COLOR As Int = Colors.RGB(255, 255, 255)
-	
-	
-	
-
-
-	
+	Public Const TASK_UNCHECKED_ROOT_COLOR As Int = Colors.RGB(255, 255, 255)	
 	
 	Private pnlSearch As Panel
 	Private pnlTitleBar As Panel
 	Private searchFragment As Panel
 	Private separator As Panel
+	Private groupPanel As Panel
+	Private lblGroupIcon As Label
+	Private lblGroupName As Label
+	
+	Private smartLists(5) As Group
+	
+	Private Const SMART_LIST_NONE As Int = -1
+	Private Const SMART_LIST_MY_DAY As Int = 0
+	Private Const SMART_LIST_PLANNED As Int = 1
+	Private Const SMART_LIST_COMPLETED As Int = 2
+	Private Const SMART_LIST_ALL As Int = 3
+	Private Const SMART_LIST_TASKS As Int = 5
+	Private Const SMART_LIST_TRASH As Int = 6
+	Private Const SMART_LIST_SEARCH As Int = 7
+	Private Const SMART_LIST_SORT As Int = 8
+	
+	Private Const SEARCH_BY_NONE As Int = 0
+	Private Const SEARCH_BY_TITLE As Int = 1
+	Private Const SEARCH_BY_DESCRIPTION As Int = 2
+	Private Const SEARCH_BY_ATTACHMENTS As Int = 3
+	Private Const SEARCH_BY_DUE_DATE As Int = 4
+	Private Const SEARCH_BY_REPEAT As Int = 5
+	Private Const SEARCH_BY_PRIORITY As Int = 6
+	
+	Private Const SEARCH_BY_DUE_DATE_SPECIFIC_DATE As String = "Specific Date"
+	Private Const SEARCH_BY_DUE_DATE_SPECIFIC_DATE_RANGE As String = "Specific Date Range"
+
+	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
+	Private m_savedGroup As Group
+	Private m_savedSearchByDueDateIdentifer As String = ""
+	Private m_savedSearchByDueDateRange1 As Date
+	Private m_savedSearchByDueDateRange2 As Date
+	Private m_savedSearchByRepeat(7) As Boolean
+	Private m_savedSearchByPriority As Int = -1
+	Private m_query As String
+	
+	Private m_itemsLoaded As Boolean = False
+	
+	Private m_tasks As List
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
+	'ToDoList.AnimationDuration = 0
+	
 	drawer.Initialize(Me, "Drawer", Activity, 300dip)
 	drawer.CenterPanel.LoadLayout("layout")
 	mainFragment.LoadLayout("newFragment")
 	drawer.LeftPanel.LoadLayout("drawerLayout")
-	drawerItems
+	LoadDrawerItems
 	listview_init
-	'Activity.LoadLayout("Layout")
 	
-	
+	m_tasks.Initialize
+	m_savedGroup.Initialize(0)
 End Sub
 
 Sub Activity_Resume
@@ -172,6 +224,8 @@ End Sub
 Private Sub btnAdd_Click
 	' Set the editor mode by submitting the requested value into the InstanceState bundle.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_CREATE)
+	
+	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_GROUP_ID, m_savedGroup.GetID)
 	
 	' Start the activity.
 	StartActivity(EditorActivity)
@@ -197,6 +251,55 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 	
 	' Since the item has been changed, update the database.
 	Starter.TaskViewModelInstance.UpdateTask(item)
+	
+	Select m_savedSmartList:
+		Case SMART_LIST_PLANNED:
+			If Checked == True Then
+				' Hide the completed task if the current smart list is in "Planned"				
+				ToDoList.RemoveAt(index)
+
+				' Also remove the subgroup If it exists And the subgroup Is empty.
+				Dim prevSubGroup As Object = ToDoList.GetValue(index - 1)
+				Dim nextSubGroup As Object
+				
+				If (index > ToDoList.Size - 1) Then
+					nextSubGroup = Null
+				Else
+					nextSubGroup = ToDoList.GetValue(index)
+				End If
+				
+				If prevSubGroup Is SubGroupViewHolder Then
+					If nextSubGroup == Null Then
+						ToDoList.RemoveAt(index - 1)
+					End If
+					If nextSubGroup Is SubGroupViewHolder Then
+						ToDoList.RemoveAt(index - 1)
+					End If
+				End If
+				
+			End If
+		Case SMART_LIST_COMPLETED:
+			If Checked == False Then
+				' Hide the incomplete task if the current smart list is in "Completed"
+				ToDoList.RemoveAt(index)
+			End If
+		Case Else:
+			If Checked == True Then
+				ToDoList.RemoveAt(index)
+				viewHolder.Root.RemoveViewFromParent
+				
+				If m_itemsLoaded Then
+					ToDoList.InsertAt(ToDoList.Size - 1, viewHolder.Root, viewHolder)
+				Else
+					ToDoList.Add(viewHolder.Root, viewHolder)
+					m_itemsLoaded = True
+				End If
+			Else
+				ToDoList.RemoveAt(index)
+				viewHolder.Root.RemoveViewFromParent
+				ToDoList.InsertAt(0, viewHolder.Root, viewHolder)
+			End If
+	End Select
 	
 	' Add visual indicator that the task has been changed
 	If Checked == True Then
@@ -252,26 +355,67 @@ End Sub
 ' Loads the items.
 Private Sub LoadItems()
 
-' Initialize a list.
-	Dim items As List
-	items.Initialize
-	
+	m_itemsLoaded = False
+
+	' Initialize a list.
 	' Testing code for item sorting and searching.
-	' items = Starter.TaskViewModelInstance.FindTasksByDueDate(DateTime.Now - 86400000, DateTime.Now + (86400000 * 2), True)
+	' m_tasks = Starter.TaskViewModelInstance.FindTasksByDueDate(DateTime.Now - 86400000, DateTime.Now + (86400000 * 2), True)
 	'Dim repeat(7) As Boolean = Array As Boolean(True, False, True, False, False, False, False)
 	
-	'items = Starter.TaskViewModelInstance.FindTasksByRepeat(repeat, True)
+	'm_tasks = Starter.TaskViewModelInstance.FindTasksByRepeat(repeat, True)
 	
-	' Obtain all tasks from the database.
-	items = Starter.TaskViewModelInstance.GetAllTasks()
+	' Obtain all tasks from the database, depending on the smart list mode.
+	Select m_savedSmartList:
+		Case SMART_LIST_MY_DAY:
+			m_tasks = Starter.TaskViewModelInstance.GetTasksToday()
+		Case SMART_LIST_ALL: 
+			m_tasks = Starter.TaskViewModelInstance.GetAllTasks()
+		Case SMART_LIST_COMPLETED:
+			m_tasks = Starter.TaskViewModelInstance.GetTasksCompleted()
+		Case SMART_LIST_PLANNED:
+			m_tasks = Starter.TaskViewModelInstance.GetTasksPlanned()
+		Case SMART_LIST_TRASH:
+			m_tasks = Starter.TaskViewModelInstance.GetDeletedTasks()
+		Case Else, SMART_LIST_NONE:
+			m_tasks = Starter.TaskViewModelInstance.GetGroupedTasks(m_savedGroup.GetID)
+	End Select
 	
 	' Null check the list.
-	If items.IsInitialized Then
+	If m_tasks.IsInitialized Then
+		Dim itr As String = ""
+		
 		' Iterate each item.
-		For Each item As ToDo In items
+		For Each item As ToDo In m_tasks
 			' Initialize a ViewHolder
 			Dim viewHolder As TaskViewHolder
 			viewHolder.Initialize
+			
+			' Create subgroups.
+			Select m_savedSmartList:
+				Case SMART_LIST_PLANNED:
+					Dim currentDateIdentification As String = item.GetDueDate.IdentifyDate
+					
+					If itr <> currentDateIdentification And item.Done == False Then
+						itr = currentDateIdentification
+						
+						Dim subGroup As SubGroupViewHolder
+						subGroup.Initialize(xui)
+						subGroup.Name.Text = currentDateIdentification
+						
+						ToDoList.Add(subGroup.BuildView(), subGroup)
+					End If
+				Case SMART_LIST_SEARCH, SMART_LIST_SORT, SMART_LIST_COMPLETED:
+				Case Else:
+					' If the Next item Is marked As completed, Then add subGroup "Completed"
+					If item.Done == True And itr == "" Then
+						Dim subGroup As SubGroupViewHolder
+						subGroup.Initialize(xui)
+						subGroup.Name.Text = "Completed"
+						itr = "Completed"
+						
+						ToDoList.Add(subGroup.BuildView(), subGroup)
+					End If
+			End Select
 			
 			' Add items into the list view by binding the viewholder and the data.
 			ToDoList.Add(CreateItem(viewHolder), viewHolder)
@@ -281,8 +425,29 @@ Private Sub LoadItems()
 			BindItem(item, viewHolder)
 		Next
 	End If
+	
+	' Add the item count information
+	Select m_savedSmartList
+		' Planned and Completed has a unique way of counting items.
+		Case SMART_LIST_PLANNED, SMART_LIST_COMPLETED:
+			' @TODO: Add functionality here...
+		Case Else:
+			Dim subGroup As SubGroupViewHolder
+			subGroup.Initialize(xui)
+			
+			Dim count As Int = m_tasks.Size
+			
+			subGroup.Name.Text = count & " task"
+			
+			' Make the counting information plural if possible.
+			If count > 1 Then
+				subGroup.Name.Text = subGroup.Name.Text & "(s)"
+			End If
+			
+			ToDoList.Add(subGroup.BuildView(), subGroup)
+	End Select
+	
 End Sub
-
 
 Sub menuBtn_Click
 	If button_handling Then
@@ -298,7 +463,7 @@ Private Sub pnlMenuBgTouch_Touch (Action As Int, X As Float, Y As Float)
 		Case Activity.ACTION_DOWN
 			If menuListView.Visible = True Then
 				pnlMenuBgTouch.SendToBack
-				menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
+				menuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
 				menuListView.SetVisibleAnimated(500, False)
 				
 			End If
@@ -308,24 +473,22 @@ End Sub
 Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 	Select Position
 		Case 0
-			ToastMessageShow("Refereshed", False)
 			pnlMenuBgTouch.SendToBack
-			menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
+			menuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
 			menuListView.SetVisibleAnimated(500, False)
 			
 			
 			
 		Case 1
-			ToastMessageShow("Sort", False)
 			pnlMenuBgTouch.SendToBack
-			menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
+			menuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
 			menuListView.SetVisibleAnimated(500, False)
 			
 			
 		Case 2
 			StartActivity(SettingsActivity)
 			pnlMenuBgTouch.SendToBack
-			menuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
+			menuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
 			menuListView.SetVisibleAnimated(500, False)
 			
 	End Select
@@ -458,42 +621,38 @@ Private Sub listview_init
 		javaobj.RunMethod("setDividerHeight", Array(0))
 End Sub
 
-Sub drawerItems
+Sub LoadDrawerItems
 	clvItems.sv.ScrollViewInnerPanel.Color = xui.Color_Transparent
 	clvItems.sv.Color = xui.Color_Transparent
 	
 	Dim items As List
 	items.Initialize
-	items.Add(CreateMap("icon": "", "text": "My Day"))
-	items.Add(CreateMap("icon": "", "text": "Planned"))
-	items.Add(CreateMap("icon": "", "text": "Completed"))
-	items.Add(CreateMap("icon": "", "text": "All"))
-	items.Add(CreateMap("icon": "", "text": "Trash"))
-
-
-	For Each item As Map In items
-		Dim iconText As String = item.Get("icon")
-		Dim itemText As String = item.Get("text")
-		    
-		Dim p As B4XView = xui.CreatePanel("")
-		p.SetLayoutAnimated(0, 0, 0, 100%x, 60dip)
-		p.LoadLayout("drawerItems")
-
-		
-		Dim innerPanel As B4XView = p.GetView(0)
-		Dim icon As B4XView = innerPanel.GetView(0)
-		Dim itemName As B4XView = innerPanel.GetView(1)
-		
-
-		icon.Text = iconText
-		itemName.Text = itemText
-		
-		p.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		innerPanel.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		icon.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		itemName.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		clvItems.Add(p, itemText)
+	
+	For Each obj As Group In smartLists		
+		obj.Initialize(0)
 	Next
+	
+	smartLists(0).SetTitle("My Day")
+	smartLists(0).SetIcon("")
+	
+	smartLists(1).SetTitle("Planned")
+	smartLists(1).SetIcon("")
+	
+	smartLists(2).SetTitle("Completed")
+	smartLists(2).SetIcon("")
+	
+	smartLists(3).SetTitle("All")
+	smartLists(3).SetIcon("")
+	
+	smartLists(4).SetTitle("Trash")
+	smartLists(4).SetIcon("")
+
+	For Each obj As Group In smartLists
+		items.Add(obj)
+	Next
+
+	OnLoadTaskGroups(items)
+	
 	
 	Dim sepPanel As B4XView = xui.CreatePanel("")
 	sepPanel.SetLayoutAnimated(0, 0, 0, 100%x, 2dip) ' 2dip height for the separator
@@ -504,103 +663,88 @@ Sub drawerItems
 	sepPanel.Enabled = False
 	innerSep.Enabled = False	
 	
-	clvItems.Add(sepPanel, "separator")
+	Dim separatorViewHolder As GroupViewHolder
+	separatorViewHolder.Initialize
+	separatorViewHolder.ID = 0
+	separatorViewHolder.IsSeparator = True
+	clvItems.Add(sepPanel, separatorViewHolder)
 	
+	' Load task groups from the database
+	items.Clear
+	For Each groupObj As Group In Starter.GroupViewModelInstance.GetGroups()
+		groupObj.SetIcon("")
+		items.Add(groupObj)
+	Next
+	
+	OnLoadTaskGroups(items)
 
 	Log(Activity.Width)
 	Log(drawer.LeftPanel.Width)
 	
 End Sub
 
+Private Sub OnLoadTaskGroups(items As List)
+	For Each item As Group In items		    
+		Dim p As B4XView = xui.CreatePanel("")
+		p.SetLayoutAnimated(0, 0, 0, 100%x, 60dip)
+		p.LoadLayout("drawerItems")
+		
+		Dim viewHolder As GroupViewHolder
+		viewHolder.Initialize
+		
+		viewHolder.Root = p
+		viewHolder.ID = item.GetID
+		viewHolder.Name = lblGroupName
+		viewHolder.Icon = lblGroupIcon
+		viewHolder.BackPanel = groupPanel
+		
+		viewHolder.Name.Text = item.GetTitle
+		viewHolder.Icon.Text = item.GetIcon
+
+		viewHolder.Root.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		viewHolder.BackPanel.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		viewHolder.Icon.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		viewHolder.Name.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		clvItems.Add(p, viewHolder)
+	Next
+End Sub
+
+' Function for task group click.
 Private Sub clvItems_ItemClick (Index As Int, Value As Object)
-	If Value = "separator" Then
+	Dim viewHolder As GroupViewHolder = Value
+	
+	If viewHolder.IsSeparator == True Then
 		' Reset selection to previous item
 		clvItems.GetPanel(Index).Color = xui.Color_Transparent
 		Return
 	End If
-	Select Index
-		Case 0
-			ToastMessageShow("my day", False)
-			drawer.LeftOpen = False
-			If inMain = False Then
-				mainFragment.RemoveAllViews
-				mainFragment.LoadLayout("newFragment")
-				LoadItems
-				drawer.LeftOpen = False
-				inMain = True
-			End If
-		Case 1
-			ToastMessageShow("planned", False)
-			mainFragment.RemoveAllViews
-			mainFragment.LoadLayout("newFragment")
-			Dim p As B4XView = xui.CreatePanel("")
-			p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
-			Dim lbl As Label
-			lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
-			lbl.Text = "placeholder text for planned"
-			lbl.TextSize = 18
-			lbl.TextColor = Colors.Black
-			lbl.Gravity = Gravity.CENTER
-			p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
-			ToDoList.Add(p, "")
-			
-			
-			drawer.LeftOpen = False
-			inMain = False
-		Case 2
-			ToastMessageShow("Complete", False)
-			mainFragment.RemoveAllViews
-			mainFragment.LoadLayout("newFragment")
-			Dim p As B4XView = xui.CreatePanel("")
-			p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
-			Dim lbl As Label
-			lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
-			lbl.Text = "placeholder text for Completed"
-			lbl.TextSize = 18
-			lbl.TextColor = Colors.Black
-			lbl.Gravity = Gravity.CENTER
-			p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
-			ToDoList.Add(p, "")
-			
-			
-			drawer.LeftOpen = False
-			inMain = False
-		Case 3
-			ToastMessageShow("All", False)
-			mainFragment.RemoveAllViews
-			mainFragment.LoadLayout("newFragment")
-			Dim p As B4XView = xui.CreatePanel("")
-			p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
-			Dim lbl As Label
-			lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
-			lbl.Text = "placeholder text for All"
-			lbl.TextSize = 18
-			lbl.TextColor = Colors.Black
-			lbl.Gravity = Gravity.CENTER
-			p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
-			ToDoList.Add(p, "")
-			drawer.LeftOpen = False
-			inMain = False
-		Case 4
-			ToastMessageShow("Trash", False)
-			mainFragment.RemoveAllViews
-			mainFragment.LoadLayout("newFragment")
-			Dim p As B4XView = xui.CreatePanel("")
-			p.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
-			Dim lbl As Label
-			lbl.Initialize("")          ' No event name is needed unless you plan to handle label events
-			lbl.Text = "placeholder text for Trash"
-			lbl.TextSize = 18
-			lbl.TextColor = Colors.Black
-			lbl.Gravity = Gravity.CENTER
-			p.AddView(lbl, 5dip, 5dip, 100%x, 20dip)
-			ToDoList.Add(p, "")
-			drawer.LeftOpen = False
-			inMain = False
-	End Select
+	
+	' 0 ID for groups cannot exist on the database. Therefore, it is reserved
+	' for special groups such as smart lists.
+	If viewHolder.ID == 0 Then
+		m_savedSmartList = Index
+		
+		OnLoadPage(smartLists(Index))
+	Else
+		m_savedSmartList = SMART_LIST_NONE
+		
+		' Get the associated group based on the ID stored in the clicked view holder of the nav drawer.
+		Dim groupObj As Group = Starter.GroupViewModelInstance.GetGroup(viewHolder.ID)
+		
+		OnLoadPage(groupObj)
+	End If
 End Sub
 
-
+Private Sub OnLoadPage(item As Group)
+	m_savedGroup = item
+	
+	titleLabel.Text = item.GetTitle
+	drawer.LeftOpen = False
+	mainFragment.RemoveAllViews
+	mainFragment.LoadLayout("newFragment")
+	LoadItems
+	drawer.LeftOpen = False
+End Sub
 
 Private Sub searchBtn_Click
 	If button_handling Then

@@ -23,6 +23,10 @@ Sub Globals
 	Private svMain As ScrollView
 	Private btnBack, help, about As Button
 
+	Private DarkMode As ToggleButton
+	Private DebugMode As ToggleButton
+	Private ExportDataBase As Button
+	Private ImportDataBase As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -71,4 +75,17 @@ End Sub
 
 Sub about_Click
 	StartActivity(SettingsAbout)
+End Sub
+
+
+Private Sub ResetApp_Click
+	
+End Sub
+
+Private Sub ImportDatabase_Click
+	
+End Sub
+
+Private Sub ExportDatabase_Click
+	
 End Sub
