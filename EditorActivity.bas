@@ -151,11 +151,23 @@ Sub Activity_Create(FirstTime As Boolean)
 		' Load the attachments
 		LoadAttachments
 		
+		' Load the selected task group.
 		spnTaskGroup.SelectedIndex = spnTaskGroup.IndexOf(m_group.GetTitle)
 		
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		' Disable the delete button if the editor mode is EDITOR_MODE_CREATE
 		btnDelete.Visible = False
+		
+		' Load the default task group based on the last opened task group.
+		Dim groupId As Long = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_GROUP_ID)
+		
+		If groupId > 0 Then
+			m_group = Starter.GroupViewModelInstance.GetGroup(groupId)
+			If m_group.IsInitialized Then
+				spnTaskGroup.SelectedIndex = spnTaskGroup.IndexOf(m_group.GetTitle())
+			End If
+		End If
+		
 		
 		' Set the current date as the default value of due date fields.
 		spinnerDueDateDay.SelectedIndex = DateTime.GetDayOfMonth(DateTime.Now)
@@ -172,6 +184,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	' Remove editor mode key from the bundle to avoid some potential application state-related bugs.
 	Starter.InstanceState.Remove(Starter.EXTRA_EDITOR_MODE)
+	Starter.InstanceState.Remove(Starter.EXTRA_EDITOR_GROUP_ID)
 End Sub
 
 Sub Activity_Resume
@@ -242,13 +255,14 @@ Private Sub btnSave_Click
 		Starter.GroupViewModelInstance.InsertTaskGroup(m_task.GetId, selectedGroup.GetID)
 	End If
 	
-	' Save the attachments
+	' Save the attachments that are pending for insertion.
 	For Each item As Attachment In m_pendingAttachmentInsert
 		If Starter.AttachmentViewModelInstance.InsertAttachment(item, m_task.GetId) == False Then
 			MsgboxAsync("Failed to insert attachment: " & item.GetFilename, "Error")
 		End If
 	Next
 	
+	' Save the attachmentsthat are pending for deletion.
 	For Each item As Attachment In m_pendingAttachmentDelete
 		Log("Pending delete:" & item.GetFilename)
 		If Starter.AttachmentViewModelInstance.DeleteAttachment(item) == False Then

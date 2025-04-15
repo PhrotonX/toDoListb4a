@@ -22,11 +22,23 @@ Public Sub InsertTaskGroup(task_id As Long, group_id As Long)
 End Sub
 
 Public Sub GetGroup(group_id As Long) As Group
-	Return m_database.GroupDao().GetGroups("WHERE group_id = " & group_id, "").Get(0)
+	Dim result As List = m_database.GroupDao().GetGroups("WHERE group_id = " & group_id, "")
+	
+	If result.IsInitialized Then
+		Return result.Get(0)
+	End If
+	
+	Return Null
 End Sub
 
 Public Sub GetGroupByTitle(title As String) As Group
-	Return m_database.GroupDao().GetGroups("WHERE title = '" & title & "'", "").Get(0)
+	Dim result As List = m_database.GroupDao().GetGroups("WHERE title = '" & title & "'", "")
+	
+	If result.IsInitialized Then
+		Return result.Get(0)
+	End If
+	
+	Return Null
 End Sub
 
 Public Sub GetGroups() As List

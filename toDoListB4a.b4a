@@ -204,9 +204,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	drawer.LeftPanel.LoadLayout("drawerLayout")
 	LoadDrawerItems
 	listview_init
-	'Activity.LoadLayout("Layout")
 	
 	m_tasks.Initialize
+	m_savedGroup.Initialize(0)
 End Sub
 
 Sub Activity_Resume
@@ -224,6 +224,8 @@ End Sub
 Private Sub btnAdd_Click
 	' Set the editor mode by submitting the requested value into the InstanceState bundle.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_CREATE)
+	
+	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_GROUP_ID, m_savedGroup.GetID)
 	
 	' Start the activity.
 	StartActivity(EditorActivity)
@@ -353,7 +355,7 @@ End Sub
 ' Loads the items.
 Private Sub LoadItems()
 
-		m_itemsLoaded = False
+	m_itemsLoaded = False
 
 	' Initialize a list.
 	' Testing code for item sorting and searching.

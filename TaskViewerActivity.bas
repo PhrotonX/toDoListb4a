@@ -100,7 +100,7 @@ End Sub
 
 ' Open editor activity.
 Private Sub btnEdit_Click
-	' Send the task ID into EditorActivity.
+	' Send the task and group ID into EditorActivity.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, m_task.GetId)
 	
 	' Set the EditorActivity mode into edit mode.
