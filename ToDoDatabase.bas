@@ -77,7 +77,7 @@ Public Sub CreateTable
 	' In this case, use the plural "groups" insead.
 	Dim query_group As String = "CREATE TABLE IF NOT EXISTS groups(" & CRLF & _
 	"group_id INTEGER PRIMARY KEY AUTOINCREMENT," & CRLF & _
-	"title VARCHAR(255) NOT NULL," & CRLF & _
+	"title VARCHAR(255) NOT NULL UNIQUE," & CRLF & _
 	"description TEXT," & CRLF & _
 	"color INTEGER," & CRLF & _
 	"created_at LONG NOT NULL DEFAULT 0," & CRLF & _
@@ -105,12 +105,12 @@ Public Sub CreateTable
 	' Query for populating group list if and only if the days_of_the_week table has also been populated.
 	' It is guaranteed that this query will only run once since it checks if days_of_the_week table has
 	' already been made in order to be executed.
-	Dim query_populate_groups As String = "INSERT INTO groups (title, description)" & CRLF & _
-	"SELECT 'Shopping', 'List of tasks for shopping' UNION ALL" & CRLF & _
-	"SELECT 'Reading', 'List of tasks for reading' UNION ALL" & CRLF & _
-	"SELECT 'Hobbies', 'List of tasks for your hobbies' UNION ALL" & CRLF & _
-	"SELECT 'Studying', 'List of tasks for your studies' UNION ALL" & CRLF & _
-	"SELECT 'Others', 'List of other tasks'" & CRLF & _
+	Dim query_populate_groups As String = "INSERT INTO groups (group_id, title, description)" & CRLF & _
+	"SELECT 1, 'Shopping', 'List of tasks for shopping' UNION ALL" & CRLF & _
+	"SELECT 2, 'Reading', 'List of tasks for reading' UNION ALL" & CRLF & _
+	"SELECT 3, 'Hobbies', 'List of tasks for your hobbies' UNION ALL" & CRLF & _
+	"SELECT 4, 'Studying', 'List of tasks for your studies' UNION ALL" & CRLF & _
+	"SELECT 5, 'Others', 'List of other tasks'" & CRLF & _
 	"WHERE NOT EXISTS (SELECT 1 FROM days_of_the_week);"
 	
 	' Mark the beginning of SQL transaction.

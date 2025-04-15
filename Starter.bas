@@ -33,6 +33,7 @@ Sub Process_Globals
 	
 	' Global variable used for identifying the current item of concern.
 	Public Const EXTRA_EDITOR_TASK_ID As String = PACKAGE_NAME & ".EXTRA_EDITOR_TASK_ID"
+	Public Const EXTRA_EDITOR_GROUP_ID As String = PACKAGE_NAME & ".EXTRA_EDITOR_GROUP_ID"
 	
 	Private ToDoDatabaseInstance As ToDoDatabase
 	Private ToDoFileSystemInstance As ToDoFileSystem

@@ -28,6 +28,7 @@ Sub Globals
 	' This variable is responsible for handling the current data that can be used for performing
 	' CRUD into the database.
 	Private m_task As ToDo
+	Private m_group As Group
 	
 	' Attachment that are pending for saving.
 	Private m_pendingAttachmentInsert As List
@@ -61,6 +62,7 @@ Sub Globals
 	Private imgAttachmentIcon As ImageView
 	Private lblAttachmentFileName As Label
 	Private pnlAttachmentRoot As Panel
+	Private spnTaskGroup As Spinner
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -91,6 +93,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Fill the due date spinners with data
 	PopulateDueDate
 	
+	' Load the task groups
+	LoadTaskGroup
+	
 	' Check the editor mode to set the appropriate EditorActivity functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
 		' Rename the activity if editing.
@@ -101,6 +106,11 @@ Sub Activity_Create(FirstTime As Boolean)
 		
 		' Retrieve the data stored in the database based on itemId.
 		m_task = Starter.TaskViewModelInstance.GetTask(itemId)
+		m_group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_task.GetId)
+		
+		If m_group.IsInitialized == False Then
+			m_group.Initialize(0)
+		End If
 		
 		' Update the fields to display the data retrieved from the database for editing.
 		editTitle.Text = m_task.GetTitle
@@ -141,10 +151,23 @@ Sub Activity_Create(FirstTime As Boolean)
 		' Load the attachments
 		LoadAttachments
 		
+		' Load the selected task group.
+		spnTaskGroup.SelectedIndex = spnTaskGroup.IndexOf(m_group.GetTitle)
 		
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		' Disable the delete button if the editor mode is EDITOR_MODE_CREATE
 		btnDelete.Visible = False
+		
+		' Load the default task group based on the last opened task group.
+		Dim groupId As Long = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_GROUP_ID)
+		
+		If groupId > 0 Then
+			m_group = Starter.GroupViewModelInstance.GetGroup(groupId)
+			If m_group.IsInitialized Then
+				spnTaskGroup.SelectedIndex = spnTaskGroup.IndexOf(m_group.GetTitle())
+			End If
+		End If
+		
 		
 		' Set the current date as the default value of due date fields.
 		spinnerDueDateDay.SelectedIndex = DateTime.GetDayOfMonth(DateTime.Now)
@@ -161,6 +184,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	' Remove editor mode key from the bundle to avoid some potential application state-related bugs.
 	Starter.InstanceState.Remove(Starter.EXTRA_EDITOR_MODE)
+	Starter.InstanceState.Remove(Starter.EXTRA_EDITOR_GROUP_ID)
 End Sub
 
 Sub Activity_Resume
@@ -210,19 +234,35 @@ Private Sub btnSave_Click
 		Return
 	End If
 	
+	' Get the selected group
+	Dim selectedGroup As Group
+	If spnTaskGroup.SelectedIndex > 0 Then
+		Dim groupTitle As String = spnTaskGroup.GetItem(spnTaskGroup.SelectedIndex)
+		selectedGroup = Starter.GroupViewModelInstance.GetGroupByTitle(groupTitle)
+	Else
+		selectedGroup.Initialize(0)
+	End If
+	
+	
 	' Check the editor mode to set the appropriate EditorActivity saving functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
 		Starter.TaskViewModelInstance.UpdateTask(m_task)
+		
+		Starter.GroupViewModelInstance.UpdateTaskGroup(m_task.GetId, m_group.GetID, selectedGroup.GetID)
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		Starter.TaskViewModelInstance.InsertTask(m_task)
+		
+		Starter.GroupViewModelInstance.InsertTaskGroup(m_task.GetId, selectedGroup.GetID)
 	End If
 	
+	' Save the attachments that are pending for insertion.
 	For Each item As Attachment In m_pendingAttachmentInsert
 		If Starter.AttachmentViewModelInstance.InsertAttachment(item, m_task.GetId) == False Then
 			MsgboxAsync("Failed to insert attachment: " & item.GetFilename, "Error")
 		End If
 	Next
 	
+	' Save the attachmentsthat are pending for deletion.
 	For Each item As Attachment In m_pendingAttachmentDelete
 		Log("Pending delete:" & item.GetFilename)
 		If Starter.AttachmentViewModelInstance.DeleteAttachment(item) == False Then
@@ -296,7 +336,7 @@ Private Sub btnDelete_Click
 	Wait For Msgbox_Result (Result As Int)
 	If Result = DialogResponse.POSITIVE Then
 		Starter.TaskViewModelInstance.DeleteTask(m_task)
-		
+		Starter.GroupViewModelInstance.DeleteTaskGroup(m_task.GetId, m_group.GetID)
 		' Close the editor after deleting,
 		Activity.Finish
 	End If
@@ -338,6 +378,20 @@ Private Sub LoadAttachments
 		Next
 	End If
 	
+End Sub
+
+Private Sub LoadTaskGroup
+	Dim groups As List = Starter.GroupViewModelInstance.GetGroups()
+	
+	' Has index of 0 by default
+	spnTaskGroup.Add("Tasks")
+	spnTaskGroup.IndexOf("Tasks")
+	
+	If groups.IsInitialized Then
+		For Each item As Group In groups
+			spnTaskGroup.Add(item.GetTitle)
+		Next
+	End If
 End Sub
 
 Private Sub OnAddAttachment(item As Attachment)
@@ -562,4 +616,8 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 	Else
 		MsgboxAsync("Unable to retrieve attachment", "Error")
 	End If
+End Sub
+
+Private Sub spnTaskGroup_ItemClick (Position As Int, Value As Object)
+	
 End Sub
