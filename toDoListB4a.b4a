@@ -814,7 +814,6 @@ Private Sub searchBtn_Click
 		Sleep(150)
 		mainFragment.Visible = False
 		pnlTitleBar.Visible = False
-		Log(searchFragment.Width)
 		
 	End If
 End Sub
