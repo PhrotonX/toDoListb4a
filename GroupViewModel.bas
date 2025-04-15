@@ -6,11 +6,21 @@ Version=13.1
 @EndOfDesignText@
 Sub Class_Globals
 	Dim m_dbRepository As GroupRepository
+	
+	Private m_defaultGroup As Group
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize(dbRepo As GroupRepository)
 	m_dbRepository = dbRepo
+	
+	m_defaultGroup.Initialize(0)
+	m_defaultGroup.SetTitle("Tasks")
+	m_defaultGroup.SetIcon("")
+End Sub
+
+Public Sub DefaultGroup() As Group
+	Return m_defaultGroup
 End Sub
 
 Public Sub InsertGroup(item As Group) As Boolean
