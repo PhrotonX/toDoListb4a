@@ -10,14 +10,15 @@ File16=newfragment.bal
 File17=pencil.png
 File18=separatorlayout.bal
 File19=settingsabout.bal
-File2=486023921_623831243812785_3842496593750662642_n.jpg
+File2=486023921_623831243812785_3842496593750662642_n (1).png
 File20=settingshelp.bal
 File21=settingslayout.bal
 File22=solid_white.png
-File23=sviewlayout.bal
-File24=TaskItemLayout.bal
-File25=taskviewlayout.bal
-File26=taskviewscrolllayout.bal
+File23=stock4.png
+File24=sviewlayout.bal
+File25=TaskItemLayout.bal
+File26=taskviewlayout.bal
+File27=taskviewscrolllayout.bal
 File3=aboutitems.bal
 File4=AttachmentItemLayout.bal
 File5=canvas.bal
@@ -44,6 +45,7 @@ FileGroup23=Default Group
 FileGroup24=Default Group
 FileGroup25=Default Group
 FileGroup26=Default Group
+FileGroup27=Default Group
 FileGroup3=Default Group
 FileGroup4=Default Group
 FileGroup5=Default Group
@@ -327,9 +329,11 @@ Private Sub CreateItem(viewHolder As TaskViewHolder) As B4XView
 	Dim panel As B4XView = xui.CreatePanel("")
 	
 	' Set properties into the root panel
-	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
+	
+	panel.SetLayoutAnimated(0, 0, 0, 95%x, 70dip)
 	panel.LoadLayout("TaskItemLayout")
-	panel.SetColorAndBorder(Colors.White, 0, Colors.White, 0)
+	'panel.SetColorAndBorder(Colors.Red, 120, Colors.Green, 5) 
+	panel.SetColorAndBorder(Colors.Transparent,110,Colors.RGB(213, 216, 232), 5)
 	
 	' Bind the root panel
 	viewHolder.Root = panel
@@ -385,6 +389,7 @@ Private Sub LoadItems()
 			m_tasks = Starter.TaskViewModelInstance.GetGroupedTasks(m_savedGroup.GetID)
 	End Select
 	
+
 	' Null check the list.
 	If m_tasks.IsInitialized Then
 		Dim itr As String = ""
@@ -406,7 +411,9 @@ Private Sub LoadItems()
 						Dim subGroup As SubGroupViewHolder
 						subGroup.Initialize(xui)
 						subGroup.Name.Text = currentDateIdentification
-						
+						subGroup.Root.Height = 70
+						subGroup.Name.TextSize = 16
+
 						ToDoList.Add(subGroup.BuildView(), subGroup)
 					End If
 				Case SMART_LIST_SEARCH, SMART_LIST_SORT, SMART_LIST_COMPLETED:
@@ -417,17 +424,22 @@ Private Sub LoadItems()
 						subGroup.Initialize(xui)
 						subGroup.Name.Text = "Completed"
 						itr = "Completed"
-						
+
+						subGroup.Name.Height = 68
 						ToDoList.Add(subGroup.BuildView(), subGroup)
 					End If
 			End Select
 			
+			
+			
 			' Add items into the list view by binding the viewholder and the data.
+			
 			ToDoList.Add(CreateItem(viewHolder), viewHolder)
 			
 			' Bind the currently referenced vieHolder that ToDoList points to into there
 			' currently iterated data.
 			BindItem(item, viewHolder)
+	
 		Next
 	End If
 	
@@ -442,15 +454,18 @@ Private Sub LoadItems()
 			
 			Dim count As Int = m_tasks.Size
 			
-			subGroup.Name.Text = count & " task"
+			subGroup.Name.Text = count & " found task"
 			
 			' Make the counting information plural if possible.
 			If count > 1 Then
 				subGroup.Name.Text = subGroup.Name.Text & "(s)"
 			End If
 			
+			subGroup.Name.TextSize = 15
+			subGroup.Name.TextColor = Colors.RGB(91,91,91)
 			ToDoList.Add(subGroup.BuildView(), subGroup)
 	End Select
+	
 	
 End Sub
 
@@ -582,6 +597,7 @@ Sub pnlViewArea_Touch (Action As Int, X As Float, Y As Float)
        End Select
 End Sub
 
+
 ' Used to process the click style of panels above the checkbox of tasks.
 Public Sub OnChkboxViewAreaClick(percentage As Int, viewHolder As TaskViewHolder)
 	' Touch color differs whether the item is marked as complete or not.
@@ -663,7 +679,7 @@ Sub LoadDrawerItems
 	sepPanel.SetLayoutAnimated(0, 0, 0, 100%x, 2dip) ' 2dip height for the separator
 	Dim innerSep As B4XView = xui.CreatePanel("")
 	innerSep.SetLayoutAnimated(0, 5%x, 0, 45.56%x, 2dip) ' 80% width, centered (10% margin on each side)
-	innerSep.Color = xui.Color_LightGray
+	innerSep.Color = Colors.RGB(91,91,91)
 	sepPanel.AddView(innerSep, 5%x, 0, 45.56%x, 2dip)
 	sepPanel.Enabled = False
 	innerSep.Enabled = False	
@@ -683,8 +699,6 @@ Sub LoadDrawerItems
 	
 	OnLoadTaskGroups(items)
 
-	Log(Activity.Width)
-	Log(drawer.LeftPanel.Width)
 	
 End Sub
 
@@ -753,13 +767,17 @@ End Sub
 
 Private Sub searchBtn_Click
 	If button_handling Then
+		pnlTitleBar.Elevation = 0
 		pnlSearch.SetLayout(pnlTitleBar.Left, pnlTitleBar.Top, 100%x, pnlTitleBar.Height)
 		pnlSearch.SetVisibleAnimated(150, True)
+		pnlSearch.Elevation = 10
 		pnlSearch.BringToFront
+
 		
 		searchFragment.SetLayout(mainFragment.Left, mainFragment.Top, mainFragment.Width, mainFragment.Height)
 		searchFragment.SetVisibleAnimated(150, True)
 		searchFragment.BringToFront
+		
 		
 		mainFragment.Visible = False
 		pnlTitleBar.Visible = False
@@ -779,7 +797,9 @@ Private Sub backBtn_Click
 		fadeout.Start(searchFragment)
 		
 		pnlSearch.Visible = False
+		pnlSearch.Elevation = 0
 		searchFragment.Visible = False
+		searchFragment.Elevation = 0
 		
 		pnlSearch.SendToBack
 		searchFragment.SendToBack
