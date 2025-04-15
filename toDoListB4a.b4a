@@ -57,8 +57,9 @@ FileGroup8=Default Group
 FileGroup9=Default Group
 Group=Default Group
 Library1=animation
-Library10=xcustomlistview
-Library11=xui
+Library10=sql
+Library11=xcustomlistview
+Library12=xui
 Library2=b4xdrawer
 Library3=contentresolver
 Library4=core
@@ -66,7 +67,7 @@ Library5=javaobject
 Library6=nb6
 Library7=phone
 Library8=reflection
-Library9=sql
+Library9=runtimepermissions
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="34" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="18" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="18" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="18" />~\n~)~\n~~\n~CreateResource(xml, provider_paths,~\n~    <paths xmlns:android="http://schemas.android.com/apk/res/android">~\n~    <external-path name="root" path="" />~\n~</paths>~\n~)~\n~#AdditionalJar: com.android.support:support-core-utils~\n~'End of default text.~\n~
 Module1=Attachment
 Module10=DaysOfTheWeek
@@ -102,7 +103,7 @@ Module7=DatabaseUtils
 Module8=Date
 Module9=DateAndTime
 NumberOfFiles=28
-NumberOfLibraries=11
+NumberOfLibraries=12
 NumberOfModules=33
 Version=13.1
 @EndOfDesignText@
@@ -806,7 +807,6 @@ Private Sub searchBtn_Click
 		Sleep(150)
 		mainFragment.Visible = False
 		pnlTitleBar.Visible = False
-		Log(searchFragment.Width)
 		
 	End If
 End Sub
