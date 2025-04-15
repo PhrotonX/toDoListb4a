@@ -24,7 +24,7 @@ Sub Globals
 	Private btnBack, help, about As Button
 
 	Private DarkMode As ToggleButton
-	Private DebugMode As Button
+	Private DebugMode As ToggleButton
 	Private ExportDataBase As Button
 	Private ImportDataBase As Button
 End Sub
@@ -82,14 +82,10 @@ Private Sub ResetApp_Click
 	
 End Sub
 
-Private Sub ImportDataBase_Click
+Private Sub ImportDatabase_Click
 	
 End Sub
 
-Private Sub ExportDataBase_Click
-	
-End Sub
-
-Private Sub DebugMode_Click
+Private Sub ExportDatabase_Click
 	
 End Sub
