@@ -151,7 +151,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		' Load the attachments
 		LoadAttachments
 		
-		spnTaskGroup.SelectedIndex = m_group.GetID
+		spnTaskGroup.SelectedIndex = spnTaskGroup.IndexOf(m_group.GetTitle)
 		
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		' Disable the delete button if the editor mode is EDITOR_MODE_CREATE
@@ -221,17 +221,25 @@ Private Sub btnSave_Click
 		Return
 	End If
 	
+	' Get the selected group
+	Dim selectedGroup As Group
+	If spnTaskGroup.SelectedIndex > 0 Then
+		Dim groupTitle As String = spnTaskGroup.GetItem(spnTaskGroup.SelectedIndex)
+		selectedGroup = Starter.GroupViewModelInstance.GetGroupByTitle(groupTitle)
+	Else
+		selectedGroup.Initialize(0)
+	End If
+	
+	
 	' Check the editor mode to set the appropriate EditorActivity saving functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
 		Starter.TaskViewModelInstance.UpdateTask(m_task)
 		
-		' Spinner is not zero-based index.
-		Starter.GroupViewModelInstance.UpdateTaskGroup(m_task.GetId, m_group.GetID, spnTaskGroup.SelectedIndex)
+		Starter.GroupViewModelInstance.UpdateTaskGroup(m_task.GetId, m_group.GetID, selectedGroup.GetID)
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		Starter.TaskViewModelInstance.InsertTask(m_task)
 		
-		' Spinner is not zero-based index.
-		Starter.GroupViewModelInstance.InsertTaskGroup(m_task.GetId, spnTaskGroup.SelectedIndex)
+		Starter.GroupViewModelInstance.InsertTaskGroup(m_task.GetId, selectedGroup.GetID)
 	End If
 	
 	' Save the attachments

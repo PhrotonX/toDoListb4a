@@ -13,8 +13,8 @@ Public Sub Initialize(database As ToDoDatabase)
 	m_database = database
 End Sub
 
-Public Sub InsertGroup(item As Group)
-	m_database.GroupDao().InsertGroup(item)
+Public Sub InsertGroup(item As Group) As Boolean
+	Return m_database.GroupDao().InsertGroup(item)
 End Sub
 
 Public Sub InsertTaskGroup(task_id As Long, group_id As Long)
@@ -22,7 +22,11 @@ Public Sub InsertTaskGroup(task_id As Long, group_id As Long)
 End Sub
 
 Public Sub GetGroup(group_id As Long) As Group
-	Return m_database.GroupDao().GetGroups("WHERE group_id = " & group_id, "ORDER BY title ASC").Get(0)
+	Return m_database.GroupDao().GetGroups("WHERE group_id = " & group_id, "").Get(0)
+End Sub
+
+Public Sub GetGroupByTitle(title As String) As Group
+	Return m_database.GroupDao().GetGroups("WHERE title = '" & title & "'", "").Get(0)
 End Sub
 
 Public Sub GetGroups() As List

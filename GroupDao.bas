@@ -13,21 +13,40 @@ Public Sub Initialize(sql As SQL)
 	m_sql = sql
 End Sub
 
-Public Sub InsertGroup(item As Group)
+Private Sub CheckForDuplicates(item As Group) As Boolean
+	If m_sql.ExecQuerySingleResult("SELECT count(*) FROM groups WHERE title = " & item.GetTitle) >= 1 Then
+		Return True
+	Else
+		Return False
+	End If
+End Sub
+
+Public Sub InsertGroup(item As Group) As Boolean
+	Dim result As Boolean
+	
 	m_sql.BeginTransaction
 	Try
-		m_sql.ExecNonQuery("INSERT INTO groups(title, description, color, created_at, updated_at) VALUES(" & CRLF & _
-		item.GetTitle & "," & CRLF & _
-		item.GetDescription & "," & CRLF & _
-		item.GetColor & "," & CRLF & _
-		 DateTime.Now & "," & CRLF & _
-		DateTime.Now & CRLF & _
-		");" )
-		m_sql.TransactionSuccessful
+		If CheckForDuplicates(item) Then
+			result = False
+		Else
+			m_sql.ExecNonQuery("INSERT INTO groups(title, description, color, created_at, updated_at) VALUES(" & CRLF & _
+			item.GetTitle & "," & CRLF & _
+			item.GetDescription & "," & CRLF & _
+			item.GetColor & "," & CRLF & _
+			 DateTime.Now & "," & CRLF & _
+			DateTime.Now & CRLF & _
+			");" )
+			
+			m_sql.TransactionSuccessful
+			
+			result = True
+		End If
 	Catch
 		Log(LastException)
 	End Try
 	m_sql.EndTransaction
+	
+	Return result
 End Sub
 
 Public Sub InsertTaskGroup(task_id As Long, group_id As Long)
@@ -144,30 +163,41 @@ Public Sub DeleteTaskGroup(task_id As Long, group_id As Long)
 	m_sql.EndTransaction
 End Sub
 
-Public Sub UpdateGroup(item As Group)
+Public Sub UpdateGroup(item As Group) As Boolean	
+	Dim Result As Boolean
 	m_sql.BeginTransaction
 	Try
-		m_sql.ExecNonQuery("UPDATE groups SET " & CRLF & _
-		"title = " & item.GetTitle() & "," & CRLF & _
-		"description = " & item.GetDescription() & "," & CRLF & _
-		"color = " & item.GetColor() & "," & CRLF & _
-		"updated_at = " & DateTime.Now & "" & CRLF & _
-		"WHERE group_id = " & item.GetID & CRLF & _
-		";" )
-		m_sql.TransactionSuccessful
+		If CheckForDuplicates(item) Then
+			Result = False
+		Else
+			m_sql.ExecNonQuery("UPDATE groups SET " & CRLF & _
+			"title = " & item.GetTitle() & "," & CRLF & _
+			"description = " & item.GetDescription() & "," & CRLF & _
+			"color = " & item.GetColor() & "," & CRLF & _
+			"updated_at = " & DateTime.Now & "" & CRLF & _
+			"WHERE group_id = " & item.GetID & CRLF & _
+			";" )
+			
+			m_sql.TransactionSuccessful			
+			
+			Result = True
+		End If
 	Catch
 		Log(LastException)
 	End Try
 	m_sql.EndTransaction
+	
+	Return Result
 End Sub
 
 Public Sub UpdateTaskGroup(task_id As Long, old_group_id As Long, new_group_id As Long)
-	' Cancel insertion if new_group_id is 0 or no group.
+	' If the task no has group set to 0, then delete task group id instead and cancel the update operation.
 	If new_group_id <= 0 Then
+		DeleteTaskGroup(task_id, old_group_id)
 		Return
 	End If
 	
-	' If the task previously did not have any group, then insert task instead and cancel the update operation.
+	' If the task previously did not have any group, then insert task group id instead and cancel the update operation.
 	If old_group_id == 0 Then
 		InsertTaskGroup(task_id, new_group_id)
 		Return

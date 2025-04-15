@@ -13,8 +13,8 @@ Public Sub Initialize(dbRepo As GroupRepository)
 	m_dbRepository = dbRepo
 End Sub
 
-Public Sub InsertGroup(item As Group)
-	m_dbRepository.InsertGroup(item)
+Public Sub InsertGroup(item As Group) As Boolean
+	Return m_dbRepository.InsertGroup(item)
 End Sub
 
 Public Sub InsertTaskGroup(task_id As Long, group_id As Long)
@@ -31,6 +31,10 @@ End Sub
 
 Public Sub GetGroupByTaskId(task_id As Long) As Group
 	Return m_dbRepository.GetGroupOnTaskId(task_id)
+End Sub
+
+Public Sub GetGroupByTitle(title As String) As Group
+	Return m_dbRepository.GetGroupByTitle(title)
 End Sub
 
 Public Sub DeleteGroup(group_id As Long)
