@@ -96,3 +96,7 @@ Public Sub DeleteAttachment(item As Attachment) As Boolean
 	m_dbRepository.DeleteAttachment(item)
 	Return m_fileRepository.RemoveAttachment(item)
 End Sub
+
+Public Sub DropAttachmentsFromFS() As Boolean
+	Return m_fileRepository.DropAttachments()
+End Sub
