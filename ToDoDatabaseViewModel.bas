@@ -21,7 +21,21 @@ Public Sub CloseDatabase()
 	m_database.CloseDatabase()
 End Sub
 
-Public Sub ResetDatabase()
-	m_database.DropTables()
-	m_database.CreateTable()
+Public Sub ResetDatabase() As Boolean
+	Try
+		Dim result1 As Boolean = False
+		Dim result2 As Boolean = False
+		result1 = m_database.DropTables()
+		result2 = m_database.CreateTable()
+	
+		If result1 And result2 Then
+			Return True
+		Else
+			Return False
+		End If
+	Catch
+		Log(LastException)
+	End Try
+	
+	Return False
 End Sub
