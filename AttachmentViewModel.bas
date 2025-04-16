@@ -72,11 +72,12 @@ Public Sub OpenAttachment(attachment_id As Long) As Boolean
 		Next
 	
 		Dim intentObj As Intent
-		intentObj.Initialize(intentObj.ACTION_VIEW, "")
-		' intentObj.Initialize(intentObj.ACTION_VIEW, File.Combine(Starter.Provider.SharedFolder, fileName)) ' Doesn't work
-		Starter.Provider.SetFileUriAsIntentData(intentObj, fileName) ' Doesn't work
+		'intentObj.Initialize(intentObj.ACTION_VIEW, "")
+		intentObj.Initialize(intentObj.ACTION_VIEW, File.Combine(Starter.Provider.SharedFolder, fileName)) ' Doesn't work
+		'Starter.Provider.SetFileUriAsIntentData(intentObj, fileName) ' Doesn't work
 		'intentObj.SetComponent("android/com.android.internal.app.ResolverActivity")
 		intentObj.SetType("image/*")
+		intentObj.Flags = Bit.Or(1, 2) ' FLAG_GRANT_READ_URI_PERMISSION
 		StartActivity(intentObj)
 		
 		Return True
