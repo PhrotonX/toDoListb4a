@@ -26,7 +26,8 @@ Public Sub Initialize
 End Sub
 
 ' Creates tables for Database in SQL syntax, not MySQL.
-Public Sub CreateTable	
+Public Sub CreateTable As Boolean
+	Dim result As Boolean = False
 	' Query for creating the task table
 	Dim query_task As String = "CREATE TABLE IF NOT EXISTS task( " & CRLF & _
 	"task_id INTEGER PRIMARY KEY AUTOINCREMENT," & CRLF & _
@@ -132,11 +133,15 @@ Public Sub CreateTable
 		
 		' Tell to the database that the SQL transaction is successful.
 		sql.TransactionSuccessful
+		
+		result = True
 	Catch
 		Log(LastException.Message)
 	End Try
 	' Mark the end of SQL Transaction
 	sql.EndTransaction
+	
+	Return result
 End Sub
 
 Public Sub TaskDao() As TaskDao
@@ -157,7 +162,9 @@ Public Sub CloseDatabase()
 End Sub
 
 ' Drops all table from the database.
-Public Sub DropTables
+Public Sub DropTables As Boolean
+
+	Dim result As Boolean = False
 	Dim query_task As String = "DROP TABLE IF EXISTS task;"
 	Dim query_days_of_the_week As String = "DROP TABLE IF EXISTS days_of_the_week;"
 	Dim query_task_repeat As String = "DROP TABLE IF EXISTS task_repeat;"
@@ -175,11 +182,16 @@ Public Sub DropTables
 		sql.ExecNonQuery(query_task_attachment)
 		sql.ExecNonQuery(query_group)
 		sql.ExecNonQuery(query_task_group)
+		
 		sql.TransactionSuccessful
+		
+		result = True
 	Catch
 		Log(LastException.Message)
 	End Try
 	sql.EndTransaction
+	
+	Return result
 End Sub
 
 Public Sub CopyDatabase()
