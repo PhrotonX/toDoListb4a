@@ -50,3 +50,20 @@ End Sub
 Public Sub RemoveFile(FileName As String, Location As String) As Boolean
 	Return File.Delete(Starter.Permissions.GetSafeDirDefaultExternal(Location), FileName)
 End Sub
+
+' Removes files from a directory in external storage
+' Returns true if succeeded.
+Public Sub RemoveFiles(Location As String) As Boolean
+	Dim result As Boolean = False
+	Try
+		For Each item As String In File.ListFiles(Location)
+			File.Delete(Location, item)
+		Next
+		
+		result = True
+	Catch
+		Log(LastException)
+	End Try
+	
+	Return result
+End Sub
