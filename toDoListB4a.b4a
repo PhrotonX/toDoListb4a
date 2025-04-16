@@ -1,4 +1,4 @@
-﻿Build1=Default,com.cm.todolist
+Build1=Default,com.cm.todolist
 File1=3528206.png
 File10=emptytasks.bal
 File11=folder.png
@@ -8,16 +8,18 @@ File14=ic_launcher_xl.png
 File15=Layout.bal
 File16=newfragment.bal
 File17=pencil.png
-File18=separatorlayout.bal
-File19=settingsabout.bal
-File2=486023921_623831243812785_3842496593750662642_n.jpg
-File20=settingshelp.bal
-File21=settingslayout.bal
-File22=solid_white.png
-File23=sviewlayout.bal
-File24=TaskItemLayout.bal
-File25=taskviewlayout.bal
-File26=taskviewscrolllayout.bal
+File18=searchByLayout.bal
+File19=separatorlayout.bal
+File2=486023921_623831243812785_3842496593750662642_n (1).png
+File20=settingsabout.bal
+File21=settingshelp.bal
+File22=settingslayout.bal
+File23=solid_white.png
+File24=stock4.png
+File25=sviewlayout.bal
+File26=TaskItemLayout.bal
+File27=taskviewlayout.bal
+File28=taskviewscrolllayout.bal
 File3=aboutitems.bal
 File4=AttachmentItemLayout.bal
 File5=canvas.bal
@@ -44,6 +46,8 @@ FileGroup23=Default Group
 FileGroup24=Default Group
 FileGroup25=Default Group
 FileGroup26=Default Group
+FileGroup27=Default Group
+FileGroup28=Default Group
 FileGroup3=Default Group
 FileGroup4=Default Group
 FileGroup5=Default Group
@@ -100,9 +104,9 @@ Module6=AttachmentViewModel
 Module7=DatabaseUtils
 Module8=Date
 Module9=DateAndTime
-NumberOfFiles=26
+NumberOfFiles=28
 NumberOfLibraries=12
-NumberOfModules=35
+NumberOfModules=33
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
@@ -141,7 +145,6 @@ Sub Globals
 	Dim menuListViewItemsize As ListView
 	Private pnlMenuBgTouch As Panel
 	Private clvItems As CustomListView
-	
 	Dim inMain As Boolean = True
 	Private mainFragment As Panel
 	Public lastClickTime As Long = 0
@@ -160,6 +163,9 @@ Sub Globals
 	Private groupPanel As Panel
 	Private lblGroupIcon As Label
 	Private lblGroupName As Label
+	Private m_tasks As List
+	Private Panel1 As Panel
+	Private pnlmenuListView As Panel
 	
 	Private smartLists(5) As Group
 	
@@ -195,7 +201,9 @@ Sub Globals
 	
 	Private m_itemsLoaded As Boolean = False
 	
-	Private m_tasks As List
+
+	Private pnlSortDialogue As Panel
+	Private pnlSortDialoguebg As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -325,9 +333,11 @@ Private Sub CreateItem(viewHolder As TaskViewHolder) As B4XView
 	Dim panel As B4XView = xui.CreatePanel("")
 	
 	' Set properties into the root panel
-	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
+	
+	panel.SetLayoutAnimated(0, 0, 0, 95%x, 70dip)
 	panel.LoadLayout("TaskItemLayout")
-	panel.SetColorAndBorder(Colors.White, 0, Colors.White, 0)
+	'panel.SetColorAndBorder(Colors.Red, 120, Colors.Green, 5) 
+	panel.SetColorAndBorder(Colors.Transparent,110,Colors.RGB(213, 216, 232), 5)
 	
 	' Bind the root panel
 	viewHolder.Root = panel
@@ -383,6 +393,7 @@ Private Sub LoadItems()
 			m_tasks = Starter.TaskViewModelInstance.GetGroupedTasks(m_savedGroup.GetID)
 	End Select
 	
+
 	' Null check the list.
 	If m_tasks.IsInitialized Then
 		Dim itr As String = ""
@@ -404,7 +415,9 @@ Private Sub LoadItems()
 						Dim subGroup As SubGroupViewHolder
 						subGroup.Initialize(xui)
 						subGroup.Name.Text = currentDateIdentification
-						
+						subGroup.Root.Height = 70
+						subGroup.Name.TextSize = 16
+
 						ToDoList.Add(subGroup.BuildView(), subGroup)
 					End If
 				Case SMART_LIST_SEARCH, SMART_LIST_SORT, SMART_LIST_COMPLETED:
@@ -415,17 +428,22 @@ Private Sub LoadItems()
 						subGroup.Initialize(xui)
 						subGroup.Name.Text = "Completed"
 						itr = "Completed"
-						
+
+						subGroup.Name.Height = 68
 						ToDoList.Add(subGroup.BuildView(), subGroup)
 					End If
 			End Select
 			
+			
+			
 			' Add items into the list view by binding the viewholder and the data.
+			
 			ToDoList.Add(CreateItem(viewHolder), viewHolder)
 			
 			' Bind the currently referenced vieHolder that ToDoList points to into there
 			' currently iterated data.
 			BindItem(item, viewHolder)
+	
 		Next
 	End If
 	
@@ -440,34 +458,72 @@ Private Sub LoadItems()
 			
 			Dim count As Int = m_tasks.Size
 			
-			subGroup.Name.Text = count & " task"
+			subGroup.Name.Text = count & " found task"
 			
 			' Make the counting information plural if possible.
 			If count > 1 Then
 				subGroup.Name.Text = subGroup.Name.Text & "(s)"
 			End If
 			
+			subGroup.Name.TextSize = 15
+			subGroup.Name.TextColor = Colors.RGB(91,91,91)
 			ToDoList.Add(subGroup.BuildView(), subGroup)
 	End Select
 	
+	
+End Sub
+
+Private Sub listview_init
+	menuListView.Visible = True
+	menuListView.AddSingleLine2("	Refresh", 1)
+	menuListView.AddSingleLine2("	Sort", 2)
+	menuListView.AddSingleLine2("	Settings", 3)
+	menuListView.SingleLineLayout.Label.TextSize = 16
+	menuListView.SingleLineLayout.Label.TextColor = Colors.Black
+	menuListView.SingleLineLayout.ItemHeight = 43dip
+		
+	Dim cd As ColorDrawable
+	cd.Initialize(Colors.White, 3dip)
+		
+	menuListView.Background = cd
+		
+		
+	menuListViewItemsize.Initialize("")
+	menuListViewItemsize.SetLayout(pnlmenuListView.Left, pnlmenuListView.Top, pnlmenuListView.Width, pnlmenuListView.Height)
+		
+	'pnlmenuListView.SetLayoutAnimated(200,100%x, 0%y, 0, 114dip)
+	pnlMenuBgTouch.SendToBack
+		
+	Dim javaobj As JavaObject = menuListView
+	javaobj.RunMethod("setDivider", Array(Null))
+	javaobj.RunMethod("setDividerHeight", Array(0))
+	
+	pnlmenuListView.Elevation = 0
 End Sub
 
 Sub menuBtn_Click
 	If button_handling Then
 		pnlMenuBgTouch.BringToFront
-		menuListView.SetVisibleAnimated(250, True)
+		pnlMenuBgTouch.Elevation = 20
+		pnlmenuListView.SetVisibleAnimated(250, True)
+		pnlmenuListView.Elevation = 20
 		menuListView.BringToFront
-		menuListView.SetLayoutAnimated(250, menuListViewItemsize.Left, menuListViewItemsize.Top, menuListViewItemsize.Width, menuListViewItemsize.Height)
+		pnlmenuListView.BringToFront
+		pnlmenuListView.SetLayoutAnimated(250, menuListViewItemsize.Left, menuListViewItemsize.Top, menuListViewItemsize.Width, menuListViewItemsize.Height)
+		
 	End If
 End Sub
 
 Private Sub pnlMenuBgTouch_Touch (Action As Int, X As Float, Y As Float)
+	
 	Select Action
 		Case Activity.ACTION_DOWN
 			If menuListView.Visible = True Then
 				pnlMenuBgTouch.SendToBack
-				menuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
-				menuListView.SetVisibleAnimated(500, False)
+				pnlmenuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
+				pnlmenuListView.SetVisibleAnimated(500, False)
+				pnlMenuBgTouch.Elevation = 0
+				pnlmenuListView.Elevation = 0
 				
 			End If
 	End Select
@@ -477,27 +533,43 @@ Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 	Select Position
 		Case 0
 			pnlMenuBgTouch.SendToBack
-			menuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
-			menuListView.SetVisibleAnimated(500, False)
-			
+			pnlmenuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
+			pnlmenuListView.SetVisibleAnimated(500, False)
+			pnlMenuBgTouch.Elevation = 0
+			pnlmenuListView.Elevation = 0
 			
 			
 		Case 1
 			pnlMenuBgTouch.SendToBack
-			menuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
-			menuListView.SetVisibleAnimated(500, False)
+			pnlmenuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
+			pnlmenuListView.SetVisibleAnimated(500, False)
+			pnlMenuBgTouch.Elevation = 0
+			pnlmenuListView.Elevation = 0
+			sortMsgBox
 			
 			
 		Case 2
 			StartActivity(SettingsActivity)
 			pnlMenuBgTouch.SendToBack
-			menuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
-			menuListView.SetVisibleAnimated(500, False)
+			pnlmenuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
+			pnlmenuListView.SetVisibleAnimated(500, False)
+			pnlMenuBgTouch.Elevation = 0
+			pnlmenuListView.Elevation = 0
 			
 	End Select
 End Sub
 
+Private Sub sortMsgBox
+	
+	pnlSortDialoguebg.BringToFront
+	pnlSortDialoguebg.Elevation = 20
+	pnlSortDialoguebg.SetVisibleAnimated(250, True)
+	pnlSortDialogue.BringToFront
+	pnlSortDialogue.SetVisibleAnimated(250, True)
+	pnlSortDialogue.Elevation = 20
 
+	
+End Sub
 
 ' Opens EditorActivity to edit a clicked task.
 Private Sub pnlClickArea_Click
@@ -580,6 +652,7 @@ Sub pnlViewArea_Touch (Action As Int, X As Float, Y As Float)
        End Select
 End Sub
 
+
 ' Used to process the click style of panels above the checkbox of tasks.
 Public Sub OnChkboxViewAreaClick(percentage As Int, viewHolder As TaskViewHolder)
 	' Touch color differs whether the item is marked as complete or not.
@@ -598,31 +671,7 @@ Private Sub drawerButton_Click
 	End If
 End Sub
 
-Private Sub listview_init
-		menuListView.Visible = False
-		menuListView.AddSingleLine2("	Refresh", 1)
-		menuListView.AddSingleLine2("	Sort", 2)
-		menuListView.AddSingleLine2("	Settings", 3)
-		menuListView.SingleLineLayout.Label.TextSize = 15
-		menuListView.SingleLineLayout.Label.TextColor = Colors.Black
-		menuListView.SingleLineLayout.ItemHeight = 43dip
-		
-		Dim cd As ColorDrawable
-		cd.Initialize(Colors.White, 3dip)
-		
-		menuListView.Background = cd
-		
-		
-		menuListViewItemsize.Initialize("")
-		menuListViewItemsize.SetLayout(menuListView.Left, menuListView.Top, menuListView.Width, menuListView.Height)
-		
-		menuListView.SetLayoutAnimated(200,100%x, 0%y, 0, 114dip)
-		pnlMenuBgTouch.SendToBack
-		
-		Dim javaobj As JavaObject = menuListView
-		javaobj.RunMethod("setDivider", Array(Null))
-		javaobj.RunMethod("setDividerHeight", Array(0))
-End Sub
+
 
 Sub LoadDrawerItems
 	clvItems.sv.ScrollViewInnerPanel.Color = xui.Color_Transparent
@@ -661,7 +710,7 @@ Sub LoadDrawerItems
 	sepPanel.SetLayoutAnimated(0, 0, 0, 100%x, 2dip) ' 2dip height for the separator
 	Dim innerSep As B4XView = xui.CreatePanel("")
 	innerSep.SetLayoutAnimated(0, 5%x, 0, 45.56%x, 2dip) ' 80% width, centered (10% margin on each side)
-	innerSep.Color = xui.Color_LightGray
+	innerSep.Color = Colors.RGB(91,91,91)
 	sepPanel.AddView(innerSep, 5%x, 0, 45.56%x, 2dip)
 	sepPanel.Enabled = False
 	innerSep.Enabled = False	
@@ -681,8 +730,6 @@ Sub LoadDrawerItems
 	
 	OnLoadTaskGroups(items)
 
-	Log(Activity.Width)
-	Log(drawer.LeftPanel.Width)
 	
 End Sub
 
@@ -751,16 +798,21 @@ End Sub
 
 Private Sub searchBtn_Click
 	If button_handling Then
-		pnlSearch.SetLayout(pnlTitleBar.Left, pnlTitleBar.Top, 100%x, pnlTitleBar.Height)
+		pnlTitleBar.Elevation = 0
+		pnlSearch.SetLayout(pnlTitleBar.Left, pnlTitleBar.Top, pnlTitleBar.Width, pnlTitleBar.Height)
 		pnlSearch.SetVisibleAnimated(150, True)
+		pnlSearch.Elevation = 10
 		pnlSearch.BringToFront
+
 		
 		searchFragment.SetLayout(mainFragment.Left, mainFragment.Top, mainFragment.Width, mainFragment.Height)
 		searchFragment.SetVisibleAnimated(150, True)
 		searchFragment.BringToFront
 		
+		Sleep(150)
 		mainFragment.Visible = False
 		pnlTitleBar.Visible = False
+		
 	End If
 End Sub
 
@@ -777,7 +829,10 @@ Private Sub backBtn_Click
 		fadeout.Start(searchFragment)
 		
 		pnlSearch.Visible = False
+		pnlSearch.Elevation = 0
 		searchFragment.Visible = False
+		searchFragment.Elevation = 0
+		pnlTitleBar.Elevation = 10
 		
 		pnlSearch.SendToBack
 		searchFragment.SendToBack
@@ -797,4 +852,25 @@ End Sub
 Private Sub enterBtn_Click
 	ToastMessageShow("startactivity", False)
 	'StartActivity(searchactivity)
+End Sub
+
+
+Private Sub btnCancel_Click
+	sortMsgBox_disappear
+	ToastMessageShow("sort cancel", False)
+End Sub
+
+Private Sub btnConfirm_Click
+	sortMsgBox_disappear
+	ToastMessageShow("sort confirm", False)
+End Sub
+
+Private Sub sortMsgBox_disappear
+	pnlSortDialoguebg.SetVisibleAnimated(200, False)
+	pnlSortDialoguebg.Elevation = 0
+	pnlSortDialoguebg.SendToBack
+	
+	pnlSortDialogue.SetVisibleAnimated(200, False)
+	pnlSortDialogue.Elevation = 0
+	pnlSortDialogue.SendToBack
 End Sub
