@@ -36,8 +36,9 @@ Public Sub GetAttachment(attachment_id As Long) As Attachment
 End Sub
 
 Public Sub GetAttachmentFilePath(attachment_id As Long) As String
+	Log("DirDefautlExternal: " & Starter.Permissions.GetSafeDirDefaultExternal(m_fileRepository.DIRECTORY))
 	For Each item As String In File.ListFiles(Starter.Permissions.GetSafeDirDefaultExternal(m_fileRepository.DIRECTORY))
-		Log(item)
+		Log("File from DirDefaultExternal: " & item)
 	Next
 	
 	Return File.Combine(Starter.Permissions.GetSafeDirDefaultExternal(m_fileRepository.DIRECTORY), _
@@ -53,18 +54,37 @@ Public Sub GetTaskAttachments(task_id As Long) As List
 End Sub
 
 ' Returns true if the insertion succeeded.
-Public Sub OpenAttachment(attachment_id As Long) As Boolean	
-	Dim filePath As String = GetAttachmentFilePath(attachment_id)
+Public Sub OpenAttachment(attachment_id As Long) As Boolean
+	Try
+		Dim filePath As String = GetAttachmentFilePath(attachment_id)
+		Dim fileName As String = GetAttachment(attachment_id).GetFilename
 	
-	Log(Starter.Provider.GetFileUri(m_fileRepository.DIRECTORY & GetAttachment(attachment_id).GetFilename))
-	Log(Starter.Provider.SharedFolder)
+		Log("filePath: " & filePath)
+		Log("fileName: " & fileName)
 	
-	Dim intentObj As Intent
-	intentObj.Initialize(intentObj.ACTION_VIEW, "")
-	Starter.Provider.SetFileUriAsIntentData(intentObj, Starter.Provider.GetFileUri(m_fileRepository.DIRECTORY & GetAttachment(attachment_id).GetFilename))
-	'intentObj.SetComponent("android/com.android.internal.app.ResolverActivity")
-	intentObj.SetType("image/*")
-	StartActivity(intentObj)
+		File.Copy(Starter.Permissions.GetSafeDirDefaultExternal(m_fileRepository.DIRECTORY), _
+		fileName, Starter.Provider.SharedFolder, fileName)
+	 
+		Log("SharedFolder: " & Starter.Provider.SharedFolder)
+	 
+		For Each item As String In File.ListFiles(Starter.Provider.SharedFolder)
+			Log("File from SharedFolder: " & item)
+		Next
+	
+		Dim intentObj As Intent
+		intentObj.Initialize(intentObj.ACTION_VIEW, "")
+		' intentObj.Initialize(intentObj.ACTION_VIEW, File.Combine(Starter.Provider.SharedFolder, fileName)) ' Doesn't work
+		Starter.Provider.SetFileUriAsIntentData(intentObj, fileName) ' Doesn't work
+		'intentObj.SetComponent("android/com.android.internal.app.ResolverActivity")
+		intentObj.SetType("image/*")
+		StartActivity(intentObj)
+		
+		Return True
+	Catch
+		Log(LastException)
+	End Try
+	
+	Return False
 End Sub
 
 Public Sub UpdateAttachment(item As Attachment)
