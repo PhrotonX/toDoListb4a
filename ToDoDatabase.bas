@@ -157,18 +157,24 @@ Public Sub CloseDatabase()
 End Sub
 
 ' Drops all table from the database.
-Public Sub DropTable
+Public Sub DropTables
 	Dim query_task As String = "DROP TABLE IF EXISTS task;"
 	Dim query_days_of_the_week As String = "DROP TABLE IF EXISTS days_of_the_week;"
 	Dim query_task_repeat As String = "DROP TABLE IF EXISTS task_repeat;"
-	Dim query_populate_days_of_the_week As String = "DROP PROCEDURE IF EXISTS PopulateDaysOfTheWeek;"
+	Dim query_attachment As String = "DROP TABLE IF EXISTS attachment;"
+	Dim query_task_attachment As String = "DROP TABLE IF EXISTS task_attachment;"
+	Dim query_group As String = "DROP TABLE IF EXISTS groups;"
+	Dim query_task_group As String = "DROP TABLE IF EXISTS task_group;"
 	
 	sql.BeginTransaction
 	Try
 		sql.ExecNonQuery(query_task)
 		sql.ExecNonQuery(query_days_of_the_week)
 		sql.ExecNonQuery(query_task_repeat)
-		sql.ExecNonQuery(query_populate_days_of_the_week)
+		sql.ExecNonQuery(query_attachment)
+		sql.ExecNonQuery(query_task_attachment)
+		sql.ExecNonQuery(query_group)
+		sql.ExecNonQuery(query_task_group)
 		sql.TransactionSuccessful
 	Catch
 		Log(LastException.Message)
@@ -176,8 +182,6 @@ Public Sub DropTable
 	sql.EndTransaction
 End Sub
 
-' FOR TESTING ONLY! REMOVE LATER
-' Copies the database into the Downloads directory.
 Public Sub CopyDatabase()
 	
 	Dim source As String = File.DirInternal & "/todo_db.db"
