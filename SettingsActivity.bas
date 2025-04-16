@@ -79,6 +79,7 @@ End Sub
 
 
 Private Sub ResetApp_Click
+	Starter.ToDoDatabaseViewModelInstance.ResetDatabase()
 	
 End Sub
 
@@ -87,5 +88,14 @@ Private Sub ImportDatabase_Click
 End Sub
 
 Private Sub ExportDatabase_Click
+	
+End Sub
+
+
+Private Sub DebugMode_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub DarkMode_CheckedChange(Checked As Boolean)
 	
 End Sub
