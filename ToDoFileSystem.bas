@@ -17,7 +17,8 @@ End Sub
 Public Sub CopyFileFromUriToInternal(FileName As String, Dir As String, FileUri As String, Location As String)
 	Try
 		Dim input As InputStream = File.OpenInput(Dir, FileUri)
-		Dim output As OutputStream = File.OpenOutput(File.DirInternal & Location, FileName, False)
+		Dim output As OutputStream = File.OpenOutput(Starter.Permissions.GetSafeDirDefaultExternal(Location), _
+		FileName, False)
 		File.Copy2(input, output)
 		input.Close
 		output.Close
@@ -44,8 +45,8 @@ Public Sub GetCursorFromUri(FileUri As String) As Cursor
 	Return cur
 End Sub
 
-' Removes file from File.DirInternal
+' Removes file from external storage
 ' Returns true if succeeded.
-Public Sub RemoveFile(FileName As String) As Boolean
-	Return File.Delete(File.DirInternal, FileName)
+Public Sub RemoveFile(FileName As String, Location As String) As Boolean
+	Return File.Delete(Starter.Permissions.GetSafeDirDefaultExternal(Location), FileName)
 End Sub

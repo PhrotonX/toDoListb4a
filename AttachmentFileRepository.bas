@@ -17,7 +17,7 @@ End Sub
 Public Sub Initialize(fileSystem As ToDoFileSystem)
 	m_fileSystem = fileSystem
 	
-	File.MakeDir(File.DirInternal, DIRECTORY_2)
+	File.MakeDir(Starter.Permissions.GetSafeDirDefaultExternal(""), DIRECTORY_2)
 End Sub
 
 ' This function currently only supports a single file.
@@ -68,7 +68,7 @@ End Sub
 
 Public Sub RemoveAttachment(item As Attachment) As Boolean
 	Try
-		Return m_fileSystem.RemoveFile(DIRECTORY & item.GetFilename)
+		Return m_fileSystem.RemoveFile(item.GetFilename, DIRECTORY)
 	Catch
 		Log(LastException)
 	End Try

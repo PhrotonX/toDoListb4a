@@ -46,6 +46,9 @@ Sub Process_Globals
 	Public TaskViewModelInstance As TaskViewModel
 	Public AttachmentViewModelInstance As AttachmentViewModel
 	Public GroupViewModelInstance As GroupViewModel
+	
+	Public Provider As FileProvider
+	Public Permissions As RuntimePermissions
 End Sub
 
 Sub CheckInstanceState
@@ -89,6 +92,8 @@ Sub Service_Create
 	TaskViewModelInstance.Initialize(taskRepo)
 	AttachmentViewModelInstance.Initialize(attachmentRepo, attachmentFileRepo)
 	GroupViewModelInstance.Initialize(groupRepo)
+	
+	Provider.Initialize
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)
