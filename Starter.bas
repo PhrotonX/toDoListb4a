@@ -48,11 +48,10 @@ Sub Process_Globals
 	Public AttachmentViewModelInstance As AttachmentViewModel
 	Public GroupViewModelInstance As GroupViewModel
 
+	Public SettingsViewModelInstance As SettingsViewModel
 	
 	Public Provider As FileProvider
 	Public Permissions As RuntimePermissions
-
-	Public SettingsViewModelInstance As SettingsViewModel
 	
 End Sub
 
@@ -121,4 +120,7 @@ End Sub
 Sub Service_Destroy
 	' Close the database
 	ToDoDatabaseViewModelInstance.CloseDatabase
+	
+	' Close the settings file
+	SettingsViewModelInstance.Close()
 End Sub
