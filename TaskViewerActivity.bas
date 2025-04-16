@@ -34,6 +34,7 @@ Sub Globals
 	Private m_task As ToDo
 	Private Label1 As Label
 	
+	Private viewTaskGroup As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -87,6 +88,13 @@ Sub Activity_Resume
 	viewDueDate.Text = m_task.GetDueDate.GetFormattedDate
 	viewCreatedAt.Text = m_task.GetCreatedAt.GetFormattedDateAndTime
 	viewModifiedAt.Text = m_task.GetUpdatedAt.GetFormattedDateAndTime
+	
+	Dim taskGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_task.GetId())
+	If taskGroup.IsInitialized Then
+		viewTaskGroup.Text = taskGroup.GetTitle
+	Else
+		viewTaskGroup.Text = Starter.GroupViewModelInstance.DefaultGroup().GetTitle()
+	End If
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -100,7 +108,7 @@ End Sub
 
 ' Open editor activity.
 Private Sub btnEdit_Click
-	' Send the task ID into EditorActivity.
+	' Send the task and group ID into EditorActivity.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, m_task.GetId)
 	
 	' Set the EditorActivity mode into edit mode.

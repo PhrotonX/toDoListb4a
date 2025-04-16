@@ -1,4 +1,4 @@
-﻿Build1=Default,com.cm.todolist
+Build1=Default,com.cm.todolist
 File1=3528206.png
 File10=emptytasks.bal
 File11=folder.png
@@ -64,11 +64,11 @@ Library2=b4xdrawer
 Library3=contentresolver
 Library4=core
 Library5=javaobject
-Library6=nb6
-Library7=phone
-Library8=reflection
-Library9=runtimepermissions
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="34" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="18" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="18" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="18" />~\n~)~\n~~\n~CreateResource(xml, provider_paths,~\n~    <paths xmlns:android="http://schemas.android.com/apk/res/android">~\n~    <external-path name="root" path="" />~\n~</paths>~\n~)~\n~#AdditionalJar: com.android.support:support-core-utils~\n~'End of default text.~\n~
+Library6=keyvaluestore
+Library7=nb6
+Library8=phone
+Library9=reflection
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="34" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="18" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="18" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="18" />~\n~)~\n~~\n~CreateResource(xml, provider_paths,~\n~    <paths xmlns:android="http://schemas.android.com/apk/res/android">~\n~    <external-path name="root" path="" />~\n~</paths>~\n~)~\n~'End of default text.~\n~
 Module1=Attachment
 Module10=DaysOfTheWeek
 Module11=Dimen
@@ -83,19 +83,21 @@ Module19=SettingsAbout
 Module2=AttachmentDao
 Module20=SettingsActivity
 Module21=SettingsHelp
-Module22=Starter
-Module23=SubGroupViewHolder
-Module24=TaskDao
-Module25=TaskRepository
-Module26=TaskViewerActivity
-Module27=TaskViewHolder
-Module28=TaskViewModel
-Module29=Theme
+Module22=SettingsRepository
+Module23=SettingsViewModel
+Module24=Starter
+Module25=SubGroupViewHolder
+Module26=TaskDao
+Module27=TaskRepository
+Module28=TaskViewerActivity
+Module29=TaskViewHolder
 Module3=AttachmentFileRepository
-Module30=Time
-Module31=ToDo
-Module32=ToDoDatabase
-Module33=ToDoFileSystem
+Module30=TaskViewModel
+Module31=Theme
+Module32=Time
+Module33=ToDo
+Module34=ToDoDatabase
+Module35=ToDoFileSystem
 Module4=AttachmentRepository
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
@@ -109,11 +111,12 @@ Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
-	#VersionCode: 9
+	#VersionCode: 10
 	#VersionName: v2.0.0.2 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
+	#MultiDex: True
 #End Region
 
 #Region  Activity Attributes 
@@ -212,9 +215,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	drawer.LeftPanel.LoadLayout("drawerLayout")
 	LoadDrawerItems
 	listview_init
-	'Activity.LoadLayout("Layout")
 	
 	m_tasks.Initialize
+	m_savedGroup.Initialize(0)
 End Sub
 
 Sub Activity_Resume
@@ -232,6 +235,8 @@ End Sub
 Private Sub btnAdd_Click
 	' Set the editor mode by submitting the requested value into the InstanceState bundle.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_CREATE)
+	
+	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_GROUP_ID, m_savedGroup.GetID)
 	
 	' Start the activity.
 	StartActivity(EditorActivity)
@@ -363,7 +368,7 @@ End Sub
 ' Loads the items.
 Private Sub LoadItems()
 
-		m_itemsLoaded = False
+	m_itemsLoaded = False
 
 	' Initialize a list.
 	' Testing code for item sorting and searching.
