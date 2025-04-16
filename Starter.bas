@@ -35,20 +35,25 @@ Sub Process_Globals
 	Public Const EXTRA_EDITOR_TASK_ID As String = PACKAGE_NAME & ".EXTRA_EDITOR_TASK_ID"
 	Public Const EXTRA_EDITOR_GROUP_ID As String = PACKAGE_NAME & ".EXTRA_EDITOR_GROUP_ID"
 	
-	Private ToDoDatabaseInstance As ToDoDatabase
+	'Public ToDoDatabaseInstance As ToDoDatabase
+	Public ToDoDatabaseViewModelInstance As ToDoDatabaseViewModel
 	Private ToDoFileSystemInstance As ToDoFileSystem
 	Private taskRepo As TaskRepository
 	Private attachmentRepo As AttachmentRepository
 	Private attachmentFileRepo As AttachmentFileRepository
 	Private groupRepo As GroupRepository
 	
-	' Glocal instance of TaskViewModel where the database can be accessed.
+	' Global instance of TaskViewModel where the database can be accessed.
 	Public TaskViewModelInstance As TaskViewModel
 	Public AttachmentViewModelInstance As AttachmentViewModel
 	Public GroupViewModelInstance As GroupViewModel
+
 	
 	Public Provider As FileProvider
 	Public Permissions As RuntimePermissions
+
+	Public SettingsViewModelInstance As SettingsViewModel
+	
 End Sub
 
 Sub CheckInstanceState
@@ -81,19 +86,21 @@ Sub Service_Create
 	' Initialize the variables
 	InstanceState.Initialize
 	
-	ToDoDatabaseInstance.Initialize
+	ToDoDatabaseViewModelInstance.Initialize
 	ToDoFileSystemInstance.Initialize
 	
-	taskRepo.Initialize(ToDoDatabaseInstance)
-	attachmentRepo.Initialize(ToDoDatabaseInstance)
+	taskRepo.Initialize(ToDoDatabaseViewModelInstance.GetInstance)
+	attachmentRepo.Initialize(ToDoDatabaseViewModelInstance.GetInstance)
 	attachmentFileRepo.Initialize(ToDoFileSystemInstance)
-	groupRepo.Initialize(ToDoDatabaseInstance)
+	groupRepo.Initialize(ToDoDatabaseViewModelInstance.GetInstance)
 	
 	TaskViewModelInstance.Initialize(taskRepo)
 	AttachmentViewModelInstance.Initialize(attachmentRepo, attachmentFileRepo)
 	GroupViewModelInstance.Initialize(groupRepo)
 	
 	Provider.Initialize
+
+	SettingsViewModelInstance.Initialize()
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)
@@ -107,11 +114,11 @@ End Sub
 'Return true to allow the OS default exceptions handler to handle the uncaught exception.
 Sub Application_Error (Error As Exception, StackTrace As String) As Boolean
 	' Close the database
-	ToDoDatabaseInstance.CloseDatabase
+	ToDoDatabaseViewModelInstance.CloseDatabase
 	Return True
 End Sub
 
 Sub Service_Destroy
 	' Close the database
-	ToDoDatabaseInstance.CloseDatabase
+	ToDoDatabaseViewModelInstance.CloseDatabase
 End Sub

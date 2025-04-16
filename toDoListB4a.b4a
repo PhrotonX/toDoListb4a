@@ -99,16 +99,17 @@ Module31=Theme
 Module32=Time
 Module33=ToDo
 Module34=ToDoDatabase
-Module35=ToDoFileSystem
+Module35=ToDoDatabaseViewModel
+Module36=ToDoFileSystem
 Module4=AttachmentRepository
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
 Module7=DatabaseUtils
 Module8=Date
 Module9=DateAndTime
-NumberOfFiles=26
+NumberOfFiles=28
 NumberOfLibraries=14
-NumberOfModules=35
+NumberOfModules=36
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
