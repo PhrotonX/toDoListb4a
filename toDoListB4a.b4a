@@ -183,7 +183,7 @@ Sub Globals
 	Private Const SMART_LIST_TASKS As Int = 5
 	Private Const SMART_LIST_TRASH As Int = 6
 	Private Const SMART_LIST_SEARCH As Int = 7
-	Private Const SMART_LIST_SORT As Int = 8
+	'Private Const SMART_LIST_SORT As Int = 8
 	
 	Private Const MENU_ITEM_REFRESH As Int = 0
 	Private Const MENU_ITEM_SORT As Int = 1
@@ -222,9 +222,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	listview_init
 	
 	m_tasks.Initialize
-	m_savedGroup.Initialize(0)
+	m_savedGroup = smartLists(0) ' Get the My Day smart list
 	
-	m_query.Initialize
+	m_query.Initialize()
 End Sub
 
 Sub Activity_Resume
@@ -270,54 +270,57 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 	' Since the item has been changed, update the database.
 	Starter.TaskViewModelInstance.UpdateTask(item)
 	
-	Select m_savedSmartList:
-		Case SMART_LIST_PLANNED:
-			If Checked == True Then
-				' Hide the completed task if the current smart list is in "Planned"				
-				ToDoList.RemoveAt(index)
+	If m_query.IsSortingEnabled() == False Then
+		Select m_savedSmartList:
+			Case SMART_LIST_PLANNED:
+				If Checked == True Then
+					' Hide the completed task if the current smart list is in "Planned"
+					ToDoList.RemoveAt(index)
 
-				' Also remove the subgroup If it exists And the subgroup Is empty.
-				Dim prevSubGroup As Object = ToDoList.GetValue(index - 1)
-				Dim nextSubGroup As Object
+					' Also remove the subgroup If it exists And the subgroup Is empty.
+					Dim prevSubGroup As Object = ToDoList.GetValue(index - 1)
+					Dim nextSubGroup As Object
 				
-				If (index > ToDoList.Size - 1) Then
-					nextSubGroup = Null
-				Else
-					nextSubGroup = ToDoList.GetValue(index)
-				End If
-				
-				If prevSubGroup Is SubGroupViewHolder Then
-					If nextSubGroup == Null Then
-						ToDoList.RemoveAt(index - 1)
+					If (index > ToDoList.Size - 1) Then
+						nextSubGroup = Null
+					Else
+						nextSubGroup = ToDoList.GetValue(index)
 					End If
-					If nextSubGroup Is SubGroupViewHolder Then
-						ToDoList.RemoveAt(index - 1)
+				
+					If prevSubGroup Is SubGroupViewHolder Then
+						If nextSubGroup == Null Then
+							ToDoList.RemoveAt(index - 1)
+						End If
+						If nextSubGroup Is SubGroupViewHolder Then
+							ToDoList.RemoveAt(index - 1)
+						End If
 					End If
+				
 				End If
+			Case SMART_LIST_COMPLETED:
+				If Checked == False Then
+					' Hide the incomplete task if the current smart list is in "Completed"
+					ToDoList.RemoveAt(index)
+				End If
+			Case Else:
+				If Checked == True Then
+					' Move the item into the bottom after marking the task as complete.
+					ToDoList.RemoveAt(index)
+					viewHolder.Root.RemoveViewFromParent
 				
-			End If
-		Case SMART_LIST_COMPLETED:
-			If Checked == False Then
-				' Hide the incomplete task if the current smart list is in "Completed"
-				ToDoList.RemoveAt(index)
-			End If
-		Case Else:
-			If Checked == True Then
-				ToDoList.RemoveAt(index)
-				viewHolder.Root.RemoveViewFromParent
-				
-				If m_itemsLoaded Then
-					ToDoList.InsertAt(ToDoList.Size - 1, viewHolder.Root, viewHolder)
+					If m_itemsLoaded Then
+						ToDoList.InsertAt(ToDoList.Size - 1, viewHolder.Root, viewHolder)
+					Else
+						ToDoList.Add(viewHolder.Root, viewHolder)
+						m_itemsLoaded = True
+					End If
 				Else
-					ToDoList.Add(viewHolder.Root, viewHolder)
-					m_itemsLoaded = True
+					ToDoList.RemoveAt(index)
+					viewHolder.Root.RemoveViewFromParent
+					ToDoList.InsertAt(0, viewHolder.Root, viewHolder)
 				End If
-			Else
-				ToDoList.RemoveAt(index)
-				viewHolder.Root.RemoveViewFromParent
-				ToDoList.InsertAt(0, viewHolder.Root, viewHolder)
-			End If
-	End Select
+		End Select
+	End If
 	
 	' Add visual indicator that the task has been changed
 	If Checked == True Then
@@ -384,20 +387,22 @@ Private Sub LoadItems()
 	
 	'm_tasks = Starter.TaskViewModelInstance.FindTasksByRepeat(repeat, True)
 	
+	m_query.SetGroupID(m_savedGroup.GetID)
+	
 	' Obtain all tasks from the database, depending on the smart list mode.
 	Select m_savedSmartList:
 		Case SMART_LIST_MY_DAY:
-			m_tasks = Starter.TaskViewModelInstance.GetTasksToday()
+			m_tasks = Starter.TaskViewModelInstance.GetTasksToday(m_query)
 		Case SMART_LIST_ALL: 
-			m_tasks = Starter.TaskViewModelInstance.GetAllTasks()
+			m_tasks = Starter.TaskViewModelInstance.GetAllTasksSorted(m_query)
 		Case SMART_LIST_COMPLETED:
-			m_tasks = Starter.TaskViewModelInstance.GetTasksCompleted()
+			m_tasks = Starter.TaskViewModelInstance.GetTasksCompleted(m_query)
 		Case SMART_LIST_PLANNED:
-			m_tasks = Starter.TaskViewModelInstance.GetTasksPlanned()
+			m_tasks = Starter.TaskViewModelInstance.GetTasksPlanned(m_query)
 		Case SMART_LIST_TRASH:
-			m_tasks = Starter.TaskViewModelInstance.GetDeletedTasks()
+			m_tasks = Starter.TaskViewModelInstance.GetDeletedTasks(m_query)
 		Case Else, SMART_LIST_NONE:
-			m_tasks = Starter.TaskViewModelInstance.GetGroupedTasks(m_savedGroup.GetID)
+			m_tasks = Starter.TaskViewModelInstance.GetGroupedTasks(m_query)
 	End Select
 	
 
@@ -412,36 +417,36 @@ Private Sub LoadItems()
 			viewHolder.Initialize
 			
 			' Create subgroups.
-			Select m_savedSmartList:
-				Case SMART_LIST_PLANNED:
-					Dim currentDateIdentification As String = item.GetDueDate.IdentifyDate
+			If m_query.IsSortingEnabled() == False Then
+				Select m_savedSmartList:
+					Case SMART_LIST_PLANNED:
+						Dim currentDateIdentification As String = item.GetDueDate.IdentifyDate
 					
-					If itr <> currentDateIdentification And item.Done == False Then
-						itr = currentDateIdentification
+						If itr <> currentDateIdentification And item.Done == False Then
+							itr = currentDateIdentification
 						
-						Dim subGroup As SubGroupViewHolder
-						subGroup.Initialize(xui)
-						subGroup.Name.Text = currentDateIdentification
-						subGroup.Root.Height = 70dip
-						subGroup.Name.TextSize = 16
+							Dim subGroup As SubGroupViewHolder
+							subGroup.Initialize(xui)
+							subGroup.Name.Text = currentDateIdentification
+							subGroup.Root.Height = 70dip
+							subGroup.Name.TextSize = 16
 
-						ToDoList.Add(subGroup.BuildView(), subGroup)
-					End If
-				Case SMART_LIST_SEARCH, SMART_LIST_SORT, SMART_LIST_COMPLETED:
-				Case Else:
-					' If the Next item Is marked As completed, Then add subGroup "Completed"
-					If item.Done == True And itr == "" Then
-						Dim subGroup As SubGroupViewHolder
-						subGroup.Initialize(xui)
-						subGroup.Name.Text = "Completed"
-						itr = "Completed"
+							ToDoList.Add(subGroup.BuildView(), subGroup)
+						End If
+					Case SMART_LIST_SEARCH, SMART_LIST_COMPLETED:
+					Case Else:
+						' If the Next item Is marked As completed, Then add subGroup "Completed"
+						If item.Done == True And itr == "" Then
+							Dim subGroup As SubGroupViewHolder
+							subGroup.Initialize(xui)
+							subGroup.Name.Text = "Completed"
+							itr = "Completed"
 
-						subGroup.Name.Height = 68dip
-						ToDoList.Add(subGroup.BuildView(), subGroup)
-					End If
-			End Select
-			
-			
+							subGroup.Name.Height = 68dip
+							ToDoList.Add(subGroup.BuildView(), subGroup)
+						End If
+				End Select
+			End If
 			
 			' Add items into the list view by binding the viewholder and the data.
 			
@@ -564,6 +569,10 @@ Private Sub sortMsgBox
 	pnlSortDialogue.BringToFront
 	pnlSortDialogue.SetVisibleAnimated(250, True)
 	pnlSortDialogue.Elevation = 20dip
+	
+	If m_query.IsInitialized == False Then
+		m_query.Initialize
+	End If
 End Sub
 
 ' Opens EditorActivity to edit a clicked task.
@@ -676,7 +685,7 @@ Sub LoadDrawerItems
 	items.Initialize
 	
 	For Each obj As Group In smartLists		
-		obj.Initialize(0)
+		obj.Initialize(-1)
 	Next
 	
 	smartLists(0).SetTitle("My Day")
@@ -766,7 +775,7 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	
 	' 0 ID for groups cannot exist on the database. Therefore, it is reserved
 	' for special groups such as smart lists.
-	If viewHolder.ID == 0 Then
+	If viewHolder.ID <= 0 Then
 		m_savedSmartList = Index
 		
 		OnLoadPage(smartLists(Index))
@@ -857,7 +866,8 @@ End Sub
 Private Sub btnConfirm_Click
 	sortMsgBox_disappear
 	
-	
+	ToDoList.Clear
+	LoadItems
 End Sub
 
 Private Sub sortMsgBox_disappear

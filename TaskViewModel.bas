@@ -34,8 +34,16 @@ Public Sub GetTask(id As Long) As ToDo
 	Return m_repository.GetTask(id)
 End Sub
 
-Public Sub GetAllTasks() As List
+Private Sub GetAllTasks() As List
 	Return m_repository.GetAllTasks
+End Sub
+
+Public Sub GetAllTasksSorted(query As TaskQuery) As List
+	If query.IsSortingEnabled() Then
+		Return GetSortedTasks(query)
+	Else
+		Return GetAllTasks
+	End If
 End Sub
 
 Public Sub GetSortedTasks(query As TaskQuery) As List
@@ -62,8 +70,15 @@ Public Sub GetTasksSortedByPriority(group_id As Long, ascending As Boolean) As L
 	Return m_repository.GetTasksSortedByPriority(group_id, ascending)
 End Sub
 
-Public Sub GetTasksToday() As List
-	Dim tasks As List = GetAllTasks
+Public Sub GetTasksToday(query As TaskQuery) As List
+	Dim tasks As List
+	
+	If query.IsSortingEnabled() Then
+		tasks = GetSortedTasks(query)
+	Else
+		tasks = GetAllTasks
+	End If
+	
 	Dim results As List
 	results.Initialize
 	
@@ -77,8 +92,15 @@ Public Sub GetTasksToday() As List
 End Sub
 
 ' Move logic to repository.
-Public Sub GetTasksCompleted() As List
-	Dim tasks As List = GetAllTasks
+Public Sub GetTasksCompleted(query As TaskQuery) As List
+	Dim tasks As List
+	
+	If query.IsSortingEnabled() Then
+		tasks = GetSortedTasks(query)
+	Else
+		tasks = GetAllTasks
+	End If
+	
 	Dim results As List
 	results.Initialize
 	
@@ -92,8 +114,15 @@ Public Sub GetTasksCompleted() As List
 End Sub
 
 ' Move logic to repository.
-Public Sub GetTasksPlanned() As List
-	Dim tasks As List = Starter.TaskViewModelInstance.GetTasksSortedByDueDate(TASKS_DEFAULT, False)
+Public Sub GetTasksPlanned(query As TaskQuery) As List
+	Dim tasks As List
+	
+	If query.IsSortingEnabled() Then
+		tasks = GetAllTasksSorted(query)
+	Else
+		tasks = GetTasksSortedByDueDate(TASKS_DEFAULT, False)
+	End If
+	
 	Dim results As List
 	results.Initialize
 	
@@ -107,9 +136,16 @@ Public Sub GetTasksPlanned() As List
 End Sub
 
 ' Move logic to repository.
-Public Sub GetDeletedTasks() As List
-	' Shall be tasks sorted by deleted_at.
-	Dim tasks As List = Starter.TaskViewModelInstance.GetTasksSortedByDueDate(TASKS_DEFAULT, False)
+Public Sub GetDeletedTasks(query As TaskQuery) As List
+	Dim tasks As List
+	
+	' Shall be tasks sorted by deleted_at at default.
+	If query.IsSortingEnabled() Then
+		tasks = GetAllTasksSorted(query)
+	Else
+		tasks = GetTasksSortedByDueDate(TASKS_DEFAULT, False)
+	End If
+	
 	Dim results As List
 	results.Initialize
 	
@@ -122,26 +158,32 @@ Public Sub GetDeletedTasks() As List
 	Return results
 End Sub
 
-Public Sub GetGroupedTasks(group_id As Long) As List
-	Return m_repository.GetGroupedTasks(group_id)
+' @Deprecated
+Public Sub GetGroupedTasks(query As TaskQuery) As List
+	Return m_repository.GetGroupedTasks(query)
 End Sub
 
-Public Sub GetUngroupedTasks() As List
-	Return m_repository.GetUngroupedTasks()
+' @Deprecated
+Public Sub GetUngroupedTasks(query As TaskQuery) As List
+	Return m_repository.GetUngroupedTasks(query)
 End Sub
 
+' @Deprecated
 Public Sub FindTasksByTitle(group_id As Long, query As String, ascending As Boolean) As List
 	Return m_repository.FindTasksByTitle(group_id, query, ascending)
 End Sub
 
+' @Deprecated
 Public Sub FindTasksByNotes(group_id As Long, query As String, ascending As Boolean) As List
 	Return m_repository.FindTasksByNotes(group_id, query, ascending)
 End Sub
 
+' @Deprecated
 Public Sub FindTasksByPriority(group_id As Long, query As Int, ascending As Boolean) As List
 	Return m_repository.FindTasksByPriority(group_id, query, ascending)
 End Sub
 
+' @Deprecated
 Public Sub FindTasksByDueDate(group_id As Long, tickBegin As Long, tickEnd As Long, ascending As Boolean) As List
 	Return m_repository.FindTasksByDueDate(group_id, tickBegin, tickEnd, ascending)
 End Sub

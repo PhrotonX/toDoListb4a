@@ -20,7 +20,7 @@ Sub Class_Globals
 	Private Const EQ As String = " = "
 	Private Const GTE As String = " >= "
 	Private Const LTE As String = " <= "
-	Public Const DONE As String = "done" ' Order by "done" field by default. Used to split
+	Public Const FIELD_DONE  As String = "done" ' Order by "done" field by default. Used to split
 	' completed and incomplete tasks.
 	Public Const FIELD_TASK_ID As String = "task_id"
 	Public Const FIELD_TITLE As String = "title"
@@ -52,11 +52,19 @@ Public Sub Initialize()
 	Next
 End Sub
 
+Public Sub IsSortingEnabled() As Boolean
+	If m_order == ORDER_NONE Then
+		Return False
+	End If
+	
+	Return True
+End Sub
+
 Public Sub SetGroupID(query As Long)
 	m_groupId = query
 End Sub
 
-' order - Supported values: ASC and DESC.
+' order - Supported values: ASC, DESC, and NONE.
 Public Sub SetSortOrder(order As String)
 	m_order = order
 End Sub
@@ -104,7 +112,7 @@ End Sub
 
 Public Sub GetSortingQuery() As String
 	If m_order == ORDER_NONE Then
-		Return "ORDER BY " & DONE & " " & ORDER_ASC
+		Return "ORDER BY " & FIELD_DONE & " " & ORDER_ASC
 	Else
 		Return "ORDER BY " & m_sortQuery & " " & m_order
 	End If

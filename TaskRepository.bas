@@ -38,12 +38,12 @@ Public Sub GetAllTasks() As List
 	Return m_database.TaskDao().GetTasks("", "ORDER BY done ASC")
 End Sub
 
-Public Sub GetGroupedTasks(group_id As Long) As List
-	Return m_database.TaskDao().GetGroupedTasks(group_id, "", "ORDER BY done ASC")
+Public Sub GetGroupedTasks(query As TaskQuery) As List
+	Return m_database.TaskDao().GetGroupedTasks(query.GetGroupID, "", query.GetSortingQuery())
 End Sub
 
-Public Sub GetUngroupedTasks() As List
-	Return m_database.TaskDao().GetUngroupedTasks("", "ORDER BY done ASC")
+Public Sub GetUngroupedTasks(query As TaskQuery) As List
+	Return m_database.TaskDao().GetUngroupedTasks("", query.GetSortingQuery())
 End Sub
 
 Public Sub GetSortedTasks(query As TaskQuery) As List
