@@ -38,18 +38,26 @@ Public Sub GetAllTasks() As List
 	Return m_repository.GetAllTasks
 End Sub
 
+Public Sub GetSortedTasks(query As TaskQuery) As List
+	Return m_repository.GetSortedTasks(query)
+End Sub
+
+' @Deprecated
 Public Sub GetTasksSortedByCreatedAt(group_id As Long, ascending As Boolean) As List
 	Return m_repository.GetTasksSortedByCreatedAt(group_id, ascending)
 End Sub
 
+' @Deprecated
 Public Sub GetTasksSortedByTitle(group_id As Long, ascending As Boolean) As List
 	Return m_repository.GetTasksSortedByTitle(group_id, ascending)
 End Sub
 
+' @Deprecated
 Public Sub GetTasksSortedByDueDate(group_id As Long, ascending As Boolean) As List
 	Return m_repository.GetTasksSortedByDueDate(group_id, ascending)
 End Sub
 
+' @Deprecated
 Public Sub GetTasksSortedByPriority(group_id As Long, ascending As Boolean) As List
 	Return m_repository.GetTasksSortedByPriority(group_id, ascending)
 End Sub
@@ -147,7 +155,7 @@ Public Sub FindTasksByRepeat(group_id As Long, repeat As List, ascending As Bool
 	' Check each task if they consist of correct repeat items.
 	For Each task As ToDo In tasks
 		' Track an iterator to also compare with the task's repeat information into the
-		' queried repeat information. ALso the iterator for the day of the week.
+		' queried repeat information. Also the iterator for the day of the week.
 		Dim i As Int = 0
 		Dim skip As Boolean = False
 		
