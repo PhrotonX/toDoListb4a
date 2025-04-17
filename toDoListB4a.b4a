@@ -871,25 +871,25 @@ Private Sub sortMsgBox_disappear
 End Sub
 
 Private Sub radioSortByTitle_CheckedChange(Checked As Boolean)
-	
+	m_query.SetSortField(m_query.FIELD_TITLE)
 End Sub
 
 Private Sub radioSortByPrio_CheckedChange(Checked As Boolean)
-	
+	m_query.SetSortField(m_query.FIELD_PRIORITY)
 End Sub
 
 Private Sub radioSortByDD_CheckedChange(Checked As Boolean)
-	
+	m_query.SetSortField(m_query.FIELD_DUE_DATE)
 End Sub
 
 Private Sub radioSortByCreaion_CheckedChange(Checked As Boolean)
-	
+	m_query.SetSortField(m_query.FIELD_CREATED_AT)
 End Sub
 
 Private Sub radioDesc_CheckedChange(Checked As Boolean)
-	m_query.SetOrder(m_query.ORDER_ASC)
+	m_query.SetSortOrder(m_query.ORDER_DESC)
 End Sub
 
 Private Sub radioAsc_CheckedChange(Checked As Boolean)
-	m_query.SetOrder(m_query.ORDER_ASC)
+	m_query.SetSortOrder(m_query.ORDER_ASC)
 End Sub
