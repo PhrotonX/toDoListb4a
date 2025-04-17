@@ -41,6 +41,7 @@
 ### Functions
 - **Functions:** FunctionName() or FunctionName
 - **Event handlers:** On[FunctionName]
+- **Events:** identifier_eventName (e.g. btnSortCancel_Click)
 
 ### Others
 - **Layout Files:** layout_name (filename is automatically lowercase)
