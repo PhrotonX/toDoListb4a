@@ -13,7 +13,7 @@
 - **Parameters:** variableName or variable_name
 
 ### Layout Views
-**Note:** You may add [SpecificFunctionaltiy] if applicable.\
+**Note:** You may add [SpecificFunctionality] if applicable.\
 **Note:** Avoid ambiguous or conflicting prefixes like btn for both Buttons and ToggleButtons.
 - **Button:** btn[SpecificFunctionality][ButtonName] e.g. btnSearchTitle, btnSortTitle
 - **Label:** lbl[SpecificFunctionality][LabelName]
