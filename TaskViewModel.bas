@@ -34,28 +34,96 @@ Public Sub GetTask(id As Long) As ToDo
 	Return m_repository.GetTask(id)
 End Sub
 
-Public Sub GetAllTasks() As List
+Private Sub GetAllTasks() As List
 	Return m_repository.GetAllTasks
 End Sub
 
+Public Sub GetAllTasksSorted(query As TaskQuery) As List
+	If query.IsSortingEnabled() Then
+		Return GetSortedTasks(query)
+	Else
+		Return GetAllTasks
+	End If
+End Sub
+
+Public Sub GetSortedTasks(query As TaskQuery) As List
+	Return m_repository.GetSortedTasks(query)
+End Sub
+
+Public Sub GetTasksSortedById(group_id As Long, ascending As Boolean) As List
+	Dim query As TaskQuery
+	query.Initialize()
+	query.SetGroupID(group_id)
+	query.SetSortField(query.FIELD_TASK_ID)
+	If ascending Then
+		query.SetSortOrder(query.ORDER_ASC)
+	Else
+		query.SetSortOrder(query.ORDER_DESC)
+	End If
+	Return m_repository.GetSortedTasks(query)
+End Sub
+
 Public Sub GetTasksSortedByCreatedAt(group_id As Long, ascending As Boolean) As List
-	Return m_repository.GetTasksSortedByCreatedAt(group_id, ascending)
+	Dim query As TaskQuery
+	query.Initialize()
+	query.SetGroupID(group_id)
+	query.SetSortField(query.FIELD_CREATED_AT)
+	If ascending Then
+		query.SetSortOrder(query.ORDER_ASC)
+	Else
+		query.SetSortOrder(query.ORDER_DESC)
+	End If
+	Return m_repository.GetSortedTasks(query)
 End Sub
 
 Public Sub GetTasksSortedByTitle(group_id As Long, ascending As Boolean) As List
-	Return m_repository.GetTasksSortedByTitle(group_id, ascending)
+	Dim query As TaskQuery
+	query.Initialize()
+	query.SetGroupID(group_id)
+	query.SetSortField(query.FIELD_TITLE)
+	If ascending Then
+		query.SetSortOrder(query.ORDER_ASC)
+	Else
+		query.SetSortOrder(query.ORDER_DESC)
+	End If
+	Return m_repository.GetSortedTasks(query)
 End Sub
 
 Public Sub GetTasksSortedByDueDate(group_id As Long, ascending As Boolean) As List
-	Return m_repository.GetTasksSortedByDueDate(group_id, ascending)
+	Dim query As TaskQuery
+	query.Initialize()
+	query.SetGroupID(group_id)
+	query.SetSortField(query.FIELD_DUE_DATE)
+	If ascending Then
+		query.SetSortOrder(query.ORDER_ASC)
+	Else
+		query.SetSortOrder(query.ORDER_DESC)
+	End If
+	Return m_repository.GetSortedTasks(query)
 End Sub
 
 Public Sub GetTasksSortedByPriority(group_id As Long, ascending As Boolean) As List
-	Return m_repository.GetTasksSortedByPriority(group_id, ascending)
+	Dim query As TaskQuery
+	query.Initialize()
+	query.SetGroupID(group_id)
+	query.SetSortField(query.FIELD_PRIORITY)
+	If ascending Then
+		query.SetSortOrder(query.ORDER_ASC)
+	Else
+		query.SetSortOrder(query.ORDER_DESC)
+	End If
+	Return m_repository.GetSortedTasks(query)
 End Sub
 
-Public Sub GetTasksToday() As List
-	Dim tasks As List = GetAllTasks
+Public Sub GetTasksToday(query As TaskQuery) As List
+	Dim tasks As List
+	
+	If query.IsSortingEnabled() Then
+		tasks = GetSortedTasks(query)
+	Else
+		tasks = GetAllTasks
+	End If
+	
 	Dim results As List
 	results.Initialize
 	
@@ -69,8 +137,15 @@ Public Sub GetTasksToday() As List
 End Sub
 
 ' Move logic to repository.
-Public Sub GetTasksCompleted() As List
-	Dim tasks As List = GetAllTasks
+Public Sub GetTasksCompleted(query As TaskQuery) As List
+	Dim tasks As List
+	
+	If query.IsSortingEnabled() Then
+		tasks = GetSortedTasks(query)
+	Else
+		tasks = GetAllTasks
+	End If
+	
 	Dim results As List
 	results.Initialize
 	
@@ -84,8 +159,15 @@ Public Sub GetTasksCompleted() As List
 End Sub
 
 ' Move logic to repository.
-Public Sub GetTasksPlanned() As List
-	Dim tasks As List = Starter.TaskViewModelInstance.GetTasksSortedByDueDate(TASKS_DEFAULT, False)
+Public Sub GetTasksPlanned(query As TaskQuery) As List
+	Dim tasks As List
+	
+	If query.IsSortingEnabled() Then
+		tasks = GetAllTasksSorted(query)
+	Else
+		tasks = GetTasksSortedByDueDate(TASKS_DEFAULT, False)
+	End If
+	
 	Dim results As List
 	results.Initialize
 	
@@ -99,9 +181,16 @@ Public Sub GetTasksPlanned() As List
 End Sub
 
 ' Move logic to repository.
-Public Sub GetDeletedTasks() As List
-	' Shall be tasks sorted by deleted_at.
-	Dim tasks As List = Starter.TaskViewModelInstance.GetTasksSortedByDueDate(TASKS_DEFAULT, False)
+Public Sub GetDeletedTasks(query As TaskQuery) As List
+	Dim tasks As List
+	
+	' Shall be tasks sorted by deleted_at at default.
+	If query.IsSortingEnabled() Then
+		tasks = GetAllTasksSorted(query)
+	Else
+		tasks = GetTasksSortedByDueDate(TASKS_DEFAULT, False)
+	End If
+	
 	Dim results As List
 	results.Initialize
 	
@@ -114,40 +203,47 @@ Public Sub GetDeletedTasks() As List
 	Return results
 End Sub
 
-Public Sub GetGroupedTasks(group_id As Long) As List
-	Return m_repository.GetGroupedTasks(group_id)
+' @Deprecated
+Public Sub GetGroupedTasks(query As TaskQuery) As List
+	Return m_repository.GetGroupedTasks(query)
 End Sub
 
-Public Sub GetUngroupedTasks() As List
-	Return m_repository.GetUngroupedTasks()
+' @Deprecated
+Public Sub GetUngroupedTasks(query As TaskQuery) As List
+	Return m_repository.GetUngroupedTasks(query)
 End Sub
 
+' @Deprecated
 Public Sub FindTasksByTitle(group_id As Long, query As String, ascending As Boolean) As List
 	Return m_repository.FindTasksByTitle(group_id, query, ascending)
 End Sub
 
+' @Deprecated
 Public Sub FindTasksByNotes(group_id As Long, query As String, ascending As Boolean) As List
 	Return m_repository.FindTasksByNotes(group_id, query, ascending)
 End Sub
 
+' @Deprecated
 Public Sub FindTasksByPriority(group_id As Long, query As Int, ascending As Boolean) As List
 	Return m_repository.FindTasksByPriority(group_id, query, ascending)
 End Sub
 
+' @Deprecated
 Public Sub FindTasksByDueDate(group_id As Long, tickBegin As Long, tickEnd As Long, ascending As Boolean) As List
 	Return m_repository.FindTasksByDueDate(group_id, tickBegin, tickEnd, ascending)
 End Sub
 
 ' repeat - Expects a list of 7 boolean values.
 Public Sub FindTasksByRepeat(group_id As Long, repeat As List, ascending As Boolean) As List
-	Dim tasks As List = m_repository.GetTasksSortedById(group_id, ascending)
+	Dim tasks As List = GetTasksSortedById(group_id, ascending)
+	
 	Dim result As List
 	result.Initialize
 	
 	' Check each task if they consist of correct repeat items.
 	For Each task As ToDo In tasks
 		' Track an iterator to also compare with the task's repeat information into the
-		' queried repeat information. ALso the iterator for the day of the week.
+		' queried repeat information. Also the iterator for the day of the week.
 		Dim i As Int = 0
 		Dim skip As Boolean = False
 		

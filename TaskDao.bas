@@ -114,7 +114,7 @@ End Sub
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
 Public Sub GetUngroupedTasks(searchingQuery As String, sortingQuery As String) As List
 	Return OnGetTask("SELECT * FROM task LEFT JOIN task_group " & CRLF & _ 
-	"ON task_group.task_id = task.task_id WHERE group_id IS NULL")
+	"ON task_group.task_id = task.task_id WHERE group_id IS NULL " & searchingQuery & " " & sortingQuery)
 End Sub
 
 Private Sub OnGetTask(query As String) As List
