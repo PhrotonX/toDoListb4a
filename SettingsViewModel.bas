@@ -6,12 +6,15 @@ Version=13.1
 @EndOfDesignText@
 Sub Class_Globals
 	Private m_dtRepository As SettingsRepository
-	
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize
 	m_dtRepository.Initialize()
+End Sub
+
+Public Sub Close
+	m_dtRepository.Close()
 End Sub
 
 Public Sub GetDebugMode() As Boolean
@@ -32,6 +35,10 @@ End Sub
 
 Public Sub GetTaskCompetionSound() As Boolean
 	Return m_dtRepository.GetTaskCompetionSound()
+End Sub
+
+Public Sub LoadDefaults()
+	m_dtRepository.LoadDefaults()
 End Sub
 
 Public Sub SetDebugMode(value As Boolean)

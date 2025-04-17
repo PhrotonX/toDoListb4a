@@ -17,7 +17,7 @@ End Sub
 Public Sub Initialize(fileSystem As ToDoFileSystem)
 	m_fileSystem = fileSystem
 	
-	File.MakeDir(File.DirInternal, DIRECTORY_2)
+	File.MakeDir(Starter.Permissions.GetSafeDirDefaultExternal(""), DIRECTORY_2)
 End Sub
 
 ' This function currently only supports a single file.
@@ -68,10 +68,32 @@ End Sub
 
 Public Sub RemoveAttachment(item As Attachment) As Boolean
 	Try
-		Return m_fileSystem.RemoveFile(DIRECTORY & item.GetFilename)
+		Return m_fileSystem.RemoveFile(item.GetFilename, DIRECTORY)
 	Catch
 		Log(LastException)
 	End Try
+	
+	Return False
+End Sub
+
+' Deletes all attachments from external storage and shared folder. This function must be called
+' after truncating or dropping attachments table successfully in the database.
+Public Sub DropAttachments() As Boolean
+	Try
+		Dim result1 As Boolean = False
+		Dim result2 As Boolean = False
+		result1 = m_fileSystem.RemoveFiles(Starter.Permissions.GetSafeDirDefaultExternal(DIRECTORY))
+		result2 = m_fileSystem.RemoveFiles(Starter.Provider.SharedFolder)
+	
+		If result1 And result2 Then
+			Return True
+		Else
+			Return False
+		End If
+	Catch
+		Log(LastException)
+	End Try
+	
 	
 	Return False
 End Sub
