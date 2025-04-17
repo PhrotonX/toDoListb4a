@@ -50,24 +50,69 @@ Public Sub GetSortedTasks(query As TaskQuery) As List
 	Return m_repository.GetSortedTasks(query)
 End Sub
 
-' @Deprecated
+Public Sub GetTasksSortedById(group_id As Long, ascending As Boolean) As List
+	Dim query As TaskQuery
+	query.Initialize()
+	query.SetGroupID(group_id)
+	query.SetSortField(query.FIELD_TASK_ID)
+	If ascending Then
+		query.SetSortOrder(query.ORDER_ASC)
+	Else
+		query.SetSortOrder(query.ORDER_DESC)
+	End If
+	Return m_repository.GetSortedTasks(query)
+End Sub
+
 Public Sub GetTasksSortedByCreatedAt(group_id As Long, ascending As Boolean) As List
-	Return m_repository.GetTasksSortedByCreatedAt(group_id, ascending)
+	Dim query As TaskQuery
+	query.Initialize()
+	query.SetGroupID(group_id)
+	query.SetSortField(query.FIELD_CREATED_AT)
+	If ascending Then
+		query.SetSortOrder(query.ORDER_ASC)
+	Else
+		query.SetSortOrder(query.ORDER_DESC)
+	End If
+	Return m_repository.GetSortedTasks(query)
 End Sub
 
-' @Deprecated
 Public Sub GetTasksSortedByTitle(group_id As Long, ascending As Boolean) As List
-	Return m_repository.GetTasksSortedByTitle(group_id, ascending)
+	Dim query As TaskQuery
+	query.Initialize()
+	query.SetGroupID(group_id)
+	query.SetSortField(query.FIELD_TITLE)
+	If ascending Then
+		query.SetSortOrder(query.ORDER_ASC)
+	Else
+		query.SetSortOrder(query.ORDER_DESC)
+	End If
+	Return m_repository.GetSortedTasks(query)
 End Sub
 
-' @Deprecated
 Public Sub GetTasksSortedByDueDate(group_id As Long, ascending As Boolean) As List
-	Return m_repository.GetTasksSortedByDueDate(group_id, ascending)
+	Dim query As TaskQuery
+	query.Initialize()
+	query.SetGroupID(group_id)
+	query.SetSortField(query.FIELD_DUE_DATE)
+	If ascending Then
+		query.SetSortOrder(query.ORDER_ASC)
+	Else
+		query.SetSortOrder(query.ORDER_DESC)
+	End If
+	Return m_repository.GetSortedTasks(query)
 End Sub
 
-' @Deprecated
 Public Sub GetTasksSortedByPriority(group_id As Long, ascending As Boolean) As List
-	Return m_repository.GetTasksSortedByPriority(group_id, ascending)
+	Dim query As TaskQuery
+	query.Initialize()
+	query.SetGroupID(group_id)
+	query.SetSortField(query.FIELD_PRIORITY)
+	If ascending Then
+		query.SetSortOrder(query.ORDER_ASC)
+	Else
+		query.SetSortOrder(query.ORDER_DESC)
+	End If
+	Return m_repository.GetSortedTasks(query)
 End Sub
 
 Public Sub GetTasksToday(query As TaskQuery) As List
@@ -190,7 +235,8 @@ End Sub
 
 ' repeat - Expects a list of 7 boolean values.
 Public Sub FindTasksByRepeat(group_id As Long, repeat As List, ascending As Boolean) As List
-	Dim tasks As List = m_repository.GetTasksSortedById(group_id, ascending)
+	Dim tasks As List = GetTasksSortedById(group_id, ascending)
+	
 	Dim result As List
 	result.Initialize
 	

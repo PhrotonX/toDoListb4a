@@ -58,68 +58,6 @@ Public Sub GetSortedTasks(query As TaskQuery) As List
 	End If
 End Sub
 
-' @Deprecated
-Public Sub GetTasksSortedById(group_id As Long, ascending As Boolean) As List
-	If group_id == TASKS_DEFAULT Then
-		Return m_database.TaskDao().GetTasks("", "ORDER BY task_id " & DatabaseUtils.IsAscending(ascending) & _
-		 ", done ASC")
-	Else If group_id == TASKS_NO_GROUP Then
-		Return m_database.TaskDao().GetUngroupedTasks("", "ORDER BY task_id " & _ 
-		DatabaseUtils.IsAscending(ascending) & ", done ASC")
-	Else
-		Return m_database.TaskDao().GetGroupedTasks(group_id, "", "ORDER BY task_id " & _
-		DatabaseUtils.IsAscending(ascending) & ", done ASC")
-	End If
-End Sub
-
-' @Deprecated
-Public Sub GetTasksSortedByCreatedAt(group_id As Long, ascending As Boolean) As List
-	If group_id == TASKS_DEFAULT Then
-		Return m_database.TaskDao().GetTasks("", "ORDER BY created_at " & DatabaseUtils.IsAscending(ascending))
-	Else If group_id == TASKS_NO_GROUP Then
-		Return m_database.TaskDao().GetUngroupedTasks("", "ORDER BY created_at " & DatabaseUtils.IsAscending(ascending))
-	Else
-		Return m_database.TaskDao().GetGroupedTasks(group_id, "", "ORDER BY created_at " & _
-		DatabaseUtils.IsAscending(ascending))
-	End If
-End Sub
-
-' @Deprecated
-Public Sub GetTasksSortedByTitle(group_id As Long, ascending As Boolean) As List
-	If group_id == TASKS_DEFAULT Then
-		Return m_database.TaskDao().GetTasks("", "ORDER BY title " & DatabaseUtils.IsAscending(ascending))
-	Else If group_id == TASKS_NO_GROUP Then
-		Return m_database.TaskDao().GetUngroupedTasks("", "ORDER BY title " & DatabaseUtils.IsAscending(ascending))
-	Else
-		Return m_database.TaskDao().GetGroupedTasks(group_id, "", "ORDER BY title " & _ 
-		DatabaseUtils.IsAscending(ascending))
-	End If
-End Sub
-
-' @Deprecated
-Public Sub GetTasksSortedByDueDate(group_id As Long, ascending As Boolean) As List
-	If group_id == TASKS_DEFAULT Then
-		Return m_database.TaskDao().GetTasks("", "ORDER BY due_date " & DatabaseUtils.IsAscending(ascending))
-	Else If group_id == TASKS_NO_GROUP Then
-		Return m_database.TaskDao().GetUngroupedTasks("", "ORDER BY due_date " & DatabaseUtils.IsAscending(ascending))
-	Else
-		Return m_database.TaskDao().GetGroupedTasks(group_id, "", "ORDER BY due_date " & DatabaseUtils.IsAscending(ascending))
-	End If
-	
-End Sub
-
-' @Deprecated
-Public Sub GetTasksSortedByPriority(group_id As Long, ascending As Boolean) As List
-	If group_id == TASKS_DEFAULT Then
-		Return m_database.TaskDao().GetTasks("", "ORDER BY priority " & DatabaseUtils.IsAscending(ascending))
-	Else If group_id == TASKS_NO_GROUP Then
-		Return m_database.TaskDao().GetUngroupedTasks("", "ORDER BY priority " & DatabaseUtils.IsAscending(ascending))
-	Else
-		Return m_database.TaskDao().GetGroupedTasks(group_id, "", "ORDER BY priority " & _
-		DatabaseUtils.IsAscending(ascending))
-	End If
-End Sub
-
 Public Sub FindTasksByTitle(group_id As Long, query As String, ascending As Boolean) As List
 	Return FindTasks(group_id, query, ascending, "title")
 End Sub
