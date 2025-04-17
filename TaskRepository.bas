@@ -46,6 +46,19 @@ Public Sub GetUngroupedTasks() As List
 	Return m_database.TaskDao().GetUngroupedTasks("", "ORDER BY done ASC")
 End Sub
 
+Public Sub GetSortedTasks(query As TaskQuery) As List
+	Dim group_id As Long = query.GetGroupID
+	
+	If group_id == TASKS_DEFAULT Then
+		Return m_database.TaskDao().GetTasks("", query.GetSortingQuery())
+	Else If group_id == TASKS_NO_GROUP Then
+		Return m_database.TaskDao().GetUngroupedTasks("", query.GetSortingQuery())
+	Else
+		Return m_database.TaskDao().GetGroupedTasks(group_id, "", query.GetSortingQuery())
+	End If
+End Sub
+
+' @Deprecated
 Public Sub GetTasksSortedById(group_id As Long, ascending As Boolean) As List
 	If group_id == TASKS_DEFAULT Then
 		Return m_database.TaskDao().GetTasks("", "ORDER BY task_id " & DatabaseUtils.IsAscending(ascending) & _
@@ -59,6 +72,7 @@ Public Sub GetTasksSortedById(group_id As Long, ascending As Boolean) As List
 	End If
 End Sub
 
+' @Deprecated
 Public Sub GetTasksSortedByCreatedAt(group_id As Long, ascending As Boolean) As List
 	If group_id == TASKS_DEFAULT Then
 		Return m_database.TaskDao().GetTasks("", "ORDER BY created_at " & DatabaseUtils.IsAscending(ascending))
@@ -70,6 +84,7 @@ Public Sub GetTasksSortedByCreatedAt(group_id As Long, ascending As Boolean) As 
 	End If
 End Sub
 
+' @Deprecated
 Public Sub GetTasksSortedByTitle(group_id As Long, ascending As Boolean) As List
 	If group_id == TASKS_DEFAULT Then
 		Return m_database.TaskDao().GetTasks("", "ORDER BY title " & DatabaseUtils.IsAscending(ascending))
@@ -81,6 +96,7 @@ Public Sub GetTasksSortedByTitle(group_id As Long, ascending As Boolean) As List
 	End If
 End Sub
 
+' @Deprecated
 Public Sub GetTasksSortedByDueDate(group_id As Long, ascending As Boolean) As List
 	If group_id == TASKS_DEFAULT Then
 		Return m_database.TaskDao().GetTasks("", "ORDER BY due_date " & DatabaseUtils.IsAscending(ascending))
@@ -92,6 +108,7 @@ Public Sub GetTasksSortedByDueDate(group_id As Long, ascending As Boolean) As Li
 	
 End Sub
 
+' @Deprecated
 Public Sub GetTasksSortedByPriority(group_id As Long, ascending As Boolean) As List
 	If group_id == TASKS_DEFAULT Then
 		Return m_database.TaskDao().GetTasks("", "ORDER BY priority " & DatabaseUtils.IsAscending(ascending))
