@@ -50,5 +50,5 @@
 - **Services:** [NameOfService]Service
 - **Receiver:** [NameOfReceiver]Receiver
 - **Database Tables:** table_name (singular, unless there is a conflict with reserved SQLite keywords)
-- **Associative Database Tables:** [independent_table (singular, noun, verb or adverb)]_[dependent_table (singular, noun, verb or adverb)]
+- **Associative Database Tables:** [independent_table (singular, noun, verb, or adverb)]_[dependent_table (singular, noun, verb, or adverb)]
 - **File System Directories:** directory_name
