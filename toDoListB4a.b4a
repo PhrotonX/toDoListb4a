@@ -1,4 +1,4 @@
-Build1=Default,com.cm.todolist
+﻿Build1=Default,com.cm.todolist
 File1=3528206.png
 File10=emptytasks.bal
 File11=folder.png
@@ -92,17 +92,18 @@ Module23=SettingsViewModel
 Module24=Starter
 Module25=SubGroupViewHolder
 Module26=TaskDao
-Module27=TaskRepository
-Module28=TaskViewerActivity
-Module29=TaskViewHolder
+Module27=TaskQuery
+Module28=TaskRepository
+Module29=TaskViewerActivity
 Module3=AttachmentFileRepository
-Module30=TaskViewModel
-Module31=Theme
-Module32=Time
-Module33=ToDo
-Module34=ToDoDatabase
-Module35=ToDoDatabaseViewModel
-Module36=ToDoFileSystem
+Module30=TaskViewHolder
+Module31=TaskViewModel
+Module32=Theme
+Module33=Time
+Module34=ToDo
+Module35=ToDoDatabase
+Module36=ToDoDatabaseViewModel
+Module37=ToDoFileSystem
 Module4=AttachmentRepository
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
@@ -111,7 +112,7 @@ Module8=Date
 Module9=DateAndTime
 NumberOfFiles=29
 NumberOfLibraries=14
-NumberOfModules=36
+NumberOfModules=37
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
@@ -184,31 +185,30 @@ Sub Globals
 	Private Const SMART_LIST_SEARCH As Int = 7
 	Private Const SMART_LIST_SORT As Int = 8
 	
-	Private Const SEARCH_BY_NONE As Int = 0
-	Private Const SEARCH_BY_TITLE As Int = 1
-	Private Const SEARCH_BY_DESCRIPTION As Int = 2
-	Private Const SEARCH_BY_ATTACHMENTS As Int = 3
-	Private Const SEARCH_BY_DUE_DATE As Int = 4
-	Private Const SEARCH_BY_REPEAT As Int = 5
-	Private Const SEARCH_BY_PRIORITY As Int = 6
-	
-	Private Const SEARCH_BY_DUE_DATE_SPECIFIC_DATE As String = "Specific Date"
-	Private Const SEARCH_BY_DUE_DATE_SPECIFIC_DATE_RANGE As String = "Specific Date Range"
+	Private Const MENU_ITEM_REFRESH As Int = 0
+	Private Const MENU_ITEM_SORT As Int = 1
+	Private Const MENU_ITEM_SETTINGS As Int = 2
 
 	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
 	Private m_savedGroup As Group
-	Private m_savedSearchByDueDateIdentifer As String = ""
-	Private m_savedSearchByDueDateRange1 As Date
-	Private m_savedSearchByDueDateRange2 As Date
-	Private m_savedSearchByRepeat(7) As Boolean
-	Private m_savedSearchByPriority As Int = -1
-	Private m_query As String
+	'Private m_savedSearchByDueDateIdentifer As String = ""
+	'Private m_savedSearchByDueDateRange1 As Date
+	'Private m_savedSearchByDueDateRange2 As Date
+	'Private m_savedSearchByRepeat(7) As Boolean
+	'Private m_savedSearchByPriority As Int = -1
+	Private m_query As TaskQuery
 	
 	Private m_itemsLoaded As Boolean = False
 	
 
 	Private pnlSortDialogue As Panel
 	Private pnlSortDialoguebg As Panel
+	Private radioAsc As RadioButton
+	Private radioDesc As RadioButton
+	Private radioSortByCreaion As RadioButton
+	Private radioSortByDD As RadioButton
+	Private radioSortByPrio As RadioButton
+	Private radioSortByTitle As RadioButton
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -223,6 +223,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	m_tasks.Initialize
 	m_savedGroup.Initialize(0)
+	
+	m_query.Initialize
 End Sub
 
 Sub Activity_Resume
@@ -342,7 +344,7 @@ Private Sub CreateItem(viewHolder As TaskViewHolder) As B4XView
 	panel.SetLayoutAnimated(0, 0, 0, 95%x, 70dip)
 	panel.LoadLayout("TaskItemLayout")
 	'panel.SetColorAndBorder(Colors.Red, 120, Colors.Green, 5) 
-	panel.SetColorAndBorder(Colors.Transparent,110,Colors.RGB(213, 216, 232), 5)
+	panel.SetColorAndBorder(Colors.Transparent,110dip,Colors.RGB(213, 216, 232), 5dip)
 	
 	' Bind the root panel
 	viewHolder.Root = panel
@@ -420,7 +422,7 @@ Private Sub LoadItems()
 						Dim subGroup As SubGroupViewHolder
 						subGroup.Initialize(xui)
 						subGroup.Name.Text = currentDateIdentification
-						subGroup.Root.Height = 70
+						subGroup.Root.Height = 70dip
 						subGroup.Name.TextSize = 16
 
 						ToDoList.Add(subGroup.BuildView(), subGroup)
@@ -434,7 +436,7 @@ Private Sub LoadItems()
 						subGroup.Name.Text = "Completed"
 						itr = "Completed"
 
-						subGroup.Name.Height = 68
+						subGroup.Name.Height = 68dip
 						ToDoList.Add(subGroup.BuildView(), subGroup)
 					End If
 			End Select
@@ -509,13 +511,13 @@ End Sub
 Sub menuBtn_Click
 	If button_handling Then
 		pnlMenuBgTouch.BringToFront
-		pnlMenuBgTouch.Elevation = 20
+		pnlMenuBgTouch.Elevation = 20dip
 		pnlmenuListView.SetVisibleAnimated(250, True)
-		pnlmenuListView.Elevation = 20
+		pnlmenuListView.Elevation = 20dip
 		menuListView.BringToFront
 		pnlmenuListView.BringToFront
-		pnlmenuListView.SetLayoutAnimated(250, menuListViewItemsize.Left, menuListViewItemsize.Top, menuListViewItemsize.Width, menuListViewItemsize.Height)
-		
+		pnlmenuListView.SetLayoutAnimated(250, menuListViewItemsize.Left, menuListViewItemsize.Top, _
+		menuListViewItemsize.Width, menuListViewItemsize.Height)
 	End If
 End Sub
 
@@ -536,44 +538,32 @@ End Sub
 
 Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 	Select Position
-		Case 0
-			pnlMenuBgTouch.SendToBack
-			pnlmenuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
-			pnlmenuListView.SetVisibleAnimated(500, False)
-			pnlMenuBgTouch.Elevation = 0
-			pnlmenuListView.Elevation = 0
+		Case MENU_ITEM_REFRESH:
 			
-			
-		Case 1
-			pnlMenuBgTouch.SendToBack
-			pnlmenuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
-			pnlmenuListView.SetVisibleAnimated(500, False)
-			pnlMenuBgTouch.Elevation = 0
-			pnlmenuListView.Elevation = 0
+		Case MENU_ITEM_SORT:
 			sortMsgBox
-			
-			
-		Case 2
+		Case MENU_ITEM_SETTINGS:
 			StartActivity(SettingsActivity)
-			pnlMenuBgTouch.SendToBack
-			pnlmenuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
-			pnlmenuListView.SetVisibleAnimated(500, False)
-			pnlMenuBgTouch.Elevation = 0
-			pnlmenuListView.Elevation = 0
-			
 	End Select
+	
+	OnHideMenuListViewItem
+End Sub
+
+Private Sub OnHideMenuListViewItem()
+	pnlMenuBgTouch.SendToBack
+	pnlmenuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
+	pnlmenuListView.SetVisibleAnimated(500, False)
+	pnlMenuBgTouch.Elevation = 0
+	pnlmenuListView.Elevation = 0
 End Sub
 
 Private Sub sortMsgBox
-	
 	pnlSortDialoguebg.BringToFront
-	pnlSortDialoguebg.Elevation = 20
+	pnlSortDialoguebg.Elevation = 20dip
 	pnlSortDialoguebg.SetVisibleAnimated(250, True)
 	pnlSortDialogue.BringToFront
 	pnlSortDialogue.SetVisibleAnimated(250, True)
-	pnlSortDialogue.Elevation = 20
-
-	
+	pnlSortDialogue.Elevation = 20dip
 End Sub
 
 ' Opens EditorActivity to edit a clicked task.
@@ -806,7 +796,7 @@ Private Sub searchBtn_Click
 		pnlTitleBar.Elevation = 0
 		pnlSearch.SetLayout(pnlTitleBar.Left, pnlTitleBar.Top, pnlTitleBar.Width, pnlTitleBar.Height)
 		pnlSearch.SetVisibleAnimated(150, True)
-		pnlSearch.Elevation = 10
+		pnlSearch.Elevation = 10dip
 		pnlSearch.BringToFront
 
 		
@@ -837,7 +827,7 @@ Private Sub backBtn_Click
 		pnlSearch.Elevation = 0
 		searchFragment.Visible = False
 		searchFragment.Elevation = 0
-		pnlTitleBar.Elevation = 10
+		pnlTitleBar.Elevation = 10dip
 		
 		pnlSearch.SendToBack
 		searchFragment.SendToBack
@@ -862,12 +852,12 @@ End Sub
 
 Private Sub btnCancel_Click
 	sortMsgBox_disappear
-	ToastMessageShow("sort cancel", False)
 End Sub
 
 Private Sub btnConfirm_Click
 	sortMsgBox_disappear
-	ToastMessageShow("sort confirm", False)
+	
+	
 End Sub
 
 Private Sub sortMsgBox_disappear
@@ -878,4 +868,28 @@ Private Sub sortMsgBox_disappear
 	pnlSortDialogue.SetVisibleAnimated(200, False)
 	pnlSortDialogue.Elevation = 0
 	pnlSortDialogue.SendToBack
+End Sub
+
+Private Sub radioSortByTitle_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioSortByPrio_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioSortByDD_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioSortByCreaion_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioDesc_CheckedChange(Checked As Boolean)
+	m_query.SetOrder(m_query.ORDER_ASC)
+End Sub
+
+Private Sub radioAsc_CheckedChange(Checked As Boolean)
+	m_query.SetOrder(m_query.ORDER_ASC)
 End Sub
