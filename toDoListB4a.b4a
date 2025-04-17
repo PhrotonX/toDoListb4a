@@ -347,7 +347,7 @@ Private Sub CreateItem(viewHolder As TaskViewHolder) As B4XView
 	panel.SetLayoutAnimated(0, 0, 0, 95%x, 70dip)
 	panel.LoadLayout("TaskItemLayout")
 	'panel.SetColorAndBorder(Colors.Red, 120, Colors.Green, 5) 
-	panel.SetColorAndBorder(Colors.Transparent,110dip,Colors.RGB(213, 216, 232), 5dip)
+	panel.SetColorAndBorder(Colors.Transparent,110,Colors.RGB(213, 216, 232), 5)
 	
 	' Bind the root panel
 	viewHolder.Root = panel
@@ -428,7 +428,7 @@ Private Sub LoadItems()
 							Dim subGroup As SubGroupViewHolder
 							subGroup.Initialize(xui)
 							subGroup.Name.Text = currentDateIdentification
-							subGroup.Root.Height = 70dip
+							subGroup.Root.Height = 70
 							subGroup.Name.TextSize = 16
 
 							ToDoList.Add(subGroup.BuildView(), subGroup)
@@ -442,7 +442,7 @@ Private Sub LoadItems()
 							subGroup.Name.Text = "Completed"
 							itr = "Completed"
 
-							subGroup.Name.Height = 68dip
+							subGroup.Name.Height = 68
 							ToDoList.Add(subGroup.BuildView(), subGroup)
 						End If
 				End Select
@@ -516,9 +516,9 @@ End Sub
 Sub menuBtn_Click
 	If button_handling Then
 		pnlMenuBgTouch.BringToFront
-		pnlMenuBgTouch.Elevation = 20dip
+		pnlMenuBgTouch.Elevation = 20
 		pnlmenuListView.SetVisibleAnimated(250, True)
-		pnlmenuListView.Elevation = 20dip
+		pnlmenuListView.Elevation = 20
 		menuListView.BringToFront
 		pnlmenuListView.BringToFront
 		pnlmenuListView.SetLayoutAnimated(250, menuListViewItemsize.Left, menuListViewItemsize.Top, _
@@ -556,7 +556,7 @@ End Sub
 
 Private Sub OnHideMenuListViewItem()
 	pnlMenuBgTouch.SendToBack
-	pnlmenuListView.SetLayoutAnimated(250dip, 1080dip, 0, 0, 228dip)
+	pnlmenuListView.SetLayoutAnimated(250, 1080, 0, 0, 228)
 	pnlmenuListView.SetVisibleAnimated(500, False)
 	pnlMenuBgTouch.Elevation = 0
 	pnlmenuListView.Elevation = 0
@@ -564,11 +564,11 @@ End Sub
 
 Private Sub sortMsgBox
 	pnlSortDialoguebg.BringToFront
-	pnlSortDialoguebg.Elevation = 20dip
+	pnlSortDialoguebg.Elevation = 20
 	pnlSortDialoguebg.SetVisibleAnimated(250, True)
 	pnlSortDialogue.BringToFront
 	pnlSortDialogue.SetVisibleAnimated(250, True)
-	pnlSortDialogue.Elevation = 20dip
+	pnlSortDialogue.Elevation = 20
 	
 	If m_query.IsInitialized == False Then
 		m_query.Initialize
@@ -805,7 +805,7 @@ Private Sub searchBtn_Click
 		pnlTitleBar.Elevation = 0
 		pnlSearch.SetLayout(pnlTitleBar.Left, pnlTitleBar.Top, pnlTitleBar.Width, pnlTitleBar.Height)
 		pnlSearch.SetVisibleAnimated(150, True)
-		pnlSearch.Elevation = 10dip
+		pnlSearch.Elevation = 10
 		pnlSearch.BringToFront
 
 		
@@ -836,7 +836,7 @@ Private Sub backBtn_Click
 		pnlSearch.Elevation = 0
 		searchFragment.Visible = False
 		searchFragment.Elevation = 0
-		pnlTitleBar.Elevation = 10dip
+		pnlTitleBar.Elevation = 10
 		
 		pnlSearch.SendToBack
 		searchFragment.SendToBack
