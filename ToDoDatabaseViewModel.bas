@@ -39,3 +39,7 @@ Public Sub ResetDatabase() As Boolean
 	
 	Return False
 End Sub
+
+Public Sub GetLastInsertedID() As Long
+	Return m_database.GetLastInsertedID()
+End Sub
