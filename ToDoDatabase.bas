@@ -223,3 +223,7 @@ Public Sub CopyDatabase()
 		ToastMessageShow("Database not found!", True)
 	End If
 End Sub
+
+Public Sub GetLastInsertedID() As Long
+	Return sql.ExecQuerySingleResult("SELECT last_insert_rowid();")
+End Sub
