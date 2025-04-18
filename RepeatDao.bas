@@ -17,13 +17,12 @@ Public Sub InsertTaskRepeat(task_id As Long, item As Repeat) As Boolean
 	Dim result As Boolean = False
 	m_sql.BeginTransaction
 	Try
-		' Insert each item's repeat value
-		Dim i As Int = 0
-		For Each repeat As Boolean In item.IsEnabled
+		' Insert each item's repeat value.
+		' This i iterator corresponds into day values 0 to 6.
+		For i = 0 To 6
 			' Insert the repeat data
-			m_sql.ExecNonQuery("INSERT INTO repeat(day_id, schedule, enabled)" & CRLF & _
-			"VALUES("&task_id&", '"&item.&"', "&DatabaseUtils.BoolToInt(repeat)&");")
-			i = i + 1
+			m_sql.ExecNonQuery("INSERT INTO repeat(day_id, schedule, enabled) VALUES(" & i & ", " & CRLF & _
+			item.GetSchedule(i) & ", " & DatabaseUtils.BoolToInt(item.IsEnabled(i)) & ");" )
 			
 			' Get the ID if the last inserted row.In this case, it is the previous INSERT INTO TASK.
 			Dim repeatId As Int = m_sql.ExecQuerySingleResult("SELECT last_insert_rowid();")
@@ -75,7 +74,7 @@ Public Sub GetTaskRepeat(task_id As Long) As Repeat
 	Return item
 End Sub
 
-Public Sub UpdateRepeat(item As Repeat)
+Public Sub UpdateRepeat(item As Repeat) As Boolean
 	Dim result As Boolean = False
 	
 	m_sql.BeginTransaction
@@ -104,7 +103,7 @@ Public Sub UpdateRepeat(item As Repeat)
 	Return result
 End Sub
 
-Public Sub DeleteRepeat(item As Repeat)
+Public Sub DeleteRepeat(item As Repeat) As Boolean
 	Dim result As Boolean = False
 	
 	m_sql.BeginTransaction
