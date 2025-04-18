@@ -117,28 +117,29 @@ Module15=GroupDao
 Module16=GroupRepository
 Module17=GroupViewHolder
 Module18=GroupViewModel
-Module19=SettingsAbout
+Module19=Repeat
 Module2=AttachmentDao
-Module20=SettingsActivity
-Module21=SettingsHelp
-Module22=SettingsRepository
-Module23=SettingsViewModel
-Module24=Starter
-Module25=SubGroupViewHolder
-Module26=TaskDao
-Module27=TaskGroupActivity
-Module28=TaskQuery
-Module29=TaskRepository
+Module20=SettingsAbout
+Module21=SettingsActivity
+Module22=SettingsHelp
+Module23=SettingsRepository
+Module24=SettingsViewModel
+Module25=Starter
+Module26=SubGroupViewHolder
+Module27=TaskDao
+Module28=TaskGroupActivity
+Module29=TaskQuery
+Module30=TaskRepository
 Module3=AttachmentFileRepository
-Module30=TaskViewerActivity
-Module31=TaskViewHolder
-Module32=TaskViewModel
-Module33=Theme
-Module34=Time
-Module35=ToDo
-Module36=ToDoDatabase
-Module37=ToDoDatabaseViewModel
-Module38=ToDoFileSystem
+Module31=TaskViewerActivity
+Module32=TaskViewHolder
+Module33=TaskViewModel
+Module34=Theme
+Module35=Time
+Module36=ToDo
+Module37=ToDoDatabase
+Module38=ToDoDatabaseViewModel
+Module39=ToDoFileSystem
 Module4=AttachmentRepository
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
@@ -147,12 +148,12 @@ Module8=Date
 Module9=DateAndTime
 NumberOfFiles=46
 NumberOfLibraries=14
-NumberOfModules=38
+NumberOfModules=39
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
-	#VersionCode: 10
+	#VersionCode: 11
 	#VersionName: v2.0.0.3 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
