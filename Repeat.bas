@@ -70,7 +70,7 @@ Public Sub GetRepeatInfo As String
 	Dim itr As Int = 0
 	Dim repeatingIndexes As List
 	repeatingIndexes.Initialize
-	
+
 	For Each item In IsEnabled
 		If item == True Then
 			repeatingIndexes.Add(itr)
