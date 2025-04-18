@@ -37,7 +37,7 @@ End Sub
 ' Retrieves the repeat information such as "Weekdays," "Weekends," "Daily," or names of the days of
 ' the week.
 Public Sub GetRepeatInfo As String
-	Dim repeat As String
+	Dim repeatStr As String
 	
 	' Set the repeat information as "Weekends" if Sunday and Saturday are enabled
 	If IsEnabled(REPEAT_SUNDAY) == True And _
@@ -47,8 +47,8 @@ Public Sub GetRepeatInfo As String
 	IsEnabled(REPEAT_THURSDAY) == False And _
 	IsEnabled(REPEAT_FRIDAY) == False And _
 	IsEnabled(REPEAT_SATURDAY) == True Then
-		repeat = "Weekends"
-		Return repeat
+		repeatStr = "Weekends"
+		Return repeatStr
 	End If
 	
 	' Set the repeat information as "Weekdays" if Monday-Friday are enabled.
@@ -59,8 +59,8 @@ Public Sub GetRepeatInfo As String
 	IsEnabled(REPEAT_THURSDAY) == True And _
 	IsEnabled(REPEAT_FRIDAY) == True And _
 	IsEnabled(REPEAT_SATURDAY) == False Then
-		repeat = "Weekdays"
-		Return repeat
+		repeatStr = "Weekdays"
+		Return repeatStr
 	End If
 	
 	' If not repeeat information is not weekend nor weekday, then count the number of enabled
@@ -80,23 +80,23 @@ Public Sub GetRepeatInfo As String
 	Select repeatingIndexes.Size
 		Case 0:
 			' Do not set repeat information if all repeat options are disabled.
-			repeat = ""
+			repeatStr = ""
 		Case 1:
 			' If only 1 day is enabled, then set the information as "Every [day of the week]"
-			repeat = "Every " & DaysOfTheWeek.Days(repeatingIndexes.Get(0))
+			repeatStr = "Every " & DaysOfTheWeek.Days(repeatingIndexes.Get(0))
 		Case 7:
 			' Set the repeat information as "Everyday" if all repeat options are enabled.
-			repeat = "Everyday"
+			repeatStr = "Everyday"
 		Case Else:
 			' Set the repeat information as "Every [shortened day of the week 1] [shortened day of the week 2] ... [shortened day of the week 6]"
 			' such that 6 is the maximum possible days to be displayed.
-			repeat = "Every "
+			repeatStr = "Every "
 			For Each index In repeatingIndexes
-				repeat = repeat & DaysOfTheWeek.ShortenedDay(index) & " "
+				repeatStr = repeatStr & DaysOfTheWeek.ShortenedDay(index) & " "
 			Next
 	End Select
 
-	Return repeat
+	Return repeatStr
 End Sub
 
 Public Sub GetSchedule(day As Byte) As Long
