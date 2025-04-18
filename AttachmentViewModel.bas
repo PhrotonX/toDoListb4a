@@ -36,12 +36,12 @@ Public Sub GetAttachment(attachment_id As Long) As Attachment
 End Sub
 
 Public Sub GetAttachmentFilePath(attachment_id As Long) As String
-	Log("DirInternal: " & File.DirInternal & m_fileRepository.DIRECTORY)
-	For Each item As String In File.ListFiles(File.DirInternal & m_fileRepository.DIRECTORY)
-		Log("File from DirInternal: " & item)
+	Log("Shared Folder: " & Starter.Provider.SharedFolder & m_fileRepository.DIRECTORY)
+	For Each item As String In File.ListFiles(Starter.Provider.SharedFolder & m_fileRepository.DIRECTORY)
+		Log("File from Shared Folder: " & item)
 	Next
 	
-	Return File.Combine(File.DirInternal & m_fileRepository.DIRECTORY, GetAttachment(attachment_id).GetFilename)
+	Return File.Combine(Starter.Provider.SharedFolder & m_fileRepository.DIRECTORY, GetAttachment(attachment_id).GetFilename)
 End Sub
 
 Public Sub GetAttachmentsFromUri(FileUri As String) As Attachment
@@ -61,17 +61,17 @@ Public Sub OpenAttachment(attachment_id As Long) As Boolean
 		Log("filePath: " & filePath)
 		Log("fileName: " & fileName)
 	
-		File.Copy(File.DirInternal & m_fileRepository.DIRECTORY, fileName, Starter.Provider.SharedFolder, fileName)
+		'File.Copy(Starter.Provider.SharedFolder & m_fileRepository.DIRECTORY, fileName, Starter.Provider.SharedFolder, fileName)
 	 
-		Log("SharedFolder: " & Starter.Provider.SharedFolder)
+		'Log("SharedFolder: " & Starter.Provider.SharedFolder)
 	 
-		For Each item As String In File.ListFiles(Starter.Provider.SharedFolder)
-			Log("File from SharedFolder: " & item)
-		Next
+		'For Each item As String In File.ListFiles(Starter.Provider.SharedFolder)
+		'	Log("File from SharedFolder: " & item)
+		'Next
 	
 		Dim intentObj As Intent
 		intentObj.Initialize(intentObj.ACTION_VIEW, "")
-		Starter.Provider.SetFileUriAsIntentData(intentObj, fileName)
+		Starter.Provider.SetFileUriAsIntentData(intentObj, m_fileRepository.DIRECTORY & fileName)
 		Dim data As String = intentObj.GetData
 		'Starter.Provider.SetFileUriAsIntentData(intentObj, m_fileRepository.DIRECTORY & fileName))
 		

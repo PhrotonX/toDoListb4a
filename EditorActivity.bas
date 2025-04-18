@@ -524,12 +524,7 @@ Private Sub btnClearDueDate_Click
 	ClearDueDate
 End Sub
 
-Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
-	' For debugging only! Move this into debug mode.
-	'For Each item As String In File.ListFiles(File.DirInternal & "/attachments/")
-	'	Log(item)
-	'Next
-	
+Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)	
 	Dim viewHolder As AttachmentViewHolder = Value	
 
 	Starter.AttachmentViewModelInstance.OpenAttachment(viewHolder.ID)
