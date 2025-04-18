@@ -17,7 +17,7 @@ End Sub
 Public Sub Initialize(fileSystem As ToDoFileSystem)
 	m_fileSystem = fileSystem
 	
-	File.MakeDir(Starter.Permissions.GetSafeDirDefaultExternal(""), DIRECTORY_2)
+	File.MakeDir(File.DirInternal, DIRECTORY_2)
 End Sub
 
 ' This function currently only supports a single file.
@@ -82,7 +82,7 @@ Public Sub DropAttachments() As Boolean
 	Try
 		Dim result1 As Boolean = False
 		Dim result2 As Boolean = False
-		result1 = m_fileSystem.RemoveFiles(Starter.Permissions.GetSafeDirDefaultExternal(DIRECTORY))
+		result1 = m_fileSystem.RemoveFiles(File.DirInternal & DIRECTORY)
 		result2 = m_fileSystem.RemoveFiles(Starter.Provider.SharedFolder)
 	
 		If result1 And result2 Then
