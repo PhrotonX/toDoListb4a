@@ -29,10 +29,6 @@ Public Sub Initialize
 	' Initialize the due date with empty date since the constructor requires it.
 	m_dueDate.Initialize(0, 0, 0)
 	
-	'For Each REPEAT As Boolean In m_repeat
-	'	REPEAT = False
-	'Next
-	
 	m_createdAt.Initialize
 	m_deletedAt.Initialize
 	m_updatedAt.Initialize
