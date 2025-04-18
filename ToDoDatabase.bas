@@ -10,6 +10,7 @@ Sub Class_Globals
 	Private m_taskDao As TaskDao
 	Private m_attachmentDao As AttachmentDao
 	Private m_groupDao As GroupDao
+	Private m_repeatDao As RepeatDao
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -23,6 +24,7 @@ Public Sub Initialize
 	m_taskDao.Initialize(sql)
 	m_attachmentDao.Initialize(sql)
 	m_groupDao.Initialize(sql)
+	m_repeatDao.Initialize(sql)
 End Sub
 
 ' Creates tables for Database in SQL syntax, not MySQL.
@@ -49,12 +51,20 @@ Public Sub CreateTable As Boolean
 	"PRIMARY KEY(day_id)" & CRLF & _
 	");"
 	
+	' Query for creating the repeat table.
+	Dim query_repeat As String = "CREATE TABLE IF NOT EXISTS repeat(" & CRLF & _
+	"repeat_id INTEGER PRIMARY KEY AUTOINCREMENT," & CRLF & _
+	"day_id TINYINT NOT NULL," & CRLF & _
+	"enabled BOOLEAN NOT NULL DEFAULT 0," & CRLF & _
+	"schedule LONG NOT NULL DEFAULT 0," & CRLF & _
+	"FOREIGN KEY (day_id) REFERENCES days_of_the_week(day_id)" & CRLF & _
+	");"
+	
 	' Query for creating the associative task_repeat table.
 	Dim query_task_repeat As String = "CREATE TABLE IF NOT EXISTS task_repeat(" & CRLF & _
 	"task_id INTEGER NOT NULL," & CRLF & _
-	"day_id TINYINT NOT NULL," & CRLF & _
-	"enabled BOOLEAN NOT NULL," & CRLF & _
-	"PRIMARY KEY(task_id, day_id)" & CRLF & _
+	"repeat_id TINYINT NOT NULL," & CRLF & _
+	"PRIMARY KEY(task_id, repeat_id)" & CRLF & _
 	");"
 	
 	' Query for creating the attachment table.
@@ -120,6 +130,7 @@ Public Sub CreateTable As Boolean
 		' Execute the queries.
 		sql.ExecNonQuery(query_task)
 		sql.ExecNonQuery(query_days_of_the_week)
+		sql.ExecNonQuery(query_repeat)
 		sql.ExecNonQuery(query_task_repeat)
 		sql.ExecNonQuery(query_attachment)
 		sql.ExecNonQuery(query_task_attachment)
@@ -156,6 +167,10 @@ Public Sub GroupDao() As GroupDao
 	Return m_groupDao
 End Sub
 
+Public Sub RepeatDao() As RepeatDao
+	Return m_repeatDao
+End Sub
+
 ' Closes the database
 Public Sub CloseDatabase()
 	sql.Close
@@ -165,23 +180,25 @@ End Sub
 Public Sub DropTables As Boolean
 
 	Dim result As Boolean = False
-	Dim query_task As String = "DROP TABLE IF EXISTS task;"
-	Dim query_days_of_the_week As String = "DROP TABLE IF EXISTS days_of_the_week;"
 	Dim query_task_repeat As String = "DROP TABLE IF EXISTS task_repeat;"
-	Dim query_attachment As String = "DROP TABLE IF EXISTS attachment;"
 	Dim query_task_attachment As String = "DROP TABLE IF EXISTS task_attachment;"
-	Dim query_group As String = "DROP TABLE IF EXISTS groups;"
 	Dim query_task_group As String = "DROP TABLE IF EXISTS task_group;"
+	Dim query_task As String = "DROP TABLE IF EXISTS task;"
+	Dim query_repeat As String = "DROP TABLE IF EXISTS repeat;"
+	Dim query_days_of_the_week As String = "DROP TABLE IF EXISTS days_of_the_week;"
+	Dim query_attachment As String = "DROP TABLE IF EXISTS attachment;"
+	Dim query_group As String = "DROP TABLE IF EXISTS groups;"
 	
 	sql.BeginTransaction
 	Try
-		sql.ExecNonQuery(query_task)
-		sql.ExecNonQuery(query_days_of_the_week)
 		sql.ExecNonQuery(query_task_repeat)
-		sql.ExecNonQuery(query_attachment)
 		sql.ExecNonQuery(query_task_attachment)
-		sql.ExecNonQuery(query_group)
 		sql.ExecNonQuery(query_task_group)
+		sql.ExecNonQuery(query_task)
+		sql.ExecNonQuery(query_repeat)
+		sql.ExecNonQuery(query_days_of_the_week)
+		sql.ExecNonQuery(query_attachment)
+		sql.ExecNonQuery(query_group)
 		
 		sql.TransactionSuccessful
 		
@@ -205,4 +222,8 @@ Public Sub CopyDatabase()
 	Else
 		ToastMessageShow("Database not found!", True)
 	End If
+End Sub
+
+Public Sub GetLastInsertedID() As Long
+	Return sql.ExecQuerySingleResult("SELECT last_insert_rowid();")
 End Sub

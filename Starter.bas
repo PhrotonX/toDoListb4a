@@ -38,15 +38,19 @@ Sub Process_Globals
 	'Public ToDoDatabaseInstance As ToDoDatabase
 	Public ToDoDatabaseViewModelInstance As ToDoDatabaseViewModel
 	Private ToDoFileSystemInstance As ToDoFileSystem
+	
+	' Repository instances
 	Private taskRepo As TaskRepository
 	Private attachmentRepo As AttachmentRepository
 	Private attachmentFileRepo As AttachmentFileRepository
 	Private groupRepo As GroupRepository
+	Private repeatRepo As RepeatRepository
 	
 	' Global instance of TaskViewModel where the database can be accessed.
 	Public TaskViewModelInstance As TaskViewModel
 	Public AttachmentViewModelInstance As AttachmentViewModel
 	Public GroupViewModelInstance As GroupViewModel
+	Public RepeatViewModelInstance As RepeatViewModel
 
 	Public SettingsViewModelInstance As SettingsViewModel
 	
@@ -94,10 +98,12 @@ Sub Service_Create
 	attachmentRepo.Initialize(ToDoDatabaseViewModelInstance.GetInstance)
 	attachmentFileRepo.Initialize(ToDoFileSystemInstance)
 	groupRepo.Initialize(ToDoDatabaseViewModelInstance.GetInstance)
+	repeatRepo.Initialize(ToDoDatabaseViewModelInstance.GetInstance)
 	
 	TaskViewModelInstance.Initialize(taskRepo)
 	AttachmentViewModelInstance.Initialize(attachmentRepo, attachmentFileRepo)
 	GroupViewModelInstance.Initialize(groupRepo)
+	RepeatViewModelInstance.Initialize(repeatRepo)
 	
 	SettingsViewModelInstance.Initialize()
 End Sub
