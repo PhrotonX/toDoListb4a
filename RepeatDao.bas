@@ -55,6 +55,8 @@ Public Sub GetTaskRepeat(task_id As Long) As Repeat
 		" ON task_repeat.repeat_id = repeat.repeat_id " & CRLF & _
 		" WHERE task_repeat.task_id = " & task_id)
 		
+		item.Initialize()
+		
 		' Iterate the cursor or each rows. This iteration checks if days Sunday to Saturday have
 		' thier repeat option enabled.
 		For i = 0 To Cursor.RowCount - 1
@@ -84,7 +86,7 @@ Public Sub UpdateRepeat(item As Repeat) As Boolean
 		For Each repeat As Boolean In item.IsEnabled
 			' The SQL code that updates the table.
 			m_sql.ExecNonQuery("UPDATE repeat SET " & CRLF & _
-			"enabled = " & DatabaseUtils.BoolToInt(repeat) & ", " & CRLF & _
+			"enabled = " & DatabaseUtils.BoolToInt(repeat) & " " & CRLF & _
 			"WHERE repeat_id = " & item.GetID(repeatItr) & " " & CRLF & _
 			"AND day_id = " & repeatItr & ";")
 			
@@ -109,16 +111,9 @@ Public Sub DeleteRepeat(item As Repeat) As Boolean
 	m_sql.BeginTransaction
 	Try
 		' Update each repeat value of the item iteratively.
-		Dim repeatItr As Int = 0
-		For Each Repeat As Boolean In item.IsEnabled
+		For i = 0 To 6
 			' The SQL code that updates the table.
-			m_sql.ExecNonQuery("UPDATE repeat SET " & CRLF & _
-			"enabled = " & DatabaseUtils.BoolToInt(Repeat) & ", " & CRLF & _
-			"WHERE repeat_id = " & item.GetID(repeatItr) & " " & CRLF & _
-			"AND day_id = " & repeatItr & ";")
-			
-			' Iterate the day IDs from 0 to 6.
-			repeatItr = repeatItr + 1
+			m_sql.ExecNonQuery("DELETE FROM repeat WHERE repeat_id = " & item.GetID(i))
 		Next
 		
 		m_sql.TransactionSuccessful

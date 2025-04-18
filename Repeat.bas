@@ -22,7 +22,9 @@ End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize
-	
+	For Each item As Boolean In m_enabled
+		item = False
+	Next
 End Sub
 
 ' Encapsulate repeat value
