@@ -10,6 +10,7 @@ Sub Class_Globals
 	Private m_taskDao As TaskDao
 	Private m_attachmentDao As AttachmentDao
 	Private m_groupDao As GroupDao
+	Private m_repeatDao As RepeatDao
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -23,6 +24,7 @@ Public Sub Initialize
 	m_taskDao.Initialize(sql)
 	m_attachmentDao.Initialize(sql)
 	m_groupDao.Initialize(sql)
+	m_repeatDao.Initialize(sql)
 End Sub
 
 ' Creates tables for Database in SQL syntax, not MySQL.
@@ -53,7 +55,8 @@ Public Sub CreateTable As Boolean
 	Dim query_repeat As String = "CREATE TABLE IF NOT EXISTS repeat(" & CRLF & _
 	"repeat_id INTEGER PRIMARY KEY AUTOINCREMENT," & CRLF & _
 	"day_id TINYINT NOT NULL," & CRLF & _
-	"enabled BOOLEAN NOT NULL," & CRLF & _
+	"enabled BOOLEAN NOT NULL DEFAULT 0," & CRLF & _
+	"schedule LONG NOT NULL DEFAULT 0," & CRLF & _
 	"FOREIGN KEY (day_id) REFERENCES days_of_the_week(day_id)" & CRLF & _
 	");"
 	
@@ -162,6 +165,10 @@ End Sub
 
 Public Sub GroupDao() As GroupDao
 	Return m_groupDao
+End Sub
+
+Public Sub RepeatDao() As RepeatDao
+	Return m_repeatDao
 End Sub
 
 ' Closes the database
