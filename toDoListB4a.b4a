@@ -360,7 +360,7 @@ Private Sub CreateItem(viewHolder As TaskViewHolder) As B4XView
 End Sub
 
 ' Binds task data into the task view.
-Private Sub BindItem(item As ToDo, viewHolder As TaskViewHolder)
+Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewHolder)
 	' Bind the checkbox
 	viewHolder.TaskCheckbox = chkToDoItem
 	' Bind the view for task info
@@ -368,7 +368,7 @@ Private Sub BindItem(item As ToDo, viewHolder As TaskViewHolder)
 	' Bind the task title
 	viewHolder.TaskCheckbox.Text = item.GetTitle
 	' Bind the glance information
-	viewHolder.TaskInfo.Text = item.GetGlance
+	viewHolder.TaskInfo.Text = item.GetGlance(repeatItem.GetRepeatInfo)
 	' Make a reference to the task_id from the database.
 	viewHolder.ID = item.GetId
 	' Bind the panel into the view holder.
@@ -416,6 +416,9 @@ Private Sub LoadItems()
 		
 		' Iterate each item.
 		For Each item As ToDo In m_tasks
+			
+			Dim repeatItem As Repeat = Starter.RepeatViewModelInstance.GetTaskRepeat(item.GetId)
+			
 			' Initialize a ViewHolder
 			Dim viewHolder As TaskViewHolder
 			viewHolder.Initialize
@@ -458,7 +461,7 @@ Private Sub LoadItems()
 			
 			' Bind the currently referenced vieHolder that ToDoList points to into there
 			' currently iterated data.
-			BindItem(item, viewHolder)
+			BindItem(item, repeatItem, viewHolder)
 	
 		Next
 	End If
