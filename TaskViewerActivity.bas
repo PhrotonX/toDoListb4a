@@ -32,6 +32,7 @@ Sub Globals
 	' This variable is responsible for handling the current data that can be used for performing
 	' CRUD into the database.
 	Private m_task As ToDo
+	Private m_repeat As Repeat
 	Private Label1 As Label
 	
 	Private viewTaskGroup As Label
@@ -79,11 +80,14 @@ Sub Activity_Resume
 		Activity.Finish
 	End If
 	
+	' Get the repeat information from task.
+	m_repeat = Starter.RepeatViewModelInstance.GetTaskRepeat(m_task.GetId)
+	
 	' Display the retrieved task into the views.
 	viewTitle.Text = m_task.GetTitle
 	viewTitle.Checked = m_task.Done
 	viewNotes.Text = m_task.GetNotes
-	viewRepeat.Text = m_task.GetRepeatInfo
+	viewRepeat.Text = m_repeat.GetRepeatInfo
 	viewPriority.Text = m_task.GetPriorityInfo
 	viewDueDate.Text = m_task.GetDueDate.GetFormattedDate
 	viewCreatedAt.Text = m_task.GetCreatedAt.GetFormattedDateAndTime
