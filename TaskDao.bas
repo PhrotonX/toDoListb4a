@@ -25,18 +25,6 @@ Public Sub InsertTask(item As ToDo)
 		m_sql.ExecNonQuery("INSERT INTO task(title, notes, priority, due_date, done, created_at, updated_at)" & CRLF & _
 		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", "&item.GetDueDate.GetUnixTime& CRLF & _
 		", "&DatabaseUtils.BoolToInt(item.Done)&", "&currentDateAndTime&", "&currentDateAndTime&");")
-		
-		' Get the ID if the last inserted row.In this case, it is the previous INSERT INTO TASK.
-		Dim id As Int = m_sql.ExecQuerySingleResult("SELECT last_insert_rowid();")
-		
-		' Insert each item's repeat value
-		Dim i As Int = 0
-		For Each repeat As Boolean In item.GetRepeat
-			' Insert the task without the repeat data.
-			m_sql.ExecNonQuery("INSERT INTO task_repeat(task_id, day_id, enabled)" & CRLF & _
-			"VALUES("&id&", '"&i&"', "&DatabaseUtils.BoolToInt(repeat)&");")
-			i = i + 1
-		Next
 		m_sql.TransactionSuccessful
 	Catch
 		Log(LastException)
@@ -73,19 +61,6 @@ Public Sub UpdateTask(item As ToDo)
 		"updated_at = " & DateTime.Now & CRLF & _
 		"WHERE task_id = " & item.GetId & CRLF & _
 		";")
-		
-		' Update each repeat value of the item iteratively.
-		Dim repeatItr As Int = 0
-		For Each repeat As Boolean In item.GetRepeat
-			' The SQL code that updates the table.
-			m_sql.ExecNonQuery("UPDATE task_repeat SET " & CRLF & _
-			"enabled = " & DatabaseUtils.BoolToInt(repeat) & CRLF & _
-			"WHERE task_id = " & item.GetId & " " & CRLF & _
-			"AND day_id = " & repeatItr & ";")
-			
-			' Iterate the day IDs from 0 to 6.
-			repeatItr = repeatItr + 1
-		Next
 		
 		m_sql.TransactionSuccessful
 	Catch
@@ -161,21 +136,5 @@ Private Sub OnBuildTask(cursorTask As Cursor) As ToDo
 	item.Done = DatabaseUtils.IntToBool(cursorTask.GetInt("done"))
 	item.SetDeleted(DatabaseUtils.IntToBool(cursorTask.GetInt("is_deleted")))
 			
-	RetrieveRepeatValues(item)
-	
 	Return item
-End Sub
-
-Public Sub RetrieveRepeatValues(item As ToDo)
-	' Get all values for task_repeat. This code uses cursor that represents a specific row
-	' from a database view.
-	Dim Cursor As Cursor
-	Cursor = m_sql.ExecQuery("SELECT * FROM task_repeat WHERE task_id = " & item.GetId)
-		
-	' Iterate the cursor or each rows. This iteration checks if days Sunday to Saturday have
-	' thier repeat option enabled.
-	For i = 0 To Cursor.RowCount - 1
-		Cursor.Position = i
-		item.SetRepeat(i, DatabaseUtils.IntToBool(Cursor.GetInt("enabled")))
-	Next
 End Sub
