@@ -7,7 +7,9 @@ Version=13.1
 Sub Class_Globals
 	' 0 represents the least critical task while 3 represents most critical task.
 	' Index 0 represents Sunday while index 6 represents Saturday.
-	Private m_repeat(7) As Boolean
+	Private m_id(7) As Long
+	Private m_enabled(7) As Boolean
+	Private m_schedule(7) As Long
 	
 	Public Const REPEAT_SUNDAY As Int = 0
 	Public Const REPEAT_MONDAY As Int = 1
@@ -24,8 +26,12 @@ Public Sub Initialize
 End Sub
 
 ' Encapsulate repeat value
-Public Sub GetRepeat As Boolean(7)
-	Return m_repeat
+Public Sub IsEnabled As Boolean(7)
+	Return m_enabled
+End Sub
+
+Public Sub GetID(day As Byte) As Long
+	Return m_id(day)
 End Sub
 
 ' Retrieves the repeat information such as "Weekdays," "Weekends," "Daily," or names of the days of
@@ -34,25 +40,25 @@ Public Sub GetRepeatInfo As String
 	Dim repeat As String
 	
 	' Set the repeat information as "Weekends" if Sunday and Saturday are enabled
-	If GetRepeat(REPEAT_SUNDAY) == True And _
-	GetRepeat(REPEAT_MONDAY) == False And _
-	GetRepeat(REPEAT_TUESDAY) == False And _
-	GetRepeat(REPEAT_WEDNESDAY) == False And _
-	GetRepeat(REPEAT_THURSDAY) == False And _
-	GetRepeat(REPEAT_FRIDAY) == False And _
-	GetRepeat(REPEAT_SATURDAY) == True Then
+	If IsEnabled(REPEAT_SUNDAY) == True And _
+	IsEnabled(REPEAT_MONDAY) == False And _
+	IsEnabled(REPEAT_TUESDAY) == False And _
+	IsEnabled(REPEAT_WEDNESDAY) == False And _
+	IsEnabled(REPEAT_THURSDAY) == False And _
+	IsEnabled(REPEAT_FRIDAY) == False And _
+	IsEnabled(REPEAT_SATURDAY) == True Then
 		repeat = "Weekends"
 		Return repeat
 	End If
 	
 	' Set the repeat information as "Weekdays" if Monday-Friday are enabled.
-	If GetRepeat(REPEAT_SUNDAY) == False And _
-	GetRepeat(REPEAT_MONDAY) == True And _
-	GetRepeat(REPEAT_TUESDAY) == True And _
-	GetRepeat(REPEAT_WEDNESDAY) == True And _
-	GetRepeat(REPEAT_THURSDAY) == True And _
-	GetRepeat(REPEAT_FRIDAY) == True And _
-	GetRepeat(REPEAT_SATURDAY) == False Then
+	If IsEnabled(REPEAT_SUNDAY) == False And _
+	IsEnabled(REPEAT_MONDAY) == True And _
+	IsEnabled(REPEAT_TUESDAY) == True And _
+	IsEnabled(REPEAT_WEDNESDAY) == True And _
+	IsEnabled(REPEAT_THURSDAY) == True And _
+	IsEnabled(REPEAT_FRIDAY) == True And _
+	IsEnabled(REPEAT_SATURDAY) == False Then
 		repeat = "Weekdays"
 		Return repeat
 	End If
@@ -63,7 +69,7 @@ Public Sub GetRepeatInfo As String
 	Dim repeatingIndexes As List
 	repeatingIndexes.Initialize
 	
-	For Each item In GetRepeat
+	For Each item In IsEnabled
 		If item == True Then
 			repeatingIndexes.Add(itr)
 		End If
@@ -93,7 +99,18 @@ Public Sub GetRepeatInfo As String
 	Return repeat
 End Sub
 
-Public Sub SetRepeat(day As Int, repeat As Boolean)
-	m_repeat(day) = repeat
+Public Sub GetSchedule(day As Byte) As Long
+	Return m_schedule(day)
 End Sub
 
+Public Sub SetEnabled(day As Byte, enabled As Boolean)
+	m_enabled(day) = enabled
+End Sub
+
+Public Sub SetID(day As Byte, value As Long)
+	m_id(day) = value
+End Sub
+
+Public Sub SetSchedule(day As Byte, value As Long)
+	m_schedule(day) = value
+End Sub
