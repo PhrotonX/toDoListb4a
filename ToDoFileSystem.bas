@@ -17,8 +17,7 @@ End Sub
 Public Sub CopyFileFromUriToInternal(FileName As String, Dir As String, FileUri As String, Location As String)
 	Try
 		Dim input As InputStream = File.OpenInput(Dir, FileUri)
-		Dim output As OutputStream = File.OpenOutput(Starter.Permissions.GetSafeDirDefaultExternal(Location), _
-		FileName, False)
+		Dim output As OutputStream = File.OpenOutput(Location, FileName, False)
 		File.Copy2(input, output)
 		input.Close
 		output.Close
@@ -48,7 +47,7 @@ End Sub
 ' Removes file from external storage
 ' Returns true if succeeded.
 Public Sub RemoveFile(FileName As String, Location As String) As Boolean
-	Return File.Delete(Starter.Permissions.GetSafeDirDefaultExternal(Location), FileName)
+	Return File.Delete(Location, FileName)
 End Sub
 
 ' Removes files from a directory in external storage

@@ -10,14 +10,14 @@ Sub Class_Globals
 	' Directory with forward slash as the beginning character
 	Public Const DIRECTORY As String = "/attachments/"
 	' Directory without forward slash as the beginning character
-	Public Const DIRECTORY_2 As String = "attachments/"
+	Public Const DIRECTORY_2 As String = "attachments"
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize(fileSystem As ToDoFileSystem)
 	m_fileSystem = fileSystem
 	
-	File.MakeDir(Starter.Permissions.GetSafeDirDefaultExternal(""), DIRECTORY_2)
+	File.MakeDir(Starter.Provider.SharedFolder, DIRECTORY_2)
 End Sub
 
 ' This function currently only supports a single file.
@@ -51,7 +51,6 @@ Public Sub GetAttachmentsFromUri(FileUri As String) As List
 	End Try
 		
 	' Close the cursor to release resorces allocated by it.
-	' Close the cursor to release resorces allocated by it.
 	cur.Close()
 	
 	Return result
@@ -60,7 +59,7 @@ End Sub
 Public Sub SaveAttachment(item As Attachment)
 	Try
 		m_fileSystem.CopyFileFromUriToInternal(item.GetFilename(), m_fileSystem.DIRECTORY, item.GetFileUri(), _
-		DIRECTORY)
+		Starter.Provider.SharedFolder & DIRECTORY)
 	Catch
 		Log(LastException)
 	End Try
@@ -68,7 +67,7 @@ End Sub
 
 Public Sub RemoveAttachment(item As Attachment) As Boolean
 	Try
-		Return m_fileSystem.RemoveFile(item.GetFilename, DIRECTORY)
+		Return m_fileSystem.RemoveFile(item.GetFilename, Starter.Provider.SharedFolder & DIRECTORY)
 	Catch
 		Log(LastException)
 	End Try
@@ -80,16 +79,10 @@ End Sub
 ' after truncating or dropping attachments table successfully in the database.
 Public Sub DropAttachments() As Boolean
 	Try
-		Dim result1 As Boolean = False
-		Dim result2 As Boolean = False
-		result1 = m_fileSystem.RemoveFiles(Starter.Permissions.GetSafeDirDefaultExternal(DIRECTORY))
-		result2 = m_fileSystem.RemoveFiles(Starter.Provider.SharedFolder)
+		Dim result As Boolean = False
+		result = m_fileSystem.RemoveFiles(Starter.Provider.SharedFolder & DIRECTORY)
 	
-		If result1 And result2 Then
-			Return True
-		Else
-			Return False
-		End If
+		Return result
 	Catch
 		Log(LastException)
 	End Try

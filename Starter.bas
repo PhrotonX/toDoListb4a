@@ -81,6 +81,8 @@ End Sub
 Sub Service_Create
 	'This is the program entry point.
 	'This is a good place to load resources that are not specific to a single activity.
+	
+	Provider.Initialize
 
 	' Initialize the variables
 	InstanceState.Initialize
@@ -97,8 +99,6 @@ Sub Service_Create
 	AttachmentViewModelInstance.Initialize(attachmentRepo, attachmentFileRepo)
 	GroupViewModelInstance.Initialize(groupRepo)
 	
-	Provider.Initialize
-
 	SettingsViewModelInstance.Initialize()
 End Sub
 
