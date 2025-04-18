@@ -234,7 +234,7 @@ Public Sub FindTasksByDueDate(group_id As Long, tickBegin As Long, tickEnd As Lo
 End Sub
 
 ' repeat - Expects a list of 7 boolean values.
-Public Sub FindTasksByRepeat(group_id As Long, repeat As List, ascending As Boolean) As List
+Public Sub FindTasksByRepeat(group_id As Long, repeatQuery As List, ascending As Boolean) As List
 	Dim tasks As List = GetTasksSortedById(group_id, ascending)
 	
 	Dim result As List
@@ -247,10 +247,12 @@ Public Sub FindTasksByRepeat(group_id As Long, repeat As List, ascending As Bool
 		Dim i As Int = 0
 		Dim skip As Boolean = False
 		
+		Dim taskRepeat As Repeat = Starter.RepeatViewModelInstance.GetTaskRepeat(task.GetId)
+		
 		' Compare if the current queried repeat boolean matches with the tasks repeat boolean.
 		' If it did not match, set the skip value as true.
-		For Each item In repeat
-			If task.GetRepeat(i) <> item Then
+		For Each item In repeatQuery
+			If item <> taskRepeat.IsEnabled(i) Then
 				skip = True
 			End If
 			
