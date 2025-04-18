@@ -115,18 +115,18 @@ Module13=FileUtils
 Module14=Group
 Module15=GroupDao
 Module16=GroupRepository
-Module17=groupTasksActivity
-Module18=GroupViewHolder
-Module19=GroupViewModel
+Module17=GroupViewHolder
+Module18=GroupViewModel
+Module19=SettingsAbout
 Module2=AttachmentDao
-Module20=SettingsAbout
-Module21=SettingsActivity
-Module22=SettingsHelp
-Module23=SettingsRepository
-Module24=SettingsViewModel
-Module25=Starter
-Module26=SubGroupViewHolder
-Module27=TaskDao
+Module20=SettingsActivity
+Module21=SettingsHelp
+Module22=SettingsRepository
+Module23=SettingsViewModel
+Module24=Starter
+Module25=SubGroupViewHolder
+Module26=TaskDao
+Module27=TaskGroupActivity
 Module28=TaskQuery
 Module29=TaskRepository
 Module3=AttachmentFileRepository
@@ -1030,5 +1030,5 @@ Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
 End Sub
 
 Private Sub groupPanel_Click
-	StartActivity(groupTasksActivity)
+	StartActivity(TaskGroupActivity)
 End Sub
