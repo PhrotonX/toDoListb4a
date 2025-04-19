@@ -8,13 +8,15 @@ Sub Class_Globals
 	Private m_kvs As KeyValueStore
 	
 	Private Const SETTINGS_FILENAME As String = "settings.dat"
-	
+
 	Private Const SETTINGS_KEY_APP_TITLE As String = "app_title"
 	Private Const SETTINGS_KEY_DARK_MODE As String = "dark_mode"
 	Private Const SETTINGS_KEY_DEBUG_MODE As String = "debug_mode"
 	Private Const SETTINGS_KEY_EXPERIMENTAL_MODE As String = "experimental_mode"
 	Private Const SETTINGS_KEY_LANGUAGE As String = "language"
 	Private Const SETTINGS_KEY_TASK_COMPLETION_SOUND As String = "task_completion_sound"
+	Private Const SETTINGS_KEY_24_HOUR_FORMAT As String = "24_hour_format"
+	Private Const 
 	
 	Private Const DEFAULT_LANGUAGE As String = "en_us"
 End Sub
@@ -38,6 +40,7 @@ Public Sub LoadDefaults()
 	SetLanguage(DEFAULT_LANGUAGE)
 	SetTaskCompletionSound(True)
 	SetExperimentalMode(False)
+	Set24HourFormat(False)
 End Sub
 
 Public Sub GetDebugMode() As Boolean
@@ -58,6 +61,10 @@ End Sub
 
 Public Sub GetTaskCompetionSound() As Boolean
 	Return m_kvs.Get(SETTINGS_KEY_TASK_COMPLETION_SOUND)
+End Sub
+
+Public Sub Get24HourFormat() As Boolean
+	Return m_kvs.Get(SETTINGS_KEY_24_HOUR_FORMAT)
 End Sub
 
 Public Sub ResetSettings() As Boolean
@@ -103,4 +110,8 @@ End Sub
 
 Public Sub SetTaskCompletionSound(value As Boolean)
 	m_kvs.Put(SETTINGS_KEY_TASK_COMPLETION_SOUND, value)
+End Sub
+
+Public Sub Set24HourFormat(value As Boolean)
+	m_kvs.Put(SETTINGS_KEY_24_HOUR_FORMAT, value)
 End Sub

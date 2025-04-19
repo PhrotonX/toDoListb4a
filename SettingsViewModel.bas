@@ -37,6 +37,10 @@ Public Sub GetTaskCompetionSound() As Boolean
 	Return m_dtRepository.GetTaskCompetionSound()
 End Sub
 
+Public Sub Get24HourFormat() As Boolean
+	Return m_dtRepository.Get24HourFormat()
+End Sub
+
 Public Sub LoadDefaults()
 	m_dtRepository.LoadDefaults()
 End Sub
@@ -60,4 +64,8 @@ End Sub
 
 Public Sub SetTaskCompletionSound(value As Boolean)
 	m_dtRepository.SetTaskCompletionSound(value)
+End Sub
+
+Public Sub Set24HourFormat(value As Boolean)
+	m_dtRepository.Set24HourFormat(value)
 End Sub
