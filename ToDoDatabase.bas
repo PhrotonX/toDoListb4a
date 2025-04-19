@@ -39,6 +39,9 @@ Public Sub CreateTable As Boolean
 	"due_date DATE," & CRLF & _
 	"done BOOLEAN NOT NULL DEFAULT 0," & CRLF & _
 	"is_deleted BOOLEAN NOT NULL DEFAULT 0," & CRLF & _
+	"reminder LONG NOT NULL DEFAULT 0," & CRLF & _
+	"is_reminder_enabled BOOLEAN NOT NULL DEFAULT 0," & CRLF & _
+	"snooze LONG NOT NULL DEFAULT 0," & CRLF & _
 	"created_at LONG NOT NULL DEFAULT 0," & CRLF & _
 	"updated_at LONG NOT NULL DEFAULT 0," & CRLF & _
 	"deleted_at LONG NOT NULL DEFAULT 0" & CRLF & _
