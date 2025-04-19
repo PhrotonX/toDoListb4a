@@ -4,6 +4,8 @@ ModulesStructureVersion=1
 Type=Class
 Version=13.1
 @EndOfDesignText@
+' This class stores time in 24-hour format by default.
+
 Sub Class_Globals
 	Private m_hour As Int
 	Private m_minute As Int
@@ -13,6 +15,9 @@ Sub Class_Globals
 	
 	' A single day in UNIX time is equal to 86,400,000 milliseconds.
 	Private Const DAY_LENGTH As Long = 86400000
+	
+	Public Const MARKER_AM As String = "AM"
+	Public Const MARKER_PM As String = "PM"
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -70,7 +75,7 @@ End Sub
 
 ' Returns a numeric string with 1 leading zero. Works for numbers intended to be displayed
 ' as a two digit number with a single zero.
-Private Sub GetNumWithLeadingZero(num As Int) As String
+Public Sub GetNumWithLeadingZero(num As Int) As String
 	Select num
 		Case 0, 1, 2, 3, 4, 5, 6, 7, 8, 9:
 			Return "0" & num
@@ -107,6 +112,23 @@ End Sub
 
 Public Sub SetHour(hour As Int)
 	m_hour = hour
+End Sub
+
+Public Sub SetHour12HourFormat(hour As Int, marker As String)
+	'Set the hour value before converting.
+	m_hour = hour
+	
+	If m_marker == MARKER_AM Then
+		' 12:00 AM is 00:00.
+		If hour == 12 Then
+			m_hour = 0
+		End If
+	Else If m_marker == MARKER_PM Then
+		' 1:00 PM is 1 + 12 = 13:00 and 11:00 PM is 11+12 = 23:00.
+		If hour > 12 And hour < 24 Then
+			m_hour = hour + 12
+		End If
+	End If
 End Sub
 
 Public Sub SetMinute(minute As Int)
