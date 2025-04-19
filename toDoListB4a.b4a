@@ -1,33 +1,50 @@
 ﻿Build1=Default,com.cm.todolist
 File1=3528206.png
-File10=emptytasks.bal
-File11=folder.png
-File12=helpitems.bal
-File13=ic_launcher.png
-File14=ic_launcher_xl.png
-File15=Layout.bal
-File16=newfragment.bal
-File17=pencil.png
-File18=searchByLayout.bal
-File19=separatorlayout.bal
+File10=EditorLayout.bal
+File11=EditorScrollLayout.bal
+File12=emptytasks.bal
+File13=folder.png
+File14=GREEN.png
+File15=GREEN-SELECTED.png
+File16=groupTasksLayout.bal
+File17=groupTasksSVLayout.bal
+File18=helpitems.bal
+File19=ic_launcher.png
 File2=486023921_623831243812785_3842496593750662642_n (1).png
-File20=settingsabout.bal
-File21=settingshelp.bal
-File22=settingslayout.bal
-File23=solid_white.png
-File24=stock4.png
-File25=sviewlayout.bal
-File26=TaskItemLayout.bal
-File27=taskviewlayout.bal
-File28=taskviewscrolllayout.bal
-File29=test.bal
+File20=ic_launcher_xl.png
+File21=INDIGO.png
+File22=INDIGO-SELECTED.png
+File23=Layout.bal
+File24=newfragment.bal
+File25=ORANGE.png
+File26=ORANGE-SELECTED.PNG
+File27=pencil.png
+File28=PINK.png
+File29=PINK-SELECTED.png
 File3=aboutitems.bal
+File30=RED.png
+File31=RED-SELECTED.png
+File32=searchByLayout.bal
+File33=searchFragmentSVLayout.bal
+File34=separatorlayout.bal
+File35=settingsabout.bal
+File36=settingshelp.bal
+File37=settingslayout.bal
+File38=solid_white.png
+File39=stock4.png
 File4=AttachmentItemLayout.bal
-File5=canvas.bal
-File6=draweritems.bal
-File7=drawerlayout.bal
-File8=EditorLayout.bal
-File9=EditorScrollLayout.bal
+File40=sviewlayout.bal
+File41=TaskItemLayout.bal
+File42=taskviewlayout.bal
+File43=taskviewscrolllayout.bal
+File44=test.bal
+File45=YELLOW.png
+File46=YELLOW-SELECTED.png
+File5=BLUE.png
+File6=BLUE-SELECTED.png
+File7=canvas.bal
+File8=draweritems.bal
+File9=drawerlayout.bal
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
@@ -51,7 +68,24 @@ FileGroup27=Default Group
 FileGroup28=Default Group
 FileGroup29=Default Group
 FileGroup3=Default Group
+FileGroup30=Default Group
+FileGroup31=Default Group
+FileGroup32=Default Group
+FileGroup33=Default Group
+FileGroup34=Default Group
+FileGroup35=Default Group
+FileGroup36=Default Group
+FileGroup37=Default Group
+FileGroup38=Default Group
+FileGroup39=Default Group
 FileGroup4=Default Group
+FileGroup40=Default Group
+FileGroup41=Default Group
+FileGroup42=Default Group
+FileGroup43=Default Group
+FileGroup44=Default Group
+FileGroup45=Default Group
+FileGroup46=Default Group
 FileGroup5=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
@@ -92,27 +126,28 @@ Module23=SettingsViewModel
 Module24=Starter
 Module25=SubGroupViewHolder
 Module26=TaskDao
-Module27=TaskQuery
-Module28=TaskRepository
-Module29=TaskViewerActivity
+Module27=TaskGroupActivity
+Module28=TaskQuery
+Module29=TaskRepository
 Module3=AttachmentFileRepository
-Module30=TaskViewHolder
-Module31=TaskViewModel
-Module32=Theme
-Module33=Time
-Module34=ToDo
-Module35=ToDoDatabase
-Module36=ToDoDatabaseViewModel
-Module37=ToDoFileSystem
+Module30=TaskViewerActivity
+Module31=TaskViewHolder
+Module32=TaskViewModel
+Module33=Theme
+Module34=Time
+Module35=ToDo
+Module36=ToDoDatabase
+Module37=ToDoDatabaseViewModel
+Module38=ToDoFileSystem
 Module4=AttachmentRepository
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
 Module7=DatabaseUtils
 Module8=Date
 Module9=DateAndTime
-NumberOfFiles=29
+NumberOfFiles=46
 NumberOfLibraries=14
-NumberOfModules=37
+NumberOfModules=38
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
@@ -209,6 +244,32 @@ Sub Globals
 	Private radioSortByDD As RadioButton
 	Private radioSortByPrio As RadioButton
 	Private radioSortByTitle As RadioButton
+	Private svSearchBody As ScrollView
+	Private checkFBPriority As CheckBox
+	Private checkFBRepeat As CheckBox
+	Private checkFBDueDate As CheckBox
+	Private checkFBGroup As CheckBox
+	Private radioPrioCritical As RadioButton
+	Private radioPrioHigh As RadioButton
+	Private radioPrioMedium As RadioButton
+	Private radioPrioLow As RadioButton
+	Private pnlFBDueDate As Panel
+	Private pnlFBGroupName As Panel
+	Private pnlFBPriority As Panel
+	Private pnlFBRepeat As Panel
+	Private radioDueSpecificDate As RadioButton
+	Private radioDueSpecificDateGroup As RadioButton
+	Private radioDueSpecificDateRange As RadioButton
+	Private spinDateDay As Spinner
+	Private spinDateGroup As Spinner
+	Private spinDateMonth As Spinner
+	Private spinRangeDay As Spinner
+	Private spinRangeMonth As Spinner
+	Private txtDateYear As EditText
+	Private txtRangeYear As EditText
+	Private pnlDueSpecificDate As Panel
+	Private pnlDueSpecificDateRange As Panel
+	Private pnlDueSpecificDateGroup As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -238,6 +299,8 @@ End Sub
 Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
+
+
 
 Private Sub btnAdd_Click
 	' Set the editor mode by submitting the requested value into the InstanceState bundle.
@@ -347,7 +410,7 @@ Private Sub CreateItem(viewHolder As TaskViewHolder) As B4XView
 	panel.SetLayoutAnimated(0, 0, 0, 95%x, 70dip)
 	panel.LoadLayout("TaskItemLayout")
 	'panel.SetColorAndBorder(Colors.Red, 120, Colors.Green, 5) 
-	panel.SetColorAndBorder(Colors.Transparent,110,Colors.RGB(213, 216, 232), 5)
+	panel.SetColorAndBorder(Colors.Transparent,0,Colors.Transparent, 0)
 	
 	' Bind the root panel
 	viewHolder.Root = panel
@@ -451,7 +514,7 @@ Private Sub LoadItems()
 			' Add items into the list view by binding the viewholder and the data.
 			
 			ToDoList.Add(CreateItem(viewHolder), viewHolder)
-			
+			viewHolder.Root.SetColorAndBorder(Colors.White, 1, Colors.White, 15)
 			' Bind the currently referenced vieHolder that ToDoList points to into there
 			' currently iterated data.
 			BindItem(item, viewHolder)
@@ -492,7 +555,7 @@ Private Sub listview_init
 	menuListView.AddSingleLine2("	Settings", 3)
 	menuListView.SingleLineLayout.Label.TextSize = 16
 	menuListView.SingleLineLayout.Label.TextColor = Colors.Black
-	menuListView.SingleLineLayout.ItemHeight = 43dip
+	menuListView.SingleLineLayout.ItemHeight = 45dip
 		
 	Dim cd As ColorDrawable
 	cd.Initialize(Colors.White, 3dip)
@@ -714,7 +777,7 @@ Sub LoadDrawerItems
 	sepPanel.SetLayoutAnimated(0, 0, 0, 100%x, 2dip) ' 2dip height for the separator
 	Dim innerSep As B4XView = xui.CreatePanel("")
 	innerSep.SetLayoutAnimated(0, 5%x, 0, 45.56%x, 2dip) ' 80% width, centered (10% margin on each side)
-	innerSep.Color = Colors.RGB(91,91,91)
+	innerSep.Color = Colors.LightGray
 	sepPanel.AddView(innerSep, 5%x, 0, 45.56%x, 2dip)
 	sepPanel.Enabled = False
 	innerSep.Enabled = False	
@@ -802,6 +865,7 @@ End Sub
 
 Private Sub searchBtn_Click
 	If button_handling Then
+		svSearchBody.Panel.LoadLayout("searchFragmentSVLayout")
 		pnlTitleBar.Elevation = 0
 		pnlSearch.SetLayout(pnlTitleBar.Left, pnlTitleBar.Top, pnlTitleBar.Width, pnlTitleBar.Height)
 		pnlSearch.SetVisibleAnimated(150, True)
@@ -840,12 +904,13 @@ Private Sub backBtn_Click
 		
 		pnlSearch.SendToBack
 		searchFragment.SendToBack
+		svSearchBody.Panel.RemoveAllViews
 	End If
 End Sub
 
 Public Sub button_handling As Boolean
 	Dim now As Long = DateTime.Now
-	If now - lastClickTime < 500 Then
+	If now - lastClickTime < 250 Then
 		' Less than 300ms since last click, ignore
 		Return False
 	End If
@@ -902,4 +967,68 @@ End Sub
 
 Private Sub radioAsc_CheckedChange(Checked As Boolean)
 	m_query.SetSortOrder(m_query.ORDER_ASC)
+End Sub
+
+Private Sub checkFBPriority_CheckedChange(Checked As Boolean)
+	SetRadioButtonsEnabled(pnlFBPriority, Checked)
+End Sub
+
+Sub SetRadioButtonsEnabled(pnl As Panel, enabled As Boolean)
+		For i = 0 To pnl.NumberOfViews - 1
+			Dim v As View = pnl.GetView(i)
+			v.Enabled = enabled
+		Next
+End Sub
+
+
+
+Private Sub checkFBRepeat_CheckedChange(Checked As Boolean)
+	SetRadioButtonsEnabled(pnlFBRepeat, Checked)
+End Sub
+
+Private Sub checkFBDueDate_CheckedChange(Checked As Boolean)
+	SetRadioButtonsEnabled(pnlFBDueDate, Checked)
+End Sub
+
+
+
+Private Sub checkFBGroup_CheckedChange(Checked As Boolean)
+	SetRadioButtonsEnabled(pnlFBGroupName, Checked)
+End Sub
+
+Private Sub radioDueSpecificDateRange_CheckedChange(Checked As Boolean)
+	SetRadioButtonsEnabled(pnlDueSpecificDateRange, Checked)
+	
+	For i = 0 To pnlDueSpecificDate.NumberOfViews - 1
+		Dim v As View = pnlDueSpecificDate.GetView(i)
+		Dim c As View = pnlDueSpecificDateGroup.GetView(0)
+		c.Enabled = False
+		v.Enabled = False
+	Next
+End Sub
+
+Private Sub radioDueSpecificDateGroup_CheckedChange(Checked As Boolean)
+	SetRadioButtonsEnabled(pnlDueSpecificDateGroup, Checked)
+	
+	For i = 0 To pnlDueSpecificDateRange.NumberOfViews - 1
+		Dim v As View = pnlDueSpecificDateRange.GetView(i)
+		Dim c As View = pnlDueSpecificDate.GetView(i)
+		c.Enabled = False
+		v.Enabled = False
+	Next
+End Sub
+
+Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
+	SetRadioButtonsEnabled(pnlDueSpecificDate, Checked)
+	
+	For i = 0 To pnlDueSpecificDateRange.NumberOfViews - 1
+		Dim v As View = pnlDueSpecificDateRange.GetView(i)
+		Dim c As View = pnlDueSpecificDateGroup.GetView(0)
+		c.Enabled = False
+		v.Enabled = False
+	Next
+End Sub
+
+Private Sub groupPanel_Click
+	StartActivity(TaskGroupActivity)
 End Sub
