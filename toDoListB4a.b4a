@@ -117,29 +117,34 @@ Module15=GroupDao
 Module16=GroupRepository
 Module17=GroupViewHolder
 Module18=GroupViewModel
-Module19=SettingsAbout
+Module19=Repeat
 Module2=AttachmentDao
-Module20=SettingsActivity
-Module21=SettingsHelp
-Module22=SettingsRepository
-Module23=SettingsViewModel
-Module24=Starter
-Module25=SubGroupViewHolder
-Module26=TaskDao
-Module27=TaskGroupActivity
-Module28=TaskQuery
-Module29=TaskRepository
+Module20=RepeatDao
+Module21=RepeatRepository
+Module22=RepeatViewModel
+Module23=SettingsAbout
+Module24=SettingsActivity
+Module25=SettingsHelp
+Module26=SettingsRepository
+Module27=SettingsViewModel
+Module28=Snooze
+Module29=Starter
 Module3=AttachmentFileRepository
-Module30=TaskViewerActivity
-Module31=TaskViewHolder
-Module32=TaskViewModel
-Module33=Theme
-Module34=Time
-Module35=ToDo
-Module36=ToDoDatabase
-Module37=ToDoDatabaseViewModel
-Module38=ToDoFileSystem
+Module30=SubGroupViewHolder
+Module31=TaskDao
+Module32=TaskGroupActivity
+Module33=TaskQuery
+Module34=TaskRepository
+Module35=TaskViewerActivity
+Module36=TaskViewHolder
+Module37=TaskViewModel
+Module38=Theme
+Module39=Time
 Module4=AttachmentRepository
+Module40=ToDo
+Module41=ToDoDatabase
+Module42=ToDoDatabaseViewModel
+Module43=ToDoFileSystem
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
 Module7=DatabaseUtils
@@ -147,12 +152,12 @@ Module8=Date
 Module9=DateAndTime
 NumberOfFiles=46
 NumberOfLibraries=14
-NumberOfModules=38
+NumberOfModules=43
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
-	#VersionCode: 10
+	#VersionCode: 12
 	#VersionName: v2.0.0.3 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
@@ -419,7 +424,7 @@ Private Sub CreateItem(viewHolder As TaskViewHolder) As B4XView
 End Sub
 
 ' Binds task data into the task view.
-Private Sub BindItem(item As ToDo, viewHolder As TaskViewHolder)
+Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewHolder)
 	' Bind the checkbox
 	viewHolder.TaskCheckbox = chkToDoItem
 	' Bind the view for task info
@@ -427,7 +432,7 @@ Private Sub BindItem(item As ToDo, viewHolder As TaskViewHolder)
 	' Bind the task title
 	viewHolder.TaskCheckbox.Text = item.GetTitle
 	' Bind the glance information
-	viewHolder.TaskInfo.Text = item.GetGlance
+	viewHolder.TaskInfo.Text = item.GetGlance(repeatItem.GetRepeatInfo)
 	' Make a reference to the task_id from the database.
 	viewHolder.ID = item.GetId
 	' Bind the panel into the view holder.
@@ -475,6 +480,9 @@ Private Sub LoadItems()
 		
 		' Iterate each item.
 		For Each item As ToDo In m_tasks
+			
+			Dim repeatItem As Repeat = Starter.RepeatViewModelInstance.GetTaskRepeat(item.GetId)
+			
 			' Initialize a ViewHolder
 			Dim viewHolder As TaskViewHolder
 			viewHolder.Initialize
@@ -517,7 +525,7 @@ Private Sub LoadItems()
 			viewHolder.Root.SetColorAndBorder(Colors.White, 1, Colors.White, 15)
 			' Bind the currently referenced vieHolder that ToDoList points to into there
 			' currently iterated data.
-			BindItem(item, viewHolder)
+			BindItem(item, repeatItem, viewHolder)
 	
 		Next
 	End If
