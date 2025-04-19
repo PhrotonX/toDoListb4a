@@ -21,10 +21,13 @@ Public Sub InsertTask(item As ToDo)
 		' Get the current date and time in ticks.
 		Dim currentDateAndTime As Long = DateTime.Now
 		
-		' Insert the task without the repeat data.
-		m_sql.ExecNonQuery("INSERT INTO task(title, notes, priority, due_date, done, created_at, updated_at)" & CRLF & _
+		' Insert the task with the data from item object.
+		m_sql.ExecNonQuery("INSERT INTO task(title, notes, priority, due_date, done, created_at, updated_at, " & CRLF & _
+		"is_reminder_enabled, reminder, snooze)" & CRLF & _
 		"VALUES('"&item.GetTitle&"', '"&item.GetNotes&"', "&item.GetPriority&", "&item.GetDueDate.GetUnixTime& CRLF & _
-		", "&DatabaseUtils.BoolToInt(item.Done)&", "&currentDateAndTime&", "&currentDateAndTime&");")
+		", "&DatabaseUtils.BoolToInt(item.Done)&", "&currentDateAndTime&", "&currentDateAndTime & ", " & CRLF & _
+		DatabaseUtils.BoolToInt(item.IsReminderEnabled) & ", " & item.Reminder.GetUnixTime & ", " & _
+		item.Snooze.GetSnooze & ");")
 		m_sql.TransactionSuccessful
 	Catch
 		Log(LastException)
@@ -58,6 +61,9 @@ Public Sub UpdateTask(item As ToDo)
 		"priority = " & item.GetPriority & ", " & CRLF & _
 		"done = " & DatabaseUtils.BoolToInt(item.Done) & ", " & CRLF & _ 
 		"due_date = " & item.GetDueDate.GetUnixTime & ", " & CRLF & _
+		"is_reminder_enabled = " & DatabaseUtils.BoolToInt(item.IsReminderEnabled) & ", " & CRLF & _
+		"reminder = " & item.Reminder.GetUnixTime & ", " & CRLF & _
+		"snooze = " & item.Snooze.GetSnooze & ", " & CRLF & _
 		"updated_at = " & DateTime.Now & CRLF & _
 		"WHERE task_id = " & item.GetId & CRLF & _
 		";")
@@ -130,6 +136,9 @@ Private Sub OnBuildTask(cursorTask As Cursor) As ToDo
 	item.SetNotes(cursorTask.GetString("notes"))
 	item.SetPriority(cursorTask.GetInt("priority"))
 	item.GetDueDate.SetUnixTime(cursorTask.GetLong("due_date"))
+	item.SetReminderEnabled(DatabaseUtils.IntToBool("is_reminder_enabled"))
+	item.Reminder.SetUnixTime(cursorTask.GetLong("reminder"))
+	item.Snooze.SetSnooze(cursorTask.GetLong("snooze"))
 	item.GetCreatedAt.SetUnixTime(cursorTask.GetLong("created_at"))
 	item.GetDeletedAt.SetUnixTime(cursorTask.GetLong("deleted_at"))
 	item.GetUpdatedAt.SetUnixTime(cursorTask.GetLong("updated_at"))
