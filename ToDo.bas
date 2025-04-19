@@ -14,6 +14,9 @@ Sub Class_Globals
 	Private m_updatedAt As DateAndTime
 	Private m_deletedAt As DateAndTime
 	Private m_isDeleted As Boolean
+	Private m_isReminderEnabled As Boolean
+	Private m_reminder As Time
+	Private m_snooze As Snooze
 	Public Done As Boolean
 	
 	Public Const PRIORITY_LOW As Int = 0
@@ -32,6 +35,9 @@ Public Sub Initialize
 	m_createdAt.Initialize
 	m_deletedAt.Initialize
 	m_updatedAt.Initialize
+	
+	m_reminder.Initialize(0, 0, 0)
+	m_snooze.Initialize
 End Sub
 
 Public Sub GetCreatedAt As DateAndTime
@@ -44,7 +50,7 @@ End Sub
 
 ' Retrieves the glance information to be displayed on TaskItemLayout.
 ' repeat - The repeat information from Repeat object.
-Public Sub GetGlance(repeat As String) As String
+Public Sub GetGlance(repeatStr As String) As String
 	Dim dueDate As String = m_dueDate.GetFormattedDate2
 	'Dim repeat As String = GetRepeatInfo
 	
@@ -53,12 +59,12 @@ Public Sub GetGlance(repeat As String) As String
 	Dim hyphen As String = " - "
 	
 	' Remove hyphen for if repeat information is not available.
-	If repeat == "" Then
+	If repeatStr == "" Then
 		hyphen = ""
 	End If
 	
 	
-	Return dueDate & hyphen & repeat
+	Return dueDate & hyphen & repeatStr
 End Sub
 
 Public Sub GetDueDate As Date
@@ -103,8 +109,20 @@ Public Sub GetUpdatedAt As DateAndTime
 	Return m_updatedAt
 End Sub
 
+Public Sub Reminder() As Time
+	Return m_reminder
+End Sub
+
+Public Sub Snooze() As Snooze
+	Return m_snooze
+End Sub
+
 Public Sub IsDeleted As Boolean
 	Return m_isDeleted
+End Sub
+
+Public Sub IsReminderEnabled As Boolean
+	Return m_isReminderEnabled
 End Sub
 
 Public Sub SetDeleted(value As Boolean)
@@ -117,6 +135,10 @@ End Sub
 
 Public Sub SetId(id As String)
 	m_id = id
+End Sub
+
+Public Sub SetReminderEnabled(value As Boolean)
+	m_isReminderEnabled = value
 End Sub
 
 Public Sub SetTitle(title As String)
