@@ -10,6 +10,9 @@ Sub Class_Globals
 	Private m_second As Int
 	Private m_marker As String
 	Private m_24hour As Boolean
+	
+	' A single day in UNIX time is equal to 86,400,000 milliseconds.
+	Private Const DAY_LENGTH As Long = 86400000
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -46,8 +49,7 @@ End Sub
 Public Sub GetFormattedTime As String
 	'Check if the time uses a 24-hour format to return a string of Time of HH:MM:SS format.
 	If m_24hour == True Then
-		Return GetNumWithLeadingZero(m_hour) & ":" & GetNumWithLeadingZero(m_minute) & ":" & _
-		":" & GetNumWithLeadingZero(m_second)	
+		Return GetFormattedTime24Hour
 	Else
 		' Return a 12-hour format (hh:mm:ss a) instead
 		Return GetNumWithLeadingZero(Convert24HourInto12HourFormat) & ":" & _
@@ -55,6 +57,11 @@ Public Sub GetFormattedTime As String
 			GetNumWithLeadingZero(m_second) & ":" & _
 			" " & GetTimeMarker
 	End If
+End Sub
+
+Public Sub GetFormattedTime24Hour() As String
+	Return GetNumWithLeadingZero(m_hour) & ":" & GetNumWithLeadingZero(m_minute) & ":" & _
+		":" & GetNumWithLeadingZero(m_second)
 End Sub
 
 Public Sub GetHour As Int
@@ -87,6 +94,15 @@ Public Sub GetTimeMarker As String
 	Else
 		Return "AM"	
 	End If
+End Sub
+
+Public Sub GetUnixTime() As Long
+	' Get the UNIC time of the time value set into this object. However, this includes the
+	' UNIX time of the current date as well.
+	Dim unixTime As Long = DateTime.TimeParse(GetFormattedTime24Hour)
+
+	' Retrieve the time only in UNIX format.
+	Return unixTime Mod DAY_LENGTH
 End Sub
 
 Public Sub SetHour(hour As Int)
