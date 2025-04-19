@@ -127,23 +127,24 @@ Module24=SettingsActivity
 Module25=SettingsHelp
 Module26=SettingsRepository
 Module27=SettingsViewModel
-Module28=Starter
-Module29=SubGroupViewHolder
+Module28=Snooze
+Module29=Starter
 Module3=AttachmentFileRepository
-Module30=TaskDao
-Module31=TaskGroupActivity
-Module32=TaskQuery
-Module33=TaskRepository
-Module34=TaskViewerActivity
-Module35=TaskViewHolder
-Module36=TaskViewModel
-Module37=Theme
-Module38=Time
-Module39=ToDo
-Module40=ToDoDatabase
+Module30=SubGroupViewHolder
+Module31=TaskDao
+Module32=TaskGroupActivity
+Module33=TaskQuery
+Module34=TaskRepository
+Module35=TaskViewerActivity
+Module36=TaskViewHolder
+Module37=TaskViewModel
+Module38=Theme
+Module39=Time
 Module4=AttachmentRepository
-Module41=ToDoDatabaseViewModel
-Module42=ToDoFileSystem
+Module40=ToDo
+Module41=ToDoDatabase
+Module42=ToDoDatabaseViewModel
+Module43=ToDoFileSystem
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
 Module7=DatabaseUtils
@@ -151,12 +152,12 @@ Module8=Date
 Module9=DateAndTime
 NumberOfFiles=46
 NumberOfLibraries=14
-NumberOfModules=42
+NumberOfModules=43
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
-	#VersionCode: 11
+	#VersionCode: 12
 	#VersionName: v2.0.0.3 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
