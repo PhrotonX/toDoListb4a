@@ -64,6 +64,11 @@ Sub Globals
 	Private lblAttachmentFileName As Label
 	Private pnlAttachmentRoot As Panel
 	Private spnTaskGroup As Spinner
+	Private spnReminderHour As Spinner
+	Private spnReminderMarker As Spinner
+	Private spnReminderMinute As Spinner
+	Private spnSnooze As Spinner
+	Private toggleReminder As ToggleButton
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -93,8 +98,10 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Retrieve the data sent by MainActivity to check the editor mode.
 	m_mode = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_MODE)
 	
-	' Fill the due date spinners with data
+	' Fill the spinners with data
 	PopulateDueDate
+	PopulateReminders
+	PopulateSnooze
 	
 	' Load the task groups
 	LoadTaskGroup
@@ -427,6 +434,7 @@ Private Sub OnAddAttachment(item As Attachment)
 End Sub
 
 ' Fill items into the due date Spinners.
+' Remarks: This requries m_task to be initialized before loading.
 Private Sub PopulateDueDate
 	' Clear the spinner items to prevent potential item duplication bug.
 	spinnerDueDateDay.Clear
@@ -452,6 +460,52 @@ Private Sub PopulateDueDate
 		End If
 		' Sets the current iteration value as a day.
 		spinnerDueDateDay.Add(i)
+	Next
+End Sub
+
+Private Sub PopulateSnooze
+	Dim snoozeObj As Snooze = m_task.Snooze
+	
+	' Clear the items before adding new items.
+	spnSnooze.Clear
+	
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_OFF))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_MINUTE))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_3_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_10_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_15_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_20_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_30_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_HOUR))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_2_HOURS))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_HOURS))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_12_HOURS))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_DAY))
+End Sub
+
+Private Sub PopulateReminders
+	' Clear the items before adding new items.
+	spnReminderHour.Clear
+	spnReminderMinute.Clear
+	spnReminderMarker.Clear
+	
+	' Populate the hour field, depending if 24-hour format setting is used.
+	If Starter.SettingsViewModelInstance.Get24HourFormat() == True Then
+		For i = 0 To 23
+			spnReminderHour.Add(m_task.Reminder.GetNumWithLeadingZero(i))
+		Next
+	Else
+		For i = 1 To 12
+			spnReminderHour.Add(m_task.Reminder.GetNumWithLeadingZero(i))
+		Next
+		
+		spnReminderMarker.Add("AM")
+		spnReminderMarker.Add("PM")
+	End If
+	
+	For i = 0 To 59
+		spnReminderMinute.Add(m_task.Reminder.GetNumWithLeadingZero(i))
 	Next
 End Sub
 
