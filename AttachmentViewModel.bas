@@ -35,6 +35,15 @@ Public Sub GetAttachment(attachment_id As Long) As Attachment
 	Return m_dbRepository.GetAttachment(attachment_id)
 End Sub
 
+Public Sub GetAttachmentFilePath(attachment_id As Long) As String
+	Log("Shared Folder: " & Starter.Provider.SharedFolder & m_fileRepository.DIRECTORY)
+	For Each item As String In File.ListFiles(Starter.Provider.SharedFolder & m_fileRepository.DIRECTORY)
+		Log("File from Shared Folder: " & item)
+	Next
+	
+	Return File.Combine(Starter.Provider.SharedFolder & m_fileRepository.DIRECTORY, GetAttachment(attachment_id).GetFilename)
+End Sub
+
 Public Sub GetAttachmentsFromUri(FileUri As String) As Attachment
 	Return m_fileRepository.GetAttachmentsFromUri(FileUri).Get(0)
 End Sub
@@ -45,16 +54,39 @@ End Sub
 
 ' Returns true if the insertion succeeded.
 Public Sub OpenAttachment(attachment_id As Long) As Boolean
-	'Dim filePath As String = File.DirInternal & m_fileRepository.DIRECTORY & GetAttachment(attachment_id).GetFilename
-	Dim filePath As String = File.Combine(File.DirInternal & m_fileRepository.DIRECTORY, GetAttachment(attachment_id).GetFilename)
+	Try
+		Dim filePath As String = GetAttachmentFilePath(attachment_id)
+		Dim fileName As String = GetAttachment(attachment_id).GetFilename
 	
-	Log(filePath)
+		Log("filePath: " & filePath)
+		Log("fileName: " & fileName)
 	
-	Dim intentObj As Intent
-	intentObj.Initialize(intentObj.ACTION_VIEW, "file://" & filePath)
-	intentObj.SetComponent("android/com.android.internal.app.ResolverActivity")
-	intentObj.SetType("*/*")
-	StartActivity(intentObj)
+		'File.Copy(Starter.Provider.SharedFolder & m_fileRepository.DIRECTORY, fileName, Starter.Provider.SharedFolder, fileName)
+	 
+		'Log("SharedFolder: " & Starter.Provider.SharedFolder)
+	 
+		'For Each item As String In File.ListFiles(Starter.Provider.SharedFolder)
+		'	Log("File from SharedFolder: " & item)
+		'Next
+	
+		Dim intentObj As Intent
+		intentObj.Initialize(intentObj.ACTION_VIEW, "")
+		Starter.Provider.SetFileUriAsIntentData(intentObj, m_fileRepository.DIRECTORY & fileName)
+		Dim data As String = intentObj.GetData
+		'Starter.Provider.SetFileUriAsIntentData(intentObj, m_fileRepository.DIRECTORY & fileName))
+		
+		'intentObj.SetComponent("android/com.android.internal.app.ResolverActivity")
+		
+		intentObj.SetType("image/*")
+		intentObj.Flags = Bit.Or(1, 2) ' FLAG_GRANT_READ_URI_PERMISSION
+		StartActivity(intentObj)
+		
+		Return True
+	Catch
+		Log(LastException)
+	End Try
+	
+	Return False
 End Sub
 
 Public Sub UpdateAttachment(item As Attachment)
@@ -66,12 +98,6 @@ Public Sub DeleteAttachment(item As Attachment) As Boolean
 	Return m_fileRepository.RemoveAttachment(item)
 End Sub
 
-Sub CreateFileProviderUri (Dir As String, FileName As String) As Object
-	Dim FileProvider As JavaObject
-	Dim context As JavaObject
-	context.InitializeContext
-	FileProvider.InitializeStatic("android.support.v4.content.FileProvider")
-	Dim f As JavaObject
-	f.InitializeNewInstance("java.io.File", Array(Dir, FileName))
-	Return FileProvider.RunMethod("getUriForFile", Array(context, Application.PackageName & ".provider", f))
+Public Sub DropAttachmentsFromFS() As Boolean
+	Return m_fileRepository.DropAttachments()
 End Sub

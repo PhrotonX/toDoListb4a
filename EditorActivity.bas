@@ -28,6 +28,7 @@ Sub Globals
 	' This variable is responsible for handling the current data that can be used for performing
 	' CRUD into the database.
 	Private m_task As ToDo
+	Private m_repeat As Repeat
 	Private m_group As Group
 	
 	' Attachment that are pending for saving.
@@ -87,6 +88,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Initialize variables
 	m_task.Initialize
 	
+	m_repeat.Initialize
+	
 	' Retrieve the data sent by MainActivity to check the editor mode.
 	m_mode = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_MODE)
 	
@@ -132,13 +135,15 @@ Sub Activity_Create(FirstTime As Boolean)
 		End Select
 		
 		' Update the repeat values.
-		checkRepeatSun.Checked = m_task.GetRepeat(m_task.REPEAT_SUNDAY)
-		checkRepeatMon.Checked = m_task.GetRepeat(m_task.REPEAT_MONDAY)
-		checkRepeatTue.Checked = m_task.GetRepeat(m_task.REPEAT_TUESDAY)
-		checkRepeatWed.Checked = m_task.GetRepeat(m_task.REPEAT_WEDNESDAY)
-		checkRepeatThu.Checked = m_task.GetRepeat(m_task.REPEAT_THURSDAY)
-		checkRepeatFri.Checked = m_task.GetRepeat(m_task.REPEAT_FRIDAY)
-		checkRepeatSat.Checked = m_task.GetRepeat(m_task.REPEAT_SATURDAY)
+		m_repeat = Starter.RepeatViewModelInstance.GetTaskRepeat(m_task.GetId)
+		
+		checkRepeatSun.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_SUNDAY)
+		checkRepeatMon.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_MONDAY)
+		checkRepeatTue.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_TUESDAY)
+		checkRepeatWed.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_WEDNESDAY)
+		checkRepeatThu.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_THURSDAY)
+		checkRepeatFri.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_FRIDAY)
+		checkRepeatSat.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_SATURDAY)
 		
 		' Update the selected value of due date month spinner based on the numeric month that is 
 		' set on m_task.
@@ -249,10 +254,16 @@ Private Sub btnSave_Click
 		Starter.TaskViewModelInstance.UpdateTask(m_task)
 		
 		Starter.GroupViewModelInstance.UpdateTaskGroup(m_task.GetId, m_group.GetID, selectedGroup.GetID)
+		
+		Starter.RepeatViewModelInstance.UpdateRepeat(m_repeat)
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		Starter.TaskViewModelInstance.InsertTask(m_task)
 		
+		m_task.SetId(Starter.ToDoDatabaseViewModelInstance.GetLastInsertedID())
+		
 		Starter.GroupViewModelInstance.InsertTaskGroup(m_task.GetId, selectedGroup.GetID)
+		
+		Starter.RepeatViewModelInstance.InsertTaskRepeat(m_task.GetId, m_repeat)
 	End If
 	
 	' Save the attachments that are pending for insertion.
@@ -287,31 +298,31 @@ Private Sub btnCancel_Click
 End Sub
 
 Private Sub checkRepeatSun_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(0, Checked)
+	m_repeat.SetEnabled(0, Checked)
 End Sub
 
 Private Sub checkRepeatMon_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(1, Checked)
+	m_repeat.SetEnabled(1, Checked)
 End Sub
 
 Private Sub checkRepeatTue_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(2, Checked)
+	m_repeat.SetEnabled(2, Checked)
 End Sub
 
 Private Sub checkRepeatWed_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(3, Checked)
+	m_repeat.SetEnabled(3, Checked)
 End Sub
 
 Private Sub checkRepeatThu_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(4, Checked)
+	m_repeat.SetEnabled(4, Checked)
 End Sub
 
 Private Sub checkRepeatFri_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(5, Checked)
+	m_repeat.SetEnabled(5, Checked)
 End Sub
 
 Private Sub checkRepeatSat_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(6, Checked)
+	m_repeat.SetEnabled(6, Checked)
 End Sub
 
 Private Sub radioPriorityMedium_CheckedChange(Checked As Boolean)
@@ -337,6 +348,7 @@ Private Sub btnDelete_Click
 	If Result = DialogResponse.POSITIVE Then
 		Starter.TaskViewModelInstance.DeleteTask(m_task)
 		Starter.GroupViewModelInstance.DeleteTaskGroup(m_task.GetId, m_group.GetID)
+		Starter.RepeatViewModelInstance.DeleteRepeat(m_repeat)
 		' Close the editor after deleting,
 		Activity.Finish
 	End If
@@ -524,17 +536,7 @@ Private Sub btnClearDueDate_Click
 	ClearDueDate
 End Sub
 
-Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
-	' Temporary code only
-	'For Each item As String In File.ListFiles(File.DirInternal)
-	'	Log(item)
-	'Next
-	
-	' For debugging only! Move this into debug mode.
-	For Each item As String In File.ListFiles(File.DirInternal & "/attachments/")
-		Log(item)
-	Next
-	
+Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)	
 	Dim viewHolder As AttachmentViewHolder = Value	
 
 	Starter.AttachmentViewModelInstance.OpenAttachment(viewHolder.ID)
