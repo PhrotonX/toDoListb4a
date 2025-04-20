@@ -43,15 +43,15 @@ Public Sub LoadDefaults()
 	Set24HourFormat(False)
 End Sub
 
-Public Sub GetDebugMode() As Boolean
+Public Sub IsDebugModeEnabled() As Boolean
 	Return m_kvs.Get(SETTINGS_KEY_DEBUG_MODE)
 End Sub
 
-Public Sub GetDarkMode() As Boolean
+Public Sub IsDarkModeEnabled() As Boolean
 	Return m_kvs.Get(SETTINGS_KEY_DARK_MODE)
 End Sub
 
-Public Sub GetExperimentalMode() As Boolean
+Public Sub IsExperimentalModeEnabled() As Boolean
 	Return m_kvs.Get(SETTINGS_KEY_EXPERIMENTAL_MODE)
 End Sub
 
@@ -59,11 +59,11 @@ Public Sub GetLanguage() As String
 	Return m_kvs.Get(SETTINGS_KEY_EXPERIMENTAL_MODE)
 End Sub
 
-Public Sub GetTaskCompetionSound() As Boolean
+Public Sub IsTaskCompetionSoundEnabled() As Boolean
 	Return m_kvs.Get(SETTINGS_KEY_TASK_COMPLETION_SOUND)
 End Sub
 
-Public Sub Get24HourFormat() As Boolean
+Public Sub Is24HourFormatEnabled() As Boolean
 	Return m_kvs.Get(SETTINGS_KEY_24_HOUR_FORMAT)
 End Sub
 
