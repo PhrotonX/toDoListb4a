@@ -12,7 +12,7 @@ Sub Process_Globals
 	
 	Public Const ACTION_TASK_NOTIFICATION_DISMISS As String = Application.PackageName & ".ACTION_TASK_NOTIFICATION_DISMISS"
 	Public Const CHANNEL_TASK_NOTIFICATION As String = "Task Notification"
-	Public Const CHANNEL_TASK_NOTIFICATION_ID As Int = Application.PackageName & ".CHANNEL_TASK_NOTIFICATION"
+	Public Const CHANNEL_TASK_NOTIFICATION_ID As String = Application.PackageName & ".CHANNEL_TASK_NOTIFICATION"
 	Public Const TAG_TASK_NOTIFICATION As String = Application.PackageName & ".TAG_TASK_NOTIFICATION"
 End Sub
 
@@ -23,17 +23,20 @@ Sub DisplayNotification(item As ToDo)
 	notificationBuilder.Initialize(CHANNEL_TASK_NOTIFICATION_ID, CHANNEL_TASK_NOTIFICATION, priority)
 	notificationBuilder.SetDefaults(True, False, True)
 	notificationBuilder.ShowBadge(True)
+	notificationBuilder.SmallIcon(LoadBitmap(File.DirAssets, "ic_launcher_small.png"))
 	
 	notificationBuilder.AddButtonAction(Null, "Dismiss", TaskNotificationDismissReceiver, item.GetId)
 	notificationBuilder.AddButtonAction(Null, "Snooze", TaskNotificationSnoozeReceiver, item.GetId)
 	notificationBuilder.AddButtonAction(Null, "Complete", TaskNotificationCompleteReceiver, item.GetId)
 	notificationBuilder.DeleteAction(TaskNotificationDismissReceiver, "Action String")
 	
-	notificationBuilder.ShowWhen(item.Reminder.GetUnixTime)
+	Dim notificationTime As Long = DateTime.Now + item.Reminder.GetUnixTime
+
+	notificationBuilder.ShowWhen(notificationTime)
 	
 	Dim notification As Notification = notificationBuilder.Build(GetTitle(item), item.GetNotes, _ 
 		TAG_TASK_NOTIFICATION, TaskViewerActivity)
-		
+
 	notification.Notify(item.GetId)
 End Sub
 

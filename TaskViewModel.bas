@@ -21,7 +21,7 @@ End Sub
 Public Sub InsertTask(item As ToDo)
 	m_repository.InsertTask(item)
 	
-	'TaskNotification.DisplayNotification(item)
+	TaskNotification.DisplayNotification(item)
 End Sub
 
 Public Sub DeleteTask(item As ToDo)
@@ -31,7 +31,7 @@ End Sub
 Public Sub UpdateTask(Item As ToDo)
 	m_repository.UpdateTask(Item)
 	
-	'TaskNotification.DisplayNotification(Item)
+	TaskNotification.DisplayNotification(Item)
 End Sub
 
 Public Sub GetTask(id As Long) As ToDo

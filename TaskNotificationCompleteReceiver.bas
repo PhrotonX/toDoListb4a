@@ -9,7 +9,7 @@ Sub Process_Globals
 	
 	' Repository instances
 	Private taskRepo As TaskRepository
-	Private repeatRepo As RepeatRepository
+	'Private repeatRepo As RepeatRepository
 	
 	' Global instance of TaskViewModel where the database can be accessed.
 	Public TaskViewModelInstance As TaskViewModel
