@@ -154,7 +154,7 @@ Public Sub SetHour12HourFormat(hour As Int, marker As String)
 		End If
 	Else If marker == MARKER_PM Then
 		' 1:00 PM is 1 + 12 = 13:00 and 11:00 PM is 11+12 = 23:00.
-		If hour > 12 And hour < 24 Then
+		If m_hour <> 12 Then
 			m_hour = hour + 12
 		End If
 	End If
