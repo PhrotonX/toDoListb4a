@@ -168,7 +168,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		
 		' Load reminder field data.
 		spnReminderHour.SelectedIndex = _
-			spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour))
+			spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2))
 		spnReminderMinute.SelectedIndex = _
 			spnReminderMinute.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetMinute))
 		spnReminderMarker.SelectedIndex = _
