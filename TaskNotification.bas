@@ -16,7 +16,41 @@ Sub Process_Globals
 	Public Const TAG_TASK_NOTIFICATION As String = Application.PackageName & ".TAG_TASK_NOTIFICATION"
 End Sub
 
-Sub DisplayNotification(item As ToDo)
+' This function creates or replaces a notification.
+Sub CreateNotification(item As ToDo, repeatItem As Repeat)
+	
+	If item.IsReminderEnabled == True Then
+		Dim notificationTimes As List = OnCalculateSchedule(repeatItem)
+		
+		If notificationTimes.Size > 0 Then
+			' Create separate notifications for each repeat days.
+			' @NOTE: This code does currently not handle notifications that will repeat per week.
+			Dim i As Int = 0
+			For Each notificationTime As Long In notificationTimes
+				If notificationTime <> Null Then
+					OnCreateNotification(item, notificationTime, repeatItem.GetID(i))
+				End If
+				
+				i = i + 1
+			Next
+		Else
+			Dim dateObj As Date
+			dateObj.Initialize(0,0,0)
+	
+			Dim timeObj As Long = dateObj.GetDateNoTime(DateTime.Now)
+			
+			' Single notification only.
+			' Pass first repeat ID if no repeat information is enabled.
+			OnCreateNotification(item, timeObj,repeatItem.GetID(0))
+		End If
+		
+	Else
+		
+	End If
+End Sub
+
+' repeatId - The repeat_id of the repeat day as the notification ID. If repeat is disabled, then the 
+Private Sub OnCreateNotification(item As ToDo, notificationTime As Long, repeatId As Long)
 	Dim priority As String = GetImportanceLevel(item)
 	
 	Dim notificationBuilder As NB6
@@ -30,14 +64,16 @@ Sub DisplayNotification(item As ToDo)
 	notificationBuilder.AddButtonAction(Null, "Complete", TaskNotificationCompleteReceiver, item.GetId)
 	notificationBuilder.DeleteAction(TaskNotificationDismissReceiver, "Action String")
 	
-	Dim notificationTime As Long = DateTime.Now + item.Reminder.GetUnixTime
+	Dim notificationTimeProcessed As Long = notificationTime + item.Reminder.GetUnixTime
 
-	notificationBuilder.ShowWhen(notificationTime)
+	notificationBuilder.ShowWhen(notificationTimeProcessed)
 	
 	Dim notification As Notification = notificationBuilder.Build(GetTitle(item), item.GetNotes, _ 
 		TAG_TASK_NOTIFICATION, TaskViewerActivity)
 
-	notification.Notify(item.GetId)
+	notification.Cancel(repeatId)
+
+	notification.Notify(repeatId)
 End Sub
 
 Private Sub GetImportanceLevel(item As ToDo) As String
@@ -62,4 +98,42 @@ Private Sub GetTitle(item As ToDo) As Object
 		Case Else:
 			Return item.GetTitle
 	End Select
+End Sub
+
+Private Sub OnCalculateSchedule(item As Repeat) As List
+	Dim result As List
+	result.Initialize
+	
+	Dim dateObj As Date
+	dateObj.Initialize(0,0,0)
+	
+	' Get the current day of the week. The value should be decreased by 1 since the value that this function
+	' returns is 1-based instead of 0.
+	Dim j As Int = DateTime.GetDayOfWeek(DateTime.Now) - 1
+
+	' Iterator for 0 to 6.
+	Dim itr As Int = -1
+	
+	For i = 0 To 6
+		' If the current iterated value is greater than 6 or Saturday, then set the iterator value into
+		' 0 until the value is less than j. Else, set the itr value as the current iterated value.
+		If j + (j - i) > 6 Then
+			itr = itr + 1
+		Else
+			itr = i
+		End If
+		
+		' If the current repeat day is enabled, then get its date value and then add it into the resulting list.
+		If item.IsEnabled(itr) Then
+			Dim timeObj As Long = dateObj.GetDateNoTime(DateTime.Now)
+			result.Add(timeObj)
+		Else
+			' Add filler null to avoid breaking 0-6 iterators outside this function.
+			result.Add(Null)
+		End If
+		
+		j = j + 1
+	Next
+	
+	Return result
 End Sub
