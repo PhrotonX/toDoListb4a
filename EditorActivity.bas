@@ -326,6 +326,11 @@ Private Sub btnSave_Click
 		Starter.RepeatViewModelInstance.InsertTaskRepeat(m_task.GetId, m_repeat)
 	End If
 	
+	' Get the repeat values but with repeat_id.
+	m_repeat = Starter.RepeatViewModelInstance.GetTaskRepeat(m_task.GetId)
+	
+	TaskNotification.CreateNotification(m_task, m_repeat)
+	
 	' Save the attachments that are pending for insertion.
 	For Each item As Attachment In m_pendingAttachmentInsert
 		If Starter.AttachmentViewModelInstance.InsertAttachment(item, m_task.GetId) == False Then
