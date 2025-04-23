@@ -221,7 +221,6 @@ Public Sub GetFormattedDate2 As String
 End Sub
 
 Public Sub GetDateNoTime(ticks As Long) As Long
-	Dim ticks As Long = ticks
 	Return ticks - (ticks Mod DAY_LENGTH)
 End Sub
 
