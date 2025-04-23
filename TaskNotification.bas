@@ -18,7 +18,7 @@ End Sub
 
 ' This function creates or replaces a notification.
 Sub CreateNotification(item As ToDo, repeatItem As Repeat)
-	
+	Log("CreateNotification()")
 	If item.IsReminderEnabled == True Then
 		Dim notificationTimes As List = OnCalculateSchedule(repeatItem)
 		
@@ -27,7 +27,10 @@ Sub CreateNotification(item As ToDo, repeatItem As Repeat)
 			' @NOTE: This code does currently not handle notifications that will repeat per week.
 			Dim i As Int = 0
 			For Each notificationTime As Long In notificationTimes
-				If notificationTime <> Null Then
+				
+				Log("notificationTime i " & i & ": " & notificationTime)
+				
+				If notificationTime <> 0 Then
 					OnCreateNotification(item, notificationTime, repeatItem.GetID(i))
 				End If
 				
@@ -38,6 +41,8 @@ Sub CreateNotification(item As ToDo, repeatItem As Repeat)
 			dateObj.Initialize(0,0,0)
 	
 			Dim timeObj As Long = dateObj.GetDateNoTime(DateTime.Now)
+			
+			Log("timeObj: " & timeObj)
 			
 			' Single notification only.
 			' Pass first repeat ID if no repeat information is enabled.
@@ -65,6 +70,8 @@ Private Sub OnCreateNotification(item As ToDo, notificationTime As Long, repeatI
 	notificationBuilder.DeleteAction(TaskNotificationDismissReceiver, "Action String")
 	
 	Dim notificationTimeProcessed As Long = notificationTime + item.Reminder.GetUnixTime
+
+	Log("notificationTimeProcessed: " & notificationTimeProcessed)
 
 	notificationBuilder.ShowWhen(notificationTimeProcessed)
 	
@@ -128,8 +135,8 @@ Private Sub OnCalculateSchedule(item As Repeat) As List
 			Dim timeObj As Long = dateObj.GetDateNoTime(DateTime.Now)
 			result.Add(timeObj)
 		Else
-			' Add filler null to avoid breaking 0-6 iterators outside this function.
-			result.Add(Null)
+			' Add filler 0 to avoid breaking 0-6 iterators outside this function.
+			result.Add(0)
 		End If
 		
 		j = j + 1
