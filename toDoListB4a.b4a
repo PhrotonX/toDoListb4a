@@ -303,6 +303,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	m_query.Initialize()
 	
 	Starter.Permissions.CheckAndRequest(Starter.Permissions.PERMISSION_POST_NOTIFICATIONS)
+	Starter.Permissions.CheckAndRequest("android.permission.SCHEDULE_EXACT_ALARM")
+	Starter.Permissions.CheckAndRequest("android.permission.USE_EXACT_ALARM")
 End Sub
 
 Sub Activity_Resume
