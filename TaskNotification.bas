@@ -72,18 +72,17 @@ Private Sub OnCreateNotification(item As ToDo, notificationTime As Long, repeatI
 	notificationBuilder.AddButtonAction(Null, "Complete", TaskNotificationCompleteReceiver, item.GetId)
 	notificationBuilder.DeleteAction(TaskNotificationDismissReceiver, "Action String")
 	
-	Dim notificationTimeProcessed As Long = notificationTime + item.Reminder.GetUnixTime
+	'Dim notificationTimeProcessed As Long = notificationTime + item.Reminder.GetUnixTime
 
-	Log("notificationTimeProcessed: " & notificationTimeProcessed)
+	'Log("notificationTimeProcessed: " & notificationTimeProcessed)
 
-	notificationBuilder.ShowWhen(notificationTimeProcessed)
+	'notificationBuilder.ShowWhen(notificationTimeProcessed)
 	
 	notification = notificationBuilder.Build(GetTitle(item), item.GetNotes, _ 
 		TAG_TASK_NOTIFICATION, TaskViewerActivity)
 
-	'notification.Cancel(repeatId)
+	notification.Cancel(repeatId)
 	notification.Notify(repeatId)
-	'notification.
 	
 	Return notification
 End Sub
