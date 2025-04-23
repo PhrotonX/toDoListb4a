@@ -17,24 +17,22 @@ Sub Process_Globals
 End Sub
 
 ' This function creates or replaces a notification.
-Sub CreateNotification(item As ToDo, repeatItem As Repeat)
+Sub CreateNotification(item As ToDo, repeatItem As Repeat) As List
+	Dim notifications As List
+	notifications.Initialize
+	
 	Log("CreateNotification()")
 	If item.IsReminderEnabled == True Then
-		Dim notificationTimes As List = OnCalculateSchedule(repeatItem)
+		Dim notificationTimes As Map = OnCalculateSchedule(repeatItem)
 		
 		If notificationTimes.Size > 0 Then
 			' Create separate notifications for each repeat days.
 			' @NOTE: This code does currently not handle notifications that will repeat per week.
-			Dim i As Int = 0
-			For Each notificationTime As Long In notificationTimes
+			For Each notificationKey As Long In notificationTimes.Keys
 				
-				Log("notificationTime i " & i & ": " & notificationTime)
+				Log("notificationTime key:" & notificationTimes.Get(notificationKey))
 				
-				If notificationTime <> 0 Then
-					OnCreateNotification(item, notificationTime, repeatItem.GetID(i))
-				End If
-				
-				i = i + 1
+				notifications.Add(OnCreateNotification(item, notificationTimes.Get(notificationKey), notificationKey))
 			Next
 		Else
 			Dim dateObj As Date
@@ -46,16 +44,21 @@ Sub CreateNotification(item As ToDo, repeatItem As Repeat)
 			
 			' Single notification only.
 			' Pass first repeat ID if no repeat information is enabled.
-			OnCreateNotification(item, timeObj,repeatItem.GetID(0))
+			notifications.Add(OnCreateNotification(item, timeObj,repeatItem.GetID(0)))
 		End If
 		
-	Else
-		
 	End If
+	
+	Return notifications
 End Sub
 
 ' repeatId - The repeat_id of the repeat day as the notification ID. If repeat is disabled, then the 
-Private Sub OnCreateNotification(item As ToDo, notificationTime As Long, repeatId As Long)
+Private Sub OnCreateNotification(item As ToDo, notificationTime As Long, repeatId As Long) As Notification
+	Dim notification As Notification
+	
+	notification.Initialize
+	notification.Cancel(repeatId)
+	
 	Dim priority As String = GetImportanceLevel(item)
 	
 	Dim notificationBuilder As NB6
@@ -75,12 +78,14 @@ Private Sub OnCreateNotification(item As ToDo, notificationTime As Long, repeatI
 
 	notificationBuilder.ShowWhen(notificationTimeProcessed)
 	
-	Dim notification As Notification = notificationBuilder.Build(GetTitle(item), item.GetNotes, _ 
+	notification = notificationBuilder.Build(GetTitle(item), item.GetNotes, _ 
 		TAG_TASK_NOTIFICATION, TaskViewerActivity)
 
-	notification.Cancel(repeatId)
-
+	'notification.Cancel(repeatId)
 	notification.Notify(repeatId)
+	'notification.
+	
+	Return notification
 End Sub
 
 Private Sub GetImportanceLevel(item As ToDo) As String
@@ -101,14 +106,14 @@ Private Sub GetTitle(item As ToDo) As Object
 	
 	Select item.GetPriority
 		Case item.PRIORITY_CRITICAL:
-			Return cs.Initialize().Bold.Color(Colors.RGB(255, 0, 0)).Append(item.GetTitle)
+			Return cs.Initialize().Bold.Color(Colors.RGB(255, 0, 0)).Append("Critical: " & item.GetTitle)
 		Case Else:
 			Return item.GetTitle
 	End Select
 End Sub
 
-Private Sub OnCalculateSchedule(item As Repeat) As List
-	Dim result As List
+Private Sub OnCalculateSchedule(item As Repeat) As Map
+	Dim result As Map
 	result.Initialize
 	
 	Dim dateObj As Date
@@ -132,11 +137,11 @@ Private Sub OnCalculateSchedule(item As Repeat) As List
 		
 		' If the current repeat day is enabled, then get its date value and then add it into the resulting list.
 		If item.IsEnabled(itr) Then
-			Dim timeObj As Long = dateObj.GetDateNoTime(DateTime.Now)
-			result.Add(timeObj)
-		Else
-			' Add filler 0 to avoid breaking 0-6 iterators outside this function.
-			result.Add(0)
+			Dim timeCurrent As Long = dateObj.GetDateNoTime(DateTime.Now)
+			Dim timeObj As Long = DateTime.Add(timeCurrent, 0, 0, i)
+			result.Put(item.GetID(itr), timeObj)
+			
+			Log("TaskNotification.OnCalculateSchedule() Day of the week ID: " & item.GetID(itr))
 		End If
 		
 		j = j + 1
