@@ -315,6 +315,15 @@ Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
+Sub Activity_PermissionResult (Permission As String, Result As Boolean)
+	If Starter.SettingsViewModelInstance.IsDebugModeEnabled() == True Then
+		If Result == True Then
+			ToastMessageShow("Permission granted for " & Permission, False)
+		Else
+			ToastMessageShow("Permission failed to grant for " & Permission, False)
+		End If
+	End If
+End Sub
 
 
 Private Sub btnAdd_Click
