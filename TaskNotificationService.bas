@@ -36,6 +36,9 @@ Sub Service_Create
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)
+	' Make this service only start if the app has been started or a notification has occured.
+	Service.StopAutomaticForeground 'Call this when the background task completes (if there is one)
+	
 	' Initialize the database.
 	ToDoDatabaseInstance.Initialize
 	taskRepo.Initialize(ToDoDatabaseInstance)
@@ -43,21 +46,33 @@ Sub Service_Start (StartingIntent As Intent)
 	repeatRepo.Initialize(ToDoDatabaseInstance)
 	RepeatViewModelInstance.Initialize(repeatRepo)
 	
-	If StartingIntent.IsInitialized Then
-		Dim task As ToDo
-		task.Initialize
+	Dim notifications As List
+	notifications.Initialize
+
+	' Obtaining the first repeat.
+	Dim repeatItem As Repeat = RepeatViewModelInstance.GetFirstScheduledRepeat()
+
+	Log("TaskNotificationScheduler: repeatItem " & repeatItem)
+
+	If repeatItem.IsInitialized Then
+		' Obtaining the task ID based on the repeat ID of the first repeat.
+		Dim task_id As Long = RepeatViewModelInstance.GetTaskIdFromRepeat(repeatItem.GetID(0))
+		Log("TaskNotificationScheduler: task_id" & task_id)
+		' Obtaining the task based on the task ID.
+		Dim task As ToDo = TaskViewModelInstance.GetTask(task_id)
+	
+		' Calculate the total ticks.
+		Dim totalTicks As Long = task.Reminder.GetUnixTime + repeatItem.GetSchedule(0)
 		
-		task.SetId(StartingIntent.GetExtra(task.EXTRA_TASK_ID))
-		task.SetTitle(StartingIntent.GetExtra(task.EXTRA_TITLE))
-		task.SetNotes(StartingIntent.GetExtra(task.EXTRA_NOTES))
-		task.SetPriority(StartingIntent.GetExtra(task.EXTRA_PRIORITY))
-		
-		Dim repeatId As Long = StartingIntent.GetExtra(task.EXTRA_REPEAT_ID)
-		
+		' StartServiceAt(Me, totalTicks, True)
+	
+		Log("TaskNotificationScheduler: totalTicks " & totalTicks)
+	
+		' Make a notification
 		Dim notification As Notification
 	
 		notification.Initialize
-		notification.Cancel(repeatId)
+		'notification.Cancel(repeatItem)
 	
 		Dim priority As String = GetImportanceLevel(task)
 	
@@ -82,7 +97,22 @@ Sub Service_Start (StartingIntent As Intent)
 		TAG_TASK_NOTIFICATION, TaskViewerActivity)
 
 		'notification.Cancel(repeatId)
-		notification.Notify(repeatId)
+		notification.Notify(repeatItem.GetID(0))
+		
+		' Recalculate current task.
+		If repeatItem.IsEnabled(0) Then
+			Dim newDate As Long = DateTime.Now - (DateTime.Now Mod task.GetDueDate.DAY_LENGTH)
+			newDate = newDate + task.Reminder.GetUnixTime
+			newDate = newDate + (DateTime.Add(newDate, 0, 0, 7) - newDate)
+		
+			Log("TaskNotificationScheduler: newDate " & newDate)
+		
+			repeatItem.SetSchedule(0, newDate)
+		
+			' Save to database.
+			RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(0), repeatItem.GetSchedule(0))
+		End If
+			
 	End If
 	
 End Sub

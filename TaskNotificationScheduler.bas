@@ -5,7 +5,7 @@ Type=Service
 Version=13.1
 @EndOfDesignText@
 #Region  Service Attributes 
-	#StartAtBoot: True
+	#StartAtBoot: False
 	
 #End Region
 
@@ -32,6 +32,7 @@ End Sub
 
 Sub Service_Start (StartingIntent As Intent)
 	' Make this service only start if the app has been started or a notification has occured.
+	Service.StopAutomaticForeground 'Call this when the background task completes (if there is one)
 	
 	' Initialize the database.
 	ToDoDatabaseInstance.Initialize
@@ -61,18 +62,7 @@ Sub Service_Start (StartingIntent As Intent)
 		Log("TaskNotificationScheduler: totalTicks " & totalTicks)
 		
 		' Make a notification
-		StartServiceAtExact(TaskNotificationService, totalTicks, True)
-		
-		' Recalculate current task.
-		Dim newDate As Long = DateTime.Now - (DateTime.Now Mod item.GetDueDate.DAY_LENGTH)
-		newDate = newDate + item.Reminder.GetUnixTime
-		
-		Log("TaskNotificationScheduler: newDate " & newDate)
-		
-		repeatItem.SetSchedule(0, newDate)
-		
-		' Save to database.
-		RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(0), repeatItem.GetSchedule(0))
+		StartServiceAt(TaskNotificationService, totalTicks, True)
 	End If
 	
 
