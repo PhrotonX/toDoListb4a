@@ -1,0 +1,84 @@
+﻿B4A=true
+Group=Default Group
+ModulesStructureVersion=1
+Type=Service
+Version=13.1
+@EndOfDesignText@
+#Region  Service Attributes 
+	#StartAtBoot: True
+	
+#End Region
+
+Sub Process_Globals
+	'These global variables will be declared once when the application starts.
+	'These variables can be accessed from all modules.
+
+	Public ToDoDatabaseInstance As ToDoDatabase
+	
+	' Repository instances
+	Private taskRepo As TaskRepository
+	Private repeatRepo As RepeatRepository
+	
+	' Global instance of TaskViewModel where the database can be accessed.
+	Public TaskViewModelInstance As TaskViewModel
+	Public RepeatViewModelInstance As RepeatViewModel
+
+	'Public SettingsViewModelInstance As SettingsViewModel
+End Sub
+
+Sub Service_Create
+
+End Sub
+
+Sub Service_Start (StartingIntent As Intent)
+	' Make this service only start if the app has been started or a notification has occured.
+	
+	' Initialize the database.
+	ToDoDatabaseInstance.Initialize
+	taskRepo.Initialize(ToDoDatabaseInstance)
+	TaskViewModelInstance.Initialize(taskRepo)
+	repeatRepo.Initialize(ToDoDatabaseInstance)
+	RepeatViewModelInstance.Initialize(repeatRepo)
+	
+	Dim notifications As List
+	notifications.Initialize
+	
+	' Obtaining the first repeat.
+	Dim repeatItem As Repeat = RepeatViewModelInstance.GetFirstScheduledRepeat()
+	
+	Log("TaskNotificationScheduler: repeatItem " & repeatItem)
+	
+	If repeatItem.IsInitialized Then
+		' Obtaining the task ID based on the repeat ID of the first repeat.
+		Dim task_id As Long = RepeatViewModelInstance.GetTaskIdFromRepeat(repeatItem.GetID(0))
+		Log("TaskNotificationScheduler: task_id" & task_id)
+		' Obtaining the task based on the task ID.
+		Dim item As ToDo = TaskViewModelInstance.GetTask(task_id)
+		
+		' Calculate the total ticks.
+		Dim totalTicks As Long = item.Reminder.GetUnixTime + repeatItem.GetSchedule(0)
+		
+		Log("TaskNotificationScheduler: totalTicks " & totalTicks)
+		
+		' Make a notification
+		StartServiceAtExact(TaskNotificationService, totalTicks, True)
+		
+		' Recalculate current task.
+		Dim newDate As Long = DateTime.Now - (DateTime.Now Mod item.GetDueDate.DAY_LENGTH)
+		newDate = newDate + item.Reminder.GetUnixTime
+		
+		Log("TaskNotificationScheduler: newDate " & newDate)
+		
+		repeatItem.SetSchedule(0, newDate)
+		
+		' Save to database.
+		RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(0), repeatItem.GetSchedule(0))
+	End If
+	
+
+End Sub
+
+Sub Service_Destroy
+
+End Sub
+
