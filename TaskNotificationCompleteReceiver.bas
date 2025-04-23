@@ -29,9 +29,11 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 	If StartingIntent.IsInitialized Then
 		Dim itemId As Long = StartingIntent.Action
 		
+		Log(itemId)
+		
 		Dim item As ToDo = TaskViewModelInstance.GetTask(itemId)
 		
-		Log(item)
+		'Log(item)
 		
 		If item.IsInitialized Then
 			item.Done = True
