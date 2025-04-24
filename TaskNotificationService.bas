@@ -38,6 +38,7 @@ End Sub
 Sub Service_Start (StartingIntent As Intent)
 	' Make this service only start if the app has been started or a notification has occured.
 	Service.StopAutomaticForeground 'Call this when the background task completes (if there is one)
+	Log("=========================================")
 	
 	' Initialize the database.
 	ToDoDatabaseInstance.Initialize
@@ -51,16 +52,18 @@ Sub Service_Start (StartingIntent As Intent)
 
 	' Obtaining the first repeat.
 	Dim repeatItem As Repeat = RepeatViewModelInstance.GetFirstScheduledRepeat()
-
+	
 	Log("TaskNotificationScheduler: repeatItem " & repeatItem)
 
 	If repeatItem.IsInitialized Then
 		' Obtaining the task ID based on the repeat ID of the first repeat.
 		Dim task_id As Long = RepeatViewModelInstance.GetTaskIdFromRepeat(repeatItem.GetID(0))
-		Log("TaskNotificationScheduler: task_id" & task_id)
+		Log("TaskNotificationScheduler: task_id " & task_id)
 		' Obtaining the task based on the task ID.
 		Dim task As ToDo = TaskViewModelInstance.GetTask(task_id)
 	
+		Log("TaskNotificationScheduler: repeatItem.GetSchedule(0) " & repeatItem.GetSchedule(0))
+		Log("TaskNotificationScheduler: repeatItem.GetDayID(0) " & repeatItem.GetDayID(0))
 		' Calculate the total ticks.
 		Dim totalTicks As Long = task.Reminder.GetUnixTime + repeatItem.GetSchedule(0)
 		
@@ -100,18 +103,38 @@ Sub Service_Start (StartingIntent As Intent)
 		notification.Notify(repeatItem.GetID(0))
 		
 		' Recalculate current task.
-		If repeatItem.IsEnabled(0) Then
-			Dim newDate As Long = DateTime.Now - (DateTime.Now Mod task.GetDueDate.DAY_LENGTH)
-			newDate = newDate + task.Reminder.GetUnixTime
-			newDate = newDate + (DateTime.Add(newDate, 0, 0, 7) - newDate)
+		Log("TaskNotificationScheduler: repeatItem.IsEnabled(0) " & repeatItem.IsEnabled(0))
 		
-			Log("TaskNotificationScheduler: newDate " & newDate)
+		Dim fullRepeat As Repeat = RepeatViewModelInstance.GetTaskRepeat(task.GetId)
 		
-			repeatItem.SetSchedule(0, newDate)
 		
-			' Save to database.
+		If fullRepeat.AreAllDisabled == True Then
+			' Remove reminder schedule if no repeat option is set.
+			repeatItem.SetSchedule(0, 0)
 			RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(0), repeatItem.GetSchedule(0))
+			
+			Log("TaskNotificationService: repeatItem.GetSchedule(0) " & repeatItem.GetSchedule(0))
+		Else
+			' Update the reminder schedule if the repeat item or the "day of the week" is enabled.
+			' This reschedules the reminder into next week.
+			' Note: All off this will be turned off after tapping on "Complete" or marking such task as done.
+			If repeatItem.IsEnabled(0) Then
+				Dim newDate As Long = DateTime.Now - (DateTime.Now Mod task.GetDueDate.DAY_LENGTH)
+				newDate = newDate + task.Reminder.GetUnixTime
+				newDate = newDate + (DateTime.Add(newDate, 0, 0, 7) - newDate)
+		
+				Log("TaskNotificationService: newDate " & newDate)
+		
+				repeatItem.SetSchedule(0, newDate)
+		
+				' Save to database.
+				RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(0), repeatItem.GetSchedule(0))
+				
+				' Make another notification for the next schedule.
+				StartServiceAt(TaskNotificationScheduler, DateTime.Now, True)
+			End If
 		End If
+		
 			
 	End If
 	
