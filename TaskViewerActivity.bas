@@ -90,8 +90,10 @@ Sub Activity_Resume
 	viewRepeat.Text = m_repeat.GetRepeatInfo
 	viewPriority.Text = m_task.GetPriorityInfo
 	viewDueDate.Text = m_task.GetDueDate.GetFormattedDate
-	viewCreatedAt.Text = m_task.GetCreatedAt.GetFormattedDateAndTime
-	viewModifiedAt.Text = m_task.GetUpdatedAt.GetFormattedDateAndTime
+	viewCreatedAt.Text = m_task.GetCreatedAt.GetFormattedDateAndTime( _ 
+		Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+	viewModifiedAt.Text = m_task.GetUpdatedAt.GetFormattedDateAndTime( _
+		Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
 	
 	Dim taskGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_task.GetId())
 	If taskGroup.IsInitialized Then

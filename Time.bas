@@ -49,9 +49,9 @@ Public Sub SetUnixTime(ticks As Long)
 End Sub
 
 ' Returns a formatted time.
-Public Sub GetFormattedTime As String
+Public Sub GetFormattedTime(hour24 As Boolean) As String
 	'Check if the time uses a 24-hour format to return a string of Time of HH:MM:SS format.
-	If Starter.SettingsViewModelInstance.Is24HourFormatEnabled == True Then
+	If hour24 Then
 		Return GetFormattedTime24Hour
 	Else
 		' Return a 12-hour format (hh:mm:ss a) instead
@@ -72,8 +72,8 @@ Public Sub GetHour As Int
 End Sub
 
 ' Returns the hour value, depending on the 24-hour setting.
-Public Sub GetHour2 As Int
-	If Starter.SettingsViewModelInstance.Is24HourFormatEnabled == True Then
+Public Sub GetHour2(hour24 As Boolean) As Int
+	If hour24 Then
 		Return m_hour
 	Else
 		Return Convert24HourInto12HourFormat
@@ -131,8 +131,8 @@ Public Sub SetHour(hour As Int)
 End Sub
 
 ' Sets an hour value depending on the 24-hour settings.
-Public Sub SetHour2(hour As Int)
-	If Starter.SettingsViewModelInstance.Is24HourFormatEnabled == True Then
+Public Sub SetHour2(hour As Int, hour24 As Boolean)
+	If hour24 Then
 		SetHour(hour)
 	Else
 		If hour >= 12 And hour < 24  Then
