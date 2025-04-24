@@ -20,8 +20,6 @@ End Sub
 
 Public Sub InsertTask(item As ToDo)
 	m_repository.InsertTask(item)
-	
-	'TaskNotification.CreateNotification(item)
 End Sub
 
 Public Sub DeleteTask(item As ToDo)
@@ -30,8 +28,6 @@ End Sub
 
 Public Sub UpdateTask(Item As ToDo)
 	m_repository.UpdateTask(Item)
-	
-	'TaskNotification.CreateNotification(Item)
 End Sub
 
 Public Sub GetTask(id As Long) As ToDo

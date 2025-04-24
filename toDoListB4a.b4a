@@ -110,7 +110,7 @@ Library6=keyvaluestore
 Library7=nb6
 Library8=phone
 Library9=reflection
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="33" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~~\n~AddApplicationText(~\n~  <provider~\n~  android:name="android.support.v4.content.FileProvider"~\n~  android:authorities="$PACKAGE$.provider"~\n~  android:exported="false"~\n~  android:grantUriPermissions="true">~\n~  <meta-data~\n~  android:name="android.support.FILE_PROVIDER_PATHS"~\n~  android:resource="@xml/provider_paths"/>~\n~  </provider>~\n~)~\n~CreateResource(xml, provider_paths,~\n~   <files-path name="name" path="" />~\n~)~\n~'End of default text.~\n~
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="33" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.SCHEDULE_EXACT_ALARM"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.USE_EXACT_ALARM"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddApplicationText(~\n~  <provider~\n~  android:name="android.support.v4.content.FileProvider"~\n~  android:authorities="$PACKAGE$.provider"~\n~  android:exported="false"~\n~  android:grantUriPermissions="true">~\n~  <meta-data~\n~  android:name="android.support.FILE_PROVIDER_PATHS"~\n~  android:resource="@xml/provider_paths"/>~\n~  </provider>~\n~)~\n~CreateResource(xml, provider_paths,~\n~   <files-path name="name" path="" />~\n~)~\n~'End of default text.~\n~
 Module1=Attachment
 Module10=DaysOfTheWeek
 Module11=Dimen
@@ -137,22 +137,24 @@ Module3=AttachmentFileRepository
 Module30=SubGroupViewHolder
 Module31=TaskDao
 Module32=TaskGroupActivity
-Module33=TaskNotification
+Module33=TaskNotificationCompat
 Module34=TaskNotificationCompleteReceiver
 Module35=TaskNotificationDismissReceiver
-Module36=TaskNotificationSnoozeReceiver
-Module37=TaskQuery
-Module38=TaskRepository
-Module39=TaskViewerActivity
+Module36=TaskNotificationScheduler
+Module37=TaskNotificationService
+Module38=TaskNotificationSnoozeReceiver
+Module39=TaskQuery
 Module4=AttachmentRepository
-Module40=TaskViewHolder
-Module41=TaskViewModel
-Module42=Theme
-Module43=Time
-Module44=ToDo
-Module45=ToDoDatabase
-Module46=ToDoDatabaseViewModel
-Module47=ToDoFileSystem
+Module40=TaskRepository
+Module41=TaskViewerActivity
+Module42=TaskViewHolder
+Module43=TaskViewModel
+Module44=Theme
+Module45=Time
+Module46=ToDo
+Module47=ToDoDatabase
+Module48=ToDoDatabaseViewModel
+Module49=ToDoFileSystem
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
 Module7=DatabaseUtils
@@ -160,7 +162,7 @@ Module8=Date
 Module9=DateAndTime
 NumberOfFiles=48
 NumberOfLibraries=14
-NumberOfModules=47
+NumberOfModules=49
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
@@ -301,6 +303,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	m_query.Initialize()
 	
 	Starter.Permissions.CheckAndRequest(Starter.Permissions.PERMISSION_POST_NOTIFICATIONS)
+	Starter.Permissions.CheckAndRequest("android.permission.SCHEDULE_EXACT_ALARM")
+	Starter.Permissions.CheckAndRequest("android.permission.USE_EXACT_ALARM")
 End Sub
 
 Sub Activity_Resume
