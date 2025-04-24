@@ -10,6 +10,7 @@ Sub Class_Globals
 	Private m_id(7) As Long
 	Private m_enabled(7) As Boolean
 	Private m_schedule(7) As Long
+	Private m_dayId(7) As Int
 	
 	Public Const REPEAT_SUNDAY As Int = 0
 	Public Const REPEAT_MONDAY As Int = 1
@@ -22,9 +23,31 @@ End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize
-	For Each item As Boolean In m_enabled
-		item = False
+	For Each enabledItem As Boolean In m_enabled
+		enabledItem = False
 	Next
+	
+	For Each dayItem As Int In m_dayId
+		dayItem = 0
+	Next
+End Sub
+
+' Check if all repeat options are disabled. A return value of True indicates that no repeat option is used and
+' a default repeat value is reserved for the day 0 of this object.
+Public Sub AreAllDisabled() As Boolean
+	Dim count As Int = 0
+	
+	For Each enabledItem As Boolean In m_enabled
+		If enabledItem == True Then
+			count = count + 1
+		End If
+	Next
+	
+	If count > 0 Then
+		Return False
+	Else
+		Return True
+	End If
 End Sub
 
 ' Encapsulate repeat value
@@ -32,7 +55,11 @@ Public Sub IsEnabled As Boolean(7)
 	Return m_enabled
 End Sub
 
-Public Sub GetID(day As Byte) As Long
+Public Sub GetDayID(pos As Int) As Int
+	Return m_dayId(pos)
+End Sub
+
+Public Sub GetID(day As Int) As Long
 	Return m_id(day)
 End Sub
 
@@ -105,8 +132,49 @@ Public Sub GetSchedule(day As Byte) As Long
 	Return m_schedule(day)
 End Sub
 
+Public Sub CalculateSchedule()
+	'Dim result As Map
+	'result.Initialize
+	
+	Dim dateObj As Date
+	dateObj.Initialize(0,0,0)
+	
+	' Get the current day of the week. The value should be decreased by 1 since the value that this function
+	' returns is 1-based instead of 0.
+	Dim j As Int = DateTime.GetDayOfWeek(DateTime.Now) - 1
+
+	' Iterator for 0 to 6.
+	Dim itr As Int = -1
+	
+	For i = 0 To 6
+		' If the current iterated value is greater than 6 or Saturday, then set the iterator value into
+		' 0 until the value is less than j. Else, set the itr value as the current iterated value.
+		If j + (j - i) > 6 Then
+			itr = itr + 1
+		Else
+			itr = i
+		End If
+		
+		' If the current repeat day is enabled, then get its date value and then add it into the resulting list.
+		If IsEnabled(itr) Then
+			Dim timeCurrent As Long = dateObj.GetDateNoTime(DateTime.Now)
+			Dim timeObj As Long = DateTime.Add(timeCurrent, 0, 0, i)
+			'result.Put(GetID(itr), timeObj)
+			m_schedule(itr) = timeObj
+			
+			Log("Repeat.OnCalculateSchedule() Day of the week ID: " & GetID(itr))
+		End If
+		
+		j = j + 1
+	Next
+End Sub
+
 Public Sub SetEnabled(day As Byte, enabled As Boolean)
 	m_enabled(day) = enabled
+End Sub
+
+Public Sub SetDayID(day As Int, value As Int)
+	m_dayId(day) = value
 End Sub
 
 Public Sub SetID(day As Byte, value As Long)
