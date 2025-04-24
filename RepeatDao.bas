@@ -55,6 +55,13 @@ Public Sub GetTaskRepeat(task_id As Long) As Repeat
 		" WHERE task_repeat.task_id = " & task_id)
 End Sub
 
+' Returns only single repeat item. Indexes 1-6 cannot be accessed other than 0.
+Public Sub GetNextTaskRepeat(task_id As Long) As Repeat
+	Return OnGetTaskRepeat("SELECT * FROM repeat JOIN task_repeat " & CRLF & _
+		" ON task_repeat.repeat_id = repeat.repeat_id " & CRLF & _
+		" WHERE task_repeat.task_id = " & task_id & " ORDER BY schedule ASC LIMIT 1")
+End Sub
+
 Public Sub GetTaskIdFromRepeat(repeat_id As Long) As Long
 	Dim item As Long
 	
