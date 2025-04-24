@@ -30,6 +30,10 @@ Public Sub GetFirstScheduledRepeat() As Repeat
 	Return m_database.RepeatDao().GetFirstScheduledRepeat()
 End Sub
 
+Public Sub GetNextTaskRepeat(task_id As Long) As Repeat
+	Return m_database.RepeatDao().GetNextTaskRepeat(task_id)
+End Sub
+
 Public Sub UpdateRepeat(item As Repeat) As Boolean
 	Return m_database.RepeatDao().UpdateRepeat(item)
 End Sub

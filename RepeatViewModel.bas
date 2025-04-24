@@ -47,6 +47,10 @@ Public Sub GetFirstScheduledRepeat() As Repeat
 	Return m_repository.GetFirstScheduledRepeat()
 End Sub
 
+Public Sub GetNextTaskRepeat(task_id As Long) As Repeat
+	Return m_repository.GetNextTaskRepeat(task_id)
+End Sub
+
 Public Sub UpdateRepeat(item As Repeat) As Boolean
 	Return m_repository.UpdateRepeat(item)
 End Sub
