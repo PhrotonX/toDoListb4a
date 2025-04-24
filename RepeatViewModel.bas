@@ -13,6 +13,23 @@ Public Sub Initialize(repository As RepeatRepository)
 	m_repository = repository
 End Sub
 
+Public Sub CalculateSchedule(item As ToDo)
+	Dim fullRepeat As Repeat = GetTaskRepeat(item.GetId)
+	
+	If item.Done == True Then
+		' Remove the reminder schedule if the item is done.
+		For i = 0 To 6
+			fullRepeat.SetSchedule(i, 0)
+		Next
+	Else
+		' Re-calculate schedule if the item is not done. The function should be located within Repeat class.
+		fullRepeat.CalculateSchedule()
+	End If
+	
+	' Update the repeat values for the udpated schedule.
+	UpdateRepeat(fullRepeat)
+End Sub
+
 Public Sub InsertTaskRepeat(task_id As Long, item As Repeat) As Boolean
 	Return m_repository.InsertTaskRepeat(task_id, item)
 End Sub
@@ -31,8 +48,6 @@ Public Sub GetFirstScheduledRepeat() As Repeat
 End Sub
 
 Public Sub UpdateRepeat(item As Repeat) As Boolean
-	' Re-calculate all repeat schedule.
-	
 	Return m_repository.UpdateRepeat(item)
 End Sub
 
@@ -74,7 +89,7 @@ Public Sub CreateOrUpdateNotificationSchedule(item As ToDo, repeatItem As Repeat
 			' Save the sechdule to DB.
 			' Single notification only.
 			' Pass first repeat ID if no repeat information is enabled.
-			Starter.RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(0), timeObj)
+			UpdateSingleRepeatSchedule(repeatItem.GetID(0), timeObj)
 		End If
 		
 	End If

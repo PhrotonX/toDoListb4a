@@ -129,4 +129,5 @@ Private Sub viewTitle_CheckedChange(Checked As Boolean)
 	
 	' Update the task to reflect changes with the completion value.
 	Starter.TaskViewModelInstance.UpdateTask(m_task)
+	Starter.RepeatViewModelInstance.CalculateSchedule(m_task)
 End Sub
