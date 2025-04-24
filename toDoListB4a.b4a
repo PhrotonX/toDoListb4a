@@ -363,6 +363,7 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 		item.Done = Checked
 		
 		Starter.TaskViewModelInstance.UpdateTask(item)
+		Starter.RepeatViewModelInstance.CalculateSchedule(item)
 	End If
 	
 	If m_query.IsSortingEnabled() == False Then

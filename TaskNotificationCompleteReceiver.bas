@@ -9,11 +9,11 @@ Sub Process_Globals
 	
 	' Repository instances
 	Private taskRepo As TaskRepository
-	'Private repeatRepo As RepeatRepository
+	Private repeatRepo As RepeatRepository
 	
 	' Global instance of TaskViewModel where the database can be accessed.
 	Public TaskViewModelInstance As TaskViewModel
-	'Public RepeatViewModelInstance As RepeatViewModel
+	Public RepeatViewModelInstance As RepeatViewModel
 
 	'Public SettingsViewModelInstance As SettingsViewModel
 End Sub
@@ -25,6 +25,7 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 	ToDoDatabaseInstance.Initialize
 	taskRepo.Initialize(ToDoDatabaseInstance)
 	TaskViewModelInstance.Initialize(taskRepo)
+	RepeatViewModelInstance.Initialize(repeatRepo)
 	
 	If StartingIntent.IsInitialized Then
 		Dim itemId As Long = StartingIntent.Action
@@ -39,6 +40,7 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 			item.Done = True
 			
 			TaskViewModelInstance.UpdateTask(item)
+			RepeatViewModelInstance.CalculateSchedule(item)
 		End If
 	End If
 End Sub
