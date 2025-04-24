@@ -86,9 +86,11 @@ Sub Service_Start (StartingIntent As Intent)
 		notificationBuilder.SmallIcon(LoadBitmap(File.DirAssets, "ic_launcher_small.png"))
 	
 		notificationBuilder.AddButtonAction(Null, "Dismiss", TaskNotificationDismissReceiver, task.GetId)
-		notificationBuilder.AddButtonAction(Null, "Snooze", TaskNotificationSnoozeReceiver, task.GetId)
+		If task.Snooze.GetSnooze <> task.Snooze.SNOOZE_OFF Then
+			notificationBuilder.AddButtonAction(Null, "Snooze", TaskNotificationSnoozeReceiver, task.GetId)
+		End If
 		notificationBuilder.AddButtonAction(Null, "Complete", TaskNotificationCompleteReceiver, task.GetId)
-		notificationBuilder.DeleteAction(TaskNotificationDismissReceiver, "Action String")
+		notificationBuilder.DeleteAction(TaskNotificationDismissReceiver, task.GetId)
 	
 		'Dim notificationTimeProcessed As Long = notificationTime + item.Reminder.GetUnixTime
 
