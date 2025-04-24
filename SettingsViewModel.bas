@@ -17,24 +17,28 @@ Public Sub Close
 	m_dtRepository.Close()
 End Sub
 
-Public Sub GetDebugMode() As Boolean
-	Return m_dtRepository.GetDebugMode()
+Public Sub IsDebugModeEnabled() As Boolean
+	Return m_dtRepository.IsDebugModeEnabled()
 End Sub
 
-Public Sub GetDarkMode() As Boolean
-	Return m_dtRepository.GetDarkMode()
+Public Sub IsDarkModeEnabled() As Boolean
+	Return m_dtRepository.IsDarkModeEnabled()
 End Sub
 
-Public Sub GetExperimentalMode() As Boolean
-	Return m_dtRepository.GetExperimentalMode()
+Public Sub IsExperimentalModeEnabled() As Boolean
+	Return m_dtRepository.IsExperimentalModeEnabled()
 End Sub
 
 Public Sub GetLanguage() As String
 	Return m_dtRepository.GetLanguage()
 End Sub
 
-Public Sub GetTaskCompetionSound() As Boolean
-	Return m_dtRepository.GetTaskCompetionSound()
+Public Sub IsTaskCompetionSoundEnabled() As Boolean
+	Return m_dtRepository.IsTaskCompetionSoundEnabled()
+End Sub
+
+Public Sub Is24HourFormatEnabled() As Boolean
+	Return m_dtRepository.Is24HourFormatEnabled()
 End Sub
 
 Public Sub LoadDefaults()
@@ -60,4 +64,8 @@ End Sub
 
 Public Sub SetTaskCompletionSound(value As Boolean)
 	m_dtRepository.SetTaskCompletionSound(value)
+End Sub
+
+Public Sub Set24HourFormat(value As Boolean)
+	m_dtRepository.Set24HourFormat(value)
 End Sub

@@ -68,6 +68,39 @@ Public Sub GetSnoozeText(value As Long) As String
 	End Select
 End Sub
 
+Public Sub GetSnoozeFromText(value As String) As Long
+	Select value
+		Case "Off":
+			Return SNOOZE_OFF
+		Case "1 Minute":
+			Return SNOOZE_1_MINUTE
+		Case "3 Minutes":
+			Return SNOOZE_3_MINUTES
+		Case "5 Minutes":
+			Return SNOOZE_5_MINUTES
+		Case "10 Minutes":
+			Return SNOOZE_10_MINUTES
+		Case "15 Minutes":
+			Return SNOOZE_15_MINUTES
+		Case "20 Minutes":
+			Return SNOOZE_20_MINUTES
+		Case "30 Minutes":
+			Return SNOOZE_30_MINUTES
+		Case "1 Hour":
+			Return SNOOZE_1_HOUR
+		Case "2 Hours":
+			Return SNOOZE_2_HOURS
+		Case "5 Hours":
+			Return SNOOZE_5_HOURS
+		Case "12 Hours":
+			Return SNOOZE_12_HOURS
+		Case "1 Day":
+			Return SNOOZE_1_DAY
+		Case Else:
+			Return 0
+	End Select
+End Sub
+
 Public Sub SetSnooze(value As Long)
 	m_snooze = value
 End Sub

@@ -11,35 +11,37 @@ File17=groupTasksSVLayout.bal
 File18=helpitems.bal
 File19=ic_launcher.png
 File2=486023921_623831243812785_3842496593750662642_n (1).png
-File20=ic_launcher_xl.png
-File21=INDIGO.png
-File22=INDIGO-SELECTED.png
-File23=Layout.bal
-File24=newfragment.bal
-File25=ORANGE.png
-File26=ORANGE-SELECTED.PNG
-File27=pencil.png
-File28=PINK.png
-File29=PINK-SELECTED.png
+File20=ic_launcher_small.png
+File21=ic_launcher_xl.png
+File22=INDIGO.png
+File23=INDIGO-SELECTED.png
+File24=Layout.bal
+File25=newfragment.bal
+File26=ORANGE.png
+File27=ORANGE-SELECTED.PNG
+File28=pencil.png
+File29=PINK.png
 File3=aboutitems.bal
-File30=RED.png
-File31=RED-SELECTED.png
-File32=searchByLayout.bal
-File33=searchFragmentSVLayout.bal
-File34=separatorlayout.bal
-File35=settingsabout.bal
-File36=settingshelp.bal
-File37=settingslayout.bal
-File38=solid_white.png
-File39=stock4.png
+File30=PINK-SELECTED.png
+File31=RED.png
+File32=RED-SELECTED.png
+File33=searchByLayout.bal
+File34=searchfragmentlayout.bal
+File35=searchFragmentSVLayout.bal
+File36=separatorlayout.bal
+File37=settingsabout.bal
+File38=settingshelp.bal
+File39=settingslayout.bal
 File4=AttachmentItemLayout.bal
-File40=sviewlayout.bal
-File41=TaskItemLayout.bal
-File42=taskviewlayout.bal
-File43=taskviewscrolllayout.bal
-File44=test.bal
-File45=YELLOW.png
-File46=YELLOW-SELECTED.png
+File40=solid_white.png
+File41=stock4.png
+File42=sviewlayout.bal
+File43=TaskItemLayout.bal
+File44=taskviewlayout.bal
+File45=taskviewscrolllayout.bal
+File46=test.bal
+File47=YELLOW.png
+File48=YELLOW-SELECTED.png
 File5=BLUE.png
 File6=BLUE-SELECTED.png
 File7=canvas.bal
@@ -86,6 +88,8 @@ FileGroup43=Default Group
 FileGroup44=Default Group
 FileGroup45=Default Group
 FileGroup46=Default Group
+FileGroup47=Default Group
+FileGroup48=Default Group
 FileGroup5=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
@@ -106,7 +110,7 @@ Library6=keyvaluestore
 Library7=nb6
 Library8=phone
 Library9=reflection
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="33" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~~\n~AddApplicationText(~\n~  <provider~\n~  android:name="android.support.v4.content.FileProvider"~\n~  android:authorities="$PACKAGE$.provider"~\n~  android:exported="false"~\n~  android:grantUriPermissions="true">~\n~  <meta-data~\n~  android:name="android.support.FILE_PROVIDER_PATHS"~\n~  android:resource="@xml/provider_paths"/>~\n~  </provider>~\n~)~\n~CreateResource(xml, provider_paths,~\n~   <files-path name="name" path="" />~\n~)~\n~'End of default text.~\n~
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="33" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.SCHEDULE_EXACT_ALARM"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.USE_EXACT_ALARM"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddApplicationText(~\n~  <provider~\n~  android:name="android.support.v4.content.FileProvider"~\n~  android:authorities="$PACKAGE$.provider"~\n~  android:exported="false"~\n~  android:grantUriPermissions="true">~\n~  <meta-data~\n~  android:name="android.support.FILE_PROVIDER_PATHS"~\n~  android:resource="@xml/provider_paths"/>~\n~  </provider>~\n~)~\n~CreateResource(xml, provider_paths,~\n~   <files-path name="name" path="" />~\n~)~\n~'End of default text.~\n~
 Module1=Attachment
 Module10=DaysOfTheWeek
 Module11=Dimen
@@ -133,32 +137,38 @@ Module3=AttachmentFileRepository
 Module30=SubGroupViewHolder
 Module31=TaskDao
 Module32=TaskGroupActivity
-Module33=TaskQuery
-Module34=TaskRepository
-Module35=TaskViewerActivity
-Module36=TaskViewHolder
-Module37=TaskViewModel
-Module38=Theme
-Module39=Time
+Module33=TaskNotificationCompat
+Module34=TaskNotificationCompleteReceiver
+Module35=TaskNotificationDismissReceiver
+Module36=TaskNotificationScheduler
+Module37=TaskNotificationService
+Module38=TaskNotificationSnoozeReceiver
+Module39=TaskQuery
 Module4=AttachmentRepository
-Module40=ToDo
-Module41=ToDoDatabase
-Module42=ToDoDatabaseViewModel
-Module43=ToDoFileSystem
+Module40=TaskRepository
+Module41=TaskViewerActivity
+Module42=TaskViewHolder
+Module43=TaskViewModel
+Module44=Theme
+Module45=Time
+Module46=ToDo
+Module47=ToDoDatabase
+Module48=ToDoDatabaseViewModel
+Module49=ToDoFileSystem
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
 Module7=DatabaseUtils
 Module8=Date
 Module9=DateAndTime
-NumberOfFiles=46
+NumberOfFiles=48
 NumberOfLibraries=14
-NumberOfModules=43
+NumberOfModules=49
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 12
-	#VersionName: v2.0.0.3 alpha
+	#VersionName: v2.0.0.4 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -291,6 +301,10 @@ Sub Activity_Create(FirstTime As Boolean)
 	m_savedGroup = smartLists(0) ' Get the My Day smart list
 	
 	m_query.Initialize()
+	
+	Starter.Permissions.CheckAndRequest(Starter.Permissions.PERMISSION_POST_NOTIFICATIONS)
+	Starter.Permissions.CheckAndRequest("android.permission.SCHEDULE_EXACT_ALARM")
+	Starter.Permissions.CheckAndRequest("android.permission.USE_EXACT_ALARM")
 End Sub
 
 Sub Activity_Resume
@@ -305,6 +319,15 @@ Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
+Sub Activity_PermissionResult (Permission As String, Result As Boolean)
+	If Starter.SettingsViewModelInstance.IsDebugModeEnabled() == True Then
+		If Result == True Then
+			ToastMessageShow("Permission granted for " & Permission, False)
+		Else
+			ToastMessageShow("Permission failed to grant for " & Permission, False)
+		End If
+	End If
+End Sub
 
 
 Private Sub btnAdd_Click
@@ -332,11 +355,15 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 	' Retrieve the item from the database based on the DB-based ID stored in the viewHolder.
 	Dim item As ToDo = Starter.TaskViewModelInstance.GetTask(viewHolder.ID)
 	
-	' Update the checked value of the task.
-	item.Done = Checked
 	
-	' Since the item has been changed, update the database.
-	Starter.TaskViewModelInstance.UpdateTask(item)
+	' If the value has changed, update the database. This checking is required to prevent duplicate
+	' notifications,
+	If item.Done <> Checked Then
+		' Update the checked value of the task.
+		item.Done = Checked
+		
+		Starter.TaskViewModelInstance.UpdateTask(item)
+	End If
 	
 	If m_query.IsSortingEnabled() == False Then
 		Select m_savedSmartList:

@@ -23,6 +23,12 @@ Sub Class_Globals
 	Public Const PRIORITY_MEDIUM As Int = 1
 	Public Const PRIORITY_HIGH As Int = 2
 	Public Const PRIORITY_CRITICAL As Int = 3
+	
+	Public Const EXTRA_REPEAT_ID As String = Application.PackageName & ".EXTRA_REPEAT_ID"
+	Public Const EXTRA_TITLE As String = Application.PackageName & ".EXTRA_TITLE"
+	Public Const EXTRA_NOTES As String = Application.PackageName & ".EXTRA_NOTES"
+	Public Const EXTRA_PRIORITY As String = Application.PackageName & ".EXTRA_PRIORITY"
+	Public Const EXTRA_TASK_ID As String = Application.PackageName & ".EXTRA_TASK_ID"
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.

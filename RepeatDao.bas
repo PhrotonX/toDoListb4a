@@ -44,6 +44,44 @@ Public Sub InsertTaskRepeat(task_id As Long, item As Repeat) As Boolean
 End Sub
 
 Public Sub GetTaskRepeat(task_id As Long) As Repeat
+	Return OnGetTaskRepeat("SELECT * FROM repeat JOIN task_repeat " & CRLF & _
+		" ON task_repeat.repeat_id = repeat.repeat_id " & CRLF & _
+		" WHERE task_repeat.task_id = " & task_id)
+End Sub
+
+Public Sub GetTaskIdFromRepeat(repeat_id As Long) As Long
+	Dim item As Long
+	
+	m_sql.BeginTransaction
+	Try
+		' Get all values for task_repeat. This code uses cursor that represents a specific row
+		' from a database view.
+		Dim Cursor As Cursor
+		Cursor = m_sql.ExecQuery("SELECT task_id FROM task_repeat WHERE repeat_id = " & repeat_id)
+
+		' Iterate the cursor or each rows. This iteration checks if days Sunday to Saturday have
+		' thier repeat option enabled.
+		For i = 0 To Cursor.RowCount - 1
+			Cursor.Position = i
+			
+			item = Cursor.GetLong("task_id")
+		Next
+		
+		m_sql.TransactionSuccessful
+	Catch
+		Log(LastException)
+	End Try
+	m_sql.EndTransaction
+	
+	Return item
+End Sub
+
+' Returns only single repeat item. Indexes 1-6 cannot be accessed other than 0.
+Public Sub GetFirstScheduledRepeat() As Repeat
+	Return OnGetTaskRepeat("SELECT * FROM repeat ORDER BY schedule ASC LIMIT 1")
+End Sub
+
+Public Sub OnGetTaskRepeat(query As String) As Repeat
 	Dim item As Repeat
 	
 	m_sql.BeginTransaction
@@ -51,9 +89,7 @@ Public Sub GetTaskRepeat(task_id As Long) As Repeat
 		' Get all values for task_repeat. This code uses cursor that represents a specific row
 		' from a database view.
 		Dim Cursor As Cursor
-		Cursor = m_sql.ExecQuery("SELECT * FROM repeat JOIN task_repeat " & CRLF & _
-		" ON task_repeat.repeat_id = repeat.repeat_id " & CRLF & _
-		" WHERE task_repeat.task_id = " & task_id)
+		Cursor = m_sql.ExecQuery(query)
 		
 		item.Initialize()
 		
@@ -86,7 +122,8 @@ Public Sub UpdateRepeat(item As Repeat) As Boolean
 		For Each repeat As Boolean In item.IsEnabled
 			' The SQL code that updates the table.
 			m_sql.ExecNonQuery("UPDATE repeat SET " & CRLF & _
-			"enabled = " & DatabaseUtils.BoolToInt(repeat) & " " & CRLF & _
+			"enabled = " & DatabaseUtils.BoolToInt(repeat) & ", " & CRLF & _
+			"schedule = " & item.GetSchedule(repeatItr) & " " & CRLF & _
 			"WHERE repeat_id = " & item.GetID(repeatItr) & " " & CRLF & _
 			"AND day_id = " & repeatItr & ";")
 			
@@ -94,6 +131,27 @@ Public Sub UpdateRepeat(item As Repeat) As Boolean
 			repeatItr = repeatItr + 1
 		Next
 		
+		m_sql.TransactionSuccessful
+		
+		result = True
+	Catch
+		Log(LastException)
+	End Try
+	m_sql.EndTransaction
+	
+	Return result
+End Sub
+
+Public Sub UpdateSingleRepeatSchedule(repeat_id As Long, schedule As Long) As Boolean
+	Dim result As Boolean = False
+	
+	m_sql.BeginTransaction
+	Try
+		' The SQL code that updates the table.
+		m_sql.ExecNonQuery("UPDATE repeat SET " & CRLF & _
+		"schedule = " & schedule & " " & CRLF & _
+		"WHERE repeat_id = " & repeat_id & ";")
+
 		m_sql.TransactionSuccessful
 		
 		result = True

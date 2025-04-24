@@ -64,6 +64,11 @@ Sub Globals
 	Private lblAttachmentFileName As Label
 	Private pnlAttachmentRoot As Panel
 	Private spnTaskGroup As Spinner
+	Private spnReminderHour As Spinner
+	Private spnReminderMarker As Spinner
+	Private spnReminderMinute As Spinner
+	Private spnSnooze As Spinner
+	Private toggleReminder As ToggleButton
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -93,8 +98,10 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Retrieve the data sent by MainActivity to check the editor mode.
 	m_mode = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_MODE)
 	
-	' Fill the due date spinners with data
+	' Fill the spinners with data
 	PopulateDueDate
+	PopulateReminders
+	PopulateSnooze
 	
 	' Load the task groups
 	LoadTaskGroup
@@ -156,6 +163,20 @@ Sub Activity_Create(FirstTime As Boolean)
 		' Load the attachments
 		LoadAttachments
 		
+		' Load whether reminder field is enabled or not.
+		toggleReminder.Checked = m_task.IsReminderEnabled
+		
+		' Load reminder field data.
+		spnReminderHour.SelectedIndex = _
+			spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2))
+		spnReminderMinute.SelectedIndex = _
+			spnReminderMinute.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetMinute))
+		spnReminderMarker.SelectedIndex = _
+			spnReminderMarker.IndexOf(m_task.Reminder.GetMarker)
+			
+		' Load snooze data.
+		spnSnooze.SelectedIndex = spnSnooze.IndexOf(m_task.Snooze.GetSnoozeInfo())
+		
 		' Load the selected task group.
 		spnTaskGroup.SelectedIndex = spnTaskGroup.IndexOf(m_group.GetTitle)
 		
@@ -173,11 +194,35 @@ Sub Activity_Create(FirstTime As Boolean)
 			End If
 		End If
 		
-		
 		' Set the current date as the default value of due date fields.
 		spinnerDueDateDay.SelectedIndex = DateTime.GetDayOfMonth(DateTime.Now)
 		spinnerDueDateMonth.SelectedIndex = DateTime.GetMonth(DateTime.Now)
 		editDueDateYear.Text = DateTime.GetYear(DateTime.Now)
+		
+		' Set the reminder field as enabled by default.
+		toggleReminder.Checked = True
+		
+		' Set the hour and marker reminder field
+		Dim currentHour As Int = DateTime.GetHour(DateTime.Now)
+		
+		If 6 < currentHour And currentHour >= 22 Then
+			' Set the current hour plus 2 hour as the default value of the reminder fields.
+			m_task.Reminder.SetHour2(currentHour + 2)
+			spnReminderHour.SelectedIndex = _
+				spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2()))
+			spnReminderMarker.SelectedIndex = spnReminderMarker.IndexOf(m_task.Reminder.GetMarker())
+		Else
+			' Set the current hour plus 2 hour as the default value of the reminder fields.
+			spnReminderHour.SelectedIndex = _
+				spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(8))
+			spnReminderMarker.SelectedIndex = spnReminderMarker.IndexOf(m_task.Reminder.MARKER_AM)
+		End If
+		
+		' Set the minute reminder field.
+		spnReminderMinute.SelectedIndex = spnReminderMinute.IndexOf(m_task.Reminder.GetNumWithLeadingZero(0))
+		
+		' Set the snooze field.
+		spnSnooze.SelectedIndex = spnSnooze.IndexOf(m_task.Snooze.SNOOZE_OFF)
 		
 		' Load the due date data on the fields into the m_task variable.
 		' Even if spinner and edit fields are updated, the m_task.GetDueDate
@@ -239,6 +284,21 @@ Private Sub btnSave_Click
 		Return
 	End If
 	
+	' Get the selected value whether reminders are enabled or not.
+	toggleReminder.Checked = m_task.IsReminderEnabled
+	
+	' Get the selected reminder.
+	If Starter.SettingsViewModelInstance.Is24HourFormatEnabled Then
+		m_task.Reminder.SetHour(spnReminderHour.SelectedItem)
+	Else
+		m_task.Reminder.SetHour12HourFormat(spnReminderHour.SelectedItem, spnReminderMarker.SelectedItem)
+	End If
+	m_task.Reminder.SetMinute(spnReminderMinute.SelectedItem)
+	m_task.Reminder.SetSecond(0)
+	
+	' Get the selected snooze
+	m_task.Snooze.SetSnooze(m_task.Snooze.GetSnoozeFromText(spnSnooze.SelectedItem))
+	
 	' Get the selected group
 	Dim selectedGroup As Group
 	If spnTaskGroup.SelectedIndex > 0 Then
@@ -265,6 +325,11 @@ Private Sub btnSave_Click
 		
 		Starter.RepeatViewModelInstance.InsertTaskRepeat(m_task.GetId, m_repeat)
 	End If
+	
+	' Get the repeat values but with repeat_id.
+	m_repeat = Starter.RepeatViewModelInstance.GetTaskRepeat(m_task.GetId)
+	
+	Starter.RepeatViewModelInstance.CreateOrUpdateNotificationSchedule(m_task, m_repeat)
 	
 	' Save the attachments that are pending for insertion.
 	For Each item As Attachment In m_pendingAttachmentInsert
@@ -427,6 +492,7 @@ Private Sub OnAddAttachment(item As Attachment)
 End Sub
 
 ' Fill items into the due date Spinners.
+' Remarks: This requries m_task to be initialized before loading.
 Private Sub PopulateDueDate
 	' Clear the spinner items to prevent potential item duplication bug.
 	spinnerDueDateDay.Clear
@@ -452,6 +518,56 @@ Private Sub PopulateDueDate
 		End If
 		' Sets the current iteration value as a day.
 		spinnerDueDateDay.Add(i)
+	Next
+End Sub
+
+Private Sub PopulateSnooze
+	Dim snoozeObj As Snooze = m_task.Snooze
+	
+	' Clear the items before adding new items.
+	spnSnooze.Clear
+	
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_OFF))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_MINUTE))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_3_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_10_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_15_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_20_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_30_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_HOUR))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_2_HOURS))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_HOURS))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_12_HOURS))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_DAY))
+End Sub
+
+Private Sub PopulateReminders
+	' Clear the items before adding new items.
+	spnReminderHour.Clear
+	spnReminderMinute.Clear
+	spnReminderMarker.Clear
+	
+	' Populate the hour field, depending if 24-hour format setting is used.
+	If Starter.SettingsViewModelInstance.Is24HourFormatEnabled() == True Then
+		For i = 0 To 23
+			spnReminderHour.Add(m_task.Reminder.GetNumWithLeadingZero(i))
+		Next
+		
+		 ' Hide the time marker field if the 24-hour format setting is enabled.
+		spnReminderMarker.Visible = False
+	Else
+		For i = 1 To 12
+			spnReminderHour.Add(m_task.Reminder.GetNumWithLeadingZero(i))
+		Next
+		
+		spnReminderMarker.Add("AM")
+		spnReminderMarker.Add("PM")
+		
+	End If
+	
+	For i = 0 To 59
+		spnReminderMinute.Add(m_task.Reminder.GetNumWithLeadingZero(i))
 	Next
 End Sub
 
@@ -622,4 +738,13 @@ End Sub
 
 Private Sub spnTaskGroup_ItemClick (Position As Int, Value As Object)
 	
+End Sub
+
+Private Sub toggleReminder_CheckedChange(Checked As Boolean)
+	m_task.SetReminderEnabled(Checked)
+	
+	spnReminderHour.Enabled = Checked
+	spnReminderMinute.Enabled = Checked
+	spnReminderMarker.Enabled = Checked
+	spnSnooze.Enabled = Checked
 End Sub
