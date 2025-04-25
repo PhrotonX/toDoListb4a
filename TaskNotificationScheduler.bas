@@ -47,7 +47,7 @@ Sub Service_Start (StartingIntent As Intent)
 	' Obtaining the first repeat.
 	Dim repeatItem As Repeat = RepeatViewModelInstance.GetFirstScheduledRepeat()
 	
-	Log("TaskNotificationScheduler: repeatItem " & repeatItem)
+	Log("TaskNotificationScheduler: repeatItem ID " & repeatItem.GetID(0) & " day " & repeatItem.GetDayID(0))
 	
 	If repeatItem.IsInitialized Then
 		' Obtaining the task ID based on the repeat ID of the first repeat.
@@ -59,6 +59,7 @@ Sub Service_Start (StartingIntent As Intent)
 		' Calculate the total ticks.
 		Dim totalTicks As Long = item.Reminder.GetUnixTime + repeatItem.GetSchedule(0)
 		
+		Log("TaskNotificationScheduler: item.Reminder.GetUnixTime " & item.Reminder.GetUnixTime)
 		Log("TaskNotificationScheduler: totalTicks " & totalTicks)
 		
 		' Make a notification
