@@ -206,6 +206,10 @@ Sub Activity_Create(FirstTime As Boolean)
 		' Set the hour and marker reminder field
 		Dim currentHour As Int = DateTime.GetHour(DateTime.Now)
 		
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+			Log("EditorActivity: currentHour " & currentHour)
+		End If
+		
 		If 6 < currentHour And currentHour >= 22 Then
 			' Set the current hour plus 2 hour as the default value of the reminder fields.
 			m_task.Reminder.SetHour2(currentHour + 2, Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
@@ -293,10 +297,16 @@ Private Sub btnSave_Click
 	If Starter.SettingsViewModelInstance.Is24HourFormatEnabled Then
 		m_task.Reminder.SetHour(spnReminderHour.SelectedItem)
 	Else
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+			Log("EditorActivity: selected reminder marker " & spnReminderMarker.SelectedItem)
+		End If
 		m_task.Reminder.SetHour12HourFormat(spnReminderHour.SelectedItem, spnReminderMarker.SelectedItem)
 	End If
 	m_task.Reminder.SetMinute(spnReminderMinute.SelectedItem)
 	m_task.Reminder.SetSecond(0)
+	
+	Log("EditorActivity: Saved reminder " & m_task.Reminder.GetFormattedTime( _
+		Starter.SettingsViewModelInstance.Is24HourFormatEnabled()))
 	
 	' Get the selected snooze
 	m_task.Snooze.SetSnooze(m_task.Snooze.GetSnoozeFromText(spnSnooze.SelectedItem))
