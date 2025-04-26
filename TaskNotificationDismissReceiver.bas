@@ -29,15 +29,21 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 	RepeatViewModelInstance.Initialize(repeatRepo)
 	SettingsViewModelInstance.Initialize()
 	
+	' Make a notification builder instance.
+	Dim nb As Notification
+	nb.Initialize
+	
 	Dim toastMsg As String = "Task Dimissed. No recurring task follows."
 	
 	If StartingIntent.IsInitialized Then
-		Dim itemId As Long = StartingIntent.Action
+		' Notification ID is the same as the repeat ID.
+		Dim notificationId As Long = StartingIntent.Action
+		Dim itemId As Long = RepeatViewModelInstance.GetTaskIdFromRepeat(notificationId)
 		
-		Log(itemId)
+		Log("TaskNotificationDismissReceiver: Task id " & itemId)
 		
 		Dim item As ToDo = TaskViewModelInstance.GetTask(itemId)
-		
+
 		If item.IsInitialized Then
 			If item.Done == False Then
 				Dim fullRepeat As Repeat = RepeatViewModelInstance.GetTaskRepeat(item.GetId)

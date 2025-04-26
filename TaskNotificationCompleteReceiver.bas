@@ -24,18 +24,24 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 	' Initialize the database.
 	ToDoDatabaseInstance.Initialize
 	taskRepo.Initialize(ToDoDatabaseInstance)
+	repeatRepo.Initialize(ToDoDatabaseInstance)
 	TaskViewModelInstance.Initialize(taskRepo)
 	RepeatViewModelInstance.Initialize(repeatRepo)
 	
+	' Make a notification builder instance to cancel the tapped notification.
+	Dim nb As Notification
+	nb.Initialize
+	
 	If StartingIntent.IsInitialized Then
-		Dim itemId As Long = StartingIntent.Action
+		' Notification ID is the same as the repeat ID.
+		Dim notificationId As Long = StartingIntent.Action
+		Dim itemId As Long = RepeatViewModelInstance.GetTaskIdFromRepeat(notificationId)
 		
-		Log(itemId)
+		Log("TaskNotificationCompleteReceiver: Task id " & itemId)
 		
 		Dim item As ToDo = TaskViewModelInstance.GetTask(itemId)
 		
-		'Log(item)
-		
+		nb.Cancel(itemId)
 		If item.IsInitialized Then
 			item.Done = True
 			
