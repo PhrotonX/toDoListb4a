@@ -53,7 +53,7 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 					RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(currentDayOfTheWeek), _
 					repeatItem.GetSchedule(currentDayOfTheWeek))
 					
-					StartServiceAt(TaskNotificationService, DateTime.Now, True)
+					StartServiceAtExact(TaskNotificationScheduler, DateTime.Now, True)
 				End If
 				
 			End If
