@@ -303,7 +303,29 @@ Sub Activity_Create(FirstTime As Boolean)
 	m_query.Initialize()
 	
 	Starter.Permissions.CheckAndRequest(Starter.Permissions.PERMISSION_POST_NOTIFICATIONS)
-	Starter.Permissions.CheckAndRequest("android.permission.SCHEDULE_EXACT_ALARM")
+
+	If Starter.Phone.SdkVersion >= 31 Then
+		Dim am As JavaObject = GetAlarmManager
+		If am.RunMethod("canScheduleExactAlarms", Null).As(Boolean) == False Then
+			Msgbox2Async("This application may not work correctly if is not granted with a special access" & _
+					" to Alarms & Reminders permission." & CRLF & CRLF & "To enable this permission, go to Settings >" & _
+					" Apps > Special app access > Alarms & reminders > To Do List Application > Allow setting alarms " & _ 
+					"And reminders." & CRLF & CRLF & "Click 'Open Settings' button to continue or click 'Cancel' to " & _ 
+					"exit this Application.", "Some permissions are disabled For this Application.", "Open Settings", _ 
+					"Cancel", "", Null, False)
+				
+			Wait For Msgbox_Result (MsgBoxResult As Int)
+			If MsgBoxResult == DialogResponse.POSITIVE Then
+				GetScheduleExactAlarmPermission
+			Else If MsgBoxResult == DialogResponse.NEGATIVE Or MsgBoxResult == DialogResponse.CANCEL Then
+				ExitApplication
+			End If
+		Else
+			StartServiceAtExact(TaskNotificationService, DateTime.Now, True)
+		End If
+	Else
+		StartServiceAtExact(TaskNotificationService, DateTime.Now, True)
+	End If
 End Sub
 
 Sub Activity_Resume
@@ -326,42 +348,13 @@ Sub Activity_PermissionResult (Permission As String, Result As Boolean)
 			ToastMessageShow("Permission failed to grant for " & Permission, False)
 		End If
 	End If
-	
-	Select Permission:
-		Case "android.permission.SCHEDULE_EXACT_ALARM":
-			If Starter.Phone.SdkVersion >= 31 Then
-				If Result == True Then
-					StartServiceAtExact(TaskNotificationService, DateTime.Now, True)
-				Else
-					Msgbox2Async("This application may not work correctly if is not granted with a special access" & _
-					" to Alarms & Reminders permission." & CRLF & CRLF & "To enable this permission, go to Settings >" & _
-					" Apps > Special app access > Alarms & reminders > To Do List Application > Allow setting alarms " & _ 
-					"And reminders." & CRLF & CRLF & "Click 'Open Settings' button to continue or click 'Cancel' to " & _ 
-					"exit this Application.", "Some permissions are disabled For this Application.", "Open Settings", _ 
-					"Cancel", "", Null, False)
-				
-					Wait For Msgbox_Result (MsgBoxResult As Int)
-					If MsgBoxResult == DialogResponse.POSITIVE Then
-						GetScheduleExactAlarmPermission
-					Else If MsgBoxResult == DialogResponse.NEGATIVE Or MsgBoxResult == DialogResponse.CANCEL Then
-						ExitApplication
-					End If
-				End If
-			Else
-				StartServiceAtExact(TaskNotificationService, DateTime.Now, True)
-			End If
-	End Select
 End Sub
 
+' Only run if Android SDK version is >= 31.
 Private Sub GetScheduleExactAlarmPermission
-	If Starter.Phone.SdkVersion >= 31 Then
-		Dim am As JavaObject = GetAlarmManager
-		If am.RunMethod("canScheduleExactAlarms", Null).As(Boolean) = False Then
-			Dim in As Intent
-			in.Initialize("android.settings.REQUEST_SCHEDULE_EXACT_ALARM", "package:" & Application.PackageName)
-			StartActivity(in)
-		End If
-	End If
+	Dim in As Intent
+	in.Initialize("android.settings.REQUEST_SCHEDULE_EXACT_ALARM", "package:" & Application.PackageName)
+	StartActivity(in)
 End Sub
 
 Private Sub GetAlarmManager As JavaObject
