@@ -10,7 +10,7 @@ Sub Class_Globals
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
-Public Sub Initialize
+Public Sub Initialize()
 	m_date.Initialize(0, 0, 0)
 	m_time.Initialize(0, 0, 0)
 End Sub
@@ -19,8 +19,8 @@ Public Sub GetDay As Date
 	Return m_date
 End Sub
 
-Public Sub GetFormattedDateAndTime As String
-	Return m_date.GetFormattedDate & " " & m_time.GetFormattedTime
+Public Sub GetFormattedDateAndTime(hour24 As Boolean) As String
+	Return m_date.GetFormattedDate & " " & m_time.GetFormattedTime(hour24)
 End Sub
 
 Public Sub GetTime As Time

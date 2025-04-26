@@ -56,7 +56,7 @@ Sub Process_Globals
 	
 	Public Provider As FileProvider
 	Public Permissions As RuntimePermissions
-	
+	Public Phone As Phone
 End Sub
 
 Sub CheckInstanceState

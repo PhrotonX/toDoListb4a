@@ -31,7 +31,12 @@ Public Sub UpdateTask(Item As ToDo)
 End Sub
 
 Public Sub GetTask(id As Long) As ToDo
-	Return m_database.TaskDao().GetTasks("WHERE task_id = " & id, "").Get(0)
+	Dim result As List = m_database.TaskDao().GetTasks("WHERE task_id = " & id, "")
+	If result.Size > 0 Then
+		Return result.Get(0)
+	End If
+	
+	Return Null
 End Sub
 
 Public Sub GetAllTasks() As List
