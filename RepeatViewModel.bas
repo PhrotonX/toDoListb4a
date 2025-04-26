@@ -102,7 +102,7 @@ Public Sub CreateOrUpdateNotificationSchedule(item As ToDo, repeatItem As Repeat
 	End If
 	
 	'StopService(TaskNotificationScheduler)
-	StartServiceAt(TaskNotificationScheduler, DateTime.Now, True)
+	StartServiceAtExact(TaskNotificationScheduler, DateTime.Now, True)
 End Sub
 
 Private Sub OnCalculateSchedule(item As Repeat) As Map
