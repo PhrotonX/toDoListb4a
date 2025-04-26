@@ -201,7 +201,10 @@ Sub Activity_Create(FirstTime As Boolean)
 		editDueDateYear.Text = DateTime.GetYear(DateTime.Now)
 		
 		' Set the reminder field as enabled by default.
-		toggleReminder.Checked = True
+		toggleReminder.Checked = False
+		
+		radioPriorityMedium.Checked = True
+		m_task.SetPriority(m_task.PRIORITY_MEDIUM)
 		
 		' Set the hour and marker reminder field
 		Dim currentHour As Int = DateTime.GetHour(DateTime.Now)
@@ -426,6 +429,10 @@ Private Sub btnDelete_Click
 		Starter.TaskViewModelInstance.DeleteTask(m_task)
 		Starter.GroupViewModelInstance.DeleteTaskGroup(m_task.GetId, m_group.GetID)
 		Starter.RepeatViewModelInstance.DeleteRepeat(m_repeat)
+		
+		' Set the extra ID into 0.
+		Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, 0)
+		
 		' Close the editor after deleting,
 		Activity.Finish
 	End If

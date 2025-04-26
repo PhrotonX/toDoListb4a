@@ -71,47 +71,68 @@ Sub Activity_Resume
 	' Prevent instance errors.
 	Starter.CheckInstanceState
 	
-	If Activity.GetStartingIntent.IsInitialized Then
-		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
-			Log("TaskViewerActivity: Activity.GetStartingIntent.Action " & Activity.GetStartingIntent.Action)
-		End If
+	' Replace the task ID if there is a task_id sent by a notification.
+	Dim in As Intent = Activity.GetStartingIntent
+	If in.IsInitialized And in.HasExtra("Notification_Tag") Then
+		Dim task_id_fromNotification As String = in.GetExtra("Notification_Tag")
 		
-		Dim task_id_fromNotification As Long = Activity.GetStartingIntent.Action
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+			Log("TaskViewerActivity: task_id_fromNotification " & task_id_fromNotification)
+		End If
 		
 		If task_id_fromNotification > 0 Then
 			Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, task_id_fromNotification)
 		End If
 	End If
 	
-	' Retrieve the task sent by MainActivity.
-	m_task = Starter.TaskViewModelInstance.GetTask(Starter.InstanceState.Get(Starter.EXTRA_EDITOR_TASK_ID))
+	Dim task_id As Long = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_TASK_ID)
 	
-	' Validate if the task exists by checking the task ID which cannot be zero on
-	' the database. Else, return back to MainActivity.
-	If m_task.GetId == 0 Then
-		Activity.Finish
+	If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+		Log("TaskViewerActivity: task_id " & task_id)
 	End If
 	
-	' Get the repeat information from task.
-	m_repeat = Starter.RepeatViewModelInstance.GetTaskRepeat(m_task.GetId)
+	' Retrieve the task sent by MainActivity.
+	m_task = Starter.TaskViewModelInstance.GetTask(task_id)
 	
-	' Display the retrieved task into the views.
-	viewTitle.Text = m_task.GetTitle
-	viewTitle.Checked = m_task.Done
-	viewNotes.Text = m_task.GetNotes
-	viewRepeat.Text = m_repeat.GetRepeatInfo
-	viewPriority.Text = m_task.GetPriorityInfo
-	viewDueDate.Text = m_task.GetDueDate.GetFormattedDate
-	viewCreatedAt.Text = m_task.GetCreatedAt.GetFormattedDateAndTime( _ 
-		Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
-	viewModifiedAt.Text = m_task.GetUpdatedAt.GetFormattedDateAndTime( _
-		Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+	If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+		Log("TaskViewerActivity: m_task " & m_task)
+	End If
 	
-	Dim taskGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_task.GetId())
-	If taskGroup.IsInitialized Then
-		viewTaskGroup.Text = taskGroup.GetTitle
+	' Validate if the task is null.
+	If m_task <> Null Then
+		If task_id == 0 Then
+			Activity.Finish
+		End If
+		
+		' Validate if the task exists by checking the task ID which cannot be zero on
+		' the database. Else, return back to MainActivity.
+		If m_task.GetId == 0 Then
+			Activity.Finish
+		End If
+		
+		' Get the repeat information from task.
+		m_repeat = Starter.RepeatViewModelInstance.GetTaskRepeat(m_task.GetId)
+		
+		' Display the retrieved task into the views.
+		viewTitle.Text = m_task.GetTitle
+		viewTitle.Checked = m_task.Done
+		viewNotes.Text = m_task.GetNotes
+		viewRepeat.Text = m_repeat.GetRepeatInfo
+		viewPriority.Text = m_task.GetPriorityInfo
+		viewDueDate.Text = m_task.GetDueDate.GetFormattedDate
+		viewCreatedAt.Text = m_task.GetCreatedAt.GetFormattedDateAndTime( _
+			Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+		viewModifiedAt.Text = m_task.GetUpdatedAt.GetFormattedDateAndTime( _
+			Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+		
+		Dim taskGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_task.GetId())
+		If taskGroup.IsInitialized Then
+			viewTaskGroup.Text = taskGroup.GetTitle
+		Else
+			viewTaskGroup.Text = Starter.GroupViewModelInstance.DefaultGroup().GetTitle()
+		End If
 	Else
-		viewTaskGroup.Text = Starter.GroupViewModelInstance.DefaultGroup().GetTitle()
+		Activity.Finish
 	End If
 End Sub
 
@@ -131,6 +152,8 @@ Private Sub btnEdit_Click
 	
 	' Set the EditorActivity mode into edit mode.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_MODE, Starter.EDITOR_MODE_EDIT)
+	
+	m_task = Null
 	
 	' Start the EditorActivity.
 	StartActivity(EditorActivity)
