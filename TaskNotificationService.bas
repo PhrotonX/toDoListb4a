@@ -101,7 +101,7 @@ Sub Service_Start (StartingIntent As Intent)
 			'notificationBuilder.ShowWhen(notificationTimeProcessed)
 	
 			notification = notificationBuilder.Build(GetTitle(task), task.GetNotes, _
-		TAG_TASK_NOTIFICATION, TaskViewerActivity)
+		task_id, TaskViewerActivity)
 
 			'notification.Cancel(repeatId)
 			notification.Notify(repeatItem.GetID(0))

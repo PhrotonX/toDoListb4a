@@ -71,6 +71,14 @@ Sub Activity_Resume
 	' Prevent instance errors.
 	Starter.CheckInstanceState
 	
+	If Activity.GetStartingIntent.IsInitialized Then
+		Dim task_id_fromNotification As Long = Activity.GetStartingIntent.Action
+		
+		If task_id_fromNotification > 0 Then
+			Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, task_id_fromNotification)
+		End If
+	End If
+	
 	' Retrieve the task sent by MainActivity.
 	m_task = Starter.TaskViewModelInstance.GetTask(Starter.InstanceState.Get(Starter.EXTRA_EDITOR_TASK_ID))
 	
