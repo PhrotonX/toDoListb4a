@@ -110,7 +110,7 @@ Library6=keyvaluestore
 Library7=nb6
 Library8=phone
 Library9=reflection
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="33" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.SCHEDULE_EXACT_ALARM"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.USE_EXACT_ALARM"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddApplicationText(~\n~  <provider~\n~  android:name="android.support.v4.content.FileProvider"~\n~  android:authorities="$PACKAGE$.provider"~\n~  android:exported="false"~\n~  android:grantUriPermissions="true">~\n~  <meta-data~\n~  android:name="android.support.FILE_PROVIDER_PATHS"~\n~  android:resource="@xml/provider_paths"/>~\n~  </provider>~\n~)~\n~CreateResource(xml, provider_paths,~\n~   <files-path name="name" path="" />~\n~)~\n~'End of default text.~\n~
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="33" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddPermission("android.permission.SCHEDULE_EXACT_ALARM")~\n~AddApplicationText(~\n~  <provider~\n~  android:name="android.support.v4.content.FileProvider"~\n~  android:authorities="$PACKAGE$.provider"~\n~  android:exported="false"~\n~  android:grantUriPermissions="true">~\n~  <meta-data~\n~  android:name="android.support.FILE_PROVIDER_PATHS"~\n~  android:resource="@xml/provider_paths"/>~\n~  </provider>~\n~)~\n~CreateResource(xml, provider_paths,~\n~   <files-path name="name" path="" />~\n~)~\n~~\n~#BridgeLogger: True~\n~'End of default text.~\n~
 Module1=Attachment
 Module10=DaysOfTheWeek
 Module11=Dimen
@@ -303,8 +303,29 @@ Sub Activity_Create(FirstTime As Boolean)
 	m_query.Initialize()
 	
 	Starter.Permissions.CheckAndRequest(Starter.Permissions.PERMISSION_POST_NOTIFICATIONS)
-	Starter.Permissions.CheckAndRequest("android.permission.SCHEDULE_EXACT_ALARM")
-	Starter.Permissions.CheckAndRequest("android.permission.USE_EXACT_ALARM")
+
+	If Starter.Phone.SdkVersion >= 31 Then
+		Dim am As JavaObject = GetAlarmManager
+		If am.RunMethod("canScheduleExactAlarms", Null).As(Boolean) == False Then
+			Msgbox2Async("This application may not work correctly if is not granted with a special access" & _
+					" to Alarms & Reminders permission." & CRLF & CRLF & "To enable this permission, go to Settings >" & _
+					" Apps > Special app access > Alarms & reminders > To Do List Application > Allow setting alarms " & _ 
+					"And reminders." & CRLF & CRLF & "Click 'Open Settings' button to continue or click 'Cancel' to " & _ 
+					"exit this Application.", "Some permissions are disabled For this Application.", "Open Settings", _ 
+					"Cancel", "", Null, False)
+				
+			Wait For Msgbox_Result (MsgBoxResult As Int)
+			If MsgBoxResult == DialogResponse.POSITIVE Then
+				GetScheduleExactAlarmPermission
+			Else If MsgBoxResult == DialogResponse.NEGATIVE Or MsgBoxResult == DialogResponse.CANCEL Then
+				ExitApplication
+			End If
+		Else
+			StartServiceAtExact(TaskNotificationService, DateTime.Now, True)
+		End If
+	Else
+		StartServiceAtExact(TaskNotificationService, DateTime.Now, True)
+	End If
 End Sub
 
 Sub Activity_Resume
@@ -329,6 +350,18 @@ Sub Activity_PermissionResult (Permission As String, Result As Boolean)
 	End If
 End Sub
 
+' Only run if Android SDK version is >= 31.
+Private Sub GetScheduleExactAlarmPermission
+	Dim in As Intent
+	in.Initialize("android.settings.REQUEST_SCHEDULE_EXACT_ALARM", "package:" & Application.PackageName)
+	StartActivity(in)
+End Sub
+
+Private Sub GetAlarmManager As JavaObject
+	Dim ctxt As JavaObject
+	ctxt.InitializeContext
+	Return ctxt.RunMethod("getSystemService", Array("alarm"))
+End Sub
 
 Private Sub btnAdd_Click
 	' Set the editor mode by submitting the requested value into the InstanceState bundle.
@@ -363,6 +396,7 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 		item.Done = Checked
 		
 		Starter.TaskViewModelInstance.UpdateTask(item)
+		Starter.RepeatViewModelInstance.CalculateSchedule(item)
 	End If
 	
 	If m_query.IsSortingEnabled() == False Then

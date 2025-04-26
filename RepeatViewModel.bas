@@ -13,6 +13,23 @@ Public Sub Initialize(repository As RepeatRepository)
 	m_repository = repository
 End Sub
 
+Public Sub CalculateSchedule(item As ToDo)
+	Dim fullRepeat As Repeat = GetTaskRepeat(item.GetId)
+	
+	If item.Done == True Then
+		' Remove the reminder schedule if the item is done.
+		For i = 0 To 6
+			fullRepeat.SetSchedule(i, 0)
+		Next
+	Else
+		' Re-calculate schedule if the item is not done. The function should be located within Repeat class.
+		fullRepeat.CalculateSchedule()
+	End If
+	
+	' Update the repeat values for the udpated schedule.
+	UpdateRepeat(fullRepeat)
+End Sub
+
 Public Sub InsertTaskRepeat(task_id As Long, item As Repeat) As Boolean
 	Return m_repository.InsertTaskRepeat(task_id, item)
 End Sub
@@ -30,9 +47,11 @@ Public Sub GetFirstScheduledRepeat() As Repeat
 	Return m_repository.GetFirstScheduledRepeat()
 End Sub
 
+Public Sub GetNextTaskRepeat(task_id As Long) As Repeat
+	Return m_repository.GetNextTaskRepeat(task_id)
+End Sub
+
 Public Sub UpdateRepeat(item As Repeat) As Boolean
-	' Re-calculate all repeat schedule.
-	
 	Return m_repository.UpdateRepeat(item)
 End Sub
 
@@ -47,7 +66,8 @@ End Sub
 ' item - Expects repeat items in which all IDs are already 
 Public Sub CreateOrUpdateNotificationSchedule(item As ToDo, repeatItem As Repeat)
 	' Create the notification
-	Log("TaskNotificationScheduler: Creating Notification")
+	Log("CreateOrUpdateNotificationSchedule: Creating Notification")
+	
 	If item.IsReminderEnabled == True Then
 		Dim notificationTimes As Map = OnCalculateSchedule(repeatItem)
 		
@@ -56,7 +76,13 @@ Public Sub CreateOrUpdateNotificationSchedule(item As ToDo, repeatItem As Repeat
 			' @NOTE: This code does currently not handle notifications that will repeat per week.
 			For Each notificationKey As Long In notificationTimes.Keys
 				
-				Log("notificationTime key:" & notificationTimes.Get(notificationKey))
+				Log("CreateOrUpdateNotificationSchedule notificationTime: " & notificationTimes.Get(notificationKey))
+				Log("CreateOrUpdateNotificationSchedule notificationTime key: " & notificationKey)
+				Log("CreateOrUpdateNotificationSchedule notificationTime Day of the week ID: " & notificationKey)
+				
+				Dim calculatedTime As Long = notificationTimes.Get(notificationKey) + item.Reminder.GetUnixTime
+				
+				Log("CreateOrUpdateNotificationSchedule notificationTime calculatedTime: " & calculatedTime)
 				
 				' Save the schedule to DB.
 				Starter.RepeatViewModelInstance.UpdateSingleRepeatSchedule(notificationKey, _ 
@@ -74,13 +100,13 @@ Public Sub CreateOrUpdateNotificationSchedule(item As ToDo, repeatItem As Repeat
 			' Save the sechdule to DB.
 			' Single notification only.
 			' Pass first repeat ID if no repeat information is enabled.
-			Starter.RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(0), timeObj)
+			UpdateSingleRepeatSchedule(repeatItem.GetID(0), timeObj)
 		End If
 		
 	End If
 	
 	'StopService(TaskNotificationScheduler)
-	StartServiceAt(TaskNotificationScheduler, DateTime.Now, True)
+	StartServiceAtExact(TaskNotificationScheduler, DateTime.Now, True)
 End Sub
 
 Private Sub OnCalculateSchedule(item As Repeat) As Map
@@ -94,28 +120,42 @@ Private Sub OnCalculateSchedule(item As Repeat) As Map
 	' returns is 1-based instead of 0.
 	Dim j As Int = DateTime.GetDayOfWeek(DateTime.Now) - 1
 
+	Log("TaskNotification.OnCalculateSchedule() j init " & j)
+
 	' Iterator for 0 to 6.
-	Dim itr As Int = -1
+	Dim itr As Int = 0
+	
+	Dim timeCurrent As Long = dateObj.GetDateNoTime(DateTime.Now)
+	
+	Log("current date & time" & dateObj.GetDateNoTime(DateTime.Now))
 	
 	For i = 0 To 6
 		' If the current iterated value is greater than 6 or Saturday, then set the iterator value into
 		' 0 until the value is less than j. Else, set the itr value as the current iterated value.
-		If j + (j - i) > 6 Then
-			itr = itr + 1
-		Else
-			itr = i
+		If j > 6 Then
+			j = itr
 		End If
 		
+		Log("TaskNotification.OnCalculateSchedule() j " & j)
+		Log("TaskNotification.OnCalculateSchedule() itr " & itr)
+		
 		' If the current repeat day is enabled, then get its date value and then add it into the resulting list.
-		If item.IsEnabled(itr) Then
-			Dim timeCurrent As Long = dateObj.GetDateNoTime(DateTime.Now)
+		If item.IsEnabled(j) Then		
+			Log("TaskNotification.OnCalculateSchedule() i " & i)
 			Dim timeObj As Long = DateTime.Add(timeCurrent, 0, 0, i)
-			result.Put(item.GetID(itr), timeObj)
+			timeObj = timeObj - (timeObj Mod dateObj.DAY_LENGTH)
 			
-			Log("TaskNotification.OnCalculateSchedule() Day of the week ID: " & item.GetID(itr))
+			result.Put(item.GetID(j), timeObj)
+			
+			Log("TaskNotification.OnCalculateSchedule() Day of the week ID: " & item.GetDayID(j))
+		End If
+		
+		If j > 6 Then
+			itr = itr + 1
 		End If
 		
 		j = j + 1
+		
 	Next
 	
 	Return result

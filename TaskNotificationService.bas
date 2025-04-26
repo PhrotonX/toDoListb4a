@@ -38,6 +38,7 @@ End Sub
 Sub Service_Start (StartingIntent As Intent)
 	' Make this service only start if the app has been started or a notification has occured.
 	Service.StopAutomaticForeground 'Call this when the background task completes (if there is one)
+	Log("=========================================")
 	
 	' Initialize the database.
 	ToDoDatabaseInstance.Initialize
@@ -51,68 +52,79 @@ Sub Service_Start (StartingIntent As Intent)
 
 	' Obtaining the first repeat.
 	Dim repeatItem As Repeat = RepeatViewModelInstance.GetFirstScheduledRepeat()
-
+	
 	Log("TaskNotificationScheduler: repeatItem " & repeatItem)
 
 	If repeatItem.IsInitialized Then
 		' Obtaining the task ID based on the repeat ID of the first repeat.
 		Dim task_id As Long = RepeatViewModelInstance.GetTaskIdFromRepeat(repeatItem.GetID(0))
-		Log("TaskNotificationScheduler: task_id" & task_id)
+		Log("TaskNotificationScheduler: task_id " & task_id)
 		' Obtaining the task based on the task ID.
 		Dim task As ToDo = TaskViewModelInstance.GetTask(task_id)
-	
-		' Calculate the total ticks.
-		Dim totalTicks As Long = task.Reminder.GetUnixTime + repeatItem.GetSchedule(0)
 		
-		' StartServiceAt(Me, totalTicks, True)
+		If task <> Null Then
+			Log("TaskNotificationScheduler: repeatItem.GetDayID(0) " & repeatItem.GetDayID(0))
 	
-		Log("TaskNotificationScheduler: totalTicks " & totalTicks)
+			' Make a notification
+			Dim notification As Notification
 	
-		' Make a notification
-		Dim notification As Notification
-	
-		notification.Initialize
-		'notification.Cancel(repeatItem)
-	
-		Dim priority As String = GetImportanceLevel(task)
-	
-		Dim notificationBuilder As NB6
-		notificationBuilder.Initialize(CHANNEL_TASK_NOTIFICATION_ID, CHANNEL_TASK_NOTIFICATION, priority)
-		notificationBuilder.SetDefaults(True, False, True)
-		notificationBuilder.ShowBadge(True)
-		notificationBuilder.SmallIcon(LoadBitmap(File.DirAssets, "ic_launcher_small.png"))
-	
-		notificationBuilder.AddButtonAction(Null, "Dismiss", TaskNotificationDismissReceiver, task.GetId)
-		notificationBuilder.AddButtonAction(Null, "Snooze", TaskNotificationSnoozeReceiver, task.GetId)
-		notificationBuilder.AddButtonAction(Null, "Complete", TaskNotificationCompleteReceiver, task.GetId)
-		notificationBuilder.DeleteAction(TaskNotificationDismissReceiver, "Action String")
-	
-		'Dim notificationTimeProcessed As Long = notificationTime + item.Reminder.GetUnixTime
-
-		'Log("notificationTimeProcessed: " & notificationTimeProcessed)
-
-		'notificationBuilder.ShowWhen(notificationTimeProcessed)
-	
-		notification = notificationBuilder.Build(GetTitle(task), task.GetNotes, _
-		TAG_TASK_NOTIFICATION, TaskViewerActivity)
-
-		'notification.Cancel(repeatId)
-		notification.Notify(repeatItem.GetID(0))
-		
-		' Recalculate current task.
-		If repeatItem.IsEnabled(0) Then
-			Dim newDate As Long = DateTime.Now - (DateTime.Now Mod task.GetDueDate.DAY_LENGTH)
-			newDate = newDate + task.Reminder.GetUnixTime
-			newDate = newDate + (DateTime.Add(newDate, 0, 0, 7) - newDate)
-		
-			Log("TaskNotificationScheduler: newDate " & newDate)
-		
-			repeatItem.SetSchedule(0, newDate)
-		
-			' Save to database.
-			RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(0), repeatItem.GetSchedule(0))
-		End If
+			notification.Initialize
 			
+			Dim priority As String = GetImportanceLevel(task)
+	
+			Dim notificationBuilder As NB6
+			notificationBuilder.Initialize(CHANNEL_TASK_NOTIFICATION_ID, CHANNEL_TASK_NOTIFICATION, priority)
+			notificationBuilder.SetDefaults(True, False, True)
+			notificationBuilder.ShowBadge(True)
+			notificationBuilder.SmallIcon(LoadBitmap(File.DirAssets, "ic_launcher_small.png"))
+			notificationBuilder.AutoCancel(True)
+			
+			notificationBuilder.AddButtonAction(Null, "Dismiss", TaskNotificationDismissReceiver, repeatItem.GetID(0))
+			If task.Snooze.GetSnooze <> task.Snooze.SNOOZE_OFF Then
+				notificationBuilder.AddButtonAction(Null, "Snooze", TaskNotificationSnoozeReceiver, repeatItem.GetID(0))
+			End If
+			notificationBuilder.AddButtonAction(Null, "Complete", TaskNotificationCompleteReceiver, repeatItem.GetID(0))
+			notificationBuilder.DeleteAction(TaskNotificationDismissReceiver, repeatItem.GetID(0))
+	
+			notification = notificationBuilder.Build(GetTitle(task), task.GetNotes, _
+		task_id, TaskViewerActivity)
+
+			'notification.Cancel(repeatId)
+			notification.Notify(repeatItem.GetID(0))
+		
+			' Recalculate current task.
+			Log("TaskNotificationScheduler: repeatItem.IsEnabled(0) " & repeatItem.IsEnabled(0))
+		
+			Dim fullRepeat As Repeat = RepeatViewModelInstance.GetTaskRepeat(task.GetId)
+		
+		
+			If fullRepeat.AreAllDisabled == True Then
+				' Remove reminder schedule if no repeat option is set.
+				repeatItem.SetSchedule(0, 0)
+				RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(0), repeatItem.GetSchedule(0))
+			
+				Log("TaskNotificationService: repeatItem.GetSchedule(0) " & repeatItem.GetSchedule(0))
+			Else
+				' Update the reminder schedule if the repeat item or the "day of the week" is enabled.
+				' This reschedules the reminder into next week.
+				' Note: All off this will be turned off after tapping on "Complete" or marking such task as done.
+				If repeatItem.IsEnabled(0) Then
+					Dim newDate As Long = DateTime.Now - (DateTime.Now Mod task.GetDueDate.DAY_LENGTH)
+					newDate = newDate + task.Reminder.GetUnixTime
+					newDate = newDate + (DateTime.Add(newDate, 0, 0, 7) - newDate)
+		
+					Log("TaskNotificationService: newDate " & newDate)
+		
+					repeatItem.SetSchedule(0, newDate)
+		
+					' Save to database.
+					RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(0), repeatItem.GetSchedule(0))
+				
+					' Make another notification for the next schedule.
+					StartServiceAtExact(TaskNotificationScheduler, DateTime.Now, True)
+				End If
+			End If
+		End If
 	End If
 	
 End Sub
