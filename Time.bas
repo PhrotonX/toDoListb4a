@@ -144,17 +144,20 @@ Public Sub SetHour2(hour As Int, hour24 As Boolean)
 End Sub
 
 Public Sub SetHour12HourFormat(hour As Int, marker As String)
-	'Set the hour value before converting.
-	m_hour = hour
-	
 	If marker == MARKER_AM Then
 		' 12:00 AM is 00:00.
 		If hour == 12 Then
 			m_hour = 0
+		Else
+			m_hour = hour
 		End If
 	Else If marker == MARKER_PM Then
-		' 1:00 PM is 1 + 12 = 13:00 and 11:00 PM is 11+12 = 23:00.
+		If hour == 12 Then
+			m_hour = 12
+		Else
+			' 1:00 PM is 1 + 12 = 13:00 and 11:00 PM is 11+12 = 23:00.
 			m_hour = hour + 12
+		End If
 	End If
 End Sub
 

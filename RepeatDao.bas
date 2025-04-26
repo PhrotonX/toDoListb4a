@@ -59,7 +59,7 @@ End Sub
 Public Sub GetNextTaskRepeat(task_id As Long) As Repeat
 	Return OnGetTaskRepeat("SELECT * FROM repeat JOIN task_repeat " & CRLF & _
 		" ON task_repeat.repeat_id = repeat.repeat_id " & CRLF & _
-		" WHERE task_repeat.task_id = " & task_id & " ORDER BY schedule ASC LIMIT 1")
+		" WHERE task_repeat.task_id = " & task_id & " AND repeat.schedule > 0 ORDER BY schedule Asc LIMIT 1")
 End Sub
 
 Public Sub GetTaskIdFromRepeat(repeat_id As Long) As Long

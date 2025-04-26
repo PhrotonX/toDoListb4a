@@ -47,13 +47,17 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 				Dim snoozeObj As Long = item.Snooze.GetSnooze
 				
 				Log("TaskNotificationSnoozeReceiver: snoozeObj: " & snoozeObj)
+				Log("TaskNotificationSnoozeReceiver: currentDayOfTheWeek: " & currentDayOfTheWeek)
 				If snoozeObj <> item.Snooze.SNOOZE_OFF Then
-					repeatItem.SetSchedule(currentDayOfTheWeek, DateTime.Now + snoozeObj)
+					Dim calculatedTime As Long = DateTime.Now + snoozeObj
+					repeatItem.SetSchedule(currentDayOfTheWeek, calculatedTime)
 				
+					Log("TaskNotificationSnoozeReceiver: calculatedTime: " & calculatedTime)
+					
 					RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(currentDayOfTheWeek), _
 					repeatItem.GetSchedule(currentDayOfTheWeek))
 					
-					StartServiceAtExact(TaskNotificationScheduler, DateTime.Now, True)
+					StartServiceAtExact(TaskNotificationService, calculatedTime, True)
 				End If
 				
 			End If

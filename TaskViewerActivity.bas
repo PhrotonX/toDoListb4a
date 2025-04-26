@@ -72,6 +72,10 @@ Sub Activity_Resume
 	Starter.CheckInstanceState
 	
 	If Activity.GetStartingIntent.IsInitialized Then
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+			Log("TaskViewerActivity: Activity.GetStartingIntent.Action " & Activity.GetStartingIntent.Action)
+		End If
+		
 		Dim task_id_fromNotification As Long = Activity.GetStartingIntent.Action
 		
 		If task_id_fromNotification > 0 Then
