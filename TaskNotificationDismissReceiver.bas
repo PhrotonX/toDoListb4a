@@ -48,7 +48,15 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 					If repeatItem.IsInitialized Then
 						Dim dateObj As DateAndTime
 						dateObj.Initialize()
-						dateObj.SetUnixTime(repeatItem.GetSchedule(0) + item.Reminder.GetUnixTime)
+						Dim nextSchedule As Long = repeatItem.GetSchedule(0)
+						
+						Dim computedSchedule As Long = nextSchedule + item.Reminder.GetUnixTime
+						
+						Log("TaskNotificationDismissReceiver: nextSchedule " & nextSchedule)
+						Log("TaskNotificationDismissReceiver: item.Reminder.GetUnixTime " & item.Reminder.GetUnixTime)
+						Log("TaskNotificationDismissReceiver: computedSchedule " & computedSchedule)
+						
+						dateObj.SetUnixTime(computedSchedule)
 					
 						toastMsg = "Task Dimissed. Next task will be on: " & dateObj.GetFormattedDateAndTime( _
 						SettingsViewModelInstance.Is24HourFormatEnabled)
