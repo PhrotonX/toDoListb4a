@@ -136,7 +136,7 @@ Private Sub OnBuildTask(cursorTask As Cursor) As ToDo
 	item.SetNotes(cursorTask.GetString("notes"))
 	item.SetPriority(cursorTask.GetInt("priority"))
 	item.GetDueDate.SetUnixTime(cursorTask.GetLong("due_date"))
-	item.SetReminderEnabled(DatabaseUtils.IntToBool("is_reminder_enabled"))
+	item.SetReminderEnabled(DatabaseUtils.IntToBool(cursorTask.GetInt("is_reminder_enabled")))
 	item.Reminder.SetUnixTime(cursorTask.GetLong("reminder"))
 	item.Snooze.SetSnooze(cursorTask.GetLong("snooze"))
 	item.GetCreatedAt.SetUnixTime(cursorTask.GetLong("created_at"))

@@ -220,6 +220,10 @@ Public Sub GetFormattedDate2 As String
 	Return GetMonthWithLeadingZero & "/" & GetNumericDayStr & "/" & m_year
 End Sub
 
+Public Sub GetDateNoTime(ticks As Long) As Long
+	Return ticks - (ticks Mod DAY_LENGTH)
+End Sub
+
 ' Returns the day set into this object.
 Public Sub GetDay As Int
 	Return m_day

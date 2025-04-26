@@ -43,9 +43,9 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub LoadSettings
-	DarkMode.Checked = Starter.SettingsViewModelInstance.GetDarkMode()
-	DebugMode.Checked = Starter.SettingsViewModelInstance.GetDebugMode()
-	TaskCompletion.Checked = Starter.SettingsViewModelInstance.GetTaskCompetionSound()
+	DarkMode.Checked = Starter.SettingsViewModelInstance.IsDarkModeEnabled()
+	DebugMode.Checked = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
+	TaskCompletion.Checked = Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled()
 End Sub
 
 Sub button_design
@@ -104,7 +104,7 @@ Private Sub ResetApp_Click
 	Catch
 		Log(LastException)
 		
-		If Starter.SettingsViewModelInstance.GetDebugMode Then
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
 			MsgboxAsync(LastException.Message, "Error")
 		Else
 			MsgboxAsync("Failed to reset application", "Error")
