@@ -58,14 +58,10 @@ Sub Service_Start (StartingIntent As Intent)
 			Log("TaskNotificationScheduler: repeatItem ID " & repeatItem.GetID(0) & " day " & repeatItem.GetDayID(0))
 			Log("TaskNotificationScheduler: task_id" & task_id)
 			
-			' Calculate the total ticks.
-			Dim totalTicks As Long = item.Reminder.GetUnixTime + repeatItem.GetSchedule(0)
-			
 			Log("TaskNotificationScheduler: item.Reminder.GetUnixTime " & item.Reminder.GetUnixTime)
-			Log("TaskNotificationScheduler: totalTicks " & totalTicks)
 			
 			' Make a notification
-			StartServiceAtExact(TaskNotificationService, totalTicks, True)
+			StartServiceAtExact(TaskNotificationService, item.Reminder.GetUnixTime, True)
 		Else
 			Log("No new tasks")
 		End If

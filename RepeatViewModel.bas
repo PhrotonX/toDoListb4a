@@ -76,9 +76,13 @@ Public Sub CreateOrUpdateNotificationSchedule(item As ToDo, repeatItem As Repeat
 			' @NOTE: This code does currently not handle notifications that will repeat per week.
 			For Each notificationKey As Long In notificationTimes.Keys
 				
-				Log("CreateOrUpdateNotificationSchedule notificationTime:" & notificationTimes.Get(notificationKey))
-				Log("CreateOrUpdateNotificationSchedule notificationTime key:" & notificationKey)
-				Log("CreateOrUpdateNotificationSchedule notificationTime Day of the week ID:" & notificationKey)
+				Log("CreateOrUpdateNotificationSchedule notificationTime: " & notificationTimes.Get(notificationKey))
+				Log("CreateOrUpdateNotificationSchedule notificationTime key: " & notificationKey)
+				Log("CreateOrUpdateNotificationSchedule notificationTime Day of the week ID: " & notificationKey)
+				
+				Dim calculatedTime As Long = notificationTimes.Get(notificationKey) + item.Reminder.GetUnixTime
+				
+				Log("CreateOrUpdateNotificationSchedule notificationTime calculatedTime: " & calculatedTime)
 				
 				' Save the schedule to DB.
 				Starter.RepeatViewModelInstance.UpdateSingleRepeatSchedule(notificationKey, _ 

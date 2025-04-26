@@ -63,21 +63,13 @@ Sub Service_Start (StartingIntent As Intent)
 		Dim task As ToDo = TaskViewModelInstance.GetTask(task_id)
 		
 		If task <> Null Then
-			Log("TaskNotificationScheduler: repeatItem.GetSchedule(0) " & repeatItem.GetSchedule(0))
 			Log("TaskNotificationScheduler: repeatItem.GetDayID(0) " & repeatItem.GetDayID(0))
-			' Calculate the total ticks.
-			Dim totalTicks As Long = task.Reminder.GetUnixTime + repeatItem.GetSchedule(0)
-		
-			' StartServiceAt(Me, totalTicks, True)
-	
-			Log("TaskNotificationScheduler: totalTicks " & totalTicks)
 	
 			' Make a notification
 			Dim notification As Notification
 	
 			notification.Initialize
-			'notification.Cancel(repeatItem)
-	
+			
 			Dim priority As String = GetImportanceLevel(task)
 	
 			Dim notificationBuilder As NB6
@@ -93,12 +85,6 @@ Sub Service_Start (StartingIntent As Intent)
 			End If
 			notificationBuilder.AddButtonAction(Null, "Complete", TaskNotificationCompleteReceiver, task.GetId)
 			notificationBuilder.DeleteAction(TaskNotificationDismissReceiver, task.GetId)
-	
-			'Dim notificationTimeProcessed As Long = notificationTime + item.Reminder.GetUnixTime
-
-			'Log("notificationTimeProcessed: " & notificationTimeProcessed)
-
-			'notificationBuilder.ShowWhen(notificationTimeProcessed)
 	
 			notification = notificationBuilder.Build(GetTitle(task), task.GetNotes, _
 		task_id, TaskViewerActivity)
