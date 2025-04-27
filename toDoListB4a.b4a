@@ -218,7 +218,6 @@ Sub Globals
 	Private pnlTitleBar As Panel
 	Private searchFragment As Panel
 	Private separator As Panel
-	Private groupPanel As Panel
 	Private lblGroupIcon As Label
 	Private lblGroupName As Label
 	Private m_tasks As List
@@ -287,15 +286,17 @@ Sub Globals
 	Private pnlDueSpecificDate As Panel
 	Private pnlDueSpecificDateRange As Panel
 	Private pnlDueSpecificDateGroup As Panel
+	Private groupPanel As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'ToDoList.AnimationDuration = 0
-	
+	clvItems.Initialize(Me, "clvItems")
 	drawer.Initialize(Me, "Drawer", Activity, 300dip)
 	drawer.CenterPanel.LoadLayout("layout")
 	mainFragment.LoadLayout("newFragment")
 	drawer.LeftPanel.LoadLayout("drawerLayout")
+	
 	LoadDrawerItems
 	listview_init
 	
@@ -872,7 +873,7 @@ Sub LoadDrawerItems
 End Sub
 
 Private Sub OnLoadTaskGroups(items As List)
-	For Each item As Group In items		    
+	For Each item As Group In items
 		Dim p As B4XView = xui.CreatePanel("")
 		p.SetLayoutAnimated(0, 0, 0, 100%x, 60dip)
 		p.LoadLayout("drawerItems")
@@ -880,21 +881,28 @@ Private Sub OnLoadTaskGroups(items As List)
 		Dim viewHolder As GroupViewHolder
 		viewHolder.Initialize
 		
+
 		viewHolder.Root = p
 		viewHolder.ID = item.GetID
 		viewHolder.Name = lblGroupName
 		viewHolder.Icon = lblGroupIcon
 		viewHolder.BackPanel = groupPanel
-		
+		p.Tag = viewHolder
 		viewHolder.Name.Text = item.GetTitle
 		viewHolder.Icon.Text = item.GetIcon
 
 		viewHolder.Root.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		viewHolder.BackPanel.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		viewHolder.BackPanel.SetColorAndBorder(Colors.White, 0, Colors.White, 0)
 		viewHolder.Icon.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
 		viewHolder.Name.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		
 		clvItems.Add(p, viewHolder)
 	Next
+End Sub
+
+
+Private Sub pnlNewGroup_Click
+	StartActivity(TaskGroupActivity)
 End Sub
 
 ' Function for task group click.
@@ -933,6 +941,8 @@ Private Sub OnLoadPage(item As Group)
 	LoadItems
 	drawer.LeftOpen = False
 End Sub
+
+
 
 Private Sub searchBtn_Click
 	If button_handling Then
@@ -1100,6 +1110,3 @@ Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
 	Next
 End Sub
 
-Private Sub groupPanel_Click
-	StartActivity(TaskGroupActivity)
-End Sub
