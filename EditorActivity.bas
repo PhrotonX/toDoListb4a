@@ -469,6 +469,7 @@ Private Sub LoadAttachments
 	Dim attachments As List = Starter.AttachmentViewModelInstance.GetTaskAttachments(m_task.GetId())
 	
 	If attachments.IsInitialized Then
+		Log("attachments.Size: " & attachments.Size)
 		For Each item As Attachment In attachments
 			OnAddAttachment(item)
 		Next
@@ -672,9 +673,7 @@ Private Sub btnClearDueDate_Click
 End Sub
 
 Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)	
-	Dim viewHolder As AttachmentViewHolder = Value	
-
-	Starter.AttachmentViewModelInstance.OpenAttachment(viewHolder.ID)
+	
 End Sub
 
 Private Sub btnAttachmentRemove_Click
@@ -700,26 +699,7 @@ Private Sub btnAttachmentRemove_Click
 End Sub
 
 Private Sub btnAttachmentOpen_Click
-	Dim index As Int = clvAttachments.GetItemFromView(Sender)
 	
-	Dim viewHolder As AttachmentViewHolder = clvAttachments.GetValue(index)
-	
-	' Sample code only!
-	Dim item As Attachment
-	
-	ProgressDialogShow("Loading attachment...")
-	
-	Wait For (Starter.AttachmentViewModelInstance.GetAttachment(viewHolder.ID)) Complete _
-	(Result As Attachment)
-	ProgressDialogHide()
-	item = Result
-	
-	' Sample code only!
-	If item.IsInitialized Then
-		MsgboxAsync(item.GetFilename, "Sample Test")
-	Else
-		MsgboxAsync("Error obtaining file!", "Error")
-	End If
 End Sub
 
 Private Sub btnAddAttachment_Click
