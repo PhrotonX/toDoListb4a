@@ -28,6 +28,7 @@ Sub Globals
 	Private ExportDataBase As Button
 	Private ImportDataBase As Button
 	Private TaskCompletion As ToggleButton
+	Private pnlSettingsBar As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -49,6 +50,9 @@ Sub LoadSettings
 End Sub
 
 Sub button_design
+	pnlSettingsBar.Elevation = 10
+	
+	
 	'Makes the bg, border of the buttons transparent
 	
 	Dim transparentBg As ColorDrawable
