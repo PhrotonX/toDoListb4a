@@ -93,9 +93,8 @@ End Sub
 ' Retrieves multiple tasks based on a task group
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
-Public Sub GetUngroupedTasks(searchingQuery As String, sortingQuery As String) As List
-	Return OnGetTask("SELECT * FROM task LEFT JOIN task_group " & CRLF & _ 
-	"ON task_group.task_id = task.task_id WHERE group_id IS NULL " & searchingQuery & " " & sortingQuery)
+Public Sub GetUngroupedTasks(searchingQuery As String, sortingQuery As String) As List	
+	Return OnGetTask("SELECT * FROM task WHERE task_id NOT IN (SELECT task_id FROM task_group);")
 End Sub
 
 Private Sub OnGetTask(query As String) As List
