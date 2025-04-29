@@ -13,6 +13,8 @@ Sub Process_Globals
 End Sub
 
 Sub Globals
+	Private m_group As Group
+	
 	Private tiles(7) As Panel
 	Private icons(7) As Panel
 	Private selectedTileIndex As Int = -1
@@ -33,6 +35,25 @@ Sub Globals
 	Private pnlIcon5 As Panel
 	Private pnlIcon6 As Panel
 	Private pnlIcon7 As Panel
+	Private editAddGrpTitle As EditText
+	Private editNotes As EditText
+	Private icon1 As Label
+	Private icon2 As Label
+	Private icon3 As Label
+	Private icon4 As Label
+	Private icon5 As Label
+	Private icon6 As Label
+	Private icon7 As Label
+	Private ivBlue As ImageView
+	Private ivGreen As ImageView
+	Private ivIndigo As ImageView
+	Private ivOrange As ImageView
+	Private ivPink As ImageView
+	Private ivRed As ImageView
+	Private ivYellow As ImageView
+	Private lblColor As Label
+	Private lblCreatedAt As Label
+	Private lblUpdatedAt As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -58,6 +79,18 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
+	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
+		Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:
+			' Initialize the group object.
+			m_group.Initialize(0)
+			
+			m_group.SetColor(m_group.COLOR_INDIGO)
+		Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
+			editAddGrpTitle.Text = m_group.GetTitle()
+			editNotes.Text = m_group.GetDescription()
+		Case Else:
+			MsgboxAsync("Error loading task group editor", "Error")
+	End Select
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -68,6 +101,7 @@ Sub btnAddGrpCancel_Click
 End Sub
 
 Sub btnAddGrpSave_Click
+	
 	Activity.Finish
 End Sub
 
@@ -80,6 +114,8 @@ Sub pnlColor_Click
 	For i = 0 To tiles.Length - 1
 		If tiles(i) = pnl Then
 			clickedIndex = i
+			
+			m_group.SetColor(clickedIndex)
 			Exit
 		End If
 	Next
@@ -101,6 +137,7 @@ Sub pnlColor_Click
 
 	Log("Selected index: " & clickedIndex) '0 = red, 1 = orange, 2 = yellow, 3 = green, 4 = blue, 5 = indigo, 6 = pink
 	
+	m_group.SetColor(clickedIndex)
 End Sub
 
 
@@ -137,6 +174,10 @@ Sub pnlicon_Click
 	For i = 0 To icons.Length - 1
 		If icons(i) = pnl Then
 			clickedIndex = i
+			Dim currentText As Label = pnl.GetView(0)
+			Log("View of i = " & i & ": " & currentText.Text)
+			
+			m_group.SetIcon(currentText.Text)
 			Exit
 		End If
 	Next
@@ -157,4 +198,6 @@ Sub pnlicon_Click
 	selectedIconsIndex = clickedIndex
 
 	Log("Selected index: " & clickedIndex)
+	
+	
 End Sub
