@@ -33,11 +33,16 @@ Sub Globals
 	Private pnlIcon5 As Panel
 	Private pnlIcon6 As Panel
 	Private pnlIcon7 As Panel
+	
+	Private pnlAddGrpBar As Panel
+	Private btnAddGrpCancel As Button
+	Private btnAddGrpSave As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("groupTasksLayout")
 	svAddGrpBody.Panel.LoadLayout("groupTasksSVLayout")
+	pnlAddGrpBar.Elevation = 10
 
 	' Assign panels and tags (color names)
 	tiles(0) = pnlColorRed : tiles(0).Tag = "RED"
