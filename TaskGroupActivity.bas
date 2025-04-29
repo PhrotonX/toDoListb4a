@@ -255,10 +255,5 @@ Sub pnlicon_Click
 	selectedIconsIndex = clickedIndex
 
 	Log("Selected index: " & clickedIndex)
-<<<<<<< HEAD
+
 End Sub
-=======
-	
-	
-End Sub
->>>>>>> f893e1a25521d1b27028a48e141f29c399ba5665
