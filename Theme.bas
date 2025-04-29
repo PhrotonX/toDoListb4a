@@ -41,7 +41,7 @@ Public Sub GetGroupColor(groupObj As Group) As Int
 	If groupObj.IsInitialized Then
 		Select groupObj.GetColor():
 			Case groupObj.COLOR_RED:
-				Colors.RGB(
+				'Colors.RGB(
 		End Select
 	End If
 End Sub

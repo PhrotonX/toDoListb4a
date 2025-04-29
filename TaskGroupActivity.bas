@@ -54,6 +54,9 @@ Sub Globals
 	Private lblColor As Label
 	Private lblCreatedAt As Label
 	Private lblUpdatedAt As Label
+	Private btnAddGrpCancel As Button
+	Private btnAddGrpSave As Button
+	Private lblAddGrp As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -81,13 +84,30 @@ End Sub
 Sub Activity_Resume
 	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
 		Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:
+			lblAddGrp.Text = "Edit Group"
+			
 			' Initialize the group object.
 			m_group.Initialize(0)
 			
+			' Set the default indigo color.
 			m_group.SetColor(m_group.COLOR_INDIGO)
+			UpdateTileImage(tiles(m_group.COLOR_INDIGO), True)
+			
+			' Set the default icon.
+			' @TODO: Add functionality here if the icons has been changed into appropriate ones.
 		Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
+			' Change the title
+			lblAddGrp.Text = "Edit Group"
+			
+			' Load title and notes.
 			editAddGrpTitle.Text = m_group.GetTitle()
 			editNotes.Text = m_group.GetDescription()
+			
+			' Load the default icon.
+			UpdateTileImage(tiles(m_group.GetColor()), True)
+			
+			' Mark the loaded group icon as selected.
+			icons(OnLoadGroupIcon(m_group.GetIcon())).Color = Colors.LightGray
 		Case Else:
 			MsgboxAsync("Error loading task group editor", "Error")
 	End Select
@@ -101,6 +121,19 @@ Sub btnAddGrpCancel_Click
 End Sub
 
 Sub btnAddGrpSave_Click
+	' Set the title and description.
+	m_group.SetTitle(editAddGrpTitle.Text)
+	m_group.SetDescription(editNotes.Text)
+	
+	' Colors and icons are already set by pnlColor_Click and pnlIcon_Click events.
+	
+	' Save the group, depending if the editor mode is creating or editing a task.
+	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
+		Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:
+			Starter.GroupViewModelInstance.InsertGroup(m_group)
+		Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
+			Starter.GroupViewModelInstance.UpdateGroup(m_group)
+	End Select
 	
 	Activity.Finish
 End Sub
@@ -137,6 +170,7 @@ Sub pnlColor_Click
 
 	Log("Selected index: " & clickedIndex) '0 = red, 1 = orange, 2 = yellow, 3 = green, 4 = blue, 5 = indigo, 6 = pink
 	
+	' Update the color value of the m_group variable.
 	m_group.SetColor(clickedIndex)
 End Sub
 
@@ -165,6 +199,24 @@ Sub GetImageViewFromPanel(pnl As Panel) As ImageView
 		End If
 	Next
 	Return Null
+End Sub
+
+' Returns the index of the icon data.
+Private Sub OnLoadGroupIcon(icon As String) As Int
+	Dim itr As Int = 0
+	
+	For Each item As Panel In icons
+		Dim textItem As Label = item.GetView(0)
+		If textItem.Text == icon Then
+			Return itr		
+		End If
+		
+		itr = itr + 1
+	Next
+	
+	MsgboxAsync("Failed to retrieve group icon " & itr, "Error")
+	
+	Return 0
 End Sub
 
 Sub pnlicon_Click

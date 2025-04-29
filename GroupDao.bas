@@ -14,7 +14,7 @@ Public Sub Initialize(sql As SQL)
 End Sub
 
 Private Sub CheckForDuplicates(item As Group) As Boolean
-	If m_sql.ExecQuerySingleResult("SELECT count(*) FROM groups WHERE title = " & item.GetTitle) >= 1 Then
+	If m_sql.ExecQuerySingleResult("SELECT count(*) FROM groups WHERE title = '" & item.GetTitle & "';") >= 1 Then
 		Return True
 	Else
 		Return False
@@ -30,10 +30,10 @@ Public Sub InsertGroup(item As Group) As Boolean
 			result = False
 		Else
 			m_sql.ExecNonQuery("INSERT INTO groups(title, description, color, icon, created_at, updated_at) VALUES(" & CRLF & _
-			item.GetTitle & "," & CRLF & _
-			item.GetDescription & "," & CRLF & _
+			"'" & item.GetTitle & "'," & CRLF & _
+			"'" & item.GetDescription & "'," & CRLF & _
 			item.GetColor & "," & CRLF & _
-			item.GetIcon & "," & CRLF & _
+			"'" & item.GetIcon & "'," & CRLF & _
 			 DateTime.Now & "," & CRLF & _
 			DateTime.Now & CRLF & _
 			");" )
@@ -138,6 +138,7 @@ Public Sub DeleteGroup(group_id As Long)
 	m_sql.BeginTransaction
 	Try
 		m_sql.ExecNonQuery("DELETE FROM groups WHERE group_id = " & group_id)
+		m_sql.ExecNonQuery("DELETE FROM task_group WHERE group_id = " & group_id)
 		m_sql.TransactionSuccessful
 	Catch
 		Log(LastException)
@@ -172,10 +173,10 @@ Public Sub UpdateGroup(item As Group) As Boolean
 			Result = False
 		Else
 			m_sql.ExecNonQuery("UPDATE groups SET " & CRLF & _
-			"title = " & item.GetTitle() & "," & CRLF & _
-			"description = " & item.GetDescription() & "," & CRLF & _
-			"color = " & item.GetColor() & "," & CRLF & _
-			"icon = " & item.GetIcon() & ", " & CRLF & _
+			"title = '" & item.GetTitle() & "', " & CRLF & _
+			"description = '" & item.GetDescription() & "', " & CRLF & _
+			"color = " & item.GetColor() & ", " & CRLF & _
+			"icon = '" & item.GetIcon() & "', " & CRLF & _
 			"updated_at = " & DateTime.Now & "" & CRLF & _
 			"WHERE group_id = " & item.GetID & CRLF & _
 			";" )
