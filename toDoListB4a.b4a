@@ -747,7 +747,6 @@ Private Sub SetIdAsExtra
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, viewHolder.ID)
 End Sub
 
-
 Sub pnlViewArea_Touch (Action As Int, X As Float, Y As Float)
 	' Obtains the index of the clciked
 	Dim index As Int = ToDoList.GetItemFromView(Sender)
@@ -912,6 +911,8 @@ End Sub
 
 
 Private Sub pnlNewGroup_Click
+	Starter.InstanceState.Put(Starter.EXTRA_TASK_GROUP_EDITOR_MODE, Starter.TASK_GROUP_EDITOR_MODE_CREATE)
+	
 	StartActivity(TaskGroupActivity)
 End Sub
 
