@@ -30,6 +30,7 @@ Sub Class_Globals
 	Public Const FIELD_DUE_DATE As String = "due_date"
 	Public Const FIELD_CREATED_AT As String = "created_at"
 	Public Const FIELD_PRIORITY As String = "priority"
+	Public Const FIELD_IS_DELETED As String = "is_deleted"
 	
 	Public Const ORDER_NONE As String = "NONE"
 	Public Const ORDER_ASC As String = "ASC"
@@ -50,6 +51,16 @@ Public Sub Initialize()
 	For Each item In m_repeat
 		item = False
 	Next
+	
+	SetSearchIsDeleted(False)
+End Sub
+
+Public Sub AppendAndSearch()
+	m_searchQuery = m_searchQuery & " AND "
+End Sub
+
+Public Sub AppendAndSort()
+	m_sortQuery = m_sortQuery & " AND "
 End Sub
 
 Public Sub IsSortingEnabled() As Boolean
@@ -75,18 +86,24 @@ Public Sub SetSortField(field As String)
 End Sub
 
 Public Sub SetSearchTitle(query As String)
-	m_searchQuery = FIELD_TITLE & EQ & query
+	m_searchQuery = m_searchQuery & " " & FIELD_TITLE & EQ & query
 	m_selectedQuery = FIELD_TITLE
 End Sub
 
 Public Sub SetSearchNotes(query As String)
-	m_searchQuery = FIELD_NOTES & EQ & query
+	m_searchQuery = m_searchQuery & " " & FIELD_NOTES & EQ & query
 	m_selectedQuery = FIELD_NOTES
 End Sub
 
+' @NOTE: Incomplete implementation.
 Public Sub SetSearchAttachmentFileName(query As String)
-	m_searchQuery = query
+	m_searchQuery = m_searchQuery & " " & query
 	m_selectedQuery = FIELD_ATTACHMENT_FILENAME
+End Sub
+
+Public Sub SetSearchIsDeleted(value As Boolean)
+	m_searchQuery = m_searchQuery & " " & FIELD_IS_DELETED & EQ & DatabaseUtils.BoolToInt(value)
+	m_selectedQuery = FIELD_IS_DELETED
 End Sub
 
 ' Does not support SQL query
@@ -102,7 +119,7 @@ Public Sub SetSearchDueDate(dateObj As Date)
 End Sub
 
 Public Sub SetSearchDueDateRange(tickBegin As Long, tickEnd As Long)
-	m_searchQuery = FIELD_DUE_DATE & GTE & tickBegin & " AND " & FIELD_DUE_DATE & LTE & tickEnd
+	m_searchQuery = m_searchQuery & " " & FIELD_DUE_DATE & GTE & tickBegin & " AND " & FIELD_DUE_DATE & LTE & tickEnd
 	'm_selectedQuery = DUE_DATE
 End Sub
 
@@ -118,8 +135,13 @@ Public Sub GetSortingQuery() As String
 	End If
 End Sub
 
-Public Sub GetSearchingQuery() As String
-	Return "WHERE " & m_searchQuery
+Public Sub GetSearchingQuery(removeWhereClause As Boolean) As String
+	Dim query As String = ""
+	If removeWhereClause == False Then
+		query = "WHERE "
+	End If
+	Log("TaskQuery: " & query & m_searchQuery)
+	Return query & m_searchQuery
 End Sub
 
 ' Returns no field name.
