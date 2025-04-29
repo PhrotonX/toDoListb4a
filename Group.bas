@@ -13,6 +13,14 @@ Sub Class_Globals
 	Private m_createdAt As DateAndTime
 	Private m_updatedAt As DateAndTime
 	Public SpecialGroup As Boolean
+	
+	Public Const COLOR_RED As Int = 0
+	Public Const COLOR_ORANGE As Int = 1
+	Public Const COLOR_YELLOW As Int = 2
+	Public Const COLOR_GREEN As Int = 3
+	Public Const COLOR_BLUE As Int = 4
+	Public Const COLOR_INDIGO As Int = 5
+	Public Const COLOR_PINK As Int = 6
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
