@@ -29,10 +29,11 @@ Public Sub InsertGroup(item As Group) As Boolean
 		If CheckForDuplicates(item) Then
 			result = False
 		Else
-			m_sql.ExecNonQuery("INSERT INTO groups(title, description, color, created_at, updated_at) VALUES(" & CRLF & _
+			m_sql.ExecNonQuery("INSERT INTO groups(title, description, color, icon, created_at, updated_at) VALUES(" & CRLF & _
 			item.GetTitle & "," & CRLF & _
 			item.GetDescription & "," & CRLF & _
 			item.GetColor & "," & CRLF & _
+			item.GetIcon & "," & CRLF & _
 			 DateTime.Now & "," & CRLF & _
 			DateTime.Now & CRLF & _
 			");" )
@@ -174,6 +175,7 @@ Public Sub UpdateGroup(item As Group) As Boolean
 			"title = " & item.GetTitle() & "," & CRLF & _
 			"description = " & item.GetDescription() & "," & CRLF & _
 			"color = " & item.GetColor() & "," & CRLF & _
+			"icon = " & item.GetIcon() & ", " & CRLF & _
 			"updated_at = " & DateTime.Now & "" & CRLF & _
 			"WHERE group_id = " & item.GetID & CRLF & _
 			";" )

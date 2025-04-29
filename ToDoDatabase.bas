@@ -94,6 +94,7 @@ Public Sub CreateTable As Boolean
 	"title VARCHAR(255) NOT NULL UNIQUE," & CRLF & _
 	"description TEXT," & CRLF & _
 	"color INTEGER," & CRLF & _
+	"icon VARCHAR(25)," & CRLF & _
 	"created_at LONG NOT NULL DEFAULT 0," & CRLF & _
 	"updated_at LONG NOT NULL DEFAULT 0" & CRLF & _
 	");"
