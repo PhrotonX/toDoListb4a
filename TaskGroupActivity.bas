@@ -61,6 +61,10 @@ Sub Globals
 	Private btnAddGrpCancel As Button
 	Private btnAddGrpSave As Button
 	Private lblAddGrp As Label
+	
+	Private pnlAddGrpBar As Panel
+	Private btnAddGrpCancel As Button
+	Private btnAddGrpSave As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -256,4 +260,6 @@ Sub pnlicon_Click
 
 	Log("Selected index: " & clickedIndex)
 
+	
+	
 End Sub
