@@ -36,6 +36,10 @@ Public Sub GetTask(id As Long) As ToDo
 	Return m_repository.GetTask(id)
 End Sub
 
+Private Sub GetTasks(query As TaskQuery) As List
+	Return m_repository.GetTasks(query)
+End Sub
+
 Private Sub GetAllTasks() As List
 	Return m_repository.GetAllTasks
 End Sub
@@ -123,7 +127,7 @@ Public Sub GetTasksToday(query As TaskQuery) As List
 	If query.IsSortingEnabled() Then
 		tasks = GetSortedTasks(query)
 	Else
-		tasks = GetAllTasks
+		tasks = GetTasks(query)
 	End If
 	
 	Dim results As List
@@ -186,23 +190,11 @@ End Sub
 Public Sub GetDeletedTasks(query As TaskQuery) As List
 	Dim tasks As List
 	
-	' Shall be tasks sorted by deleted_at at default.
-	If query.IsSortingEnabled() Then
-		tasks = GetAllTasksSorted(query)
-	Else
-		tasks = GetTasksSortedByDueDate(TASKS_DEFAULT, False)
-	End If
+	query.SetSearchIsDeleted(True)
 	
-	Dim results As List
-	results.Initialize
+	tasks = GetAllTasksSorted(query)
 	
-	For Each item As ToDo In tasks
-		If item.IsDeleted == True Then
-			results.Add(item)
-		End If
-	Next
-	
-	Return results
+	Return tasks
 End Sub
 
 ' @Deprecated

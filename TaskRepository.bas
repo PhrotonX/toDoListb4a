@@ -39,27 +39,31 @@ Public Sub GetTask(id As Long) As ToDo
 	Return Null
 End Sub
 
+Public Sub GetTasks(query As TaskQuery) As List
+	Return m_database.TaskDao().GetTasks(query.GetSearchingQuery(False), "ORDER BY done ASC")
+End Sub
+
 Public Sub GetAllTasks() As List
 	Return m_database.TaskDao().GetTasks("", "ORDER BY done ASC")
 End Sub
 
 Public Sub GetGroupedTasks(query As TaskQuery) As List
-	Return m_database.TaskDao().GetGroupedTasks(query.GetGroupID, "", query.GetSortingQuery())
+	Return m_database.TaskDao().GetGroupedTasks(query.GetGroupID, " AND " & query.GetSearchingQuery(True), query.GetSortingQuery())
 End Sub
 
 Public Sub GetUngroupedTasks(query As TaskQuery) As List
-	Return m_database.TaskDao().GetUngroupedTasks("", query.GetSortingQuery())
+	Return m_database.TaskDao().GetUngroupedTasks(" AND " & query.GetSearchingQuery(True), query.GetSortingQuery())
 End Sub
 
 Public Sub GetSortedTasks(query As TaskQuery) As List
 	Dim group_id As Long = query.GetGroupID
 	
 	If group_id == TASKS_DEFAULT Then
-		Return m_database.TaskDao().GetTasks("", query.GetSortingQuery())
+		Return m_database.TaskDao().GetTasks(query.GetSearchingQuery(False), query.GetSortingQuery())
 	Else If group_id == TASKS_NO_GROUP Then
-		Return m_database.TaskDao().GetUngroupedTasks("", query.GetSortingQuery())
+		Return m_database.TaskDao().GetUngroupedTasks(" AND " & query.GetSearchingQuery(True), query.GetSortingQuery())
 	Else
-		Return m_database.TaskDao().GetGroupedTasks(group_id, "", query.GetSortingQuery())
+		Return m_database.TaskDao().GetGroupedTasks(group_id, " AND " & query.GetSearchingQuery(True), query.GetSortingQuery())
 	End If
 End Sub
 
