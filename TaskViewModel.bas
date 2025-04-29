@@ -26,6 +26,8 @@ Public Sub DeleteTask(item As ToDo)
 	m_repository.DeleteTask(item)
 End Sub
 
+' Note: If the item.Done value has been changed, it is required to call RepeatViewModel.CalculateSchedule()
+' to refresh the notifications.
 Public Sub UpdateTask(Item As ToDo)
 	m_repository.UpdateTask(Item)
 End Sub

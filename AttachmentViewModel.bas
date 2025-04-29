@@ -56,28 +56,18 @@ End Sub
 Public Sub OpenAttachment(attachment_id As Long) As Boolean
 	Try
 		Dim filePath As String = GetAttachmentFilePath(attachment_id)
-		Dim fileName As String = GetAttachment(attachment_id).GetFilename
+		Dim attachmentObj As Attachment = GetAttachment(attachment_id)
+		Dim fileName As String = attachmentObj.GetFilename
 	
 		Log("filePath: " & filePath)
 		Log("fileName: " & fileName)
-	
-		'File.Copy(Starter.Provider.SharedFolder & m_fileRepository.DIRECTORY, fileName, Starter.Provider.SharedFolder, fileName)
-	 
-		'Log("SharedFolder: " & Starter.Provider.SharedFolder)
-	 
-		'For Each item As String In File.ListFiles(Starter.Provider.SharedFolder)
-		'	Log("File from SharedFolder: " & item)
-		'Next
+		Log("MIME Type: " & attachmentObj.GetMimeType())
 	
 		Dim intentObj As Intent
 		intentObj.Initialize(intentObj.ACTION_VIEW, "")
 		Starter.Provider.SetFileUriAsIntentData(intentObj, m_fileRepository.DIRECTORY & fileName)
-		Dim data As String = intentObj.GetData
-		'Starter.Provider.SetFileUriAsIntentData(intentObj, m_fileRepository.DIRECTORY & fileName))
-		
-		'intentObj.SetComponent("android/com.android.internal.app.ResolverActivity")
-		
-		intentObj.SetType("image/*")
+		'Dim data As String = intentObj.GetData ' This variable is for debugging only
+		intentObj.SetType(attachmentObj.GetMimeType())
 		intentObj.Flags = Bit.Or(1, 2) ' FLAG_GRANT_READ_URI_PERMISSION
 		StartActivity(intentObj)
 		

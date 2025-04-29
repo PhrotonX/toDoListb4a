@@ -1,50 +1,53 @@
 ﻿Build1=Default,com.cm.todolist
 File1=3528206.png
-File10=EditorLayout.bal
-File11=EditorScrollLayout.bal
-File12=emptytasks.bal
-File13=folder.png
-File14=GREEN.png
-File15=GREEN-SELECTED.png
-File16=groupTasksLayout.bal
-File17=groupTasksSVLayout.bal
-File18=helpitems.bal
-File19=ic_launcher.png
+File10=drawerlayout.bal
+File11=EditorLayout.bal
+File12=EditorScrollLayout.bal
+File13=emptytasks.bal
+File14=folder.png
+File15=GREEN.png
+File16=GREEN-SELECTED.png
+File17=groupTasksLayout.bal
+File18=groupTasksSVLayout.bal
+File19=helpitems.bal
 File2=486023921_623831243812785_3842496593750662642_n (1).png
-File20=ic_launcher_xl.png
-File21=INDIGO.png
-File22=INDIGO-SELECTED.png
-File23=Layout.bal
-File24=newfragment.bal
-File25=ORANGE.png
-File26=ORANGE-SELECTED.PNG
-File27=pencil.png
-File28=PINK.png
-File29=PINK-SELECTED.png
+File20=ic_launcher.png
+File21=ic_launcher_small.png
+File22=ic_launcher_xl.png
+File23=INDIGO.png
+File24=INDIGO-SELECTED.png
+File25=Layout.bal
+File26=newfragment.bal
+File27=ORANGE.png
+File28=ORANGE-SELECTED.PNG
+File29=pencil.png
 File3=aboutitems.bal
-File30=RED.png
-File31=RED-SELECTED.png
-File32=searchByLayout.bal
-File33=searchFragmentSVLayout.bal
-File34=separatorlayout.bal
-File35=settingsabout.bal
-File36=settingshelp.bal
-File37=settingslayout.bal
-File38=solid_white.png
-File39=stock4.png
+File30=PINK.png
+File31=PINK-SELECTED.png
+File32=RED.png
+File33=RED-SELECTED.png
+File34=searchByLayout.bal
+File35=searchfragmentlayout.bal
+File36=searchFragmentSVLayout.bal
+File37=separatorlayout.bal
+File38=settingsabout.bal
+File39=settingshelp.bal
 File4=AttachmentItemLayout.bal
-File40=sviewlayout.bal
-File41=TaskItemLayout.bal
-File42=taskviewlayout.bal
-File43=taskviewscrolllayout.bal
-File44=test.bal
-File45=YELLOW.png
-File46=YELLOW-SELECTED.png
-File5=BLUE.png
-File6=BLUE-SELECTED.png
-File7=canvas.bal
-File8=draweritems.bal
-File9=drawerlayout.bal
+File40=settingslayout.bal
+File41=solid_white.png
+File42=stock4.png
+File43=sviewlayout.bal
+File44=TaskItemLayout.bal
+File45=taskviewlayout.bal
+File46=taskviewscrolllayout.bal
+File47=test.bal
+File48=YELLOW.png
+File49=YELLOW-SELECTED.png
+File5=AttachmentListLayout.bal
+File6=BLUE.png
+File7=BLUE-SELECTED.png
+File8=canvas.bal
+File9=draweritems.bal
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
@@ -86,6 +89,9 @@ FileGroup43=Default Group
 FileGroup44=Default Group
 FileGroup45=Default Group
 FileGroup46=Default Group
+FileGroup47=Default Group
+FileGroup48=Default Group
+FileGroup49=Default Group
 FileGroup5=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
@@ -106,7 +112,7 @@ Library6=keyvaluestore
 Library7=nb6
 Library8=phone
 Library9=reflection
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="33" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~~\n~AddApplicationText(~\n~  <provider~\n~  android:name="android.support.v4.content.FileProvider"~\n~  android:authorities="$PACKAGE$.provider"~\n~  android:exported="false"~\n~  android:grantUriPermissions="true">~\n~  <meta-data~\n~  android:name="android.support.FILE_PROVIDER_PATHS"~\n~  android:resource="@xml/provider_paths"/>~\n~  </provider>~\n~)~\n~CreateResource(xml, provider_paths,~\n~   <files-path name="name" path="" />~\n~)~\n~'End of default text.~\n~
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="33" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddPermission("android.permission.SCHEDULE_EXACT_ALARM")~\n~AddApplicationText(~\n~  <provider~\n~  android:name="android.support.v4.content.FileProvider"~\n~  android:authorities="$PACKAGE$.provider"~\n~  android:exported="false"~\n~  android:grantUriPermissions="true">~\n~  <meta-data~\n~  android:name="android.support.FILE_PROVIDER_PATHS"~\n~  android:resource="@xml/provider_paths"/>~\n~  </provider>~\n~)~\n~CreateResource(xml, provider_paths,~\n~   <files-path name="name" path="" />~\n~)~\n~~\n~#BridgeLogger: True~\n~'End of default text.~\n~
 Module1=Attachment
 Module10=DaysOfTheWeek
 Module11=Dimen
@@ -133,32 +139,38 @@ Module3=AttachmentFileRepository
 Module30=SubGroupViewHolder
 Module31=TaskDao
 Module32=TaskGroupActivity
-Module33=TaskQuery
-Module34=TaskRepository
-Module35=TaskViewerActivity
-Module36=TaskViewHolder
-Module37=TaskViewModel
-Module38=Theme
-Module39=Time
+Module33=TaskNotificationCompat
+Module34=TaskNotificationCompleteReceiver
+Module35=TaskNotificationDismissReceiver
+Module36=TaskNotificationScheduler
+Module37=TaskNotificationService
+Module38=TaskNotificationSnoozeReceiver
+Module39=TaskQuery
 Module4=AttachmentRepository
-Module40=ToDo
-Module41=ToDoDatabase
-Module42=ToDoDatabaseViewModel
-Module43=ToDoFileSystem
+Module40=TaskRepository
+Module41=TaskViewerActivity
+Module42=TaskViewHolder
+Module43=TaskViewModel
+Module44=Theme
+Module45=Time
+Module46=ToDo
+Module47=ToDoDatabase
+Module48=ToDoDatabaseViewModel
+Module49=ToDoFileSystem
 Module5=AttachmentViewHolder
 Module6=AttachmentViewModel
 Module7=DatabaseUtils
 Module8=Date
 Module9=DateAndTime
-NumberOfFiles=46
+NumberOfFiles=49
 NumberOfLibraries=14
-NumberOfModules=43
+NumberOfModules=49
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 12
-	#VersionName: v2.0.0.3 alpha
+	#VersionName: v2.0.0.5 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -206,23 +218,22 @@ Sub Globals
 	Private pnlTitleBar As Panel
 	Private searchFragment As Panel
 	Private separator As Panel
-	Private groupPanel As Panel
 	Private lblGroupIcon As Label
 	Private lblGroupName As Label
 	Private m_tasks As List
 	Private Panel1 As Panel
 	Private pnlmenuListView As Panel
 	
-	Private smartLists(5) As Group
+	Private smartLists(6) As Group
 	
 	Private Const SMART_LIST_NONE As Int = -1
 	Private Const SMART_LIST_MY_DAY As Int = 0
-	Private Const SMART_LIST_PLANNED As Int = 1
-	Private Const SMART_LIST_COMPLETED As Int = 2
-	Private Const SMART_LIST_ALL As Int = 3
-	Private Const SMART_LIST_TASKS As Int = 5
-	Private Const SMART_LIST_TRASH As Int = 6
-	Private Const SMART_LIST_SEARCH As Int = 7
+	Private Const SMART_LIST_TASKS As Int = 1
+	Private Const SMART_LIST_PLANNED As Int = 2
+	Private Const SMART_LIST_COMPLETED As Int = 3
+	Private Const SMART_LIST_ALL As Int = 4
+	Private Const SMART_LIST_TRASH As Int = 5
+	Private Const SMART_LIST_SEARCH As Int = 6
 	'Private Const SMART_LIST_SORT As Int = 8
 	
 	Private Const MENU_ITEM_REFRESH As Int = 0
@@ -275,15 +286,17 @@ Sub Globals
 	Private pnlDueSpecificDate As Panel
 	Private pnlDueSpecificDateRange As Panel
 	Private pnlDueSpecificDateGroup As Panel
+	Private groupPanel As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'ToDoList.AnimationDuration = 0
-	
+	clvItems.Initialize(Me, "clvItems")
 	drawer.Initialize(Me, "Drawer", Activity, 300dip)
 	drawer.CenterPanel.LoadLayout("layout")
 	mainFragment.LoadLayout("newFragment")
 	drawer.LeftPanel.LoadLayout("drawerLayout")
+	
 	LoadDrawerItems
 	listview_init
 	
@@ -291,6 +304,31 @@ Sub Activity_Create(FirstTime As Boolean)
 	m_savedGroup = smartLists(0) ' Get the My Day smart list
 	
 	m_query.Initialize()
+	
+	Starter.Permissions.CheckAndRequest(Starter.Permissions.PERMISSION_POST_NOTIFICATIONS)
+
+	If Starter.Phone.SdkVersion >= 31 Then
+		Dim am As JavaObject = GetAlarmManager
+		If am.RunMethod("canScheduleExactAlarms", Null).As(Boolean) == False Then
+			Msgbox2Async("This application may not work correctly if is not granted with a special access" & _
+					" to Alarms & Reminders permission." & CRLF & CRLF & "To enable this permission, go to Settings >" & _
+					" Apps > Special app access > Alarms & reminders > To Do List Application > Allow setting alarms " & _ 
+					"And reminders." & CRLF & CRLF & "Click 'Open Settings' button to continue or click 'Cancel' to " & _ 
+					"exit this Application.", "Some permissions are disabled For this Application.", "Open Settings", _ 
+					"Cancel", "", Null, False)
+				
+			Wait For Msgbox_Result (MsgBoxResult As Int)
+			If MsgBoxResult == DialogResponse.POSITIVE Then
+				GetScheduleExactAlarmPermission
+			Else If MsgBoxResult == DialogResponse.NEGATIVE Or MsgBoxResult == DialogResponse.CANCEL Then
+				ExitApplication
+			End If
+		Else
+			StartServiceAtExact(TaskNotificationService, DateTime.Now, True)
+		End If
+	Else
+		StartServiceAtExact(TaskNotificationService, DateTime.Now, True)
+	End If
 End Sub
 
 Sub Activity_Resume
@@ -305,7 +343,28 @@ Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
+Sub Activity_PermissionResult (Permission As String, Result As Boolean)
+	If Starter.SettingsViewModelInstance.IsDebugModeEnabled() == True Then
+		If Result == True Then
+			ToastMessageShow("Permission granted for " & Permission, False)
+		Else
+			ToastMessageShow("Permission failed to grant for " & Permission, False)
+		End If
+	End If
+End Sub
 
+' Only run if Android SDK version is >= 31.
+Private Sub GetScheduleExactAlarmPermission
+	Dim in As Intent
+	in.Initialize("android.settings.REQUEST_SCHEDULE_EXACT_ALARM", "package:" & Application.PackageName)
+	StartActivity(in)
+End Sub
+
+Private Sub GetAlarmManager As JavaObject
+	Dim ctxt As JavaObject
+	ctxt.InitializeContext
+	Return ctxt.RunMethod("getSystemService", Array("alarm"))
+End Sub
 
 Private Sub btnAdd_Click
 	' Set the editor mode by submitting the requested value into the InstanceState bundle.
@@ -332,11 +391,16 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 	' Retrieve the item from the database based on the DB-based ID stored in the viewHolder.
 	Dim item As ToDo = Starter.TaskViewModelInstance.GetTask(viewHolder.ID)
 	
-	' Update the checked value of the task.
-	item.Done = Checked
 	
-	' Since the item has been changed, update the database.
-	Starter.TaskViewModelInstance.UpdateTask(item)
+	' If the value has changed, update the database. This checking is required to prevent duplicate
+	' notifications,
+	If item.Done <> Checked Then
+		' Update the checked value of the task.
+		item.Done = Checked
+		
+		Starter.TaskViewModelInstance.UpdateTask(item)
+		Starter.RepeatViewModelInstance.CalculateSchedule(item)
+	End If
 	
 	If m_query.IsSortingEnabled() == False Then
 		Select m_savedSmartList:
@@ -445,6 +509,8 @@ End Sub
 
 ' Loads the items.
 Private Sub LoadItems()
+	
+	Log("=============================")
 
 	m_itemsLoaded = False
 
@@ -461,6 +527,8 @@ Private Sub LoadItems()
 	Select m_savedSmartList:
 		Case SMART_LIST_MY_DAY:
 			m_tasks = Starter.TaskViewModelInstance.GetTasksToday(m_query)
+		Case SMART_LIST_TASKS:
+			m_tasks = Starter.TaskViewModelInstance.GetUngroupedTasks(m_query)
 		Case SMART_LIST_ALL: 
 			m_tasks = Starter.TaskViewModelInstance.GetAllTasksSorted(m_query)
 		Case SMART_LIST_COMPLETED:
@@ -473,13 +541,16 @@ Private Sub LoadItems()
 			m_tasks = Starter.TaskViewModelInstance.GetGroupedTasks(m_query)
 	End Select
 	
-
 	' Null check the list.
 	If m_tasks.IsInitialized Then
 		Dim itr As String = ""
 		
 		' Iterate each item.
 		For Each item As ToDo In m_tasks
+			
+			If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+				Log("Task ID: " & item.GetId())
+			End If
 			
 			Dim repeatItem As Repeat = Starter.RepeatViewModelInstance.GetTaskRepeat(item.GetId)
 			
@@ -762,17 +833,20 @@ Sub LoadDrawerItems
 	smartLists(0).SetTitle("My Day")
 	smartLists(0).SetIcon("")
 	
-	smartLists(1).SetTitle("Planned")
-	smartLists(1).SetIcon("")
+	smartLists(1).SetTitle("Tasks")
+	smartLists(1).SetIcon("")
 	
-	smartLists(2).SetTitle("Completed")
-	smartLists(2).SetIcon("")
+	smartLists(2).SetTitle("Planned")
+	smartLists(2).SetIcon("")
 	
-	smartLists(3).SetTitle("All")
-	smartLists(3).SetIcon("")
+	smartLists(3).SetTitle("Completed")
+	smartLists(3).SetIcon("")
 	
-	smartLists(4).SetTitle("Trash")
-	smartLists(4).SetIcon("")
+	smartLists(4).SetTitle("All")
+	smartLists(4).SetIcon("")
+	
+	smartLists(5).SetTitle("Trash")
+	smartLists(5).SetIcon("")
 
 	For Each obj As Group In smartLists
 		items.Add(obj)
@@ -809,7 +883,7 @@ Sub LoadDrawerItems
 End Sub
 
 Private Sub OnLoadTaskGroups(items As List)
-	For Each item As Group In items		    
+	For Each item As Group In items
 		Dim p As B4XView = xui.CreatePanel("")
 		p.SetLayoutAnimated(0, 0, 0, 100%x, 60dip)
 		p.LoadLayout("drawerItems")
@@ -817,21 +891,28 @@ Private Sub OnLoadTaskGroups(items As List)
 		Dim viewHolder As GroupViewHolder
 		viewHolder.Initialize
 		
+
 		viewHolder.Root = p
 		viewHolder.ID = item.GetID
 		viewHolder.Name = lblGroupName
 		viewHolder.Icon = lblGroupIcon
 		viewHolder.BackPanel = groupPanel
-		
+		p.Tag = viewHolder
 		viewHolder.Name.Text = item.GetTitle
 		viewHolder.Icon.Text = item.GetIcon
 
 		viewHolder.Root.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		viewHolder.BackPanel.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		viewHolder.BackPanel.SetColorAndBorder(Colors.White, 0, Colors.White, 0)
 		viewHolder.Icon.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
 		viewHolder.Name.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		
 		clvItems.Add(p, viewHolder)
 	Next
+End Sub
+
+
+Private Sub pnlNewGroup_Click
+	StartActivity(TaskGroupActivity)
 End Sub
 
 ' Function for task group click.
@@ -870,6 +951,8 @@ Private Sub OnLoadPage(item As Group)
 	LoadItems
 	drawer.LeftOpen = False
 End Sub
+
+
 
 Private Sub searchBtn_Click
 	If button_handling Then
@@ -1037,6 +1120,3 @@ Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
 	Next
 End Sub
 
-Private Sub groupPanel_Click
-	StartActivity(TaskGroupActivity)
-End Sub
