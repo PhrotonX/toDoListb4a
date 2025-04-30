@@ -69,6 +69,8 @@ Sub Globals
 	Private spnReminderMinute As Spinner
 	Private spnSnooze As Spinner
 	Private toggleReminder As ToggleButton
+	Private btnMoveToTrash As Button
+	Private btnRestore As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -181,9 +183,21 @@ Sub Activity_Create(FirstTime As Boolean)
 		' Load the selected task group.
 		spnTaskGroup.SelectedIndex = spnTaskGroup.IndexOf(m_group.GetTitle)
 		
-	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
-		' Disable the delete button if the editor mode is EDITOR_MODE_CREATE
+		' Hide the show the restore button if task is deleted. Else, hide it.
+		If m_task.IsDeleted() == True Then
+			btnRestore.Visible = True
+			btnMoveToTrash.Visible = False
+			btnDelete.Visible = True
+		Else
+			btnRestore.Visible = False
+			btnMoveToTrash.Visible = True
+			btnDelete.Visible = False
+		End If
+	Else If m_mode == Starter.EDITOR_MODE_CREATE Then		
+		' Disable the delete-related buttons if the editor mode is EDITOR_MODE_CREATE
 		btnDelete.Visible = False
+		btnRestore.Visible = False
+		btnMoveToTrash.Visible = False
 		
 		' Load the default task group based on the last opened task group.
 		Dim groupId As Long = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_GROUP_ID)
@@ -255,6 +269,10 @@ Sub Activity_Pause (UserClosed As Boolean)
 End Sub
 
 Private Sub btnSave_Click
+	OnSaveTask
+End Sub
+
+Private Sub OnSaveTask
 	' Add the current editor result into the instance state.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_RESULT, Starter.EDITOR_RESULT_SAVE)
 	
@@ -746,4 +764,26 @@ Private Sub toggleReminder_CheckedChange(Checked As Boolean)
 	spnReminderMinute.Enabled = Checked
 	spnReminderMarker.Enabled = Checked
 	spnSnooze.Enabled = Checked
+End Sub
+
+Private Sub btnRestore_Click
+	Msgbox2Async("Do you really want to restore this task from the recycle bin?", "Alert", "Yes", "Cancel", _
+	"No", Null, True)
+	Wait For Msgbox_Result (Result As Int)
+	If Result = DialogResponse.POSITIVE Then
+		m_task.SetDeleted(False)
+	
+		OnSaveTask
+	End If
+End Sub
+
+Private Sub btnMoveToTrash_Click
+	Msgbox2Async("Do you really want to move this task into the recycle bin?", "Alert", "Yes", "Cancel", _
+	"No", Null, True)
+	Wait For Msgbox_Result (Result As Int)
+	If Result = DialogResponse.POSITIVE Then
+		m_task.SetDeleted(True)
+	
+		OnSaveTask
+	End If
 End Sub
