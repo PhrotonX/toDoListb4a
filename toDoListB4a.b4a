@@ -27,22 +27,21 @@ File31=PINK-SELECTED.png
 File32=RED.png
 File33=RED-SELECTED.png
 File34=searchByLayout.bal
-File35=searchfragmentlayout.bal
-File36=searchFragmentSVLayout.bal
-File37=separatorlayout.bal
-File38=settingsabout.bal
-File39=settingshelp.bal
+File35=searchFragmentSVLayout.bal
+File36=separatorlayout.bal
+File37=settingsabout.bal
+File38=settingshelp.bal
+File39=settingslayout.bal
 File4=AttachmentItemLayout.bal
-File40=settingslayout.bal
-File41=solid_white.png
-File42=stock4.png
-File43=sviewlayout.bal
-File44=TaskItemLayout.bal
-File45=taskviewlayout.bal
-File46=taskviewscrolllayout.bal
-File47=test.bal
-File48=YELLOW.png
-File49=YELLOW-SELECTED.png
+File40=solid_white.png
+File41=stock4.png
+File42=sviewlayout.bal
+File43=TaskItemLayout.bal
+File44=taskviewlayout.bal
+File45=taskviewscrolllayout.bal
+File46=test.bal
+File47=YELLOW.png
+File48=YELLOW-SELECTED.png
 File5=AttachmentListLayout.bal
 File6=BLUE.png
 File7=BLUE-SELECTED.png
@@ -91,7 +90,6 @@ FileGroup45=Default Group
 FileGroup46=Default Group
 FileGroup47=Default Group
 FileGroup48=Default Group
-FileGroup49=Default Group
 FileGroup5=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
@@ -162,7 +160,7 @@ Module6=AttachmentViewModel
 Module7=DatabaseUtils
 Module8=Date
 Module9=DateAndTime
-NumberOfFiles=49
+NumberOfFiles=48
 NumberOfLibraries=14
 NumberOfModules=49
 Version=13.1
@@ -287,6 +285,9 @@ Sub Globals
 	Private pnlDueSpecificDateRange As Panel
 	Private pnlDueSpecificDateGroup As Panel
 	Private groupPanel As Panel
+	Private searchPnlSeparator1 As Panel
+	Private searchPnlSeparator2 As Panel
+	Private pnlItems As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -296,6 +297,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	drawer.CenterPanel.LoadLayout("layout")
 	mainFragment.LoadLayout("newFragment")
 	drawer.LeftPanel.LoadLayout("drawerLayout")
+	
 	
 	LoadDrawerItems
 	listview_init
@@ -634,7 +636,7 @@ Private Sub listview_init
 	menuListView.AddSingleLine2("	Settings", 3)
 	menuListView.SingleLineLayout.Label.TextSize = 16
 	menuListView.SingleLineLayout.Label.TextColor = Colors.Black
-	menuListView.SingleLineLayout.ItemHeight = 45dip
+	menuListView.SingleLineLayout.ItemHeight = 70
 		
 	Dim cd As ColorDrawable
 	cd.Initialize(Colors.White, 3dip)
@@ -644,6 +646,11 @@ Private Sub listview_init
 		
 	menuListViewItemsize.Initialize("")
 	menuListViewItemsize.SetLayout(pnlmenuListView.Left, pnlmenuListView.Top, pnlmenuListView.Width, pnlmenuListView.Height)
+	
+	Log(menuListView.SingleLineLayout.ItemHeight)
+	Log(menuListView.Height & "menulistiv")
+	Log(pnlmenuListView.Height & "pnlmenulsitview")
+	
 		
 	'pnlmenuListView.SetLayoutAnimated(200,100%x, 0%y, 0, 114dip)
 	pnlMenuBgTouch.SendToBack
@@ -853,15 +860,21 @@ Sub LoadDrawerItems
 
 	OnLoadTaskGroups(items)
 	
+	Dim clvitemsWidthinDip As Int = clvItems.AsView.Width / GetDeviceLayoutValues.Scale
 	
 	Dim sepPanel As B4XView = xui.CreatePanel("")
-	sepPanel.SetLayoutAnimated(0, 0, 0, 100%x, 2dip) ' 2dip height for the separator
+	sepPanel.SetLayoutAnimated(0, 0, 0, clvitemsWidthinDip, 2dip) ' 2dip height for the separator
+	
 	Dim innerSep As B4XView = xui.CreatePanel("")
-	innerSep.SetLayoutAnimated(0, 5%x, 0, 45.56%x, 2dip) ' 80% width, centered (10% margin on each side)
+	innerSep.SetLayoutAnimated(0, 0, 0, clvitemsWidthinDip, 100%y) ' 80% width, centered (10% margin on each side)
 	innerSep.Color = Colors.LightGray
-	sepPanel.AddView(innerSep, 5%x, 0, 45.56%x, 2dip)
+	sepPanel.Color = Colors.Transparent
+	sepPanel.AddView(innerSep, 20dip, 0, 280dip - 31dip, 2dip)
 	sepPanel.Enabled = False
 	innerSep.Enabled = False	
+	
+	Log(clvitemsWidthinDip & "clvitemsheight")
+	Log((innerSep.Width / GetDeviceLayoutValues.Scale) & "innersepindip")
 	
 	Dim separatorViewHolder As GroupViewHolder
 	separatorViewHolder.Initialize
@@ -966,6 +979,9 @@ Private Sub searchBtn_Click
 
 		
 		searchFragment.SetLayout(mainFragment.Left, mainFragment.Top, mainFragment.Width, mainFragment.Height)
+		svSearchBody.SetLayout(searchFragment.Left, 0, searchFragment.Width, searchFragment.Height)
+		searchPnlSeparator1.SetLayout(50dip, searchPnlSeparator1.Top, 100%x - 100dip, 2dip)
+		searchPnlSeparator2.SetLayout(50dip, searchPnlSeparator2.Top, 100%x - 100dip, 2dip)
 		searchFragment.SetVisibleAnimated(150, True)
 		searchFragment.BringToFront
 		
