@@ -36,16 +36,16 @@ Public Sub GetTask(id As Long) As ToDo
 	Return m_repository.GetTask(id)
 End Sub
 
+Private Sub GetTasks(query As TaskQuery) As List
+	Return m_repository.GetTasks(query)
+End Sub
+
 Private Sub GetAllTasks() As List
 	Return m_repository.GetAllTasks
 End Sub
 
 Public Sub GetAllTasksSorted(query As TaskQuery) As List
-	If query.IsSortingEnabled() Then
 		Return GetSortedTasks(query)
-	Else
-		Return GetAllTasks
-	End If
 End Sub
 
 Public Sub GetSortedTasks(query As TaskQuery) As List
@@ -123,7 +123,7 @@ Public Sub GetTasksToday(query As TaskQuery) As List
 	If query.IsSortingEnabled() Then
 		tasks = GetSortedTasks(query)
 	Else
-		tasks = GetAllTasks
+		tasks = GetTasks(query)
 	End If
 	
 	Dim results As List
@@ -183,19 +183,19 @@ Public Sub GetTasksPlanned(query As TaskQuery) As List
 End Sub
 
 ' Move logic to repository.
+' This clears the search query and then replaces it with FIELD_IS_DELETED set to true.
 Public Sub GetDeletedTasks(query As TaskQuery) As List
 	Dim tasks As List
-	
-	' Shall be tasks sorted by deleted_at at default.
-	If query.IsSortingEnabled() Then
-		tasks = GetAllTasksSorted(query)
-	Else
-		tasks = GetTasksSortedByDueDate(TASKS_DEFAULT, False)
-	End If
-	
 	Dim results As List
-	results.Initialize
+	results.Initialize()
 	
+	' Avoid updating the referenced TaskQuery.
+	Dim queryCopy As TaskQuery = query
+	
+	'The query system needs to be fixed before using this functions.
+	queryCopy.SetSearchIsDeleted(True)
+	
+	tasks = GetAllTasksSorted(queryCopy)
 	For Each item As ToDo In tasks
 		If item.IsDeleted == True Then
 			results.Add(item)

@@ -12,7 +12,7 @@ Version=10.2
 Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
-
+	Private xui As XUI
 End Sub
 
 Sub Globals
@@ -36,6 +36,14 @@ Sub Globals
 	Private Label1 As Label
 	
 	Private viewTaskGroup As Label
+	Private btnAttachmentOpen As Button
+	Private btnAttachmentRemove As Button
+	Private imgAttachmentIcon As ImageView
+	Private lblAttachmentFileName As Label
+	Private pnlAttachmentRoot As Panel
+	
+	Private svAttachments As ScrollView
+	Private clvAttachments As CustomListView
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -52,9 +60,10 @@ Sub Activity_Create(FirstTime As Boolean)
 	Dim borderColor As Int = Colors.RGB(209, 209, 209)
 	Dim borderHeight As Int = 1dip
 
-	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, borderHeight)
+	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, _ 
+		borderHeight)
 
-	Label1.Invalidate	
+	Label1.Invalidate
 End Sub
 
 Private Sub button_design
@@ -64,7 +73,6 @@ Private Sub button_design
 	
 	transparentBg.Initialize(Colors.Transparent, 0)
 	btnBack.Background = transparentBg
-	
 End Sub
 
 Sub Activity_Resume
@@ -124,6 +132,8 @@ Sub Activity_Resume
 			Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
 		viewModifiedAt.Text = m_task.GetUpdatedAt.GetFormattedDateAndTime( _
 			Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+			
+		LoadAttachments
 		
 		Dim taskGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_task.GetId())
 		If taskGroup.IsInitialized Then
@@ -167,4 +177,91 @@ Private Sub viewTitle_CheckedChange(Checked As Boolean)
 	' Update the task to reflect changes with the completion value.
 	Starter.TaskViewModelInstance.UpdateTask(m_task)
 	Starter.RepeatViewModelInstance.CalculateSchedule(m_task)
+End Sub
+
+Private Sub pnlAttachmentRoot_Click
+	Dim index As Int = clvAttachments.GetItemFromView(Sender)
+	
+	OnAttachmentOpen(index)
+End Sub
+
+Private Sub btnAttachmentRemove_Click
+	MsgboxAsync("Editing is not supported on task viewer", "Error")
+End Sub
+
+Private Sub btnAttachmentOpen_Click
+	Dim index As Int = clvAttachments.GetItemFromView(Sender)
+	
+	OnAttachmentOpen(index)
+End Sub
+
+Private Sub LoadAttachments
+	' Load the attachments list layout.
+	svAttachments.Panel.LoadLayout("attachmentlistlayout")
+	
+	Log("svAttachments: " & svAttachments)
+	Log("svAttachments.Panel: " & svAttachments.Panel)
+
+	Dim attachments As List = Starter.AttachmentViewModelInstance.GetTaskAttachments(m_task.GetId())
+	
+	If attachments.IsInitialized Then
+		Log("m_task.GetId(): " & m_task.GetId())
+		Log("attachments.Size: " & attachments.Size)
+		For Each item As Attachment In attachments
+			OnAddAttachment(item)
+		Next
+	End If
+	
+End Sub
+
+Private Sub OnAddAttachment(item As Attachment)
+	Dim panel As B4XView = xui.CreatePanel("")
+		
+	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
+	panel.LoadLayout("AttachmentItemLayout")
+	panel.SetColorAndBorder(Theme.ForegroundColor, 0, Theme.ForegroundColor, 0)
+	
+	Dim viewHolder As AttachmentViewHolder
+	viewHolder.Initialize
+	viewHolder.Root = panel
+	viewHolder.Icon = imgAttachmentIcon
+	viewHolder.AttachmentLabel = lblAttachmentFileName
+	viewHolder.OpenButton = btnAttachmentOpen
+	viewHolder.DeleteButton = btnAttachmentRemove
+	' Hide the remove button for attachments. Attachments cannot be edited within TaskViewerActivity.
+	viewHolder.DeleteButton.Visible = False
+	viewHolder.ID = item.GetID
+	
+	clvAttachments.Add(panel, viewHolder)
+	
+	Log("clvAttachments: " & clvAttachments.Size)
+End Sub
+
+
+Private Sub OnAttachmentOpen(index As Int)
+	Dim viewHolder As AttachmentViewHolder = clvAttachments.GetValue(index)
+	
+	' Sample code only!
+	Dim item As Attachment
+	
+	ProgressDialogShow("Loading attachment...")
+	
+	'Wait For (Starter.AttachmentViewModelInstance.GetAttachment(viewHolder.ID)) Complete _
+	'(Result As Attachment)
+	item = Starter.AttachmentViewModelInstance.GetAttachment(viewHolder.ID)
+	ProgressDialogHide()
+	'item = Result
+	
+	' Sample code only!
+	If item.IsInitialized Then
+		Starter.AttachmentViewModelInstance.OpenAttachment(item.GetID)
+	Else
+		MsgboxAsync("Error obtaining file!", "Error")
+	End If
+End Sub
+
+Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
+	Dim viewHolder As AttachmentViewHolder = Value
+
+	Starter.AttachmentViewModelInstance.OpenAttachment(viewHolder.ID)
 End Sub

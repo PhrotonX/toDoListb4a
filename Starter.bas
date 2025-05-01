@@ -26,6 +26,11 @@ Sub Process_Globals
 	Public Const EDITOR_MODE_EDIT As String = PACKAGE_NAME & ".EDITOR_MODE_EDIT"
 	Public Const EDITOR_MODE_CREATE As String = PACKAGE_NAME & ".EDITOR_MODE_CREATE"
 	
+	' Global variables used for passing extras into TaskGroupActivity.
+	Public Const EXTRA_TASK_GROUP_EDITOR_MODE As String = "EXTRA_TASK_GROUP_EDITOR_MODE"
+	Public Const TASK_GROUP_EDITOR_MODE_EDIT As String = PACKAGE_NAME & ".TASK_GROUP_EDITOR_MODE_EDIT"
+	Public Const TASK_GROUP_EDITOR_MODE_CREATE As String = PACKAGE_NAME & ".TASK_GROUP_EDITOR_MODE_CREATE"
+	
 	' Global variables used for passing extras as a result of EditorActivity.
 	Public Const EXTRA_EDITOR_RESULT As String = "EXTRA_EDITOR_RESULT"
 	Public Const EDITOR_RESULT_SAVE As String = PACKAGE_NAME & ".EDITOR_RESULT_SAVE"
