@@ -183,18 +183,20 @@ Sub Activity_Create(FirstTime As Boolean)
 		' Load the selected task group.
 		spnTaskGroup.SelectedIndex = spnTaskGroup.IndexOf(m_group.GetTitle)
 		
-		' Hide the show the restore button if task is deleted. Else, hide it.
+		' Hide the move to trash button if the current opened task is already marked as deleted.
 		If m_task.IsDeleted() == True Then
 			btnRestore.Visible = True
 			btnMoveToTrash.Visible = False
 			btnDelete.Visible = True
 		Else
+			' Show the move to trash buttons while hiding other buttons when the task is not marked as deleted.
 			btnRestore.Visible = False
 			btnMoveToTrash.Visible = True
 			btnDelete.Visible = False
 		End If
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then		
-		' Disable the delete-related buttons if the editor mode is EDITOR_MODE_CREATE
+		' Disable the delete-related buttons if the editor mode is EDITOR_MODE_CREATE. No tasks can be
+		' deleted while still being created.
 		btnDelete.Visible = False
 		btnRestore.Visible = False
 		btnMoveToTrash.Visible = False
