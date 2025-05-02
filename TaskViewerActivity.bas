@@ -217,7 +217,7 @@ End Sub
 Private Sub OnAddAttachment(item As Attachment)
 	Dim panel As B4XView = xui.CreatePanel("")
 		
-	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
+	panel.SetLayoutAnimated(0, 0, 0, 420dip, 70dip)
 	panel.LoadLayout("AttachmentItemLayout")
 	panel.SetColorAndBorder(Theme.ForegroundColor, 0, Theme.ForegroundColor, 0)
 	
@@ -231,6 +231,7 @@ Private Sub OnAddAttachment(item As Attachment)
 	' Hide the remove button for attachments. Attachments cannot be edited within TaskViewerActivity.
 	viewHolder.DeleteButton.Visible = False
 	viewHolder.ID = item.GetID
+	
 	
 	clvAttachments.Add(panel, viewHolder)
 	

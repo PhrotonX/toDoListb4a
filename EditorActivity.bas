@@ -71,9 +71,13 @@ Sub Globals
 	Private toggleReminder As ToggleButton
 	Private btnMoveToTrash As Button
 	Private btnRestore As Button
+	Private pnlAttachments As Panel
+	Private Panel1 As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
+	
+	
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("EditorLayout")
 	
@@ -82,6 +86,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	editorScrollView.Panel.LoadLayout("EditorScrollLayout")
 	
+	Panel1.Height = 300dip
+	clvAttachments.AsView.Height = Panel1.Height
 	Dim c As Canvas
 	c.Initialize(Label1)
 	Dim borderColor As Int = Colors.RGB(209, 209, 209)
@@ -511,6 +517,19 @@ Private Sub LoadTaskGroup
 	End If
 End Sub
 
+Sub ScrollView1_Touch (Action As Int, X As Float, Y As Float) As Boolean
+	' Check if the touch is within the CustomListView bounds
+	If X > clvAttachments.AsView.Left And X < clvAttachments.AsView.Left + clvAttachments.AsView.Width And _
+       Y > clvAttachments.AsView.Top And Y < clvAttachments.AsView.Top + clvAttachments.AsView.Height Then
+		' Let the CustomListView handle the touch event (scrolling)
+		Return False
+	End If
+    
+	' If touch is outside CLV, allow the ScrollView to handle the scroll
+	Return True
+End Sub
+
+
 Private Sub OnAddAttachment(item As Attachment)
 	Dim panel As B4XView = xui.CreatePanel("")
 		
@@ -527,6 +546,7 @@ Private Sub OnAddAttachment(item As Attachment)
 	viewHolder.OpenButton.Visible = False
 	viewHolder.DeleteButton = btnAttachmentRemove
 	viewHolder.ID = item.GetID
+	viewHolder.AttachmentLabel.Text = item.GetFilename
 	
 	clvAttachments.Add(panel, viewHolder)
 End Sub
@@ -729,6 +749,13 @@ Private Sub btnAddAttachment_Click
 	
 	filepicker.Initialize("filepicker")
 	filepicker.Show("*/*", "Choose file")
+End Sub
+
+Private Sub clvAttachment_Height
+	Dim a As B4XView
+	a = clvAttachments.GetBase
+	a.Height = 130dip
+	
 End Sub
 
 Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As String)
