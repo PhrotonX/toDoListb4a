@@ -288,6 +288,7 @@ Sub Globals
 	Private searchPnlSeparator1 As Panel
 	Private searchPnlSeparator2 As Panel
 	Private pnlItems As Panel
+	Private pnlGroupTaskTouch As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -820,6 +821,7 @@ End Sub
 Private Sub drawerButton_Click
 	If button_handling Then
 		drawer.LeftOpen = True
+		SetAllItemsToTransparent
 	End If
 End Sub
 
@@ -909,14 +911,15 @@ Private Sub OnLoadTaskGroups(items As List)
 		viewHolder.Name = lblGroupName
 		viewHolder.Icon = lblGroupIcon
 		viewHolder.BackPanel = groupPanel
+		viewHolder.BackPanel.Height = p.Height
 		p.Tag = viewHolder
 		viewHolder.Name.Text = item.GetTitle
 		viewHolder.Icon.Text = item.GetIcon
 
-		viewHolder.Root.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		viewHolder.BackPanel.SetColorAndBorder(Colors.White, 0, Colors.White, 0)
-		viewHolder.Icon.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		viewHolder.Name.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		viewHolder.Root.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
+		viewHolder.BackPanel.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
+		viewHolder.Icon.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
+		viewHolder.Name.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
 		
 		clvItems.Add(p, viewHolder)
 	Next
@@ -929,29 +932,49 @@ Private Sub pnlNewGroup_Click
 	StartActivity(TaskGroupActivity)
 End Sub
 
+Sub SetAllItemsToTransparent()
+	' Loop through all items in the CustomListView
+	For i = 0 To clvItems.Size - 1
+		' Get the view of each item (panel) in the CustomListView
+		Dim itemView As B4XView = clvItems.GetPanel(i)
+        
+		' Set the background color of each item to transparent
+		itemView.Color = xui.Color_Transparent
+	Next
+End Sub
+
 ' Function for task group click.
 Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	Dim viewHolder As GroupViewHolder = Value
-	
-	If viewHolder.IsSeparator == True Then
-		' Reset selection to previous item
+
+	' Check if the item is a separator (e.g., a group separator).
+	If viewHolder.IsSeparator = True Then
+		' Reset selection to previous item (make it transparent).
 		clvItems.GetPanel(Index).Color = xui.Color_Transparent
 		Return
 	End If
-	
-	' 0 ID for groups cannot exist on the database. Therefore, it is reserved
-	' for special groups such as smart lists.
+
+	' Change color of the selected item to highlight it.
+	' Optionally, you can reset the color of the previously selected item here if needed.
+	Dim selectedItem As B4XView = clvItems.GetPanel(Index)
+	selectedItem.SetColorAnimated(200, Colors.Transparent, Colors.LightGray) ' Change to LightGray for selected item
+
+	' Reset the color of previously selected item if needed (optional).
+	If m_savedSmartList >= 0 Then
+		Dim prevSelectedItem As B4XView = clvItems.GetPanel(m_savedSmartList)
+		prevSelectedItem.SetColorAnimated(200, Colors.LightGray, Colors.Transparent) ' Reset previous item's color
+	End If
+
+	' 0 ID for groups cannot exist on the database. Therefore, it is reserved for special groups such as smart lists.
 	If viewHolder.ID <= 0 Then
 		m_savedSmartList = Index
-		
-		OnLoadPage(smartLists(Index))
+		OnLoadPage(smartLists(Index))  ' Load the special smart list page
 	Else
-		m_savedSmartList = SMART_LIST_NONE
-		
-		' Get the associated group based on the ID stored in the clicked view holder of the nav drawer.
+		m_savedSmartList = SMART_LIST_NONE  ' Reset special list flag
+
+		' Get the associated group based on the ID stored in the clicked view holder.
 		Dim groupObj As Group = Starter.GroupViewModelInstance.GetGroup(viewHolder.ID)
-		
-		OnLoadPage(groupObj)
+		OnLoadPage(groupObj)  ' Load the associated group page
 	End If
 End Sub
 
@@ -1136,4 +1159,5 @@ Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
 		v.Enabled = False
 	Next
 End Sub
+
 

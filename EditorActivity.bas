@@ -72,7 +72,7 @@ Sub Globals
 	Private btnMoveToTrash As Button
 	Private btnRestore As Button
 	Private pnlAttachments As Panel
-	Private Panel1 As Panel
+	Private pnlAttachments As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -86,8 +86,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	editorScrollView.Panel.LoadLayout("EditorScrollLayout")
 	
-	Panel1.Height = 300dip
-	clvAttachments.AsView.Height = Panel1.Height
+	pnlAttachments.Height = 300dip
+	clvAttachments.AsView.Height = pnlAttachments.Height
 	Dim c As Canvas
 	c.Initialize(Label1)
 	Dim borderColor As Int = Colors.RGB(209, 209, 209)
