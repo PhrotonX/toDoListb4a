@@ -252,43 +252,42 @@ Sub Globals
 
 	Private pnlSortDialogue As Panel
 	Private pnlSortDialoguebg As Panel
-	Private radioAsc As RadioButton
-	Private radioDesc As RadioButton
-	Private radioSortByCreaion As RadioButton
-	Private radioSortByDD As RadioButton
-	Private radioSortByPrio As RadioButton
+	Private radioSortOrderAscending As RadioButton
+	Private radioSortOrderDescending As RadioButton
+	Private radioSortByCreation As RadioButton
+	Private radioSortByDueDate As RadioButton
+	Private radioSortByPriority As RadioButton
 	Private radioSortByTitle As RadioButton
 	Private svSearchBody As ScrollView
-	Private checkFBPriority As CheckBox
-	Private checkFBRepeat As CheckBox
-	Private checkFBDueDate As CheckBox
-	Private checkFBGroup As CheckBox
-	Private radioPrioCritical As RadioButton
-	Private radioPrioHigh As RadioButton
-	Private radioPrioMedium As RadioButton
-	Private radioPrioLow As RadioButton
-	Private pnlFBDueDate As Panel
-	Private pnlFBGroupName As Panel
-	Private pnlFBPriority As Panel
-	Private pnlFBRepeat As Panel
+	Private checkFilterByPriority As CheckBox
+	Private checkFilterByRepeat As CheckBox
+	Private checkFilterByDueDate As CheckBox
+	Private checkFilterByGroup As CheckBox
+	Private radioFilterByPriorityCritical As RadioButton
+	Private radioFilterByPriorityHigh As RadioButton
+	Private radioFilterByPriorityMedium As RadioButton
+	Private radioFilterByPriorityLow As RadioButton
+	Private pnlFilterByDueDate As Panel
+	Private pnlFilterByGroupName As Panel
+	Private pnlFilterByPriority As Panel
+	Private pnlFilterByRepeat As Panel
 	Private radioDueSpecificDate As RadioButton
 	Private radioDueSpecificDateGroup As RadioButton
 	Private radioDueSpecificDateRange As RadioButton
-	Private spinDateDay As Spinner
-	Private spinDateGroup As Spinner
-	Private spinDateMonth As Spinner
-	Private spinRangeDay As Spinner
-	Private spinRangeMonth As Spinner
-	Private txtDateYear As EditText
-	Private txtRangeYear As EditText
+	Private spnDateDay As Spinner
+	Private spnDateGroup As Spinner
+	Private spnDateMonth As Spinner
+	Private spnRangeDay As Spinner
+	Private spnRangeMonth As Spinner
+	Private editDateYear As EditText
+	Private editRangeYear As EditText
 	Private pnlDueSpecificDate As Panel
 	Private pnlDueSpecificDateRange As Panel
 	Private pnlDueSpecificDateGroup As Panel
 	Private groupPanel As Panel
-	Private searchPnlSeparator1 As Panel
-	Private searchPnlSeparator2 As Panel
+	Private pnlSearchSeparator1 As Panel
+	Private pnlSearchSeparator2 As Panel
 	Private pnlItems As Panel
-	Private pnlGroupTaskTouch As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -821,7 +820,6 @@ End Sub
 Private Sub drawerButton_Click
 	If button_handling Then
 		drawer.LeftOpen = True
-		SetAllItemsToTransparent
 	End If
 End Sub
 
@@ -911,15 +909,14 @@ Private Sub OnLoadTaskGroups(items As List)
 		viewHolder.Name = lblGroupName
 		viewHolder.Icon = lblGroupIcon
 		viewHolder.BackPanel = groupPanel
-		viewHolder.BackPanel.Height = p.Height
 		p.Tag = viewHolder
 		viewHolder.Name.Text = item.GetTitle
 		viewHolder.Icon.Text = item.GetIcon
 
-		viewHolder.Root.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
-		viewHolder.BackPanel.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
-		viewHolder.Icon.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
-		viewHolder.Name.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
+		viewHolder.Root.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		viewHolder.BackPanel.SetColorAndBorder(Colors.White, 0, Colors.White, 0)
+		viewHolder.Icon.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		viewHolder.Name.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
 		
 		clvItems.Add(p, viewHolder)
 	Next
@@ -932,49 +929,29 @@ Private Sub pnlNewGroup_Click
 	StartActivity(TaskGroupActivity)
 End Sub
 
-Sub SetAllItemsToTransparent()
-	' Loop through all items in the CustomListView
-	For i = 0 To clvItems.Size - 1
-		' Get the view of each item (panel) in the CustomListView
-		Dim itemView As B4XView = clvItems.GetPanel(i)
-        
-		' Set the background color of each item to transparent
-		itemView.Color = xui.Color_Transparent
-	Next
-End Sub
-
 ' Function for task group click.
 Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	Dim viewHolder As GroupViewHolder = Value
-
-	' Check if the item is a separator (e.g., a group separator).
-	If viewHolder.IsSeparator = True Then
-		' Reset selection to previous item (make it transparent).
+	
+	If viewHolder.IsSeparator == True Then
+		' Reset selection to previous item
 		clvItems.GetPanel(Index).Color = xui.Color_Transparent
 		Return
 	End If
-
-	' Change color of the selected item to highlight it.
-	' Optionally, you can reset the color of the previously selected item here if needed.
-	Dim selectedItem As B4XView = clvItems.GetPanel(Index)
-	selectedItem.SetColorAnimated(200, Colors.Transparent, Colors.LightGray) ' Change to LightGray for selected item
-
-	' Reset the color of previously selected item if needed (optional).
-	If m_savedSmartList >= 0 Then
-		Dim prevSelectedItem As B4XView = clvItems.GetPanel(m_savedSmartList)
-		prevSelectedItem.SetColorAnimated(200, Colors.LightGray, Colors.Transparent) ' Reset previous item's color
-	End If
-
-	' 0 ID for groups cannot exist on the database. Therefore, it is reserved for special groups such as smart lists.
+	
+	' 0 ID for groups cannot exist on the database. Therefore, it is reserved
+	' for special groups such as smart lists.
 	If viewHolder.ID <= 0 Then
 		m_savedSmartList = Index
-		OnLoadPage(smartLists(Index))  ' Load the special smart list page
+		
+		OnLoadPage(smartLists(Index))
 	Else
-		m_savedSmartList = SMART_LIST_NONE  ' Reset special list flag
-
-		' Get the associated group based on the ID stored in the clicked view holder.
+		m_savedSmartList = SMART_LIST_NONE
+		
+		' Get the associated group based on the ID stored in the clicked view holder of the nav drawer.
 		Dim groupObj As Group = Starter.GroupViewModelInstance.GetGroup(viewHolder.ID)
-		OnLoadPage(groupObj)  ' Load the associated group page
+		
+		OnLoadPage(groupObj)
 	End If
 End Sub
 
@@ -1003,8 +980,8 @@ Private Sub searchBtn_Click
 		
 		searchFragment.SetLayout(mainFragment.Left, mainFragment.Top, mainFragment.Width, mainFragment.Height)
 		svSearchBody.SetLayout(searchFragment.Left, 0, searchFragment.Width, searchFragment.Height)
-		searchPnlSeparator1.SetLayout(50dip, searchPnlSeparator1.Top, 100%x - 100dip, 2dip)
-		searchPnlSeparator2.SetLayout(50dip, searchPnlSeparator2.Top, 100%x - 100dip, 2dip)
+		pnlSearchSeparator1.SetLayout(50dip, pnlSearchSeparator1.Top, 100%x - 100dip, 2dip)
+		pnlSearchSeparator2.SetLayout(50dip, pnlSearchSeparator2.Top, 100%x - 100dip, 2dip)
 		searchFragment.SetVisibleAnimated(150, True)
 		searchFragment.BringToFront
 		
@@ -1080,28 +1057,28 @@ Private Sub radioSortByTitle_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_TITLE)
 End Sub
 
-Private Sub radioSortByPrio_CheckedChange(Checked As Boolean)
+Private Sub radioSortByPriority_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_PRIORITY)
 End Sub
 
-Private Sub radioSortByDD_CheckedChange(Checked As Boolean)
+Private Sub radioSortByDueDate_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_DUE_DATE)
 End Sub
 
-Private Sub radioSortByCreaion_CheckedChange(Checked As Boolean)
+Private Sub radioSortByCreation_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_CREATED_AT)
 End Sub
 
-Private Sub radioDesc_CheckedChange(Checked As Boolean)
+Private Sub radioSortOrderDescending_CheckedChange(Checked As Boolean)
 	m_query.SetSortOrder(m_query.ORDER_DESC)
 End Sub
 
-Private Sub radioAsc_CheckedChange(Checked As Boolean)
+Private Sub radioSortOrderAscending_CheckedChange(Checked As Boolean)
 	m_query.SetSortOrder(m_query.ORDER_ASC)
 End Sub
 
-Private Sub checkFBPriority_CheckedChange(Checked As Boolean)
-	SetRadioButtonsEnabled(pnlFBPriority, Checked)
+Private Sub checkFilterByPriority_CheckedChange(Checked As Boolean)
+	SetRadioButtonsEnabled(pnlFilterByPriority, Checked)
 End Sub
 
 Sub SetRadioButtonsEnabled(pnl As Panel, enabled As Boolean)
@@ -1113,18 +1090,18 @@ End Sub
 
 
 
-Private Sub checkFBRepeat_CheckedChange(Checked As Boolean)
-	SetRadioButtonsEnabled(pnlFBRepeat, Checked)
+Private Sub checkFilterByRepeat_CheckedChange(Checked As Boolean)
+	SetRadioButtonsEnabled(pnlFilterByRepeat, Checked)
 End Sub
 
-Private Sub checkFBDueDate_CheckedChange(Checked As Boolean)
-	SetRadioButtonsEnabled(pnlFBDueDate, Checked)
+Private Sub checkFilterByDueDate_CheckedChange(Checked As Boolean)
+	SetRadioButtonsEnabled(pnlFilterByDueDate, Checked)
 End Sub
 
 
 
-Private Sub checkFBGroup_CheckedChange(Checked As Boolean)
-	SetRadioButtonsEnabled(pnlFBGroupName, Checked)
+Private Sub checkFilterByGroup_CheckedChange(Checked As Boolean)
+	SetRadioButtonsEnabled(pnlFilterByGroupName, Checked)
 End Sub
 
 Private Sub radioDueSpecificDateRange_CheckedChange(Checked As Boolean)
@@ -1159,5 +1136,4 @@ Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
 		v.Enabled = False
 	Next
 End Sub
-
 
