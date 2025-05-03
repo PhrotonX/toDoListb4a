@@ -232,12 +232,18 @@ Sub Activity_Create(FirstTime As Boolean)
 		If 6 < currentHour And currentHour >= 22 Then
 			' Set the current hour plus 2 hour as the default value of the reminder fields.
 			m_task.Reminder.SetHour2(currentHour + 2, Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+			Log("EditorActivity hour: " & m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2( _
+				Starter.SettingsViewModelInstance.Is24HourFormatEnabled())))
+			Log("EditorActivity hour index: " & spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2( _
+				Starter.SettingsViewModelInstance.Is24HourFormatEnabled()))))
 			spnReminderHour.SelectedIndex = _
 				spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2( _ 
 				Starter.SettingsViewModelInstance.Is24HourFormatEnabled())))
 			spnReminderMarker.SelectedIndex = spnReminderMarker.IndexOf(m_task.Reminder.GetMarker())
 		Else
 			' Set the current hour plus 2 hour as the default value of the reminder fields.
+			Log("EditorActivity hour: " & m_task.Reminder.GetNumWithLeadingZero(8))
+			Log("EditorActivity hour index: " & spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(8)))
 			spnReminderHour.SelectedIndex = _
 				spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(8))
 			spnReminderMarker.SelectedIndex = spnReminderMarker.IndexOf(m_task.Reminder.MARKER_AM)
