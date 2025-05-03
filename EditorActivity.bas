@@ -528,6 +528,7 @@ Private Sub OnAddAttachment(item As Attachment)
 	viewHolder.OpenButton.Visible = False
 	viewHolder.DeleteButton = btnAttachmentRemove
 	viewHolder.ID = item.GetID
+	viewHolder.Icon.Gravity = Gravity.FILL
 	
 	clvAttachments.Add(panel, viewHolder)
 End Sub
