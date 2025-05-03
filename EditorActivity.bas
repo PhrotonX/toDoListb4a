@@ -71,6 +71,8 @@ Sub Globals
 	Private toggleReminder As ToggleButton
 	Private btnMoveToTrash As Button
 	Private btnRestore As Button
+	Private pnlEditorBar As Panel
+	Private pnlRepeat As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -81,16 +83,13 @@ Sub Activity_Create(FirstTime As Boolean)
 	m_pendingAttachmentDelete.Initialize
 	
 	editorScrollView.Panel.LoadLayout("EditorScrollLayout")
-	
-	Dim c As Canvas
-	c.Initialize(Label1)
-	Dim borderColor As Int = Colors.RGB(209, 209, 209)
-	Dim borderHeight As Int = 1dip
+	pnlEditorBar.Elevation = 10
 
 	
-	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, borderHeight)
-
-	Label1.Invalidate
+	
+	Dim cd As ColorDrawable
+	cd.Initialize(Colors.Transparent, 0) ' 0 is the corner radius
+	toggleReminder.Background = cd
 	
 	' Initialize variables
 	m_task.Initialize
@@ -762,12 +761,17 @@ Private Sub spnTaskGroup_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Private Sub toggleReminder_CheckedChange(Checked As Boolean)
+	toggleReminder.TextColor = Colors.RGB(73, 93, 143)
 	m_task.SetReminderEnabled(Checked)
 	
 	spnReminderHour.Enabled = Checked
 	spnReminderMinute.Enabled = Checked
 	spnReminderMarker.Enabled = Checked
 	spnSnooze.Enabled = Checked
+	
+	If Checked = False Then
+		toggleReminder.TextColor = Colors.Gray
+	End If
 End Sub
 
 Private Sub btnRestore_Click
