@@ -523,6 +523,7 @@ Private Sub OnAddAttachment(item As Attachment)
 	viewHolder.Root = panel
 	viewHolder.Icon = imgAttachmentIcon
 	viewHolder.AttachmentLabel = lblAttachmentFileName
+	viewHolder.AttachmentLabel.Text = item.GetFilename
 	viewHolder.OpenButton = btnAttachmentOpen
 	viewHolder.OpenButton.Visible = False
 	viewHolder.DeleteButton = btnAttachmentRemove
