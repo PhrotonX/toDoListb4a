@@ -36,7 +36,7 @@ Public Sub GetTask(id As Long) As ToDo
 	Return m_repository.GetTask(id)
 End Sub
 
-Private Sub GetTasks(query As TaskQuery) As List
+Public Sub GetTasks(query As TaskQuery) As List
 	Return m_repository.GetTasks(query)
 End Sub
 
