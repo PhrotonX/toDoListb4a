@@ -225,29 +225,43 @@ Sub Activity_Create(FirstTime As Boolean)
 		' Set the hour and marker reminder field
 		Dim currentHour As Int = DateTime.GetHour(DateTime.Now)
 		
+		' Log the current hour if debug mode is enabled.
 		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
 			Log("EditorActivity: currentHour " & currentHour)
 		End If
 		
-		If 6 < currentHour And currentHour >= 22 Then
-			' Set the current hour plus 2 hour as the default value of the reminder fields.
-			m_task.Reminder.SetHour2(currentHour + 2, Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
-			Log("EditorActivity hour: " & m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2( _
+		If 6 < currentHour And currentHour <= 20 Then
+			' Set the current hour plus 2 hour as the default value of the reminder fields if the current hour
+			' is ranging within 6:00 AM until 8:00 PM (20:00)
+			m_task.Reminder.SetHour(currentHour + 2)
+			
+			' Logging for debug mode.
+			If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+				Log("EditorActivity hour: " & m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2( _
 				Starter.SettingsViewModelInstance.Is24HourFormatEnabled())))
-			Log("EditorActivity hour index: " & spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2( _
+				Log("EditorActivity hour index: " & spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2( _
 				Starter.SettingsViewModelInstance.Is24HourFormatEnabled()))))
+			End If
+			
+			' Set the current hour plus 2 hour as the default value of the reminder fields.
 			spnReminderHour.SelectedIndex = _
 				spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2( _ 
 				Starter.SettingsViewModelInstance.Is24HourFormatEnabled())))
 			spnReminderMarker.SelectedIndex = spnReminderMarker.IndexOf(m_task.Reminder.GetMarker())
 		Else
-			' Set the current hour plus 2 hour as the default value of the reminder fields.
+			' Set the default 8 o'clock as the default time value if the time range condition above has failed.
+			
+			' Logging for debug mode
 			Log("EditorActivity hour: " & m_task.Reminder.GetNumWithLeadingZero(8))
 			Log("EditorActivity hour index: " & spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(8)))
+			
+			' Set the 8:00 hour value.
 			spnReminderHour.SelectedIndex = _
 				spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(8))
 			spnReminderMarker.SelectedIndex = spnReminderMarker.IndexOf(m_task.Reminder.MARKER_AM)
 		End If
+		
+		Log("EditorActiivty marker: " & m_task.Reminder.GetMarker())
 		
 		' Set the minute reminder field.
 		spnReminderMinute.SelectedIndex = spnReminderMinute.IndexOf(m_task.Reminder.GetNumWithLeadingZero(0))
