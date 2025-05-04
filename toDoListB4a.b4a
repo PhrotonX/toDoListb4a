@@ -288,6 +288,32 @@ Sub Globals
 	Private pnlSearchSeparator1 As Panel
 	Private pnlSearchSeparator2 As Panel
 	Private pnlItems As Panel
+	Private checkRepeatFriday As CheckBox
+	Private checkRepeatMonday As CheckBox
+	Private checkRepeatSaturday As CheckBox
+	Private checkRepeatSunday As CheckBox
+	Private checkRepeatThursday As CheckBox
+	Private checkRepeatTuesday As CheckBox
+	Private checkRepeatWednesday As CheckBox
+	Private lblFilterFilterBy As Label
+	Private lblRepeatFriday As Label
+	Private lblRepeatMonday As Label
+	Private lblRepeatSaturday As Label
+	Private lblRepeatSunday As Label
+	Private lblRepeatThursday As Label
+	Private lblRepeatTuesday As Label
+	Private lblRepeatWednesday As Label
+	Private lblSearchSearchBy As Label
+	Private lblSortOrderBy As Label
+	Private radioSearchByFilename As RadioButton
+	Private radioSearchByNotes As RadioButton
+	Private radioSearchByTitle As RadioButton
+	Private radioSortOrderByAscending As RadioButton
+	Private radioSortOrderByDescending As RadioButton
+	Private radioSortOrderByNone As RadioButton
+	Private spinRangeDay As Spinner
+	Private spinRangeMonth As Spinner
+	Private spnGroupName As Spinner
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -626,6 +652,10 @@ Private Sub LoadItems()
 			ToDoList.Add(subGroup.BuildView(), subGroup)
 	End Select
 	
+	
+End Sub
+
+Private Sub LoadSearchItems()
 	
 End Sub
 
@@ -1137,3 +1167,96 @@ Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
 	Next
 End Sub
 
+Private Sub spnGroupName_ItemClick (Position As Int, Value As Object)
+	Log(Value)
+	
+	'm_query.SetGroupID(
+End Sub
+
+Private Sub spnDateMonth_ItemClick (Position As Int, Value As Object)
+	
+End Sub
+
+Private Sub spnDateGroup_ItemClick (Position As Int, Value As Object)
+	
+End Sub
+
+Private Sub spnDateDay_ItemClick (Position As Int, Value As Object)
+	
+End Sub
+
+Private Sub spinRangeMonth_ItemClick (Position As Int, Value As Object)
+	
+End Sub
+
+Private Sub spinRangeDay_ItemClick (Position As Int, Value As Object)
+	
+End Sub
+
+Private Sub radioSortOrderByNone_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioSortOrderByDescending_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioSortOrderByAscending_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioSearchByTitle_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioSearchByNotes_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioSearchByFilename_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioFilterByPriorityMedium_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioFilterByPriorityLow_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioFilterByPriorityHigh_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub radioFilterByPriorityCritical_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub checkRepeatWednesday_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub checkRepeatTuesday_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub checkRepeatThursday_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub checkRepeatSunday_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub checkRepeatSaturday_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub checkRepeatMonday_CheckedChange(Checked As Boolean)
+	
+End Sub
+
+Private Sub checkRepeatFriday_CheckedChange(Checked As Boolean)
+	
+End Sub
