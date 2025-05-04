@@ -104,6 +104,8 @@ Public Sub PopulateSnooze(spnSnooze As Spinner)
 	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_DAY))
 End Sub
 
+' Populates the task group spinner based on the database contents.
+' Expects Starter.GroupViewModelInstance to be initialized.
 Public Sub PopulateTaskGroups(spntaskGroup As Spinner)
 	Dim groups As List = Starter.GroupViewModelInstance.GetGroups()
 	
@@ -117,7 +119,7 @@ Public Sub PopulateTaskGroups(spntaskGroup As Spinner)
 	End If
 End Sub
 
-' Validation to check if editTitle is empty and set the title into the task object.
+' Validation to check if editTitle is empty.
 Public Sub ValidateTitle(taskObj As ToDo, editTitle As EditText) As Boolean
 	If editTitle.Text == "" Then
 		MsgboxAsync("Title cannot be empty!", "Error")
@@ -128,8 +130,6 @@ Public Sub ValidateTitle(taskObj As ToDo, editTitle As EditText) As Boolean
 		MsgboxAsync("Title cannot be larger than 255!", "Error")
 		Return False
 	End If
-	
-	taskObj.SetTitle(editTitle.Text)
 	Return True
 End Sub
 
