@@ -10,9 +10,8 @@ Version=13.1
 
 Sub Class_Globals
 	Private m_order As String
-	Private m_searchQuery As String
+	'Private m_searchQuery As String
 	Private m_sortQuery As String
-	Private m_selectedQuery As String
 	
 	Private Const EQ As String = " = "
 	Private Const GTE As String = " >= "
@@ -32,14 +31,13 @@ Sub Class_Globals
 	Public Const FIELD_IS_REMINDER_ENABLED As String = "is_reminder_enabled"
 	
 	Private const SEARCH_QUERY_ITEM_TASK_ID As Int = 0
-	Private const SEARCH_QUERY_ITEM_TITLE As Int = 1
-	Private const SEARCH_QUERY_ITEM_NOTES As Int = 2
-	Private const SEARCH_QUERY_ITEM_DUE_DATE_RANGE As Int = 3
-	Private const SEARCH_QUERY_ITEM_PRIORITY As Int = 4
-	Private const SEARCH_QUERY_ITEM_IS_DELETED As Int = 5
-	Private const SEARCH_QUERY_ITEM_REMINDER As Int = 6
-	Private const SEARCH_QUERY_ITEM_IS_REMINDER_ENABLED As Int = 7
-	Private const SEARCH_QUERY_ITEM_ARRAY_SIZE As Int = 8
+	Private const SEARCH_QUERY_ITEM_SEARCH_BY As Int = 1
+	Private const SEARCH_QUERY_ITEM_DUE_DATE_RANGE As Int = 2
+	Private const SEARCH_QUERY_ITEM_PRIORITY As Int = 3
+	Private const SEARCH_QUERY_ITEM_IS_DELETED As Int = 4
+	Private const SEARCH_QUERY_ITEM_REMINDER As Int = 5
+	Private const SEARCH_QUERY_ITEM_IS_REMINDER_ENABLED As Int = 6
+	Private const SEARCH_QUERY_ITEM_ARRAY_SIZE As Int = 7
 	
 	Public Const ORDER_NONE As String = "NONE"
 	Public Const ORDER_ASC As String = "ASC"
@@ -47,6 +45,13 @@ Sub Class_Globals
 	
 	' Adds data into the SQL query.
 	Public m_searchQueryItem(SEARCH_QUERY_ITEM_ARRAY_SIZE) As String
+	
+	Private Const SEARCH_QUERY_ITEM_SEARCH_BY_TITLE As Int = 0
+	Private Const SEARCH_QUERY_ITEM_SEARCH_BY_NOTES As Int = 1
+	Private Const SEARCH_QUERY_ITEM_SEARCH_BY_ATTACHMENT_TITLE As Int = 2
+	
+	Private m_searchBy As Int = SEARCH_QUERY_ITEM_SEARCH_BY
+	Private m_searchByField As String = FIELD_TITLE
 	
 	Private m_groupId As Long
 	Private m_searchRepeat(7) As Boolean
@@ -64,14 +69,6 @@ Public Sub Initialize()
 	
 	SetSearchIsDeleted(False)
 End Sub
-
-'Public Sub AppendAndSearch()
-'	m_searchQuery = m_searchQuery & " AND "
-'End Sub
-
-'Public Sub AppendAndSort()
-'	m_sortQuery = m_sortQuery & " AND "
-'End Sub
 
 Public Sub IsSortingEnabled() As Boolean
 	If m_order == ORDER_NONE Then
@@ -95,45 +92,40 @@ Public Sub SetSortField(field As String)
 	m_sortQuery = field
 End Sub
 
-Public Sub SetSearchTitle(query As String)
-	m_searchQueryItem(SEARCH_QUERY_ITEM_TITLE) = FIELD_TITLE & EQ & query
-	m_selectedQuery = FIELD_TITLE
+Public Sub SetSearchBy(query As String)
+	m_searchQueryItem(SEARCH_QUERY_ITEM_SEARCH_BY) = m_searchByField & " LIKE '%" & query & "%'"
 End Sub
 
-Public Sub SetSearchNotes(query As String)
-	m_searchQueryItem(SEARCH_QUERY_ITEM_NOTES) = FIELD_NOTES & EQ & query
-	m_selectedQuery = FIELD_NOTES
+' Supported values: FIELD_TITLE (default) and FIELD_NOTES
+Public Sub SetSearchByField(field As String)
+	m_searchByField = field
 End Sub
 
 ' @NOTE: Incomplete implementation.
-'Public Sub SetSearchAttachmentFileName(query As String)
-'	m_searchQuery = m_searchQuery & " " & query
-'	m_selectedQuery = FIELD_ATTACHMENT_FILENAME
-'End Sub
+ Public Sub SetSearchAttachmentFileName(query As String)
+	'm_searchQuery = m_searchQuery & " " & query
+	'm_selectedQuery = FIELD_ATTACHMENT_FILENAME
+End Sub
+
 Public Sub SetSearchIsDeleted(value As Boolean)
 	m_searchQueryItem(SEARCH_QUERY_ITEM_IS_DELETED) = FIELD_IS_DELETED & EQ & DatabaseUtils.BoolToInt(value)
-	m_selectedQuery = FIELD_IS_DELETED
 End Sub
 
 Public Sub SetSearchIsReminderEnabled(value As Boolean)
 	m_searchQueryItem(SEARCH_QUERY_ITEM_IS_REMINDER_ENABLED) = FIELD_IS_REMINDER_ENABLED & EQ & DatabaseUtils.BoolToInt(value)
-	m_selectedQuery = FIELD_IS_REMINDER_ENABLED
 End Sub
 
 Public Sub SetSearchReminder(value As Long)
 	m_searchQueryItem(SEARCH_QUERY_ITEM_REMINDER) = FIELD_REMINDER & EQ & value
-	m_selectedQuery = FIELD_REMINDER
 End Sub
 
 Public Sub SetSearchPriority(value As Int)
 	m_searchQueryItem(SEARCH_QUERY_ITEM_PRIORITY) = FIELD_PRIORITY & EQ & value
-	m_selectedQuery = FIELD_PRIORITY
 End Sub
 
 ' Does not support SQL query
 Public Sub SetSearchRepeat(dayOfTheWeek As Int, value As Boolean)
 	m_searchRepeat(dayOfTheWeek) = value
-	'm_selectedQuery = FIELD_REPEAT
 End Sub
 
 ' Set Specific Due Date.
@@ -144,7 +136,6 @@ End Sub
 
 Public Sub SetSearchDueDateRange(tickBegin As Long, tickEnd As Long)
 	m_searchQueryItem(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = FIELD_DUE_DATE & GTE & tickBegin & " AND " & FIELD_DUE_DATE & LTE & tickEnd
-	'm_selectedQuery = DUE_DATE
 End Sub
 
 Public Sub GetGroupID() As Long
@@ -164,8 +155,16 @@ Public Sub GetSearchingQuery(removeWhereClause As Boolean) As String
 	If removeWhereClause == False Then
 		query = "WHERE "
 	End If
-	Log("TaskQuery: " & query & OnBuildSearchingQuery)
-	Return query & OnBuildSearchingQuery
+	
+	Dim result As String = query & OnBuildSearchingQuery
+	
+	Log("TaskQuery: " & result)
+	
+	If result == "WHERE " Then
+		Return " "
+	Else
+		Return query & OnBuildSearchingQuery
+	End If
 End Sub
 
 ' Returns no field name.
@@ -197,12 +196,8 @@ Public Sub UnsetTaskId()
 	m_searchQueryItem(SEARCH_QUERY_ITEM_TASK_ID) = ""
 End Sub
 
-Public Sub UnsetSearchTitle()
-	m_searchQueryItem(SEARCH_QUERY_ITEM_TITLE) = ""
-End Sub
-
-Public Sub UnsetSearchNotes()
-	m_searchQueryItem(SEARCH_QUERY_ITEM_NOTES) = ""
+Public Sub UnsetSearchBy()
+	m_searchQueryItem(SEARCH_QUERY_ITEM_SEARCH_BY) = ""
 End Sub
 
 Public Sub UnsetSearchDueDateRange()
