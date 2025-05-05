@@ -63,7 +63,7 @@ Sub button_design
 	Dim whiteBg As ColorDrawable
 	
 	whiteBg.Initialize(Colors.White, 8)
-	help.Background = whiteBg
+		help.Background = whiteBg
 	about.Background = whiteBg
 	
 	
