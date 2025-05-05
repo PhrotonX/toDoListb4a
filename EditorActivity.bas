@@ -55,8 +55,8 @@ Sub Globals
 	Private spinnerDueDateDay As Spinner
 	Private spinnerDueDateMonth As Spinner
 	
-	Private Const SPINNER_DUE_DATE_DAY_HINT_TEXT As String = "Select day here..."
-	Private Const SPINNER_DUE_DATE_MONTH_HINT_TEXT As String = "Select month here..."
+	Private Const SPINNER_DUE_DATE_DAY_HINT_TEXT As String = "Day"
+	Private Const SPINNER_DUE_DATE_MONTH_HINT_TEXT As String = "Month"
 	Private clvAttachments As CustomListView
 	Private btnAttachmentOpen As Button
 	Private btnAttachmentRemove As Button
@@ -84,7 +84,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	editorScrollView.Panel.LoadLayout("EditorScrollLayout")
 	pnlEditorBar.Elevation = 10
-
+	EditText_removeunderline
 	
 	
 	Dim cd As ColorDrawable
@@ -794,4 +794,12 @@ Private Sub btnMoveToTrash_Click
 	
 		OnSaveTask
 	End If
+End Sub
+
+Private Sub EditText_removeunderline
+	Dim cd As ColorDrawable
+	cd.Initialize(Colors.Transparent, 0)
+	editTitle.Background = cd
+	editNotes.Background = cd
+	editDueDateYear.Background = cd
 End Sub
