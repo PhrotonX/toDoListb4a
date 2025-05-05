@@ -85,7 +85,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	editorScrollView.Panel.LoadLayout("EditorScrollLayout")
 	pnlEditorBar.Elevation = 10
 
-	
+	EditTextBackground_Transparent
 	
 	Dim cd As ColorDrawable
 	cd.Initialize(Colors.Transparent, 0) ' 0 is the corner radius
@@ -791,6 +791,7 @@ Private Sub toggleReminder_CheckedChange(Checked As Boolean)
 	
 	If Checked = False Then
 		toggleReminder.TextColor = Colors.Gray
+		
 	End If
 End Sub
 
@@ -814,4 +815,12 @@ Private Sub btnMoveToTrash_Click
 	
 		OnSaveTask
 	End If
+End Sub
+
+Private Sub EditTextBackground_Transparent
+	Dim cd As ColorDrawable
+	cd.Initialize(Colors.Transparent, 0)
+	editNotes.Background = cd
+	editTitle.Background = cd
+	editDueDateYear.Background = cd
 End Sub
