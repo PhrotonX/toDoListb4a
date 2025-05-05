@@ -277,17 +277,32 @@ Sub Globals
 	Private spnDateDay As Spinner
 	Private spnDateGroup As Spinner
 	Private spnDateMonth As Spinner
-	Private spnRangeDay As Spinner
-	Private spnRangeMonth As Spinner
 	Private editDateYear As EditText
-	Private editRangeYear As EditText
 	Private pnlDueSpecificDate As Panel
-	Private pnlDueSpecificDateRange As Panel
+	Private pnlDueSpecificDateRangeFrom As Panel
+	Private pnlDueSpecificDateRangeTo As Panel
 	Private pnlDueSpecificDateGroup As Panel
 	Private groupPanel As Panel
 	Private pnlSearchSeparator1 As Panel
 	Private pnlSearchSeparator2 As Panel
 	Private pnlItems As Panel
+	Private pnlContainerFilterByCheckRepeat As Panel
+	Private editRangeYearFrom As EditText
+	Private editRangeYearTo As EditText
+	Private spinRangeDayFrom As Spinner
+	Private spinRangeDayTo As Spinner
+	Private spinRangeMonthFrom As Spinner
+	Private spinRangeMonthTo As Spinner
+	Private pnlSpnDateDay As Panel
+	Private searchEditText As EditText
+	Private pnlEditDateYear As Panel
+	Private pnlEditRangeYearFrom As Panel
+	Private pnlEditRangeYearTo As Panel
+	Private pnlSpinRangeDayFrom As Panel
+	Private pnlSpinRangeDayTo As Panel
+	Private pnlSpinRangeMonthFrom As Panel
+	Private pnlSpinRangeMonthTo As Panel
+	Private pnlSpnDateMonth As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -970,7 +985,7 @@ End Sub
 
 Private Sub searchBtn_Click
 	If button_handling Then
-		svSearchBody.Panel.LoadLayout("searchFragmentSVLayout")
+		
 		pnlTitleBar.Elevation = 0
 		pnlSearch.SetLayout(pnlTitleBar.Left, pnlTitleBar.Top, pnlTitleBar.Width, pnlTitleBar.Height)
 		pnlSearch.SetVisibleAnimated(150, True)
@@ -980,6 +995,8 @@ Private Sub searchBtn_Click
 		
 		searchFragment.SetLayout(mainFragment.Left, mainFragment.Top, mainFragment.Width, mainFragment.Height)
 		svSearchBody.SetLayout(searchFragment.Left, 0, searchFragment.Width, searchFragment.Height)
+		svSearchBody.Panel.LoadLayout("searchFragmentSVLayout")
+		SearchEditText_Underline
 		pnlSearchSeparator1.SetLayout(50dip, pnlSearchSeparator1.Top, 100%x - 100dip, 2dip)
 		pnlSearchSeparator2.SetLayout(50dip, pnlSearchSeparator2.Top, 100%x - 100dip, 2dip)
 		searchFragment.SetVisibleAnimated(150, True)
@@ -1091,7 +1108,7 @@ End Sub
 
 
 Private Sub checkFilterByRepeat_CheckedChange(Checked As Boolean)
-	SetRadioButtonsEnabled(pnlFilterByRepeat, Checked)
+	SetRadioButtonsEnabled(pnlContainerFilterByCheckRepeat, Checked)
 End Sub
 
 Private Sub checkFilterByDueDate_CheckedChange(Checked As Boolean)
@@ -1105,7 +1122,15 @@ Private Sub checkFilterByGroup_CheckedChange(Checked As Boolean)
 End Sub
 
 Private Sub radioDueSpecificDateRange_CheckedChange(Checked As Boolean)
-	SetRadioButtonsEnabled(pnlDueSpecificDateRange, Checked)
+	
+	
+	spinRangeMonthFrom.Enabled = True
+	spinRangeMonthTo.Enabled = True
+	spinRangeDayFrom.Enabled = True
+	spinRangeDayTo.Enabled = True
+	editRangeYearFrom.Enabled = True
+	editRangeYearTo.Enabled = True
+	
 	
 	For i = 0 To pnlDueSpecificDate.NumberOfViews - 1
 		Dim v As View = pnlDueSpecificDate.GetView(i)
@@ -1113,27 +1138,63 @@ Private Sub radioDueSpecificDateRange_CheckedChange(Checked As Boolean)
 		c.Enabled = False
 		v.Enabled = False
 	Next
+	
+	spnDateMonth.Enabled = False
+	spnDateDay.Enabled = False
+	editDateYear.Enabled = False
+	
 End Sub
 
 Private Sub radioDueSpecificDateGroup_CheckedChange(Checked As Boolean)
+	
+	
 	SetRadioButtonsEnabled(pnlDueSpecificDateGroup, Checked)
 	
-	For i = 0 To pnlDueSpecificDateRange.NumberOfViews - 1
-		Dim v As View = pnlDueSpecificDateRange.GetView(i)
+	For i = 0 To pnlDueSpecificDateRangeFrom.NumberOfViews - 1
 		Dim c As View = pnlDueSpecificDate.GetView(i)
 		c.Enabled = False
-		v.Enabled = False
 	Next
+	
+	spinRangeMonthFrom.Enabled = False
+	spinRangeMonthTo.Enabled = False
+	spinRangeDayFrom.Enabled = False
+	spinRangeDayTo.Enabled = False
+	editRangeYearFrom.Enabled = False
+	editRangeYearTo.Enabled = False
+	
+	spnDateMonth.Enabled = False
+	spnDateDay.Enabled = False
+	editDateYear.Enabled = False
+	
 End Sub
 
 Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
-	SetRadioButtonsEnabled(pnlDueSpecificDate, Checked)
 	
-	For i = 0 To pnlDueSpecificDateRange.NumberOfViews - 1
-		Dim v As View = pnlDueSpecificDateRange.GetView(i)
+	
+	spnDateMonth.Enabled = True
+	spnDateDay.Enabled = True
+	editDateYear.Enabled = True
+	
 		Dim c As View = pnlDueSpecificDateGroup.GetView(0)
 		c.Enabled = False
-		v.Enabled = False
-	Next
+	
+	spinRangeMonthFrom.Enabled = False
+	spinRangeMonthTo.Enabled = False
+	spinRangeDayFrom.Enabled = False
+	spinRangeDayTo.Enabled = False
+	editRangeYearFrom.Enabled = False
+	editRangeYearTo.Enabled = False
+	
 End Sub
 
+Private Sub SearchEditText_Underline
+	Dim cd As ColorDrawable
+	cd.Initialize(Colors.Transparent, 0)
+	
+	searchEditText.Background = cd
+	editDateYear.Background = cd
+	editRangeYearTo.Background = cd
+	editRangeYearFrom.Background = cd
+	
+	
+End Sub
