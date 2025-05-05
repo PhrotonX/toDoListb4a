@@ -28,6 +28,8 @@ Sub Globals
 	' This variable is responsible for handling the current data that can be used for performing
 	' CRUD into the database.
 	Private m_task As ToDo
+	Private m_repeat As Repeat
+	Private m_group As Group
 	
 	' Attachment that are pending for saving.
 	Private m_pendingAttachmentInsert As List
@@ -53,14 +55,24 @@ Sub Globals
 	Private spinnerDueDateDay As Spinner
 	Private spinnerDueDateMonth As Spinner
 	
-	Private Const SPINNER_DUE_DATE_DAY_HINT_TEXT As String = "Select day here..."
-	Private Const SPINNER_DUE_DATE_MONTH_HINT_TEXT As String = "Select month here..."
+	Private Const SPINNER_DUE_DATE_DAY_HINT_TEXT As String = "Day"
+	Private Const SPINNER_DUE_DATE_MONTH_HINT_TEXT As String = "Month"
 	Private clvAttachments As CustomListView
 	Private btnAttachmentOpen As Button
 	Private btnAttachmentRemove As Button
 	Private imgAttachmentIcon As ImageView
 	Private lblAttachmentFileName As Label
 	Private pnlAttachmentRoot As Panel
+	Private spnTaskGroup As Spinner
+	Private spnReminderHour As Spinner
+	Private spnReminderMarker As Spinner
+	Private spnReminderMinute As Spinner
+	Private spnSnooze As Spinner
+	Private toggleReminder As ToggleButton
+	Private btnMoveToTrash As Button
+	Private btnRestore As Button
+	Private pnlEditorBar As Panel
+	Private pnlRepeat As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -71,25 +83,29 @@ Sub Activity_Create(FirstTime As Boolean)
 	m_pendingAttachmentDelete.Initialize
 	
 	editorScrollView.Panel.LoadLayout("EditorScrollLayout")
+	pnlEditorBar.Elevation = 10
+	EditText_removeunderline
 	
-	Dim c As Canvas
-	c.Initialize(Label1)
-	Dim borderColor As Int = Colors.RGB(209, 209, 209)
-	Dim borderHeight As Int = 1dip
-
 	
-	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, borderHeight)
-
-	Label1.Invalidate
+	Dim cd As ColorDrawable
+	cd.Initialize(Colors.Transparent, 0) ' 0 is the corner radius
+	toggleReminder.Background = cd
 	
 	' Initialize variables
 	m_task.Initialize
 	
+	m_repeat.Initialize
+	
 	' Retrieve the data sent by MainActivity to check the editor mode.
 	m_mode = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_MODE)
 	
-	' Fill the due date spinners with data
+	' Fill the spinners with data
 	PopulateDueDate
+	PopulateReminders
+	PopulateSnooze
+	
+	' Load the task groups
+	LoadTaskGroup
 	
 	' Check the editor mode to set the appropriate EditorActivity functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
@@ -101,6 +117,11 @@ Sub Activity_Create(FirstTime As Boolean)
 		
 		' Retrieve the data stored in the database based on itemId.
 		m_task = Starter.TaskViewModelInstance.GetTask(itemId)
+		m_group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_task.GetId)
+		
+		If m_group.IsInitialized == False Then
+			m_group.Initialize(0)
+		End If
 		
 		' Update the fields to display the data retrieved from the database for editing.
 		editTitle.Text = m_task.GetTitle
@@ -122,13 +143,15 @@ Sub Activity_Create(FirstTime As Boolean)
 		End Select
 		
 		' Update the repeat values.
-		checkRepeatSun.Checked = m_task.GetRepeat(m_task.REPEAT_SUNDAY)
-		checkRepeatMon.Checked = m_task.GetRepeat(m_task.REPEAT_MONDAY)
-		checkRepeatTue.Checked = m_task.GetRepeat(m_task.REPEAT_TUESDAY)
-		checkRepeatWed.Checked = m_task.GetRepeat(m_task.REPEAT_WEDNESDAY)
-		checkRepeatThu.Checked = m_task.GetRepeat(m_task.REPEAT_THURSDAY)
-		checkRepeatFri.Checked = m_task.GetRepeat(m_task.REPEAT_FRIDAY)
-		checkRepeatSat.Checked = m_task.GetRepeat(m_task.REPEAT_SATURDAY)
+		m_repeat = Starter.RepeatViewModelInstance.GetTaskRepeat(m_task.GetId)
+		
+		checkRepeatSun.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_SUNDAY)
+		checkRepeatMon.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_MONDAY)
+		checkRepeatTue.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_TUESDAY)
+		checkRepeatWed.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_WEDNESDAY)
+		checkRepeatThu.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_THURSDAY)
+		checkRepeatFri.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_FRIDAY)
+		checkRepeatSat.Checked = m_repeat.IsEnabled(m_repeat.REPEAT_SATURDAY)
 		
 		' Update the selected value of due date month spinner based on the numeric month that is 
 		' set on m_task.
@@ -141,15 +164,109 @@ Sub Activity_Create(FirstTime As Boolean)
 		' Load the attachments
 		LoadAttachments
 		
+		' Load whether reminder field is enabled or not.
+		toggleReminder.Checked = m_task.IsReminderEnabled
 		
-	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
-		' Disable the delete button if the editor mode is EDITOR_MODE_CREATE
+		' Load reminder field data.
+		spnReminderHour.SelectedIndex = _
+			spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2( _ 
+			Starter.SettingsViewModelInstance.Is24HourFormatEnabled)))
+		spnReminderMinute.SelectedIndex = _
+			spnReminderMinute.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetMinute))
+		spnReminderMarker.SelectedIndex = _
+			spnReminderMarker.IndexOf(m_task.Reminder.GetMarker)
+			
+		' Load snooze data.
+		spnSnooze.SelectedIndex = spnSnooze.IndexOf(m_task.Snooze.GetSnoozeInfo())
+		
+		' Load the selected task group.
+		spnTaskGroup.SelectedIndex = spnTaskGroup.IndexOf(m_group.GetTitle)
+		
+		' Hide the move to trash button if the current opened task is already marked as deleted.
+		If m_task.IsDeleted() == True Then
+			btnRestore.Visible = True
+			btnMoveToTrash.Visible = False
+			btnDelete.Visible = True
+		Else
+			' Show the move to trash buttons while hiding other buttons when the task is not marked as deleted.
+			btnRestore.Visible = False
+			btnMoveToTrash.Visible = True
+			btnDelete.Visible = False
+		End If
+	Else If m_mode == Starter.EDITOR_MODE_CREATE Then		
+		' Disable the delete-related buttons if the editor mode is EDITOR_MODE_CREATE. No tasks can be
+		' deleted while still being created.
 		btnDelete.Visible = False
+		btnRestore.Visible = False
+		btnMoveToTrash.Visible = False
+		
+		' Load the default task group based on the last opened task group.
+		Dim groupId As Long = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_GROUP_ID)
+		
+		If groupId > 0 Then
+			m_group = Starter.GroupViewModelInstance.GetGroup(groupId)
+			If m_group.IsInitialized Then
+				spnTaskGroup.SelectedIndex = spnTaskGroup.IndexOf(m_group.GetTitle())
+			End If
+		End If
 		
 		' Set the current date as the default value of due date fields.
 		spinnerDueDateDay.SelectedIndex = DateTime.GetDayOfMonth(DateTime.Now)
 		spinnerDueDateMonth.SelectedIndex = DateTime.GetMonth(DateTime.Now)
 		editDueDateYear.Text = DateTime.GetYear(DateTime.Now)
+		
+		' Set the reminder field as enabled by default.
+		toggleReminder.Checked = False
+		
+		radioPriorityMedium.Checked = True
+		m_task.SetPriority(m_task.PRIORITY_MEDIUM)
+		
+		' Set the hour and marker reminder field
+		Dim currentHour As Int = DateTime.GetHour(DateTime.Now)
+		
+		' Log the current hour if debug mode is enabled.
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+			Log("EditorActivity: currentHour " & currentHour)
+		End If
+		
+		If 6 < currentHour And currentHour <= 20 Then
+			' Set the current hour plus 2 hour as the default value of the reminder fields if the current hour
+			' is ranging within 6:00 AM until 8:00 PM (20:00)
+			m_task.Reminder.SetHour(currentHour + 2)
+			
+			' Logging for debug mode.
+			If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+				Log("EditorActivity hour: " & m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2( _
+				Starter.SettingsViewModelInstance.Is24HourFormatEnabled())))
+				Log("EditorActivity hour index: " & spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2( _
+				Starter.SettingsViewModelInstance.Is24HourFormatEnabled()))))
+			End If
+			
+			' Set the current hour plus 2 hour as the default value of the reminder fields.
+			spnReminderHour.SelectedIndex = _
+				spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(m_task.Reminder.GetHour2( _ 
+				Starter.SettingsViewModelInstance.Is24HourFormatEnabled())))
+			spnReminderMarker.SelectedIndex = spnReminderMarker.IndexOf(m_task.Reminder.GetMarker())
+		Else
+			' Set the default 8 o'clock as the default time value if the time range condition above has failed.
+			
+			' Logging for debug mode
+			Log("EditorActivity hour: " & m_task.Reminder.GetNumWithLeadingZero(8))
+			Log("EditorActivity hour index: " & spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(8)))
+			
+			' Set the 8:00 hour value.
+			spnReminderHour.SelectedIndex = _
+				spnReminderHour.IndexOf(m_task.Reminder.GetNumWithLeadingZero(8))
+			spnReminderMarker.SelectedIndex = spnReminderMarker.IndexOf(m_task.Reminder.MARKER_AM)
+		End If
+		
+		Log("EditorActiivty marker: " & m_task.Reminder.GetMarker())
+		
+		' Set the minute reminder field.
+		spnReminderMinute.SelectedIndex = spnReminderMinute.IndexOf(m_task.Reminder.GetNumWithLeadingZero(0))
+		
+		' Set the snooze field.
+		spnSnooze.SelectedIndex = spnSnooze.IndexOf(m_task.Snooze.SNOOZE_OFF)
 		
 		' Load the due date data on the fields into the m_task variable.
 		' Even if spinner and edit fields are updated, the m_task.GetDueDate
@@ -161,6 +278,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	' Remove editor mode key from the bundle to avoid some potential application state-related bugs.
 	Starter.InstanceState.Remove(Starter.EXTRA_EDITOR_MODE)
+	Starter.InstanceState.Remove(Starter.EXTRA_EDITOR_GROUP_ID)
 End Sub
 
 Sub Activity_Resume
@@ -172,6 +290,10 @@ Sub Activity_Pause (UserClosed As Boolean)
 End Sub
 
 Private Sub btnSave_Click
+	OnSaveTask
+End Sub
+
+Private Sub OnSaveTask
 	' Add the current editor result into the instance state.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_RESULT, Starter.EDITOR_RESULT_SAVE)
 	
@@ -210,19 +332,67 @@ Private Sub btnSave_Click
 		Return
 	End If
 	
+	' Get the selected value whether reminders are enabled or not.
+	toggleReminder.Checked = m_task.IsReminderEnabled
+	
+	' Get the selected reminder.
+	If Starter.SettingsViewModelInstance.Is24HourFormatEnabled Then
+		m_task.Reminder.SetHour(spnReminderHour.SelectedItem)
+	Else
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+			Log("EditorActivity: selected reminder marker " & spnReminderMarker.SelectedItem)
+		End If
+		m_task.Reminder.SetHour12HourFormat(spnReminderHour.SelectedItem, spnReminderMarker.SelectedItem)
+	End If
+	m_task.Reminder.SetMinute(spnReminderMinute.SelectedItem)
+	m_task.Reminder.SetSecond(0)
+	
+	Log("EditorActivity: Saved reminder " & m_task.Reminder.GetFormattedTime( _
+		Starter.SettingsViewModelInstance.Is24HourFormatEnabled()))
+	
+	' Get the selected snooze
+	m_task.Snooze.SetSnooze(m_task.Snooze.GetSnoozeFromText(spnSnooze.SelectedItem))
+	
+	' Get the selected group
+	Dim selectedGroup As Group
+	If spnTaskGroup.SelectedIndex > 0 Then
+		Dim groupTitle As String = spnTaskGroup.GetItem(spnTaskGroup.SelectedIndex)
+		selectedGroup = Starter.GroupViewModelInstance.GetGroupByTitle(groupTitle)
+	Else
+		selectedGroup.Initialize(0)
+	End If
+	
+	
 	' Check the editor mode to set the appropriate EditorActivity saving functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
 		Starter.TaskViewModelInstance.UpdateTask(m_task)
+		
+		Starter.GroupViewModelInstance.UpdateTaskGroup(m_task.GetId, m_group.GetID, selectedGroup.GetID)
+		
+		Starter.RepeatViewModelInstance.UpdateRepeat(m_repeat)
 	Else If m_mode == Starter.EDITOR_MODE_CREATE Then
 		Starter.TaskViewModelInstance.InsertTask(m_task)
+		
+		m_task.SetId(Starter.ToDoDatabaseViewModelInstance.GetLastInsertedID())
+		
+		Starter.GroupViewModelInstance.InsertTaskGroup(m_task.GetId, selectedGroup.GetID)
+		
+		Starter.RepeatViewModelInstance.InsertTaskRepeat(m_task.GetId, m_repeat)
 	End If
 	
+	' Get the repeat values but with repeat_id.
+	m_repeat = Starter.RepeatViewModelInstance.GetTaskRepeat(m_task.GetId)
+	
+	Starter.RepeatViewModelInstance.CreateOrUpdateNotificationSchedule(m_task, m_repeat)
+	
+	' Save the attachments that are pending for insertion.
 	For Each item As Attachment In m_pendingAttachmentInsert
 		If Starter.AttachmentViewModelInstance.InsertAttachment(item, m_task.GetId) == False Then
 			MsgboxAsync("Failed to insert attachment: " & item.GetFilename, "Error")
 		End If
 	Next
 	
+	' Save the attachmentsthat are pending for deletion.
 	For Each item As Attachment In m_pendingAttachmentDelete
 		Log("Pending delete:" & item.GetFilename)
 		If Starter.AttachmentViewModelInstance.DeleteAttachment(item) == False Then
@@ -247,31 +417,31 @@ Private Sub btnCancel_Click
 End Sub
 
 Private Sub checkRepeatSun_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(0, Checked)
+	m_repeat.SetEnabled(0, Checked)
 End Sub
 
 Private Sub checkRepeatMon_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(1, Checked)
+	m_repeat.SetEnabled(1, Checked)
 End Sub
 
 Private Sub checkRepeatTue_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(2, Checked)
+	m_repeat.SetEnabled(2, Checked)
 End Sub
 
 Private Sub checkRepeatWed_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(3, Checked)
+	m_repeat.SetEnabled(3, Checked)
 End Sub
 
 Private Sub checkRepeatThu_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(4, Checked)
+	m_repeat.SetEnabled(4, Checked)
 End Sub
 
 Private Sub checkRepeatFri_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(5, Checked)
+	m_repeat.SetEnabled(5, Checked)
 End Sub
 
 Private Sub checkRepeatSat_CheckedChange(Checked As Boolean)
-	m_task.SetRepeat(6, Checked)
+	m_repeat.SetEnabled(6, Checked)
 End Sub
 
 Private Sub radioPriorityMedium_CheckedChange(Checked As Boolean)
@@ -296,6 +466,11 @@ Private Sub btnDelete_Click
 	Wait For Msgbox_Result (Result As Int)
 	If Result = DialogResponse.POSITIVE Then
 		Starter.TaskViewModelInstance.DeleteTask(m_task)
+		Starter.GroupViewModelInstance.DeleteTaskGroup(m_task.GetId, m_group.GetID)
+		Starter.RepeatViewModelInstance.DeleteRepeat(m_repeat)
+		
+		' Set the extra ID into 0.
+		Starter.InstanceState.Put(Starter.EXTRA_EDITOR_TASK_ID, 0)
 		
 		' Close the editor after deleting,
 		Activity.Finish
@@ -333,11 +508,26 @@ Private Sub LoadAttachments
 	Dim attachments As List = Starter.AttachmentViewModelInstance.GetTaskAttachments(m_task.GetId())
 	
 	If attachments.IsInitialized Then
+		Log("attachments.Size: " & attachments.Size)
 		For Each item As Attachment In attachments
 			OnAddAttachment(item)
 		Next
 	End If
 	
+End Sub
+
+Private Sub LoadTaskGroup
+	Dim groups As List = Starter.GroupViewModelInstance.GetGroups()
+	
+	' Has index of 0 by default
+	spnTaskGroup.Add("Tasks")
+	spnTaskGroup.IndexOf("Tasks")
+	
+	If groups.IsInitialized Then
+		For Each item As Group In groups
+			spnTaskGroup.Add(item.GetTitle)
+		Next
+	End If
 End Sub
 
 Private Sub OnAddAttachment(item As Attachment)
@@ -352,15 +542,18 @@ Private Sub OnAddAttachment(item As Attachment)
 	viewHolder.Root = panel
 	viewHolder.Icon = imgAttachmentIcon
 	viewHolder.AttachmentLabel = lblAttachmentFileName
+	viewHolder.AttachmentLabel.Text = item.GetFilename
 	viewHolder.OpenButton = btnAttachmentOpen
 	viewHolder.OpenButton.Visible = False
 	viewHolder.DeleteButton = btnAttachmentRemove
 	viewHolder.ID = item.GetID
+	viewHolder.Icon.Gravity = Gravity.FILL
 	
 	clvAttachments.Add(panel, viewHolder)
 End Sub
 
 ' Fill items into the due date Spinners.
+' Remarks: This requries m_task to be initialized before loading.
 Private Sub PopulateDueDate
 	' Clear the spinner items to prevent potential item duplication bug.
 	spinnerDueDateDay.Clear
@@ -386,6 +579,56 @@ Private Sub PopulateDueDate
 		End If
 		' Sets the current iteration value as a day.
 		spinnerDueDateDay.Add(i)
+	Next
+End Sub
+
+Private Sub PopulateSnooze
+	Dim snoozeObj As Snooze = m_task.Snooze
+	
+	' Clear the items before adding new items.
+	spnSnooze.Clear
+	
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_OFF))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_MINUTE))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_3_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_10_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_15_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_20_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_30_MINUTES))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_HOUR))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_2_HOURS))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_HOURS))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_12_HOURS))
+	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_DAY))
+End Sub
+
+Private Sub PopulateReminders
+	' Clear the items before adding new items.
+	spnReminderHour.Clear
+	spnReminderMinute.Clear
+	spnReminderMarker.Clear
+	
+	' Populate the hour field, depending if 24-hour format setting is used.
+	If Starter.SettingsViewModelInstance.Is24HourFormatEnabled() == True Then
+		For i = 0 To 23
+			spnReminderHour.Add(m_task.Reminder.GetNumWithLeadingZero(i))
+		Next
+		
+		 ' Hide the time marker field if the 24-hour format setting is enabled.
+		spnReminderMarker.Visible = False
+	Else
+		For i = 1 To 12
+			spnReminderHour.Add(m_task.Reminder.GetNumWithLeadingZero(i))
+		Next
+		
+		spnReminderMarker.Add("AM")
+		spnReminderMarker.Add("PM")
+		
+	End If
+	
+	For i = 0 To 59
+		spnReminderMinute.Add(m_task.Reminder.GetNumWithLeadingZero(i))
 	Next
 End Sub
 
@@ -470,14 +713,8 @@ Private Sub btnClearDueDate_Click
 	ClearDueDate
 End Sub
 
-Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
-	' Temporary code only
-	'For Each item As String In File.ListFiles(File.DirInternal)
-	'	Log(item)
-	'Next
-	For Each item As String In File.ListFiles(File.DirInternal & "/attachments/")
-		Log(item)
-	Next
+Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)	
+	
 End Sub
 
 Private Sub btnAttachmentRemove_Click
@@ -503,26 +740,7 @@ Private Sub btnAttachmentRemove_Click
 End Sub
 
 Private Sub btnAttachmentOpen_Click
-	Dim index As Int = clvAttachments.GetItemFromView(Sender)
 	
-	Dim viewHolder As AttachmentViewHolder = clvAttachments.GetValue(index)
-	
-	' Sample code only!
-	Dim item As Attachment
-	
-	ProgressDialogShow("Loading attachment...")
-	
-	Wait For (Starter.AttachmentViewModelInstance.GetAttachment(viewHolder.ID)) Complete _
-	(Result As Attachment)
-	ProgressDialogHide()
-	item = Result
-	
-	' Sample code only!
-	If item.IsInitialized Then
-		MsgboxAsync(item.GetFilename, "Sample Test")
-	Else
-		MsgboxAsync("Error obtaining file!", "Error")
-	End If
 End Sub
 
 Private Sub btnAddAttachment_Click
@@ -556,4 +774,52 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 	Else
 		MsgboxAsync("Unable to retrieve attachment", "Error")
 	End If
+End Sub
+
+Private Sub spnTaskGroup_ItemClick (Position As Int, Value As Object)
+	
+End Sub
+
+Private Sub toggleReminder_CheckedChange(Checked As Boolean)
+	toggleReminder.TextColor = Colors.RGB(73, 93, 143)
+	m_task.SetReminderEnabled(Checked)
+	
+	spnReminderHour.Enabled = Checked
+	spnReminderMinute.Enabled = Checked
+	spnReminderMarker.Enabled = Checked
+	spnSnooze.Enabled = Checked
+	
+	If Checked = False Then
+		toggleReminder.TextColor = Colors.Gray
+	End If
+End Sub
+
+Private Sub btnRestore_Click
+	Msgbox2Async("Do you really want to restore this task from the recycle bin?", "Alert", "Yes", "Cancel", _
+	"No", Null, True)
+	Wait For Msgbox_Result (Result As Int)
+	If Result = DialogResponse.POSITIVE Then
+		m_task.SetDeleted(False)
+	
+		OnSaveTask
+	End If
+End Sub
+
+Private Sub btnMoveToTrash_Click
+	Msgbox2Async("Do you really want to move this task into the recycle bin?", "Alert", "Yes", "Cancel", _
+	"No", Null, True)
+	Wait For Msgbox_Result (Result As Int)
+	If Result = DialogResponse.POSITIVE Then
+		m_task.SetDeleted(True)
+	
+		OnSaveTask
+	End If
+End Sub
+
+Private Sub EditText_removeunderline
+	Dim cd As ColorDrawable
+	cd.Initialize(Colors.Transparent, 0)
+	editTitle.Background = cd
+	editNotes.Background = cd
+	editDueDateYear.Background = cd
 End Sub
