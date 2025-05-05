@@ -40,12 +40,12 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	LoadSettings
 	
-	button_design
+	'button_design
 End Sub
 
 Sub LoadSettings
 	DarkMode.Checked = Starter.SettingsViewModelInstance.IsDarkModeEnabled()
-	DebugMode.Checked = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
+	'DebugMode.Checked = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
 	TaskCompletion.Checked = Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled()
 End Sub
 
