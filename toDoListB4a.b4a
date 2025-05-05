@@ -324,6 +324,7 @@ Sub Globals
 	Private searchEditText As EditText
 	Private GroupDescription As Label
 	Private GroupLineDecor As Panel
+	Private drawerButton As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -876,12 +877,20 @@ Public Sub OnChkboxViewAreaClick(percentage As Int, viewHolder As TaskViewHolder
 End Sub
 
 Private Sub drawerButton_Click
-	If button_handling Then
-		drawer.LeftOpen = True
+	If m_savedSmartList == SMART_LIST_SEARCH Then
+		OnClearSearchQuery
+		
+		m_savedSmartList = SMART_LIST_ALL
+		
+		' Go to the "All" smart list by default.
+		OnLoadPage(smartLists(SMART_LIST_ALL))
+	Else
+		If button_handling Then
+			drawer.LeftOpen = True
+		End If
 	End If
+	
 End Sub
-
-
 
 Sub LoadDrawerItems
 	clvItems.sv.ScrollViewInnerPanel.Color = xui.Color_Transparent
@@ -989,6 +998,12 @@ Private Sub OnLoadTaskGroups(items As List)
 	Next
 End Sub
 
+Private Sub OnClearSearchQuery
+	' Bring backt the drawer icon into menu icon.
+	drawerButton.Text = Chr(0xE5D2)
+	
+	ToastMessageShow("Logic not implemented", False)
+End Sub
 
 Private Sub pnlNewGroup_Click
 	Starter.InstanceState.Put(Starter.EXTRA_TASK_GROUP_EDITOR_MODE, Starter.TASK_GROUP_EDITOR_MODE_CREATE)
@@ -1104,6 +1119,8 @@ Private Sub enterBtn_Click
 	
 	m_savedSmartList = SMART_LIST_SEARCH
 	OnLoadPage(smartLists(m_savedSmartList))
+	
+	drawerButton.Text = Chr(0xE5CD)
 End Sub
 
 
