@@ -50,13 +50,10 @@ Sub Globals
 	Private checkRepeatWed As CheckBox
 	Private btnDelete As Button
 	Private editorScrollView As ScrollView
-	Private Label1 As Label
+	Private lblAddTask As Label
 	Private editDueDateYear As EditText
 	Private spinnerDueDateDay As Spinner
 	Private spinnerDueDateMonth As Spinner
-	
-	Private Const SPINNER_DUE_DATE_DAY_HINT_TEXT As String = "Day"
-	Private Const SPINNER_DUE_DATE_MONTH_HINT_TEXT As String = "Month"
 	Private clvAttachments As CustomListView
 	Private btnAttachmentOpen As Button
 	Private btnAttachmentRemove As Button
@@ -100,17 +97,17 @@ Sub Activity_Create(FirstTime As Boolean)
 	m_mode = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_MODE)
 	
 	' Fill the spinners with data
-	PopulateDueDate
-	PopulateReminders
-	PopulateSnooze
+	FormHelper.PopulateDate(spinnerDueDateMonth, spinnerDueDateDay)
+	FormHelper.PopulateTime(spnReminderHour, spnReminderMinute, spnReminderMarker)
+	FormHelper.PopulateSnooze(spnSnooze)
 	
 	' Load the task groups
-	LoadTaskGroup
+	FormHelper.PopulateTaskGroups(spnTaskGroup)
 	
 	' Check the editor mode to set the appropriate EditorActivity functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
 		' Rename the activity if editing.
-		Label1.Text = "Edit Task"
+		lblAddTask.Text = "Edit Task"
 		
 		' Retrieve the stored ID that is sent from MainActivity.
 		Dim itemId As Int = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_TASK_ID)
@@ -297,66 +294,41 @@ Private Sub OnSaveTask
 	' Add the current editor result into the instance state.
 	Starter.InstanceState.Put(Starter.EXTRA_EDITOR_RESULT, Starter.EDITOR_RESULT_SAVE)
 	
-	' Validation to check if editTitle is empty.
-	If editTitle.Text == "" Then
-		MsgboxAsync("Title cannot be empty!", "Error")
+	' Validate title
+	If FormHelper.ValidateTitle(m_task, editTitle) == False Then
 		Return
 	End If
 	
-	' Validation for priority radio buttons.
-	If radioPriorityCritical.Checked == False And radioPriorityHigh.Checked == False _
-	And radioPriorityMedium.Checked == False And radioPriorityLow.Checked == False Then
-		MsgboxAsync("Priority cannot be empty!", "Error")
-		Return
-	End If
-	
-	' Set values into m_task.
 	m_task.SetTitle(editTitle.Text)
 	m_task.SetNotes(editNotes.Text)
 	
 	' Priority, Due Date Day, Due date Month, and Repeat values are already set once the
 	' buttons are clicked.
 	
-	' Primarily validate the due date year field if null before taking another validation if
-	' the date is a valid date.
-	If editDueDateYear.Text.Trim = "" Then
-		MsgboxAsync("Due date field cannot be empty!", "Error")
+	' Save and validate priority.
+	If FormHelper.ValidatePriority(radioPriorityCritical, radioPriorityHigh, radioPriorityMedium, _
+		radioPriorityLow) == False Then
 		Return
-	Else
-		' Save the due date year value.
-		m_task.GetDueDate.SetYear(editDueDateYear.Text)
 	End If
 	
 	' Validate the due date values
-	If validateDueDate == False Then
+	If FormHelper.ValidateDate(m_task.GetDueDate(), editDueDateYear) == False Then
 		Return
 	End If
 	
 	' Get the selected value whether reminders are enabled or not.
 	toggleReminder.Checked = m_task.IsReminderEnabled
 	
-	' Get the selected reminder.
-	If Starter.SettingsViewModelInstance.Is24HourFormatEnabled Then
-		m_task.Reminder.SetHour(spnReminderHour.SelectedItem)
-	Else
-		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
-			Log("EditorActivity: selected reminder marker " & spnReminderMarker.SelectedItem)
-		End If
-		m_task.Reminder.SetHour12HourFormat(spnReminderHour.SelectedItem, spnReminderMarker.SelectedItem)
-	End If
-	m_task.Reminder.SetMinute(spnReminderMinute.SelectedItem)
-	m_task.Reminder.SetSecond(0)
-	
-	Log("EditorActivity: Saved reminder " & m_task.Reminder.GetFormattedTime( _
-		Starter.SettingsViewModelInstance.Is24HourFormatEnabled()))
+	' Get the selected value of reminders field.
+	FormHelper.GetSelectedTime(m_task.Reminder, spnReminderHour, spnReminderMinute, spnReminderMarker)
 	
 	' Get the selected snooze
 	m_task.Snooze.SetSnooze(m_task.Snooze.GetSnoozeFromText(spnSnooze.SelectedItem))
 	
 	' Get the selected group
-	Dim selectedGroup As Group
-	If spnTaskGroup.SelectedIndex > 0 Then
-		Dim groupTitle As String = spnTaskGroup.GetItem(spnTaskGroup.SelectedIndex)
+	Dim selectedGroup As Group	
+	Dim groupTitle As String = FormHelper.GetSelectedGroup(spnTaskGroup)
+	If groupTitle <> "" Then
 		selectedGroup = Starter.GroupViewModelInstance.GetGroupByTitle(groupTitle)
 	Else
 		selectedGroup.Initialize(0)
@@ -516,20 +488,6 @@ Private Sub LoadAttachments
 	
 End Sub
 
-Private Sub LoadTaskGroup
-	Dim groups As List = Starter.GroupViewModelInstance.GetGroups()
-	
-	' Has index of 0 by default
-	spnTaskGroup.Add("Tasks")
-	spnTaskGroup.IndexOf("Tasks")
-	
-	If groups.IsInitialized Then
-		For Each item As Group In groups
-			spnTaskGroup.Add(item.GetTitle)
-		Next
-	End If
-End Sub
-
 Private Sub OnAddAttachment(item As Attachment)
 	Dim panel As B4XView = xui.CreatePanel("")
 		
@@ -552,91 +510,11 @@ Private Sub OnAddAttachment(item As Attachment)
 	clvAttachments.Add(panel, viewHolder)
 End Sub
 
-' Fill items into the due date Spinners.
-' Remarks: This requries m_task to be initialized before loading.
-Private Sub PopulateDueDate
-	' Clear the spinner items to prevent potential item duplication bug.
-	spinnerDueDateDay.Clear
-	spinnerDueDateMonth.Clear
-	
-	' Populate with months. Include the 0 value or null.
-	For i = 0 To 12
-		' If i is equal to 0, then add a hint text as an option
-		If i == 0 Then
-			spinnerDueDateMonth.Add(SPINNER_DUE_DATE_MONTH_HINT_TEXT)
-			Continue
-		End If
-		' Retrieves the month name based on the iteration value and add it to the spinner.
-		spinnerDueDateMonth.Add(m_task.GetDueDate.GetMonthFromNum(i))
-	Next
-	
-	' Populate with days. Include the 0 value or null.
-	For i = 0 To 31
-		' If i is equal to 0, then add a hint text as an option
-		If i == 0 Then
-			spinnerDueDateDay.Add(SPINNER_DUE_DATE_DAY_HINT_TEXT)
-			Continue
-		End If
-		' Sets the current iteration value as a day.
-		spinnerDueDateDay.Add(i)
-	Next
-End Sub
-
-Private Sub PopulateSnooze
-	Dim snoozeObj As Snooze = m_task.Snooze
-	
-	' Clear the items before adding new items.
-	spnSnooze.Clear
-	
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_OFF))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_MINUTE))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_3_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_10_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_15_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_20_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_30_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_HOUR))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_2_HOURS))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_HOURS))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_12_HOURS))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_DAY))
-End Sub
-
-Private Sub PopulateReminders
-	' Clear the items before adding new items.
-	spnReminderHour.Clear
-	spnReminderMinute.Clear
-	spnReminderMarker.Clear
-	
-	' Populate the hour field, depending if 24-hour format setting is used.
-	If Starter.SettingsViewModelInstance.Is24HourFormatEnabled() == True Then
-		For i = 0 To 23
-			spnReminderHour.Add(m_task.Reminder.GetNumWithLeadingZero(i))
-		Next
-		
-		 ' Hide the time marker field if the 24-hour format setting is enabled.
-		spnReminderMarker.Visible = False
-	Else
-		For i = 1 To 12
-			spnReminderHour.Add(m_task.Reminder.GetNumWithLeadingZero(i))
-		Next
-		
-		spnReminderMarker.Add("AM")
-		spnReminderMarker.Add("PM")
-		
-	End If
-	
-	For i = 0 To 59
-		spnReminderMinute.Add(m_task.Reminder.GetNumWithLeadingZero(i))
-	Next
-End Sub
-
 Private Sub spinnerDueDateMonth_ItemClick (Position As Int, Value As Object)
 	' Retrieve the item as string from the Spinner.
 	Dim monthStr As String = spinnerDueDateMonth.GetItem(Position)
 	
-	If monthStr == SPINNER_DUE_DATE_MONTH_HINT_TEXT Then
+	If monthStr == FormHelper.SPINNER_DUE_DATE_MONTH_HINT_TEXT Then
 		' If the month value that is clicked is invalid, then clear the month
 		' value that is set into m-task.
 		m_task.GetDueDate.SetMonth(0)
@@ -654,7 +532,7 @@ End Sub
 Private Sub spinnerDueDateDay_ItemClick (Position As Int, Value As Object)	
 	Dim day As String = spinnerDueDateDay.GetItem(Position)
 	
-	If day == SPINNER_DUE_DATE_DAY_HINT_TEXT Then
+	If day == FormHelper.SPINNER_DUE_DATE_DAY_HINT_TEXT Then
 		' If the day value that is clicked is invalid, then clear the day
 		' value that is set into m-task.
 		m_task.GetDueDate.SetDay(0)
@@ -668,34 +546,6 @@ End Sub
 
 Private Sub btnRepeatClear_Click
 	ClearRadioButtons
-End Sub
-
-' Validates if the date input is valid, ranging from January 1, 1970 until February 18, 2038.
-' and is not unset.
-Private Sub validateDueDate As Boolean
-	Dim dateObj As Date = m_task.GetDueDate
-	
-	' Check if the date is unset. Unset values cannot be valid.
-	If dateObj.IsUnset Then
-		MsgboxAsync("Due date cannot be empty", "Error")
-		Return False
-	End If
-	
-	' Check if the year input is valid. The input only supports from years 1970 until 2038.
-	If m_task.GetDueDate.IsRangeValid() == False Then
-		MsgboxAsync("Due date is beyond the supported range: " & CRLF & _ 
-		"January 1, 1970 to January 19, 2038", "Error")	
-		Return False
-	End If
-	
-	' Check for malformations within the date. The date could be on the valid range 1970 to 2038
-	' but malformed date such as January -20, 2023 or February 29, 2025.
-	If m_task.GetDueDate.IsDateValid() == False Then
-		MsgboxAsync("Due date is not valid", "Error")
-		Return False
-	End If
-	
-	Return True
 End Sub
 
 Public Sub ClearDueDate()
