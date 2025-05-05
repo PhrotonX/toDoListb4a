@@ -1053,6 +1053,7 @@ Private Sub searchBtn_Click
 		mainFragment.Visible = False
 		pnlTitleBar.Visible = False
 		
+		LoadSearchItems
 	End If
 End Sub
 
