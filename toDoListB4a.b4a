@@ -595,6 +595,15 @@ Private Sub LoadItems()
 			m_tasks = Starter.TaskViewModelInstance.GetDeletedTasks(m_query)
 		Case SMART_LIST_SEARCH:
 			
+			' Set the date year for searching.
+			Select m_query.GetSearchDateMode():
+				Case m_query.DUE_DATE_MODE_SEARCH_DEFAULT:
+					m_query.DateBegin.SetYear(editDateYear.Text)
+				Case m_query.DUE_DATE_MODE_SEARCH_BY_RANGE:
+					m_query.DateBegin.SetYear(editRangeYearFrom.Text)
+					m_query.DateEnd.SetYear(editRangeYearTo.Text)
+			End Select
+			
 			GroupDescription.Text = "Results for " & searchEditText.Text
 			GroupLineDecor.Visible = False
 			
@@ -1211,17 +1220,26 @@ Sub SetRadioButtonsEnabled(pnl As Panel, enabled As Boolean)
 		Next
 End Sub
 
-
-
 Private Sub checkFilterByRepeat_CheckedChange(Checked As Boolean)
 	SetRadioButtonsEnabled(pnlFilterByRepeat, Checked)
 End Sub
 
 Private Sub checkFilterByDueDate_CheckedChange(Checked As Boolean)
+	If Checked Then
+		If radioDueSpecificDate.Checked Then
+			m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_DEFAULT)
+		Else If radioDueSpecificDateRange.Checked Then
+			m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_RANGE)
+		Else If radioDueSpecificDateGroup.Checked Then
+			m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_GROUP)
+		Else
+			m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_NONE)
+		End If
+	Else
+		m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_NONE)
+	End If
 	SetRadioButtonsEnabled(pnlFilterByDueDate, Checked)
 End Sub
-
-
 
 Private Sub checkFilterByGroup_CheckedChange(Checked As Boolean)
 	If Checked Then
@@ -1254,11 +1272,15 @@ Private Sub radioDueSpecificDateRange_CheckedChange(Checked As Boolean)
 		Next
 		
 		spnDateGroup.Enabled = False
+		
+		m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_RANGE)
 	End If
 End Sub
 
 Private Sub radioDueSpecificDateGroup_CheckedChange(Checked As Boolean)
 	If Checked Then
+		ToastMessageShow("Logic not implemented", False)
+		
 		For Each v As View In pnlDueSpecificDate.GetAllViewsRecursive
 			v.Enabled = False
 		Next
@@ -1270,6 +1292,8 @@ Private Sub radioDueSpecificDateGroup_CheckedChange(Checked As Boolean)
 		Next
 	
 		spnDateGroup.Enabled = True
+		
+		m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_GROUP)
 	End If
 End Sub
 
@@ -1286,6 +1310,8 @@ Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
 		Next
 	
 		spnDateGroup.Enabled = False
+		
+		m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_DEFAULT)
 	End If
 End Sub
 
@@ -1306,21 +1332,15 @@ Private Sub spnGroupName_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Private Sub spnDateMonth_ItemClick (Position As Int, Value As Object)
-	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
-		ToastMessageShow("Logic not implemented", False)
-	End If
+	FormHelper.SetMonthValue(spnDateMonth, m_query.DateBegin, Position)
 End Sub
 
 Private Sub spnDateGroup_ItemClick (Position As Int, Value As Object)
-	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
-		ToastMessageShow("Logic not implemented", False)
-	End If
+	ToastMessageShow("Logic not implemented", False)
 End Sub
 
 Private Sub spnDateDay_ItemClick (Position As Int, Value As Object)
-	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
-		ToastMessageShow("Logic not implemented", False)
-	End If
+	FormHelper.SetDayValue(spnDateDay, m_query.DateBegin, Position)
 End Sub
 
 Private Sub radioSortOrderByNone_CheckedChange(Checked As Boolean)
@@ -1344,9 +1364,7 @@ Private Sub radioSearchByNotes_CheckedChange(Checked As Boolean)
 End Sub
 
 Private Sub radioSearchByFilename_CheckedChange(Checked As Boolean)
-	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
-		ToastMessageShow("Logic not implemented", False)
-	End If
+	ToastMessageShow("Logic not implemented", False)
 End Sub
 
 Private Sub radioFilterByPriorityMedium_CheckedChange(Checked As Boolean)
@@ -1391,4 +1409,20 @@ End Sub
 
 Private Sub checkRepeatFriday_CheckedChange(Checked As Boolean)
 	m_query.SetSearchRepeat(m_repeatObj.REPEAT_FRIDAY, Checked)
+End Sub
+
+Private Sub spinRangeMonthTo_ItemClick (Position As Int, Value As Object)
+	FormHelper.SetMonthValue(spinRangeMonthTo, m_query.DateEnd, Position)
+End Sub
+
+Private Sub spinRangeMonthFrom_ItemClick (Position As Int, Value As Object)
+	FormHelper.SetMonthValue(spinRangeMonthFrom, m_query.DateBegin, Position)
+End Sub
+
+Private Sub spinRangeDayTo_ItemClick (Position As Int, Value As Object)
+	FormHelper.SetDayValue(spinRangeDayTo, m_query.DateEnd, Position)
+End Sub
+
+Private Sub spinRangeDayFrom_ItemClick (Position As Int, Value As Object)
+	FormHelper.SetDayValue(spinRangeDayFrom, m_query.DateBegin, Position)
 End Sub
