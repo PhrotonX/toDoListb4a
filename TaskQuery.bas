@@ -50,11 +50,21 @@ Sub Class_Globals
 	Private Const SEARCH_QUERY_ITEM_SEARCH_BY_NOTES As Int = 1
 	Private Const SEARCH_QUERY_ITEM_SEARCH_BY_ATTACHMENT_TITLE As Int = 2
 	
+	Public Const DUE_DATE_MODE_SEARCH_NONE As Int = -1
+	Public Const DUE_DATE_MODE_SEARCH_DEFAULT As Int = 0
+	Public Const DUE_DATE_MODE_SEARCH_BY_RANGE As Int = 1
+	Public Const DUE_DATE_MODE_SEARCH_BY_GROUP As Int = 2
+	
 	Private m_searchBy As Int = SEARCH_QUERY_ITEM_SEARCH_BY
 	Private m_searchByField As String = FIELD_TITLE
 	
 	Private m_groupId As Long = -1
 	Private m_searchRepeat(7) As Boolean
+	
+	Public DateBegin As Date
+	Public DateEnd As Date
+	
+	Private m_searchDateMode As Int = DUE_DATE_MODE_SEARCH_NONE
 	
 End Sub
 
@@ -68,6 +78,9 @@ Public Sub Initialize()
 	Next
 	
 	SetSearchIsDeleted(False)
+	
+	DateBegin.Initialize(0, 0, 0)
+	DateEnd.Initialize(0, 0, 0)
 End Sub
 
 Public Sub IsSortingEnabled() As Boolean
@@ -128,13 +141,21 @@ Public Sub SetSearchRepeat(dayOfTheWeek As Int, value As Boolean)
 	m_searchRepeat(dayOfTheWeek) = value
 End Sub
 
+' Supported values: SEARCH_QUERY_ITEM_SEARCH_DATE_DEFAULT, SEARCH_QUERY_ITEM_SEARCH_DATE_BY_GROUP, 
+' SEARCH_QUERY_ITEM_SEARCH_DATE_BY_RANGE
+Public Sub SetSearchDateMode(mode As Int)
+	m_searchDateMode = mode
+End Sub
+
 ' Set Specific Due Date.
-Public Sub SetSearchDueDate(dateObj As Date)
+Private Sub SetSearchDueDate(dateObj As Date)
 	Dim unixTime As Long = dateObj.GetUnixTime()
 	SetSearchDueDateRange(unixTime, unixTime + dateObj.DAY_LENGTH)
 End Sub
 
-Public Sub SetSearchDueDateRange(tickBegin As Long, tickEnd As Long)
+Private Sub SetSearchDueDateRange(tickBegin As Long, tickEnd As Long)
+	Log(FIELD_DUE_DATE & GTE & tickBegin & " AND " & FIELD_DUE_DATE & LTE & tickEnd)
+	
 	m_searchQueryItem(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = FIELD_DUE_DATE & GTE & tickBegin & " AND " & FIELD_DUE_DATE & LTE & tickEnd
 End Sub
 
@@ -148,6 +169,10 @@ Public Sub GetSortingQuery() As String
 	Else
 		Return "ORDER BY " & m_sortQuery & " " & m_order
 	End If
+End Sub
+
+Public Sub GetSearchDateMode() As Int
+	Return m_searchDateMode
 End Sub
 
 Public Sub GetSearchingQuery(removeWhereClause As Boolean) As String
@@ -175,8 +200,15 @@ End Sub
 Private Sub OnBuildSearchingQuery() As String
 	Dim query As String
 	
+	Log("m_searchDateMode: " & m_searchDateMode)
+	
 	Dim itr As Int = 0
 	For Each item As String In m_searchQueryItem
+		Log("m_searchQueryItem: " & item)
+		
+		If itr == SEARCH_QUERY_ITEM_DUE_DATE_RANGE Then
+			OnBuildSearchQueryForDate
+		End If
 		
 		If item <> "" Then
 			If itr >= 1 And query <> "" Then
@@ -190,6 +222,21 @@ Private Sub OnBuildSearchingQuery() As String
 	Next
 	
 	Return query
+End Sub
+
+Private Sub OnBuildSearchQueryForDate()
+	Select m_searchDateMode:
+		Case DUE_DATE_MODE_SEARCH_DEFAULT:
+			SetSearchDueDate(DateBegin)
+		Case DUE_DATE_MODE_SEARCH_BY_RANGE:
+			SetSearchDueDateRange(DateBegin.GetUnixTime, DateEnd.GetUnixTime)
+		Case DUE_DATE_MODE_SEARCH_BY_GROUP:
+			If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+				Log("OnBuildSearchQueryForDate() SEARCH_QUERY_ITEM_SEARCH_DUE_DATE_BY_GROUP is not implemented.")
+			End If
+		Case DUE_DATE_MODE_SEARCH_NONE:
+			Return
+	End Select
 End Sub
 
 Public Sub UnsetTaskId()
