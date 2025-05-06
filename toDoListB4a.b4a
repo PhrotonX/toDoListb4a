@@ -1002,7 +1002,7 @@ Private Sub OnClearSearchQuery
 	' Bring backt the drawer icon into menu icon.
 	drawerButton.Text = Chr(0xE5D2)
 	
-	ToastMessageShow("Logic not implemented", False)
+	m_query.Initialize
 End Sub
 
 Private Sub pnlNewGroup_Click
