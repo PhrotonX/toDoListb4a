@@ -713,6 +713,8 @@ End Sub
 
 Private Sub LoadSearchItems()
 	FormHelper.PopulateDate(spnDateMonth, spnDateDay)
+	FormHelper.PopulateDate(spinRangeMonthFrom, spinRangeDayFrom)
+	FormHelper.PopulateDate(spinRangeMonthTo, spinRangeDayTo)
 	FormHelper.PopulateTaskGroups(spnGroupName)
 End Sub
 
