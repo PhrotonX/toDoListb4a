@@ -289,7 +289,6 @@ Sub Globals
 	Private editDateYear As EditText
 	Private editRangeYear As EditText
 	Private pnlDueSpecificDate As Panel
-	Private pnlDueSpecificDateRange As Panel
 	Private pnlDueSpecificDateGroup As Panel
 	Private groupPanel As Panel
 	Private pnlSearchSeparator1 As Panel
@@ -325,6 +324,14 @@ Sub Globals
 	Private GroupDescription As Label
 	Private GroupLineDecor As Panel
 	Private drawerButton As Button
+	Private pnlDueSpecificDateRangeFrom As Panel
+	Private pnlDueSpecificDateRangeTo As Panel
+	Private editRangeYearFrom As EditText
+	Private editRangeYearTo As EditText
+	Private spinRangeDayFrom As Spinner
+	Private spinRangeDayTo As Spinner
+	Private spinRangeMonthFrom As Spinner
+	Private spinRangeMonthTo As Spinner
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -1175,8 +1182,11 @@ End Sub
 
 Sub SetRadioButtonsEnabled(pnl As Panel, enabled As Boolean)
 		For i = 0 To pnl.NumberOfViews - 1
-			Dim v As View = pnl.GetView(i)
-			v.Enabled = enabled
+			If pnl.IsInitialized Then
+				Dim v As View = pnl.GetView(i)
+				v.Enabled = enabled
+			End If
+			
 		Next
 End Sub
 
@@ -1197,36 +1207,51 @@ Private Sub checkFilterByGroup_CheckedChange(Checked As Boolean)
 End Sub
 
 Private Sub radioDueSpecificDateRange_CheckedChange(Checked As Boolean)
-	SetRadioButtonsEnabled(pnlDueSpecificDateRange, Checked)
-	
-	For i = 0 To pnlDueSpecificDate.NumberOfViews - 1
-		Dim v As View = pnlDueSpecificDate.GetView(i)
-		Dim c As View = pnlDueSpecificDateGroup.GetView(0)
-		c.Enabled = False
-		v.Enabled = False
-	Next
+	If Checked Then
+		For Each v As View In pnlDueSpecificDate.GetAllViewsRecursive
+			v.Enabled = False
+		Next
+		For Each v As View In pnlDueSpecificDateRangeFrom.GetAllViewsRecursive
+			v.Enabled = True
+		Next
+		For Each v As View In pnlDueSpecificDateRangeTo.GetAllViewsRecursive
+			v.Enabled = True
+		Next
+		
+		spnDateGroup.Enabled = False
+	End If
 End Sub
 
 Private Sub radioDueSpecificDateGroup_CheckedChange(Checked As Boolean)
-	SetRadioButtonsEnabled(pnlDueSpecificDateGroup, Checked)
+	If Checked Then
+		For Each v As View In pnlDueSpecificDate.GetAllViewsRecursive
+			v.Enabled = False
+		Next
+		For Each v As View In pnlDueSpecificDateRangeFrom.GetAllViewsRecursive
+			v.Enabled = False
+		Next
+		For Each v As View In pnlDueSpecificDateRangeTo.GetAllViewsRecursive
+			v.Enabled = False
+		Next
 	
-	For i = 0 To pnlDueSpecificDateRange.NumberOfViews - 1
-		Dim v As View = pnlDueSpecificDateRange.GetView(i)
-		Dim c As View = pnlDueSpecificDate.GetView(i)
-		c.Enabled = False
-		v.Enabled = False
-	Next
+		spnDateGroup.Enabled = True
+	End If
 End Sub
 
 Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
-	SetRadioButtonsEnabled(pnlDueSpecificDate, Checked)
+	If Checked Then
+		For Each v As View In pnlDueSpecificDate.GetAllViewsRecursive
+			v.Enabled = True
+		Next
+		For Each v As View In pnlDueSpecificDateRangeFrom.GetAllViewsRecursive
+			v.Enabled = False
+		Next
+		For Each v As View In pnlDueSpecificDateRangeTo.GetAllViewsRecursive
+			v.Enabled = False
+		Next
 	
-	For i = 0 To pnlDueSpecificDateRange.NumberOfViews - 1
-		Dim v As View = pnlDueSpecificDateRange.GetView(i)
-		Dim c As View = pnlDueSpecificDateGroup.GetView(0)
-		c.Enabled = False
-		v.Enabled = False
-	Next
+		spnDateGroup.Enabled = False
+	End If
 End Sub
 
 Private Sub spnGroupName_ItemClick (Position As Int, Value As Object)
