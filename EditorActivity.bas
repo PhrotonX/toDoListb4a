@@ -511,37 +511,11 @@ Private Sub OnAddAttachment(item As Attachment)
 End Sub
 
 Private Sub spinnerDueDateMonth_ItemClick (Position As Int, Value As Object)
-	' Retrieve the item as string from the Spinner.
-	Dim monthStr As String = spinnerDueDateMonth.GetItem(Position)
-	
-	If monthStr == FormHelper.SPINNER_DUE_DATE_MONTH_HINT_TEXT Then
-		' If the month value that is clicked is invalid, then clear the month
-		' value that is set into m-task.
-		m_task.GetDueDate.SetMonth(0)
-	Else
-		' Convert the month String retrieved from the spinner into an int.
-		Dim month As Int = m_task.GetDueDate.GetNumericMonth(monthStr)
-		
-		' Set the month value into the task based on the month item that is
-		' clicked from the spinner.
-		m_task.GetDueDate.SetMonth(month)
-	End If
-	
+	FormHelper.SetMonthValue(spinnerDueDateMonth, m_task.GetDueDate, Position)
 End Sub
 
 Private Sub spinnerDueDateDay_ItemClick (Position As Int, Value As Object)	
-	Dim day As String = spinnerDueDateDay.GetItem(Position)
-	
-	If day == FormHelper.SPINNER_DUE_DATE_DAY_HINT_TEXT Then
-		' If the day value that is clicked is invalid, then clear the day
-		' value that is set into m-task.
-		m_task.GetDueDate.SetDay(0)
-	Else
-		' Set the day value into the task based on the day item that is
-		' clicked from the spinner.
-		m_task.GetDueDate.SetDay(day)
-	End If
-	
+	FormHelper.SetMonthValue(spinnerDueDateMonth, m_task.GetDueDate, Position)
 End Sub
 
 Private Sub btnRepeatClear_Click
