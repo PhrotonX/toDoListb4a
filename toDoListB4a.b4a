@@ -570,7 +570,9 @@ Private Sub LoadItems()
 	
 	'm_tasks = Starter.TaskViewModelInstance.FindTasksByRepeat(repeat, True)
 	
-	m_query.SetGroupID(m_savedGroup.GetID)
+	If m_savedSmartList <> SMART_LIST_SEARCH Then
+		m_query.SetGroupID(m_savedGroup.GetID)
+	End If
 	
 	' Obtain all tasks from the database, depending on the smart list mode.
 	m_query.SetSearchIsDeleted(False)
@@ -596,8 +598,20 @@ Private Sub LoadItems()
 			GroupDescription.Text = "Results for " & searchEditText.Text
 			GroupLineDecor.Visible = False
 			
+			Dim groupId As Int = m_query.GetGroupID()
+			If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+				Log("Main.LoadItems() groupId: " & groupId) 
+			End If
+			
 			' Does not handle filtering by group, repeat, due date, and attachment filename.
-			m_tasks = Starter.TaskViewModelInstance.GetTasks(m_query)
+			If groupId == -1 Then
+				m_tasks = Starter.TaskViewModelInstance.GetTasks(m_query)
+			Else If groupId == 0 Then
+				m_tasks = Starter.TaskViewModelInstance.GetUngroupedTasks(m_query)
+			Else
+				m_tasks = Starter.TaskViewModelInstance.GetGroupedTasks(m_query)
+			End If
+			
 		Case Else, SMART_LIST_NONE:
 			m_tasks = Starter.TaskViewModelInstance.GetGroupedTasks(m_query)
 	End Select
@@ -786,7 +800,10 @@ Private Sub sortMsgBox
 	pnlSortDialogue.Elevation = 20
 	
 	If m_query.IsInitialized == False Then
-		m_query.Initialize
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+			Log("Query has been initialized!")
+			m_query.Initialize
+		End If
 	End If
 End Sub
 
@@ -1006,10 +1023,14 @@ Private Sub OnLoadTaskGroups(items As List)
 End Sub
 
 Private Sub OnClearSearchQuery
-	' Bring backt the drawer icon into menu icon.
+	' Bring back the drawer icon into menu icon.
 	drawerButton.Text = Chr(0xE5D2)
 	
-	m_query.Initialize
+	If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+		Log("Query has been initialized!")
+		m_query.Initialize
+	End If
+	
 End Sub
 
 Private Sub pnlNewGroup_Click
@@ -1203,7 +1224,21 @@ End Sub
 
 
 Private Sub checkFilterByGroup_CheckedChange(Checked As Boolean)
-	SetRadioButtonsEnabled(pnlFilterByGroupName, Checked)
+	If Checked Then
+		SetRadioButtonsEnabled(pnlFilterByGroupName, Checked)
+		Dim groupId As Int = spnGroupName.SelectedIndex
+		groupId = spnGroupName.SelectedIndex
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+			Log("Selected group index: " & groupId)
+		End If
+		m_query.SetGroupID(0)
+	Else
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+			Log("Unset!")
+		End If
+		
+		m_query.UnsetSearchGroupID()
+	End If
 End Sub
 
 Private Sub radioDueSpecificDateRange_CheckedChange(Checked As Boolean)
@@ -1256,7 +1291,17 @@ End Sub
 
 Private Sub spnGroupName_ItemClick (Position As Int, Value As Object)
 	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
-		ToastMessageShow("Value: ", Value)
+		ToastMessageShow("Value: " & Value, False)
+	End If
+	
+	If Value == "Tasks" Then
+		m_query.SetGroupID(0)
+	Else
+		Dim groupId As Int = Starter.GroupViewModelInstance.GetGroupByTitle(Value).GetID
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
+			Log("Group ID Retrieved: " & groupId)
+		End If
+		m_query.SetGroupID(groupId)
 	End If
 End Sub
 

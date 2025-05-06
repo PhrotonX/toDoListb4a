@@ -53,7 +53,7 @@ Sub Class_Globals
 	Private m_searchBy As Int = SEARCH_QUERY_ITEM_SEARCH_BY
 	Private m_searchByField As String = FIELD_TITLE
 	
-	Private m_groupId As Long
+	Private m_groupId As Long = -1
 	Private m_searchRepeat(7) As Boolean
 	
 End Sub
@@ -202,6 +202,10 @@ End Sub
 
 Public Sub UnsetSearchDueDateRange()
 	m_searchQueryItem(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = ""
+End Sub
+
+Public Sub UnsetSearchGroupID()
+	m_groupId = -1
 End Sub
 
 Public Sub UnsetSearchIsDeleted()
