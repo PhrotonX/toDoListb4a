@@ -1100,6 +1100,7 @@ Private Sub searchBtn_Click
 		searchFragment.SetLayout(mainFragment.Left, mainFragment.Top, mainFragment.Width, mainFragment.Height)
 		svSearchBody.SetLayout(searchFragment.Left, 0, searchFragment.Width, searchFragment.Height)
 		svSearchBody.Panel.LoadLayout("searchFragmentSVLayout")
+		EditTextTransparentUnderline
 		pnlSearchSeparator1.SetLayout(50dip, pnlSearchSeparator1.Top, 100%x - 100dip, 2dip)
 		pnlSearchSeparator2.SetLayout(50dip, pnlSearchSeparator2.Top, 100%x - 100dip, 2dip)
 		searchFragment.SetVisibleAnimated(150, True)
@@ -1110,6 +1111,7 @@ Private Sub searchBtn_Click
 		pnlTitleBar.Visible = False
 		
 		LoadSearchItems
+
 		EditTextTransparentUnderline
 		RefillSearchFields
 	End If
