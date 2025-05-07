@@ -43,21 +43,21 @@ Sub Class_Globals
 	Public Const FIELD_REMINDER As String = "reminder"
 	Public Const FIELD_IS_REMINDER_ENABLED As String = "is_reminder_enabled"
 	
-	Private Const JOIN_QUERY_ITEM_REPEAT As Int = 0
-	Private Const JOIN_QUERY_ITEM_GROUP As Int = 1
-	Private Const JOIN_QUERY_ITEM_ATTACHMENT As Int = 2
-	Private Const JOIN_QUERY_ITEM_ARRAY_SIZE As Int = 3
+	Public Const JOIN_QUERY_ITEM_REPEAT As Int = 0
+	Public Const JOIN_QUERY_ITEM_GROUP As Int = 1
+	Public Const JOIN_QUERY_ITEM_ATTACHMENT As Int = 2
+	Public Const JOIN_QUERY_ITEM_ARRAY_SIZE As Int = 3
 	
-	Private const SEARCH_QUERY_ITEM_TASK_ID As Int = 0
-	Private const SEARCH_QUERY_ITEM_SEARCH_BY As Int = 1
-	Private const SEARCH_QUERY_ITEM_DUE_DATE_RANGE As Int = 2
-	Private const SEARCH_QUERY_ITEM_PRIORITY As Int = 3
-	Private const SEARCH_QUERY_ITEM_IS_DELETED As Int = 4
-	Private const SEARCH_QUERY_ITEM_REMINDER As Int = 5
-	Private const SEARCH_QUERY_ITEM_IS_REMINDER_ENABLED As Int = 6
-	Private const SEARCH_QUERY_ITEM_REPEAT_QUERY As Int = 7
-	Private const SEARCH_QUERY_ITEM_GROUP_ID As Int = 8
-	Private const SEARCH_QUERY_ITEM_ARRAY_SIZE As Int = 9
+	Public const SEARCH_QUERY_ITEM_TASK_ID As Int = 0
+	Public const SEARCH_QUERY_ITEM_SEARCH_BY As Int = 1
+	Public const SEARCH_QUERY_ITEM_DUE_DATE_RANGE As Int = 2
+	Public const SEARCH_QUERY_ITEM_PRIORITY As Int = 3
+	Public const SEARCH_QUERY_ITEM_IS_DELETED As Int = 4
+	Public const SEARCH_QUERY_ITEM_REMINDER As Int = 5
+	Public const SEARCH_QUERY_ITEM_IS_REMINDER_ENABLED As Int = 6
+	Public const SEARCH_QUERY_ITEM_REPEAT_QUERY As Int = 7
+	Public const SEARCH_QUERY_ITEM_GROUP_ID As Int = 8
+	Public const SEARCH_QUERY_ITEM_ARRAY_SIZE As Int = 9
 	
 	Public Const ORDER_NONE As String = "NONE"
 	Public Const ORDER_ASC As String = "ASC"
@@ -83,6 +83,7 @@ Sub Class_Globals
 	
 	Private m_groupId As Long = -1
 	Private m_searchRepeat(7) As Boolean
+	Private m_value(SEARCH_QUERY_ITEM_ARRAY_SIZE) As String
 	
 	Private m_distinct As Boolean = False
 	
@@ -117,6 +118,14 @@ Public Sub IsDistinct() As Boolean
 	Return m_distinct
 End Sub
 
+Public Sub IsJoiningFieldEnabled(field As Int) As Boolean
+	Return m_joinQueryItemEnabled(field)
+End Sub
+
+Public Sub IsSearchingFieldEnabled(field As Int) As Boolean
+	Return m_searchQueryItemEnabled(field)
+End Sub
+
 Public Sub IsSortingEnabled() As Boolean
 	If m_order == ORDER_NONE Then
 		Return False
@@ -127,6 +136,7 @@ End Sub
 
 Public Sub SetGroupID(query As Long)
 	m_groupId = query
+	m_value(SEARCH_QUERY_ITEM_GROUP_ID) = query
 End Sub
 
 Public Sub SetGroupIDEnabled(value As Boolean)
@@ -145,12 +155,14 @@ Public Sub SetSortField(field As String)
 End Sub
 
 ' Supported values: FIELD_TITLE, FIELD_NOTES, FIELD_ATTACHMENT_FILENAME
-Public Sub SetSearchBy(query As String)
+Public Sub SetSearchBy(value As String)
 	If m_searchByField == FIELD_ATTACHMENT_FILENAME Then
-		SetSearchAttachmentFileName(query)
+		SetSearchAttachmentFileName(value)
 	Else
-		m_searchQueryItem(SEARCH_QUERY_ITEM_SEARCH_BY) = m_searchByField & " LIKE '%" & query & "%'"
+		m_searchQueryItem(SEARCH_QUERY_ITEM_SEARCH_BY) = m_searchByField & " LIKE '%" & value & "%'"
 	End If
+	
+	m_value(SEARCH_QUERY_ITEM_IS_DELETED) = value
 End Sub
 
 ' Supported values: FIELD_TITLE (default) and FIELD_NOTES
@@ -174,6 +186,7 @@ End Sub
 
 Public Sub SetSearchIsDeleted(value As Boolean)
 	m_searchQueryItem(SEARCH_QUERY_ITEM_IS_DELETED) = FIELD_IS_DELETED & EQ & DatabaseUtils.BoolToInt(value)
+	m_value(SEARCH_QUERY_ITEM_IS_DELETED) = value
 End Sub
 
 Public Sub SetSearchIsDeletedEnabled(value As Boolean)
@@ -191,6 +204,7 @@ End Sub
 
 Public Sub SetSearchReminder(value As Long)
 	m_searchQueryItem(SEARCH_QUERY_ITEM_REMINDER) = FIELD_REMINDER & EQ & value
+	m_value(SEARCH_QUERY_ITEM_REMINDER) = value
 End Sub
 
 Public Sub SetSearchReminder_Enabled(value As Boolean)
@@ -199,6 +213,7 @@ End Sub
 
 Public Sub SetSearchPriority(value As Int)
 	m_searchQueryItem(SEARCH_QUERY_ITEM_PRIORITY) = FIELD_PRIORITY & EQ & value
+	m_value(SEARCH_QUERY_ITEM_PRIORITY) = value
 End Sub
 
 Public Sub SetSearchPriorityEnabled(value As Boolean)
@@ -268,8 +283,21 @@ Public Sub GetSortingQuery() As String
 	End If
 End Sub
 
+' Returns values ORDER_NONE, ORDER_DESC, and ORDER_ASC.
+Public Sub GetSortOrder() As String
+	Return m_order
+End Sub
+
 Public Sub GetSearchDateMode() As Int
 	Return m_searchDateMode
+End Sub
+
+Public Sub GetSearchBy() As String
+	Return m_searchByField
+End Sub
+
+Public Sub SearchRepeat(index As Int) As Boolean
+	Return m_searchRepeat(index)
 End Sub
 
 Public Sub GetSearchingQuery(removeWhereClause As Boolean) As String
@@ -296,6 +324,11 @@ Public Sub GetSelectClause() As String
 	Else
 		Return "SELECT * FROM task"
 	End If
+End Sub
+
+' Does not support non-string values
+Public Sub GetSearchValue(field As Int) As String
+	Return m_value(field)
 End Sub
 
 Private Sub OnBuildJoiningQuery() As String

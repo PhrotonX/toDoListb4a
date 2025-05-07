@@ -332,6 +332,7 @@ Sub Globals
 	Private spinRangeDayTo As Spinner
 	Private spinRangeMonthFrom As Spinner
 	Private spinRangeMonthTo As Spinner
+	Private checkDeleted As CheckBox
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -1108,7 +1109,107 @@ Private Sub searchBtn_Click
 		pnlTitleBar.Visible = False
 		
 		LoadSearchItems
+		
+		RefillSearchFields
 	End If
+End Sub
+
+Private Sub RefillSearchFields
+	' Fill-up Search By fields.
+	Select m_query.GetSearchBy()
+		Case m_query.FIELD_TITLE:
+			radioSearchByTitle.Checked = True
+			radioSearchByNotes.Checked = False
+			radioSearchByFilename.Checked = False
+		Case m_query.FIELD_ATTACHMENT_FILENAME:
+			radioSearchByTitle.Checked = False
+			radioSearchByNotes.Checked = False
+			radioSearchByFilename.Checked = True
+		Case m_query.FIELD_NOTES:
+			radioSearchByTitle.Checked = False
+			radioSearchByNotes.Checked = True
+			radioSearchByFilename.Checked = False
+	End Select
+	
+	' Fill-up Order by fields
+	Select m_query.GetSortOrder:
+		Case m_query.ORDER_NONE:
+			radioSortOrderByNone.Checked = True
+			radioSortOrderByAscending.Checked = False
+			radioSortOrderByDescending.Checked = False
+		Case m_query.ORDER_ASC:
+			radioSortOrderByNone.Checked = False
+			radioSortOrderByAscending.Checked = True
+			radioSortOrderByDescending.Checked = False
+		Case m_query.ORDER_DESC:
+			radioSortOrderByNone.Checked = False
+			radioSortOrderByAscending.Checked = False
+			radioSortOrderByDescending.Checked = True
+	End Select
+	
+	' Fill-up Priority field
+	checkFilterByPriority.Checked = m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_PRIORITY)
+	Select m_query.GetSearchValue(m_query.SEARCH_QUERY_ITEM_PRIORITY)
+		Case 0:
+			radioFilterByPriorityLow.Checked = True
+			radioFilterByPriorityMedium.Checked = False
+			radioFilterByPriorityHigh.Checked = False
+			radioFilterByPriorityCritical.Checked = False
+		Case 1:
+			radioFilterByPriorityLow.Checked = False
+			radioFilterByPriorityMedium.Checked = True
+			radioFilterByPriorityHigh.Checked = False
+			radioFilterByPriorityCritical.Checked = False
+		Case 2:
+			radioFilterByPriorityLow.Checked = False
+			radioFilterByPriorityMedium.Checked = False
+			radioFilterByPriorityHigh.Checked = True
+			radioFilterByPriorityCritical.Checked = False
+		Case 3:
+			radioFilterByPriorityLow.Checked = False
+			radioFilterByPriorityMedium.Checked = False
+			radioFilterByPriorityHigh.Checked = False
+			radioFilterByPriorityCritical.Checked = True
+	End Select
+	
+	' Fill-up Repeat field
+	checkFilterByRepeat.Checked = m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_REPEAT_QUERY)
+	checkRepeatSunday.Checked = m_query.SearchRepeat(0)
+	checkRepeatMonday.Checked = m_query.SearchRepeat(1)
+	checkRepeatTuesday.Checked = m_query.SearchRepeat(2)
+	checkRepeatWednesday.Checked = m_query.SearchRepeat(3)
+	checkRepeatThursday.Checked = m_query.SearchRepeat(4)
+	checkRepeatFriday.Checked = m_query.SearchRepeat(5)
+	checkRepeatSaturday.Checked = m_query.SearchRepeat(6)
+	
+	' Fill-up Date field
+	checkFilterByDueDate.Checked = m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_DUE_DATE_RANGE)
+	Select m_query.GetSearchDateMode:
+		Case m_query.DUE_DATE_MODE_SEARCH_DEFAULT:
+			radioDueSpecificDate.Checked = True
+			radioDueSpecificDateGroup.Checked = False
+			radioDueSpecificDateRange.Checked = False
+		Case m_query.DUE_DATE_MODE_SEARCH_BY_GROUP:
+			radioDueSpecificDate.Checked = False
+			radioDueSpecificDateGroup.Checked = True
+			radioDueSpecificDateRange.Checked = False
+		Case m_query.DUE_DATE_MODE_SEARCH_BY_RANGE:
+			radioDueSpecificDate.Checked = False
+			radioDueSpecificDateGroup.Checked = True
+			radioDueSpecificDateRange.Checked = True
+	End Select
+	
+	' FIll-up Group Field
+	checkFilterByGroup.Checked = m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_GROUP_ID)
+	
+	Log("GROUP " & m_query.GetGroupID)
+	If m_query.GetGroupID > 0 Then
+		spnGroupName.SelectedIndex = _ 
+			spnGroupName.IndexOf(Starter.GroupViewModelInstance.GetGroup(m_query.GetGroupID).GetTitle)
+	End If
+	
+	' Fill-up Deleted Field
+	checkDeleted.Checked = m_query.GetSearchValue(m_query.SEARCH_QUERY_ITEM_IS_DELETED)
 End Sub
 
 Private Sub backBtn_Click
@@ -1279,7 +1380,7 @@ Private Sub checkFilterByGroup_CheckedChange(Checked As Boolean)
 		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
 			Log("Selected group index: " & groupId)
 		End If
-		m_query.SetGroupID(0)
+		'm_query.SetGroupID(0)
 		
 		m_query.SetGroupIDEnabled(True)
 	Else
@@ -1315,7 +1416,7 @@ End Sub
 
 Private Sub radioDueSpecificDateGroup_CheckedChange(Checked As Boolean)
 	If Checked Then
-		ToastMessageShow("Logic not implemented", False)
+		ToastMessageShow("Logic not implemented: Searching for tasks based on date groups", False)
 		
 		For Each v As View In pnlDueSpecificDate.GetAllViewsRecursive
 			v.Enabled = False
@@ -1372,7 +1473,7 @@ Private Sub spnDateMonth_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Private Sub spnDateGroup_ItemClick (Position As Int, Value As Object)
-	ToastMessageShow("Logic not implemented", False)
+	ToastMessageShow("Logic not implemented: Searching for tasks based on date groups", False)
 End Sub
 
 Private Sub spnDateDay_ItemClick (Position As Int, Value As Object)
@@ -1461,4 +1562,8 @@ End Sub
 
 Private Sub spinRangeDayFrom_ItemClick (Position As Int, Value As Object)
 	FormHelper.SetDayValue(spinRangeDayFrom, m_query.DateBegin, Position)
+End Sub
+
+Private Sub checkDeleted_CheckedChange(Checked As Boolean)
+	m_query.SetSearchIsDeleted(Checked)
 End Sub
