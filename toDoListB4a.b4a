@@ -1,4 +1,4 @@
-﻿Build1=Default,com.cm.todolist
+Build1=Default,com.cm.todolist
 File1=3528206.png
 File10=drawerlayout.bal
 File11=EditorLayout.bal
@@ -287,7 +287,8 @@ Sub Globals
 	Private spnRangeDay As Spinner
 	Private spnRangeMonth As Spinner
 	Private editDateYear As EditText
-	Private editRangeYear As EditText
+	Private editRangeYearFrom As EditText
+	Private editRangeYearTo As EditText
 	Private pnlDueSpecificDate As Panel
 	Private pnlDueSpecificDateGroup As Panel
 	Private groupPanel As Panel
@@ -318,11 +319,11 @@ Sub Globals
 	Private radioSortOrderByDescending As RadioButton
 	Private radioSortOrderByNone As RadioButton
 	Private spinRangeDay As Spinner
-	Private spinRangeMonth As Spinner
 	Private spnGroupName As Spinner
 	Private searchEditText As EditText
 	Private GroupDescription As Label
 	Private GroupLineDecor As Panel
+	Private pnlContainerFilterByCheckRepeat As Panel
 	Private drawerButton As Button
 	Private pnlDueSpecificDateRangeFrom As Panel
 	Private pnlDueSpecificDateRangeTo As Panel
@@ -1090,7 +1091,6 @@ End Sub
 
 Private Sub searchBtn_Click
 	If button_handling Then
-		svSearchBody.Panel.LoadLayout("searchFragmentSVLayout")
 		pnlTitleBar.Elevation = 0
 		pnlSearch.SetLayout(pnlTitleBar.Left, pnlTitleBar.Top, pnlTitleBar.Width, pnlTitleBar.Height)
 		pnlSearch.SetVisibleAnimated(150, True)
@@ -1099,6 +1099,7 @@ Private Sub searchBtn_Click
 
 		searchFragment.SetLayout(mainFragment.Left, mainFragment.Top, mainFragment.Width, mainFragment.Height)
 		svSearchBody.SetLayout(searchFragment.Left, 0, searchFragment.Width, searchFragment.Height)
+		svSearchBody.Panel.LoadLayout("searchFragmentSVLayout")
 		pnlSearchSeparator1.SetLayout(50dip, pnlSearchSeparator1.Top, 100%x - 100dip, 2dip)
 		pnlSearchSeparator2.SetLayout(50dip, pnlSearchSeparator2.Top, 100%x - 100dip, 2dip)
 		searchFragment.SetVisibleAnimated(150, True)
@@ -1109,7 +1110,7 @@ Private Sub searchBtn_Click
 		pnlTitleBar.Visible = False
 		
 		LoadSearchItems
-		
+		EditTextTransparentUnderline
 		RefillSearchFields
 	End If
 End Sub
@@ -1329,6 +1330,7 @@ Sub SetRadioButtonsEnabled(pnl As Panel, enabled As Boolean)
 End Sub
 
 Private Sub checkFilterByRepeat_CheckedChange(Checked As Boolean)
+	' SetRadioButtonsEnabled(pnlContainerFilterByCheckRepeat, Checked)
 	If Checked Then
 		checkRepeatSunday.Enabled = True
 		checkRepeatMonday.Enabled = True
@@ -1397,57 +1399,26 @@ Private Sub checkFilterByGroup_CheckedChange(Checked As Boolean)
 End Sub
 
 Private Sub radioDueSpecificDateRange_CheckedChange(Checked As Boolean)
-	If Checked Then
-		For Each v As View In pnlDueSpecificDate.GetAllViewsRecursive
-			v.Enabled = False
-		Next
-		For Each v As View In pnlDueSpecificDateRangeFrom.GetAllViewsRecursive
-			v.Enabled = True
-		Next
-		For Each v As View In pnlDueSpecificDateRangeTo.GetAllViewsRecursive
-			v.Enabled = True
-		Next
-		
-		spnDateGroup.Enabled = False
-		
+	DueDateRadio_enabledisable(1)
+  
+  If Checked Then		
 		m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_RANGE)
 	End If
 End Sub
 
 Private Sub radioDueSpecificDateGroup_CheckedChange(Checked As Boolean)
-	If Checked Then
-		ToastMessageShow("Logic not implemented: Searching for tasks based on date groups", False)
-		
-		For Each v As View In pnlDueSpecificDate.GetAllViewsRecursive
-			v.Enabled = False
-		Next
-		For Each v As View In pnlDueSpecificDateRangeFrom.GetAllViewsRecursive
-			v.Enabled = False
-		Next
-		For Each v As View In pnlDueSpecificDateRangeTo.GetAllViewsRecursive
-			v.Enabled = False
-		Next
-	
-		spnDateGroup.Enabled = True
-		
+	DueDateRadio_enabledisable(2)
+  
+  If Checked Then		
 		m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_GROUP)
 	End If
+  
 End Sub
 
 Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
-	If Checked Then
-		For Each v As View In pnlDueSpecificDate.GetAllViewsRecursive
-			v.Enabled = True
-		Next
-		For Each v As View In pnlDueSpecificDateRangeFrom.GetAllViewsRecursive
-			v.Enabled = False
-		Next
-		For Each v As View In pnlDueSpecificDateRangeTo.GetAllViewsRecursive
-			v.Enabled = False
-		Next
-	
-		spnDateGroup.Enabled = False
-		
+	DueDateRadio_enabledisable(0)
+  
+  If Checked Then		
 		m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_DEFAULT)
 	End If
 End Sub
@@ -1546,6 +1517,100 @@ End Sub
 
 Private Sub checkRepeatFriday_CheckedChange(Checked As Boolean)
 	m_query.SetSearchRepeat(m_repeatObj.REPEAT_FRIDAY, Checked)
+End Sub
+
+Private Sub EditTextTransparentUnderline
+	Dim cd As ColorDrawable
+	cd.Initialize(Colors.Transparent, 0)
+	
+	editDateYear.Background = cd
+	editRangeYearFrom.Background = cd
+	editRangeYearTo.Background = cd
+	searchEditText.Background = cd
+	
+End Sub
+
+Private Sub DueDateRadio_enabledisable(number As Int)
+	If number = 0 Then
+		spnDateMonth.enabled = True
+		spnDateDay.enabled = True
+		editDateYear.enabled = True
+		
+		spnDateMonth.TextColor = Colors.Black
+		spnDateDay.TextColor = Colors.Black
+		editDateYear.TextColor = Colors.Black
+		
+		spinRangeMonthFrom.Enabled = False
+		spinRangeDayFrom.Enabled = False
+		editRangeYearFrom.Enabled = False
+		spinRangeMonthTo.Enabled = False
+		spinRangeDayTo.Enabled = False
+		editRangeYearTo.Enabled = False
+		
+		spinRangeMonthFrom.TextColor = Colors.Transparent
+		spinRangeDayFrom.TextColor = Colors.Transparent
+		editRangeYearFrom.TextColor = Colors.Transparent
+		spinRangeMonthTo.TextColor = Colors.Transparent
+		spinRangeDayTo.TextColor = Colors.Transparent
+		editRangeYearTo.TextColor = Colors.Transparent
+		
+		spnDateGroup.Enabled = False
+		spnDateGroup.TextColor = Colors.Transparent
+	End If
+	
+	If number = 1 Then
+		spnDateMonth.enabled = False
+		spnDateDay.enabled = False
+		editDateYear.enabled = False
+		
+		spnDateMonth.TextColor = Colors.Transparent
+		spnDateDay.TextColor = Colors.Transparent
+		editDateYear.TextColor = Colors.Transparent
+		
+		spinRangeMonthFrom.Enabled = True
+		spinRangeDayFrom.Enabled = True
+		editRangeYearFrom.Enabled = True
+		spinRangeMonthTo.Enabled = True
+		spinRangeDayTo.Enabled = True
+		editRangeYearTo.Enabled = True
+		
+		spinRangeMonthFrom.TextColor = Colors.Black
+		spinRangeDayFrom.TextColor = Colors.Black
+		editRangeYearFrom.TextColor = Colors.Black
+		spinRangeMonthTo.TextColor = Colors.Black
+		spinRangeDayTo.TextColor = Colors.Black
+		editRangeYearTo.TextColor = Colors.Black
+		
+		spnDateGroup.Enabled = False
+		spnDateGroup.TextColor = Colors.Transparent
+	End If
+	
+	If number = 2 Then
+		spnDateMonth.enabled = False
+		spnDateDay.enabled = False
+		editDateYear.enabled = False
+		
+		spnDateMonth.TextColor = Colors.Transparent
+		spnDateDay.TextColor = Colors.Transparent
+		editDateYear.TextColor = Colors.Transparent
+		
+		spinRangeMonthFrom.Enabled = False
+		spinRangeDayFrom.Enabled = False
+		editRangeYearFrom.Enabled = False
+		spinRangeMonthTo.Enabled = False
+		spinRangeDayTo.Enabled = False
+		editRangeYearTo.Enabled = False
+		
+		spinRangeMonthFrom.TextColor = Colors.Transparent
+		spinRangeDayFrom.TextColor = Colors.Transparent
+		editRangeYearFrom.TextColor = Colors.Transparent
+		spinRangeMonthTo.TextColor = Colors.Transparent
+		spinRangeDayTo.TextColor = Colors.Transparent
+		editRangeYearTo.TextColor = Colors.Transparent
+		
+		spnDateGroup.Enabled = True
+		spnDateGroup.TextColor = Colors.Black
+	End If
 End Sub
 
 Private Sub spinRangeMonthTo_ItemClick (Position As Int, Value As Object)
