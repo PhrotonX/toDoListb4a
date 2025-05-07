@@ -36,7 +36,7 @@ Public Sub GetTask(id As Long) As ToDo
 	Return m_repository.GetTask(id)
 End Sub
 
-Private Sub GetTasks(query As TaskQuery) As List
+Public Sub GetTasks(query As TaskQuery) As List
 	Return m_repository.GetTasks(query)
 End Sub
 
@@ -235,6 +235,7 @@ Public Sub FindTasksByDueDate(group_id As Long, tickBegin As Long, tickEnd As Lo
 	Return m_repository.FindTasksByDueDate(group_id, tickBegin, tickEnd, ascending)
 End Sub
 
+' @Deprecated
 ' repeat - Expects a list of 7 boolean values.
 Public Sub FindTasksByRepeat(group_id As Long, repeatQuery As List, ascending As Boolean) As List
 	Dim tasks As List = GetTasksSortedById(group_id, ascending)
