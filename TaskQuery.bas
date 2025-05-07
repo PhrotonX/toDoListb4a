@@ -33,7 +33,9 @@ Sub Class_Globals
 	Public Const FIELD_ATTACHMENT_FILENAME As String = "filename"
 	Public Const FIELD_ATTACHMENT_ID As String = "attachment_id"
 	'Public Const FIELD_ATTACHMENT_MIMETYPE As String = "mimeType"
+	Public Const FIELD_REPEAT_ID As String = "repeat_id"
 	Public Const FIELD_REPEAT_DAY_ID As String = "day_id"
+	Public Const FIELD_REPEAT_ENABLED As String = "enabled"
 	Public Const FIELD_DUE_DATE As String = "due_date"
 	Public Const FIELD_CREATED_AT As String = "created_at"
 	Public Const FIELD_PRIORITY As String = "priority"
@@ -53,7 +55,7 @@ Sub Class_Globals
 	Private const SEARCH_QUERY_ITEM_IS_DELETED As Int = 4
 	Private const SEARCH_QUERY_ITEM_REMINDER As Int = 5
 	Private const SEARCH_QUERY_ITEM_IS_REMINDER_ENABLED As Int = 6
-	Private const SEARCH_QUERY_ITEM_REPEAT_DAY_ID As Int = 7
+	Private const SEARCH_QUERY_ITEM_REPEAT_QUERY As Int = 7
 	Private const SEARCH_QUERY_ITEM_GROUP_ID As Int = 8
 	Private const SEARCH_QUERY_ITEM_ARRAY_SIZE As Int = 9
 	
@@ -138,7 +140,7 @@ Public Sub SetSearchByField(field As String)
 	m_searchByField = field
 End Sub
 
- Private Sub SetSearchAttachmentFileName(query As String)
+Private Sub SetSearchAttachmentFileName(query As String)
  	' Set the join clause.
 	m_joinQueryItem(JOIN_QUERY_ITEM_ATTACHMENT) = " JOIN " & TABLE_TASK_ATTACHMENT & _ 
 		" ON " & TABLE_TASK_ATTACHMENT & "." & FIELD_TASK_ID & EQ _ 
@@ -273,9 +275,12 @@ Private Sub OnBuildSearchingQuery() As String
 	For Each item As String In m_searchQueryItem
 		Log("m_searchQueryItem: " & item)
 		
-		If itr == SEARCH_QUERY_ITEM_DUE_DATE_RANGE Then
-			OnBuildSearchQueryForDate
-		End If
+		Select itr:
+			Case SEARCH_QUERY_ITEM_DUE_DATE_RANGE:
+				OnBuildSearchQueryForDate
+			Case SEARCH_QUERY_ITEM_REPEAT_QUERY:
+				OnBuildSearchQueryForRepeat
+		End Select
 		
 		If item <> "" Then
 			If itr >= 1 And query <> "" Then
@@ -306,6 +311,48 @@ Private Sub OnBuildSearchQueryForDate()
 	End Select
 End Sub
 
+Private Sub OnBuildSearchQueryForRepeat()
+	Dim searchQuery As String
+	
+ 	' Set the join clause.
+	m_joinQueryItem(JOIN_QUERY_ITEM_REPEAT) = " JOIN " & TABLE_TASK_REPEAT & _ 
+		" ON " & TABLE_TASK_REPEAT & "." & FIELD_TASK_ID & EQ _ 
+		& TABLE_TASK & "." & FIELD_TASK_ID & _
+		" JOIN " & TABLE_REPEAT & _ 
+		" ON " & TABLE_TASK_REPEAT & "." & FIELD_REPEAT_ID & EQ _ 
+		& TABLE_REPEAT & "." & FIELD_REPEAT_ID
+		
+		
+	Dim counter As Int = 0
+	Dim andStr As String = ""
+	Dim orStr As String = ""
+	' Set the where clause.
+	For i = 0 To 6
+		If m_searchRepeat(i) == True Then
+			If counter >= 0 And counter < 6 Then
+				orStr = " OR "
+			Else
+				orStr = ""
+			End If
+			
+			searchQuery = searchQuery & TABLE_REPEAT & "." & FIELD_REPEAT_DAY_ID & EQ & " " & i & orStr
+		End If
+		
+		counter = counter + 1
+	Next
+	
+	If searchQuery <> "" Then
+		' Set the query for searching enabled field set to true.
+		m_searchQueryItem(SEARCH_QUERY_ITEM_REPEAT_QUERY) = searchQuery & " AND " & TABLE_REPEAT & "." & _
+			FIELD_REPEAT_ENABLED & EQ & DatabaseUtils.BoolToInt(True)
+	Else
+		' Set the query for searching tasks with no repeat values enabled.
+		m_searchQueryItem(SEARCH_QUERY_ITEM_REPEAT_QUERY) = TABLE_REPEAT & "." & _
+			FIELD_REPEAT_ENABLED & EQ & DatabaseUtils.BoolToInt(False)
+	End If
+	
+End Sub
+
 Public Sub UnsetTaskId()
 	m_searchQueryItem(SEARCH_QUERY_ITEM_TASK_ID) = ""
 End Sub
@@ -333,6 +380,11 @@ End Sub
 
 Public Sub UnsetSearchIsReminderEnabled()
 	m_searchQueryItem(SEARCH_QUERY_ITEM_IS_REMINDER_ENABLED) = ""
+End Sub
+
+Public Sub UnsetSearchRepeat()
+	m_joinQueryItem(JOIN_QUERY_ITEM_REPEAT) = ""
+	m_searchQueryItem(SEARCH_QUERY_ITEM_REPEAT_QUERY) = ""
 End Sub
 
 Public Sub UnsetSearchReminder()
