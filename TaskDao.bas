@@ -85,8 +85,8 @@ End Sub
 ' Retrieves multiple tasks.
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
-Public Sub GetTasks(searchingQuery As String, sortingQuery As String) As List
-	Return OnGetTask("SELECT * FROM task " & searchingQuery & " " & sortingQuery)
+Public Sub GetTasks(joinQuery As String, searchingQuery As String, sortingQuery As String) As List
+	Return OnGetTask("SELECT * FROM task " & joinQuery & " " & searchingQuery & " " & sortingQuery)
 End Sub
 
 ' Retrieves multiple tasks based on a task group

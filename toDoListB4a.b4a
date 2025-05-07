@@ -1383,7 +1383,7 @@ Private Sub radioSearchByNotes_CheckedChange(Checked As Boolean)
 End Sub
 
 Private Sub radioSearchByFilename_CheckedChange(Checked As Boolean)
-	ToastMessageShow("Logic not implemented", False)
+	m_query.SetSearchByField(m_query.FIELD_ATTACHMENT_FILENAME)
 End Sub
 
 Private Sub radioFilterByPriorityMedium_CheckedChange(Checked As Boolean)

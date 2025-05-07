@@ -16,19 +16,35 @@ Sub Class_Globals
 	Private Const EQ As String = " = "
 	Private Const GTE As String = " >= "
 	Private Const LTE As String = " <= "
+	
+	Public Const TABLE_TASK As String = "task"
+	Public Const TABLE_ATTACHMENT As String = "attachment"
+	Public Const TABLE_REPEAT As String = "repeat"
+	Public Const TABLE_GROUPS As String = "groups"
+	Public Const TABLE_TASK_GROUP As String = "task_group"
+	Public Const TABLE_TASK_ATTACHMENT As String = "task_attachment"
+	Public Const TABLE_TASK_REPEAT As String = "task_repeat"
+	
 	Public Const FIELD_DONE  As String = "done" ' Order by "done" field by default. Used to split
 	' completed and incomplete tasks.
 	Public Const FIELD_TASK_ID As String = "task_id"
 	Public Const FIELD_TITLE As String = "title"
 	Public Const FIELD_NOTES As String = "notes"
-	'Public Const FIELD_ATTACHMENT_FILENAME As String = "filename"
-	'Public Const FIELD_REPEAT As String = "repeat" ' Only used for m_selectedQuery
+	Public Const FIELD_ATTACHMENT_FILENAME As String = "filename"
+	Public Const FIELD_ATTACHMENT_ID As String = "attachment_id"
+	'Public Const FIELD_ATTACHMENT_MIMETYPE As String = "mimeType"
+	Public Const FIELD_REPEAT_DAY_ID As String = "day_id"
 	Public Const FIELD_DUE_DATE As String = "due_date"
 	Public Const FIELD_CREATED_AT As String = "created_at"
 	Public Const FIELD_PRIORITY As String = "priority"
 	Public Const FIELD_IS_DELETED As String = "is_deleted"
 	Public Const FIELD_REMINDER As String = "reminder"
 	Public Const FIELD_IS_REMINDER_ENABLED As String = "is_reminder_enabled"
+	
+	Private Const JOIN_QUERY_ITEM_REPEAT As Int = 0
+	Private Const JOIN_QUERY_ITEM_GROUP As Int = 1
+	Private Const JOIN_QUERY_ITEM_ATTACHMENT As Int = 2
+	Private Const JOIN_QUERY_ITEM_ARRAY_SIZE As Int = 3
 	
 	Private const SEARCH_QUERY_ITEM_TASK_ID As Int = 0
 	Private const SEARCH_QUERY_ITEM_SEARCH_BY As Int = 1
@@ -37,7 +53,9 @@ Sub Class_Globals
 	Private const SEARCH_QUERY_ITEM_IS_DELETED As Int = 4
 	Private const SEARCH_QUERY_ITEM_REMINDER As Int = 5
 	Private const SEARCH_QUERY_ITEM_IS_REMINDER_ENABLED As Int = 6
-	Private const SEARCH_QUERY_ITEM_ARRAY_SIZE As Int = 7
+	Private const SEARCH_QUERY_ITEM_REPEAT_DAY_ID As Int = 7
+	Private const SEARCH_QUERY_ITEM_GROUP_ID As Int = 8
+	Private const SEARCH_QUERY_ITEM_ARRAY_SIZE As Int = 9
 	
 	Public Const ORDER_NONE As String = "NONE"
 	Public Const ORDER_ASC As String = "ASC"
@@ -45,6 +63,7 @@ Sub Class_Globals
 	
 	' Adds data into the SQL query.
 	Public m_searchQueryItem(SEARCH_QUERY_ITEM_ARRAY_SIZE) As String
+	Public m_joinQueryItem(JOIN_QUERY_ITEM_ARRAY_SIZE) As String
 	
 	Private Const SEARCH_QUERY_ITEM_SEARCH_BY_TITLE As Int = 0
 	Private Const SEARCH_QUERY_ITEM_SEARCH_BY_NOTES As Int = 1
@@ -105,8 +124,13 @@ Public Sub SetSortField(field As String)
 	m_sortQuery = field
 End Sub
 
+' Supported values: FIELD_TITLE, FIELD_NOTES, FIELD_ATTACHMENT_FILENAME
 Public Sub SetSearchBy(query As String)
-	m_searchQueryItem(SEARCH_QUERY_ITEM_SEARCH_BY) = m_searchByField & " LIKE '%" & query & "%'"
+	If m_searchByField == FIELD_ATTACHMENT_FILENAME Then
+		SetSearchAttachmentFileName(query)
+	Else
+		m_searchQueryItem(SEARCH_QUERY_ITEM_SEARCH_BY) = m_searchByField & " LIKE '%" & query & "%'"
+	End If
 End Sub
 
 ' Supported values: FIELD_TITLE (default) and FIELD_NOTES
@@ -114,10 +138,18 @@ Public Sub SetSearchByField(field As String)
 	m_searchByField = field
 End Sub
 
-' @NOTE: Incomplete implementation.
- Public Sub SetSearchAttachmentFileName(query As String)
-	'm_searchQuery = m_searchQuery & " " & query
-	'm_selectedQuery = FIELD_ATTACHMENT_FILENAME
+ Private Sub SetSearchAttachmentFileName(query As String)
+ 	' Set the join clause.
+	m_joinQueryItem(JOIN_QUERY_ITEM_ATTACHMENT) = " JOIN " & TABLE_TASK_ATTACHMENT & _ 
+		" ON " & TABLE_TASK_ATTACHMENT & "." & FIELD_TASK_ID & EQ _ 
+		& TABLE_TASK & "." & FIELD_TASK_ID & _
+		" JOIN " & TABLE_ATTACHMENT & _ 
+		" ON " & TABLE_TASK_ATTACHMENT & "." & FIELD_ATTACHMENT_ID & EQ _ 
+		& TABLE_ATTACHMENT & "." & FIELD_ATTACHMENT_ID
+		
+	' Set the where clause.
+	m_searchQueryItem(SEARCH_QUERY_ITEM_SEARCH_BY) = TABLE_ATTACHMENT & "." & FIELD_ATTACHMENT_FILENAME & " LIKE " _ 
+	& "'%" & query & "%'" 
 End Sub
 
 Public Sub SetSearchIsDeleted(value As Boolean)
@@ -125,7 +157,8 @@ Public Sub SetSearchIsDeleted(value As Boolean)
 End Sub
 
 Public Sub SetSearchIsReminderEnabled(value As Boolean)
-	m_searchQueryItem(SEARCH_QUERY_ITEM_IS_REMINDER_ENABLED) = FIELD_IS_REMINDER_ENABLED & EQ & DatabaseUtils.BoolToInt(value)
+	m_searchQueryItem(SEARCH_QUERY_ITEM_IS_REMINDER_ENABLED) = FIELD_IS_REMINDER_ENABLED & EQ & _
+	DatabaseUtils.BoolToInt(value)
 End Sub
 
 Public Sub SetSearchReminder(value As Long)
@@ -141,8 +174,8 @@ Public Sub SetSearchRepeat(dayOfTheWeek As Int, value As Boolean)
 	m_searchRepeat(dayOfTheWeek) = value
 End Sub
 
-' Supported values: SEARCH_QUERY_ITEM_SEARCH_DATE_DEFAULT, SEARCH_QUERY_ITEM_SEARCH_DATE_BY_GROUP, 
-' SEARCH_QUERY_ITEM_SEARCH_DATE_BY_RANGE
+' Supported values: DUE_DATE_MODE_SEARCH_NONE, DUE_DATE_MODE_SEARCH_DEFAULT, DUE_DATE_MODE_SEARCH_BY_GROUP, 
+' and DUE_DATE_MODE_SEARCH_BY_RANGE
 Public Sub SetSearchDateMode(mode As Int)
 	m_searchDateMode = mode
 End Sub
@@ -156,11 +189,29 @@ End Sub
 Private Sub SetSearchDueDateRange(tickBegin As Long, tickEnd As Long)
 	Log(FIELD_DUE_DATE & GTE & tickBegin & " AND " & FIELD_DUE_DATE & LTE & tickEnd)
 	
-	m_searchQueryItem(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = FIELD_DUE_DATE & GTE & tickBegin & " AND " & FIELD_DUE_DATE & LTE & tickEnd
+	m_searchQueryItem(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = FIELD_DUE_DATE & GTE & tickBegin & " AND " & _
+	 FIELD_DUE_DATE & LTE & tickEnd
 End Sub
 
 Public Sub GetGroupID() As Long
 	Return m_groupId
+End Sub
+
+Public Sub GetJoinQuery(removeJoinClause As Boolean) As String
+	Dim query As String = ""
+	If removeJoinClause == False Then
+		query = "JOIN "
+	End If
+	
+	Dim result As String = query & OnBuildJoiningQuery
+	
+	Log("TaskQuery: " & result)
+	
+	If result == "JOIN " Then
+		Return " "
+	Else
+		Return query & OnBuildJoiningQuery
+	End If
 End Sub
 
 Public Sub GetSortingQuery() As String
@@ -192,10 +243,26 @@ Public Sub GetSearchingQuery(removeWhereClause As Boolean) As String
 	End If
 End Sub
 
-' Returns no field name.
-'Public Sub GetSearchingAttachmentTitle() As String
-'	Return m_searchQuery
-'End Sub
+Private Sub OnBuildJoiningQuery() As String
+	Dim query As String
+	
+	Dim itr As Int = 0
+	For Each item As String In m_joinQueryItem
+		Log("m_joinQueryItem: " & item)
+		
+		If item <> "" Then
+			If itr >= 1 And query <> "" Then
+				query = query & " AND "
+			End If
+			
+			query = query & " " & item
+		End If
+		
+		itr = itr + 1
+	Next
+	
+	Return query
+End Sub
 
 Private Sub OnBuildSearchingQuery() As String
 	Dim query As String
@@ -241,6 +308,11 @@ End Sub
 
 Public Sub UnsetTaskId()
 	m_searchQueryItem(SEARCH_QUERY_ITEM_TASK_ID) = ""
+End Sub
+
+Public Sub UnsetSearchAttachmentFilename()
+	m_joinQueryItem(JOIN_QUERY_ITEM_ATTACHMENT) = ""
+	m_searchQueryItem(SEARCH_QUERY_ITEM_SEARCH_BY) = ""
 End Sub
 
 Public Sub UnsetSearchBy()
