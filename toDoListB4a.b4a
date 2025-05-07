@@ -1223,7 +1223,24 @@ Sub SetRadioButtonsEnabled(pnl As Panel, enabled As Boolean)
 End Sub
 
 Private Sub checkFilterByRepeat_CheckedChange(Checked As Boolean)
-	SetRadioButtonsEnabled(pnlFilterByRepeat, Checked)
+	If Checked Then
+		checkRepeatSunday.Enabled = True
+		checkRepeatMonday.Enabled = True
+		checkRepeatTuesday.Enabled = True
+		checkRepeatWednesday.Enabled = True
+		checkRepeatThursday.Enabled = True
+		checkRepeatFriday.Enabled = True
+		checkRepeatSaturday.Enabled = True
+	Else
+		checkRepeatSunday.Enabled = False
+		checkRepeatSunday.Enabled = False
+		checkRepeatMonday.Enabled = False
+		checkRepeatTuesday.Enabled = False
+		checkRepeatWednesday.Enabled = False
+		checkRepeatThursday.Enabled = False
+		checkRepeatFriday.Enabled = False
+		checkRepeatSaturday.Enabled = False
+	End If
 End Sub
 
 Private Sub checkFilterByDueDate_CheckedChange(Checked As Boolean)
