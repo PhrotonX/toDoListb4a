@@ -119,6 +119,39 @@ Public Sub PopulateTaskGroups(spntaskGroup As Spinner)
 	End If
 End Sub
 
+Public Sub SetMonthValue(spnMonth As Spinner, dateObj As Date, Position As Int)
+	' Retrieve the item as string from the Spinner.
+	Dim monthStr As String = spnMonth.GetItem(Position)
+	
+	If monthStr == SPINNER_DUE_DATE_MONTH_HINT_TEXT Then
+		' If the month value that is clicked is invalid, then clear the month
+		' value that is set into m-task.
+		dateObj.SetMonth(0)
+	Else
+		' Convert the month String retrieved from the spinner into an int.
+		Dim month As Int = dateObj.GetNumericMonth(monthStr)
+		
+		' Set the month value into the task based on the month item that is
+		' clicked from the spinner.
+		dateObj.SetMonth(month)
+	End If
+End Sub
+
+Public Sub SetDayValue(spnDay As Spinner, dateObj As Date, Position As Int)
+	Dim day As String = spnDay.GetItem(Position)
+	
+	If day == SPINNER_DUE_DATE_DAY_HINT_TEXT Then
+		' If the day value that is clicked is invalid, then clear the day
+		' value that is set into m-task.
+		dateObj.SetDay(0)
+	Else
+		' Set the day value into the task based on the day item that is
+		' clicked from the spinner.
+		dateObj.SetDay(day)
+	End If
+	
+End Sub
+
 ' Validation to check if editTitle is empty.
 Public Sub ValidateTitle(taskObj As ToDo, editTitle As EditText) As Boolean
 	If editTitle.Text == "" Then

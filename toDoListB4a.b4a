@@ -1,4 +1,4 @@
-﻿Build1=Default,com.cm.todolist
+Build1=Default,com.cm.todolist
 File1=3528206.png
 File10=drawerlayout.bal
 File11=EditorLayout.bal
@@ -290,7 +290,6 @@ Sub Globals
 	Private editRangeYearFrom As EditText
 	Private editRangeYearTo As EditText
 	Private pnlDueSpecificDate As Panel
-	Private pnlDueSpecificDateRange As Panel
 	Private pnlDueSpecificDateGroup As Panel
 	Private groupPanel As Panel
 	Private pnlSearchSeparator1 As Panel
@@ -325,10 +324,16 @@ Sub Globals
 	Private GroupDescription As Label
 	Private GroupLineDecor As Panel
 	Private pnlContainerFilterByCheckRepeat As Panel
+	Private drawerButton As Button
+	Private pnlDueSpecificDateRangeFrom As Panel
+	Private pnlDueSpecificDateRangeTo As Panel
+	Private editRangeYearFrom As EditText
+	Private editRangeYearTo As EditText
 	Private spinRangeDayFrom As Spinner
 	Private spinRangeDayTo As Spinner
 	Private spinRangeMonthFrom As Spinner
 	Private spinRangeMonthTo As Spinner
+	Private checkDeleted As CheckBox
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -567,7 +572,9 @@ Private Sub LoadItems()
 	
 	'm_tasks = Starter.TaskViewModelInstance.FindTasksByRepeat(repeat, True)
 	
-	m_query.SetGroupID(m_savedGroup.GetID)
+	If m_savedSmartList <> SMART_LIST_SEARCH Then
+		m_query.SetGroupID(m_savedGroup.GetID)
+	End If
 	
 	' Obtain all tasks from the database, depending on the smart list mode.
 	m_query.SetSearchIsDeleted(False)
@@ -590,11 +597,32 @@ Private Sub LoadItems()
 			m_tasks = Starter.TaskViewModelInstance.GetDeletedTasks(m_query)
 		Case SMART_LIST_SEARCH:
 			
+			' Set the date year for searching.
+			Select m_query.GetSearchDateMode():
+				Case m_query.DUE_DATE_MODE_SEARCH_DEFAULT:
+					m_query.DateBegin.SetYear(editDateYear.Text)
+				Case m_query.DUE_DATE_MODE_SEARCH_BY_RANGE:
+					m_query.DateBegin.SetYear(editRangeYearFrom.Text)
+					m_query.DateEnd.SetYear(editRangeYearTo.Text)
+			End Select
+			
 			GroupDescription.Text = "Results for " & searchEditText.Text
 			GroupLineDecor.Visible = False
 			
+			Dim groupId As Int = m_query.GetGroupID()
+			If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+				Log("Main.LoadItems() groupId: " & groupId) 
+			End If
+			
 			' Does not handle filtering by group, repeat, due date, and attachment filename.
-			m_tasks = Starter.TaskViewModelInstance.GetTasks(m_query)
+			If groupId == -1 Then
+				m_tasks = Starter.TaskViewModelInstance.GetTasks(m_query)
+			Else If groupId == 0 Then
+				m_tasks = Starter.TaskViewModelInstance.GetUngroupedTasks(m_query)
+			Else
+				m_tasks = Starter.TaskViewModelInstance.GetGroupedTasks(m_query)
+			End If
+			
 		Case Else, SMART_LIST_NONE:
 			m_tasks = Starter.TaskViewModelInstance.GetGroupedTasks(m_query)
 	End Select
@@ -687,6 +715,8 @@ End Sub
 
 Private Sub LoadSearchItems()
 	FormHelper.PopulateDate(spnDateMonth, spnDateDay)
+	FormHelper.PopulateDate(spinRangeMonthFrom, spinRangeDayFrom)
+	FormHelper.PopulateDate(spinRangeMonthTo, spinRangeDayTo)
 	FormHelper.PopulateTaskGroups(spnGroupName)
 End Sub
 
@@ -783,7 +813,10 @@ Private Sub sortMsgBox
 	pnlSortDialogue.Elevation = 20
 	
 	If m_query.IsInitialized == False Then
-		m_query.Initialize
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+			Log("Query has been initialized!")
+			m_query.Initialize
+		End If
 	End If
 End Sub
 
@@ -881,12 +914,20 @@ Public Sub OnChkboxViewAreaClick(percentage As Int, viewHolder As TaskViewHolder
 End Sub
 
 Private Sub drawerButton_Click
-	If button_handling Then
-		drawer.LeftOpen = True
+	If m_savedSmartList == SMART_LIST_SEARCH Then
+		OnClearSearchQuery
+		
+		m_savedSmartList = SMART_LIST_ALL
+		
+		' Go to the "All" smart list by default.
+		OnLoadPage(smartLists(SMART_LIST_ALL))
+	Else
+		If button_handling Then
+			drawer.LeftOpen = True
+		End If
 	End If
+	
 End Sub
-
-
 
 Sub LoadDrawerItems
 	clvItems.sv.ScrollViewInnerPanel.Color = xui.Color_Transparent
@@ -994,6 +1035,16 @@ Private Sub OnLoadTaskGroups(items As List)
 	Next
 End Sub
 
+Private Sub OnClearSearchQuery
+	' Bring back the drawer icon into menu icon.
+	drawerButton.Text = Chr(0xE5D2)
+	
+	If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+		Log("Query has been initialized!")
+		m_query.Initialize
+	End If
+	
+End Sub
 
 Private Sub pnlNewGroup_Click
 	Starter.InstanceState.Put(Starter.EXTRA_TASK_GROUP_EDITOR_MODE, Starter.TASK_GROUP_EDITOR_MODE_CREATE)
@@ -1060,7 +1111,106 @@ Private Sub searchBtn_Click
 		
 		LoadSearchItems
 		EditTextTransparentUnderline
+		RefillSearchFields
 	End If
+End Sub
+
+Private Sub RefillSearchFields
+	' Fill-up Search By fields.
+	Select m_query.GetSearchBy()
+		Case m_query.FIELD_TITLE:
+			radioSearchByTitle.Checked = True
+			radioSearchByNotes.Checked = False
+			radioSearchByFilename.Checked = False
+		Case m_query.FIELD_ATTACHMENT_FILENAME:
+			radioSearchByTitle.Checked = False
+			radioSearchByNotes.Checked = False
+			radioSearchByFilename.Checked = True
+		Case m_query.FIELD_NOTES:
+			radioSearchByTitle.Checked = False
+			radioSearchByNotes.Checked = True
+			radioSearchByFilename.Checked = False
+	End Select
+	
+	' Fill-up Order by fields
+	Select m_query.GetSortOrder:
+		Case m_query.ORDER_NONE:
+			radioSortOrderByNone.Checked = True
+			radioSortOrderByAscending.Checked = False
+			radioSortOrderByDescending.Checked = False
+		Case m_query.ORDER_ASC:
+			radioSortOrderByNone.Checked = False
+			radioSortOrderByAscending.Checked = True
+			radioSortOrderByDescending.Checked = False
+		Case m_query.ORDER_DESC:
+			radioSortOrderByNone.Checked = False
+			radioSortOrderByAscending.Checked = False
+			radioSortOrderByDescending.Checked = True
+	End Select
+	
+	' Fill-up Priority field
+	checkFilterByPriority.Checked = m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_PRIORITY)
+	Select m_query.GetSearchValue(m_query.SEARCH_QUERY_ITEM_PRIORITY)
+		Case 0:
+			radioFilterByPriorityLow.Checked = True
+			radioFilterByPriorityMedium.Checked = False
+			radioFilterByPriorityHigh.Checked = False
+			radioFilterByPriorityCritical.Checked = False
+		Case 1:
+			radioFilterByPriorityLow.Checked = False
+			radioFilterByPriorityMedium.Checked = True
+			radioFilterByPriorityHigh.Checked = False
+			radioFilterByPriorityCritical.Checked = False
+		Case 2:
+			radioFilterByPriorityLow.Checked = False
+			radioFilterByPriorityMedium.Checked = False
+			radioFilterByPriorityHigh.Checked = True
+			radioFilterByPriorityCritical.Checked = False
+		Case 3:
+			radioFilterByPriorityLow.Checked = False
+			radioFilterByPriorityMedium.Checked = False
+			radioFilterByPriorityHigh.Checked = False
+			radioFilterByPriorityCritical.Checked = True
+	End Select
+	
+	' Fill-up Repeat field
+	checkFilterByRepeat.Checked = m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_REPEAT_QUERY)
+	checkRepeatSunday.Checked = m_query.SearchRepeat(0)
+	checkRepeatMonday.Checked = m_query.SearchRepeat(1)
+	checkRepeatTuesday.Checked = m_query.SearchRepeat(2)
+	checkRepeatWednesday.Checked = m_query.SearchRepeat(3)
+	checkRepeatThursday.Checked = m_query.SearchRepeat(4)
+	checkRepeatFriday.Checked = m_query.SearchRepeat(5)
+	checkRepeatSaturday.Checked = m_query.SearchRepeat(6)
+	
+	' Fill-up Date field
+	checkFilterByDueDate.Checked = m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_DUE_DATE_RANGE)
+	Select m_query.GetSearchDateMode:
+		Case m_query.DUE_DATE_MODE_SEARCH_DEFAULT:
+			radioDueSpecificDate.Checked = True
+			radioDueSpecificDateGroup.Checked = False
+			radioDueSpecificDateRange.Checked = False
+		Case m_query.DUE_DATE_MODE_SEARCH_BY_GROUP:
+			radioDueSpecificDate.Checked = False
+			radioDueSpecificDateGroup.Checked = True
+			radioDueSpecificDateRange.Checked = False
+		Case m_query.DUE_DATE_MODE_SEARCH_BY_RANGE:
+			radioDueSpecificDate.Checked = False
+			radioDueSpecificDateGroup.Checked = True
+			radioDueSpecificDateRange.Checked = True
+	End Select
+	
+	' FIll-up Group Field
+	checkFilterByGroup.Checked = m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_GROUP_ID)
+	
+	Log("GROUP " & m_query.GetGroupID)
+	If m_query.GetGroupID > 0 Then
+		spnGroupName.SelectedIndex = _ 
+			spnGroupName.IndexOf(Starter.GroupViewModelInstance.GetGroup(m_query.GetGroupID).GetTitle)
+	End If
+	
+	' Fill-up Deleted Field
+	checkDeleted.Checked = m_query.GetSearchValue(m_query.SEARCH_QUERY_ITEM_IS_DELETED)
 End Sub
 
 Private Sub backBtn_Click
@@ -1110,6 +1260,8 @@ Private Sub enterBtn_Click
 	
 	m_savedSmartList = SMART_LIST_SEARCH
 	OnLoadPage(smartLists(m_savedSmartList))
+	
+	drawerButton.Text = Chr(0xE5CD)
 End Sub
 
 
@@ -1159,66 +1311,144 @@ Private Sub radioSortOrderAscending_CheckedChange(Checked As Boolean)
 End Sub
 
 Private Sub checkFilterByPriority_CheckedChange(Checked As Boolean)
+	If Checked Then
+		m_query.SetSearchPriorityEnabled(True)
+	Else
+		m_query.SetSearchPriorityEnabled(False)
+	End If
 	SetRadioButtonsEnabled(pnlFilterByPriority, Checked)
 End Sub
 
 Sub SetRadioButtonsEnabled(pnl As Panel, enabled As Boolean)
 		For i = 0 To pnl.NumberOfViews - 1
-			Dim v As View = pnl.GetView(i)
-			v.Enabled = enabled
+			If pnl.IsInitialized Then
+				Dim v As View = pnl.GetView(i)
+				v.Enabled = enabled
+			End If
+			
 		Next
 End Sub
 
-
-
 Private Sub checkFilterByRepeat_CheckedChange(Checked As Boolean)
-	SetRadioButtonsEnabled(pnlContainerFilterByCheckRepeat, Checked)
+	' SetRadioButtonsEnabled(pnlContainerFilterByCheckRepeat, Checked)
+	If Checked Then
+		checkRepeatSunday.Enabled = True
+		checkRepeatMonday.Enabled = True
+		checkRepeatTuesday.Enabled = True
+		checkRepeatWednesday.Enabled = True
+		checkRepeatThursday.Enabled = True
+		checkRepeatFriday.Enabled = True
+		checkRepeatSaturday.Enabled = True
+		
+		m_query.SetSearchRepeatEnabled(True)
+	Else
+		checkRepeatSunday.Enabled = False
+		checkRepeatSunday.Enabled = False
+		checkRepeatMonday.Enabled = False
+		checkRepeatTuesday.Enabled = False
+		checkRepeatWednesday.Enabled = False
+		checkRepeatThursday.Enabled = False
+		checkRepeatFriday.Enabled = False
+		checkRepeatSaturday.Enabled = False	
+		
+		m_query.SetSearchRepeatEnabled(False)
+	End If
 End Sub
 
 Private Sub checkFilterByDueDate_CheckedChange(Checked As Boolean)
+	If Checked Then
+		If radioDueSpecificDate.Checked Then
+			m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_DEFAULT)
+		Else If radioDueSpecificDateRange.Checked Then
+			m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_RANGE)
+		Else If radioDueSpecificDateGroup.Checked Then
+			m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_GROUP)
+		Else
+			m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_NONE)
+		End If
+		
+		m_query.SetSearchDueDateEnabled(True)
+	Else
+		m_query.SetSearchDueDateEnabled(False)
+		m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_NONE)
+	End If
 	SetRadioButtonsEnabled(pnlFilterByDueDate, Checked)
 End Sub
 
-
-
 Private Sub checkFilterByGroup_CheckedChange(Checked As Boolean)
+	If Checked Then
+		Dim groupId As Int = spnGroupName.SelectedIndex
+		groupId = spnGroupName.SelectedIndex
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+			Log("Selected group index: " & groupId)
+		End If
+		'm_query.SetGroupID(0)
+		
+		m_query.SetGroupIDEnabled(True)
+	Else
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+			Log("Unset!")
+		End If
+		
+		m_query.SetGroupIDEnabled(False)
+		
+		m_query.UnsetSearchGroupID()
+	End If
+	
 	SetRadioButtonsEnabled(pnlFilterByGroupName, Checked)
 End Sub
 
 Private Sub radioDueSpecificDateRange_CheckedChange(Checked As Boolean)
 	DueDateRadio_enabledisable(1)
+  
+  If Checked Then		
+		m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_RANGE)
+	End If
 End Sub
 
 Private Sub radioDueSpecificDateGroup_CheckedChange(Checked As Boolean)
 	DueDateRadio_enabledisable(2)
+  
+  If Checked Then		
+		m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_GROUP)
+	End If
+  
 End Sub
 
 Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
 	DueDateRadio_enabledisable(0)
+  
+  If Checked Then		
+		m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_DEFAULT)
+	End If
 End Sub
 
 Private Sub spnGroupName_ItemClick (Position As Int, Value As Object)
 	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
-		ToastMessageShow("Value: ", Value)
+		ToastMessageShow("Value: " & Value, False)
+	End If
+	
+	If Value == "Tasks" Then
+		m_query.SetGroupID(0)
+	Else
+		Dim groupId As Int = Starter.GroupViewModelInstance.GetGroupByTitle(Value).GetID
+		If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
+			Log("Group ID Retrieved: " & groupId)
+		End If
+		m_query.SetGroupID(groupId)
 	End If
 End Sub
 
 Private Sub spnDateMonth_ItemClick (Position As Int, Value As Object)
-	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
-		ToastMessageShow("Logic not implemented", False)
-	End If
+	FormHelper.SetMonthValue(spnDateMonth, m_query.DateBegin, Position)
 End Sub
 
 Private Sub spnDateGroup_ItemClick (Position As Int, Value As Object)
-	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
-		ToastMessageShow("Logic not implemented", False)
-	End If
+	ToastMessageShow("Logic not implemented: Searching for tasks based on date groups", False)
 End Sub
 
 Private Sub spnDateDay_ItemClick (Position As Int, Value As Object)
-	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
-		ToastMessageShow("Logic not implemented", False)
-	End If
+	FormHelper.SetDayValue(spnDateDay, m_query.DateBegin, Position)
 End Sub
 
 Private Sub radioSortOrderByNone_CheckedChange(Checked As Boolean)
@@ -1242,9 +1472,7 @@ Private Sub radioSearchByNotes_CheckedChange(Checked As Boolean)
 End Sub
 
 Private Sub radioSearchByFilename_CheckedChange(Checked As Boolean)
-	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
-		ToastMessageShow("Logic not implemented", False)
-	End If
+	m_query.SetSearchByField(m_query.FIELD_ATTACHMENT_FILENAME)
 End Sub
 
 Private Sub radioFilterByPriorityMedium_CheckedChange(Checked As Boolean)
@@ -1301,7 +1529,6 @@ Private Sub EditTextTransparentUnderline
 	searchEditText.Background = cd
 	
 End Sub
-
 
 Private Sub DueDateRadio_enabledisable(number As Int)
 	If number = 0 Then
@@ -1384,6 +1611,24 @@ Private Sub DueDateRadio_enabledisable(number As Int)
 		spnDateGroup.Enabled = True
 		spnDateGroup.TextColor = Colors.Black
 	End If
-	
-	
+End Sub
+
+Private Sub spinRangeMonthTo_ItemClick (Position As Int, Value As Object)
+	FormHelper.SetMonthValue(spinRangeMonthTo, m_query.DateEnd, Position)
+End Sub
+
+Private Sub spinRangeMonthFrom_ItemClick (Position As Int, Value As Object)
+	FormHelper.SetMonthValue(spinRangeMonthFrom, m_query.DateBegin, Position)
+End Sub
+
+Private Sub spinRangeDayTo_ItemClick (Position As Int, Value As Object)
+	FormHelper.SetDayValue(spinRangeDayTo, m_query.DateEnd, Position)
+End Sub
+
+Private Sub spinRangeDayFrom_ItemClick (Position As Int, Value As Object)
+	FormHelper.SetDayValue(spinRangeDayFrom, m_query.DateBegin, Position)
+End Sub
+
+Private Sub checkDeleted_CheckedChange(Checked As Boolean)
+	m_query.SetSearchIsDeleted(Checked)
 End Sub
