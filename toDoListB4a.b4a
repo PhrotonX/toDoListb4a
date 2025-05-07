@@ -116,59 +116,60 @@ Module10=DaysOfTheWeek
 Module11=Dimen
 Module12=EditorActivity
 Module13=FileUtils
-Module14=Group
-Module15=GroupDao
-Module16=GroupRepository
-Module17=GroupViewHolder
-Module18=GroupViewModel
-Module19=Repeat
+Module14=FormHelper
+Module15=Group
+Module16=GroupDao
+Module17=GroupRepository
+Module18=GroupViewHolder
+Module19=GroupViewModel
 Module2=AttachmentDao
-Module20=RepeatDao
-Module21=RepeatRepository
-Module22=RepeatViewModel
-Module23=SettingsAbout
-Module24=SettingsActivity
-Module25=SettingsHelp
-Module26=SettingsRepository
-Module27=SettingsViewModel
-Module28=Snooze
-Module29=Starter
+Module20=Repeat
+Module21=RepeatDao
+Module22=RepeatRepository
+Module23=RepeatViewModel
+Module24=SettingsAbout
+Module25=SettingsActivity
+Module26=SettingsHelp
+Module27=SettingsRepository
+Module28=SettingsViewModel
+Module29=Snooze
 Module3=AttachmentFileRepository
-Module30=SubGroupViewHolder
-Module31=TaskDao
-Module32=TaskGroupActivity
-Module33=TaskNotificationCompat
-Module34=TaskNotificationCompleteReceiver
-Module35=TaskNotificationDismissReceiver
-Module36=TaskNotificationScheduler
-Module37=TaskNotificationService
-Module38=TaskNotificationSnoozeReceiver
-Module39=TaskQuery
+Module30=Starter
+Module31=SubGroupViewHolder
+Module32=TaskDao
+Module33=TaskGroupActivity
+Module34=TaskNotificationCompat
+Module35=TaskNotificationCompleteReceiver
+Module36=TaskNotificationDismissReceiver
+Module37=TaskNotificationScheduler
+Module38=TaskNotificationService
+Module39=TaskNotificationSnoozeReceiver
 Module4=AttachmentRepository
-Module40=TaskRepository
-Module41=TaskViewerActivity
-Module42=TaskViewHolder
-Module43=TaskViewModel
-Module44=Theme
-Module45=Time
-Module46=ToDo
-Module47=ToDoDatabase
-Module48=ToDoDatabaseViewModel
-Module49=ToDoFileSystem
+Module40=TaskQuery
+Module41=TaskRepository
+Module42=TaskViewerActivity
+Module43=TaskViewHolder
+Module44=TaskViewModel
+Module45=Theme
+Module46=Time
+Module47=ToDo
+Module48=ToDoDatabase
+Module49=ToDoDatabaseViewModel
 Module5=AttachmentViewHolder
+Module50=ToDoFileSystem
 Module6=AttachmentViewModel
 Module7=DatabaseUtils
 Module8=Date
 Module9=DateAndTime
 NumberOfFiles=48
 NumberOfLibraries=14
-NumberOfModules=49
+NumberOfModules=50
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 12
-	#VersionName: v2.0.0.5 alpha
+	#VersionName: v2.0.0.6 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -222,8 +223,6 @@ Sub Globals
 	Private Panel1 As Panel
 	Private pnlmenuListView As Panel
 	
-	Private smartLists(6) As Group
-	
 	Private Const SMART_LIST_NONE As Int = -1
 	Private Const SMART_LIST_MY_DAY As Int = 0
 	Private Const SMART_LIST_TASKS As Int = 1
@@ -232,11 +231,15 @@ Sub Globals
 	Private Const SMART_LIST_ALL As Int = 4
 	Private Const SMART_LIST_TRASH As Int = 5
 	Private Const SMART_LIST_SEARCH As Int = 6
-	'Private Const SMART_LIST_SORT As Int = 8
+	Private Const SMART_LIST_ARRAY_SIZE As Int = 7
+	
+	Private smartLists(SMART_LIST_ARRAY_SIZE) As Group
 	
 	Private Const MENU_ITEM_REFRESH As Int = 0
 	Private Const MENU_ITEM_SORT As Int = 1
 	Private Const MENU_ITEM_SETTINGS As Int = 2
+	Private Const MENU_ITEM_EDIT_GROUP As Int = 3
+	Private Const MENU_ITEM_CLEAR_SEARCH As Int = 4
 
 	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
 	Private m_savedGroup As Group
@@ -248,6 +251,10 @@ Sub Globals
 	Private m_query As TaskQuery
 	
 	Private m_itemsLoaded As Boolean = False
+	
+	' Used for task query only
+	Private m_taskObj As ToDo
+	Private m_repeatObj As Repeat
 	
 
 	Private pnlSortDialogue As Panel
@@ -288,6 +295,35 @@ Sub Globals
 	Private pnlSearchSeparator1 As Panel
 	Private pnlSearchSeparator2 As Panel
 	Private pnlItems As Panel
+	Private checkRepeatFriday As CheckBox
+	Private checkRepeatMonday As CheckBox
+	Private checkRepeatSaturday As CheckBox
+	Private checkRepeatSunday As CheckBox
+	Private checkRepeatThursday As CheckBox
+	Private checkRepeatTuesday As CheckBox
+	Private checkRepeatWednesday As CheckBox
+	Private lblFilterFilterBy As Label
+	Private lblRepeatFriday As Label
+	Private lblRepeatMonday As Label
+	Private lblRepeatSaturday As Label
+	Private lblRepeatSunday As Label
+	Private lblRepeatThursday As Label
+	Private lblRepeatTuesday As Label
+	Private lblRepeatWednesday As Label
+	Private lblSearchSearchBy As Label
+	Private lblSortOrderBy As Label
+	Private radioSearchByFilename As RadioButton
+	Private radioSearchByNotes As RadioButton
+	Private radioSearchByTitle As RadioButton
+	Private radioSortOrderByAscending As RadioButton
+	Private radioSortOrderByDescending As RadioButton
+	Private radioSortOrderByNone As RadioButton
+	Private spinRangeDay As Spinner
+	Private spinRangeMonth As Spinner
+	Private spnGroupName As Spinner
+	Private searchEditText As EditText
+	Private GroupDescription As Label
+	Private GroupLineDecor As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -331,6 +367,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	Else
 		StartServiceAtExact(TaskNotificationService, DateTime.Now, True)
 	End If
+	
+	m_taskObj.Initialize()
+	m_repeatObj.Initialize()
 End Sub
 
 Sub Activity_Resume
@@ -526,6 +565,10 @@ Private Sub LoadItems()
 	m_query.SetGroupID(m_savedGroup.GetID)
 	
 	' Obtain all tasks from the database, depending on the smart list mode.
+	m_query.SetSearchIsDeleted(False)
+	GroupDescription.Text = "My Tasks"
+	GroupLineDecor.Visible = True
+	
 	Select m_savedSmartList:
 		Case SMART_LIST_MY_DAY:
 			m_tasks = Starter.TaskViewModelInstance.GetTasksToday(m_query)
@@ -538,7 +581,15 @@ Private Sub LoadItems()
 		Case SMART_LIST_PLANNED:
 			m_tasks = Starter.TaskViewModelInstance.GetTasksPlanned(m_query)
 		Case SMART_LIST_TRASH:
+			m_query.SetSearchIsDeleted(True)
 			m_tasks = Starter.TaskViewModelInstance.GetDeletedTasks(m_query)
+		Case SMART_LIST_SEARCH:
+			
+			GroupDescription.Text = "Results for " & searchEditText.Text
+			GroupLineDecor.Visible = False
+			
+			' Does not handle filtering by group, repeat, due date, and attachment filename.
+			m_tasks = Starter.TaskViewModelInstance.GetTasks(m_query)
 		Case Else, SMART_LIST_NONE:
 			m_tasks = Starter.TaskViewModelInstance.GetGroupedTasks(m_query)
 	End Select
@@ -629,11 +680,18 @@ Private Sub LoadItems()
 	
 End Sub
 
+Private Sub LoadSearchItems()
+	FormHelper.PopulateDate(spnDateMonth, spnDateDay)
+	FormHelper.PopulateTaskGroups(spnGroupName)
+End Sub
+
 Private Sub listview_init
 	menuListView.Visible = True
 	menuListView.AddSingleLine2("	Refresh", 1)
 	menuListView.AddSingleLine2("	Sort", 2)
 	menuListView.AddSingleLine2("	Settings", 3)
+	'menuListView.AddSingleLine2("	Edit Group", 4)
+	'menuListView.AddSingleLine2("	Clear Search", 5)
 	menuListView.SingleLineLayout.Label.TextSize = 16
 	menuListView.SingleLineLayout.Label.TextColor = Colors.Black
 	menuListView.SingleLineLayout.ItemHeight = 70
@@ -853,9 +911,18 @@ Sub LoadDrawerItems
 	
 	smartLists(5).SetTitle("Trash")
 	smartLists(5).SetIcon("")
+	
+	smartLists(6).SetTitle("Search")
+	smartLists(6).SetIcon(Chr(0xE8B6))
 
+	Dim itr As Int = 0
 	For Each obj As Group In smartLists
-		items.Add(obj)
+		
+		If itr <> SMART_LIST_SEARCH Then
+			items.Add(obj)
+		End If
+		
+		itr = itr + 1
 	Next
 
 	OnLoadTaskGroups(items)
@@ -966,8 +1033,6 @@ Private Sub OnLoadPage(item As Group)
 	drawer.LeftOpen = False
 End Sub
 
-
-
 Private Sub searchBtn_Click
 	If button_handling Then
 		svSearchBody.Panel.LoadLayout("searchFragmentSVLayout")
@@ -977,7 +1042,6 @@ Private Sub searchBtn_Click
 		pnlSearch.Elevation = 10
 		pnlSearch.BringToFront
 
-		
 		searchFragment.SetLayout(mainFragment.Left, mainFragment.Top, mainFragment.Width, mainFragment.Height)
 		svSearchBody.SetLayout(searchFragment.Left, 0, searchFragment.Width, searchFragment.Height)
 		pnlSearchSeparator1.SetLayout(50dip, pnlSearchSeparator1.Top, 100%x - 100dip, 2dip)
@@ -989,10 +1053,15 @@ Private Sub searchBtn_Click
 		mainFragment.Visible = False
 		pnlTitleBar.Visible = False
 		
+		LoadSearchItems
 	End If
 End Sub
 
 Private Sub backBtn_Click
+	OnHideSearchPanel
+End Sub
+
+Private Sub OnHideSearchPanel
 	If button_handling Then
 		Dim fadeout As Animation
 		fadeout.InitializeAlpha("fade", 1, 0)
@@ -1027,8 +1096,14 @@ Public Sub button_handling As Boolean
 End Sub
 
 Private Sub enterBtn_Click
-	ToastMessageShow("startactivity", False)
-	'StartActivity(searchactivity)
+	' Hide the search panel.
+	OnHideSearchPanel
+	
+	' Set the query values
+	m_query.SetSearchBy(searchEditText.Text)
+	
+	m_savedSmartList = SMART_LIST_SEARCH
+	OnLoadPage(smartLists(m_savedSmartList))
 End Sub
 
 
@@ -1137,3 +1212,96 @@ Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
 	Next
 End Sub
 
+Private Sub spnGroupName_ItemClick (Position As Int, Value As Object)
+	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
+		ToastMessageShow("Value: ", Value)
+	End If
+End Sub
+
+Private Sub spnDateMonth_ItemClick (Position As Int, Value As Object)
+	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
+		ToastMessageShow("Logic not implemented", False)
+	End If
+End Sub
+
+Private Sub spnDateGroup_ItemClick (Position As Int, Value As Object)
+	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
+		ToastMessageShow("Logic not implemented", False)
+	End If
+End Sub
+
+Private Sub spnDateDay_ItemClick (Position As Int, Value As Object)
+	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
+		ToastMessageShow("Logic not implemented", False)
+	End If
+End Sub
+
+Private Sub radioSortOrderByNone_CheckedChange(Checked As Boolean)
+	m_query.SetSortOrder(m_query.ORDER_NONE)
+End Sub
+
+Private Sub radioSortOrderByDescending_CheckedChange(Checked As Boolean)
+	m_query.SetSortOrder(m_query.ORDER_DESC)
+End Sub
+
+Private Sub radioSortOrderByAscending_CheckedChange(Checked As Boolean)
+	m_query.SetSortOrder(m_query.ORDER_ASC)
+End Sub
+
+Private Sub radioSearchByTitle_CheckedChange(Checked As Boolean)
+	m_query.SetSearchByField(m_query.FIELD_TITLE)
+End Sub
+
+Private Sub radioSearchByNotes_CheckedChange(Checked As Boolean)
+	m_query.SetSearchByField(m_query.FIELD_NOTES)
+End Sub
+
+Private Sub radioSearchByFilename_CheckedChange(Checked As Boolean)
+	If Starter.SettingsViewModelInstance.IsDebugModeEnabled == True Then
+		ToastMessageShow("Logic not implemented", False)
+	End If
+End Sub
+
+Private Sub radioFilterByPriorityMedium_CheckedChange(Checked As Boolean)
+	m_query.SetSearchPriority(m_taskObj.PRIORITY_MEDIUM)
+End Sub
+
+Private Sub radioFilterByPriorityLow_CheckedChange(Checked As Boolean)
+	m_query.SetSearchPriority(m_taskObj.PRIORITY_LOW)
+End Sub
+
+Private Sub radioFilterByPriorityHigh_CheckedChange(Checked As Boolean)
+	m_query.SetSearchPriority(m_taskObj.PRIORITY_HIGH)
+End Sub
+
+Private Sub radioFilterByPriorityCritical_CheckedChange(Checked As Boolean)
+	m_query.SetSearchPriority(m_taskObj.PRIORITY_CRITICAL)
+End Sub
+
+Private Sub checkRepeatWednesday_CheckedChange(Checked As Boolean)
+	m_query.SetSearchRepeat(m_repeatObj.REPEAT_WEDNESDAY, Checked)
+End Sub
+
+Private Sub checkRepeatTuesday_CheckedChange(Checked As Boolean)
+	m_query.SetSearchRepeat(m_repeatObj.REPEAT_TUESDAY, Checked)
+End Sub
+
+Private Sub checkRepeatThursday_CheckedChange(Checked As Boolean)
+	m_query.SetSearchRepeat(m_repeatObj.REPEAT_THURSDAY, Checked)
+End Sub
+
+Private Sub checkRepeatSunday_CheckedChange(Checked As Boolean)
+	m_query.SetSearchRepeat(m_repeatObj.REPEAT_SUNDAY, Checked)
+End Sub
+
+Private Sub checkRepeatSaturday_CheckedChange(Checked As Boolean)
+	m_query.SetSearchRepeat(m_repeatObj.REPEAT_SATURDAY, Checked)
+End Sub
+
+Private Sub checkRepeatMonday_CheckedChange(Checked As Boolean)
+	m_query.SetSearchRepeat(m_repeatObj.REPEAT_MONDAY, Checked)
+End Sub
+
+Private Sub checkRepeatFriday_CheckedChange(Checked As Boolean)
+	m_query.SetSearchRepeat(m_repeatObj.REPEAT_FRIDAY, Checked)
+End Sub
