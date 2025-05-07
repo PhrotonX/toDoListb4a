@@ -85,23 +85,26 @@ End Sub
 ' Retrieves multiple tasks.
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
-Public Sub GetTasks(joinQuery As String, searchingQuery As String, sortingQuery As String) As List
-	Return OnGetTask("SELECT * FROM task " & joinQuery & " " & searchingQuery & " " & sortingQuery)
+Public Sub GetTasks(selectClause As String, joinQuery As String, searchingQuery As String, sortingQuery As String) _ 
+	As List
+	
+	Return OnGetTask(selectClause & " " & joinQuery & " " & searchingQuery & " " & sortingQuery)
 End Sub
 
 ' Retrieves multiple tasks based on a task group
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
-Public Sub GetGroupedTasks(group_id As Long, searchingQuery As String, sortingQuery As String) As List
-	Return OnGetTask("SELECT * FROM task JOIN task_group " & CRLF & _ 
-	"ON task_group.task_id = task.task_id WHERE group_id = " & group_id & " " & searchingQuery & " " & sortingQuery)
+Public Sub GetGroupedTasks(selectClause As String, group_id As Long, searchingQuery As String, _ 
+	sortingQuery As String) As List
+	Return OnGetTask(selectClause & " JOIN task_group " & CRLF & _ 
+	"ON task_group.task_id = task.task_id WHERE group_id = " & group_id & " AND " & searchingQuery & " " & sortingQuery)
 End Sub
 
 ' Retrieves multiple tasks based on a task group
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
-Public Sub GetUngroupedTasks(searchingQuery As String, sortingQuery As String) As List	
-	Return OnGetTask("SELECT * FROM task WHERE task_id NOT IN (SELECT task_id FROM task_group) " & searchingQuery _
+Public Sub GetUngroupedTasks(selectClause As String, searchingQuery As String, sortingQuery As String) As List
+	Return OnGetTask(selectClause & " WHERE task_id NOT IN (SELECT task_id FROM task_group) AND " & searchingQuery _
 	& " " & sortingQuery)
 End Sub
 

@@ -65,28 +65,31 @@ Sub Class_Globals
 	
 	' Adds data into the SQL query.
 	Public m_searchQueryItem(SEARCH_QUERY_ITEM_ARRAY_SIZE) As String
+	Public m_searchQueryItemEnabled(SEARCH_QUERY_ITEM_ARRAY_SIZE) As Boolean
 	Public m_joinQueryItem(JOIN_QUERY_ITEM_ARRAY_SIZE) As String
+	Public m_joinQueryItemEnabled(JOIN_QUERY_ITEM_ARRAY_SIZE) As Boolean
 	
-	Private Const SEARCH_QUERY_ITEM_SEARCH_BY_TITLE As Int = 0
-	Private Const SEARCH_QUERY_ITEM_SEARCH_BY_NOTES As Int = 1
-	Private Const SEARCH_QUERY_ITEM_SEARCH_BY_ATTACHMENT_TITLE As Int = 2
+	'Private Const SEARCH_QUERY_ITEM_SEARCH_BY_TITLE As Int = 0
+	'Private Const SEARCH_QUERY_ITEM_SEARCH_BY_NOTES As Int = 1
+	'Private Const SEARCH_QUERY_ITEM_SEARCH_BY_ATTACHMENT_TITLE As Int = 2
 	
 	Public Const DUE_DATE_MODE_SEARCH_NONE As Int = -1
 	Public Const DUE_DATE_MODE_SEARCH_DEFAULT As Int = 0
 	Public Const DUE_DATE_MODE_SEARCH_BY_RANGE As Int = 1
 	Public Const DUE_DATE_MODE_SEARCH_BY_GROUP As Int = 2
 	
-	Private m_searchBy As Int = SEARCH_QUERY_ITEM_SEARCH_BY
+	'Private m_searchBy As Int = SEARCH_QUERY_ITEM_SEARCH_BY
 	Private m_searchByField As String = FIELD_TITLE
 	
 	Private m_groupId As Long = -1
 	Private m_searchRepeat(7) As Boolean
 	
+	Private m_distinct As Boolean = False
+	
 	Public DateBegin As Date
 	Public DateEnd As Date
 	
 	Private m_searchDateMode As Int = DUE_DATE_MODE_SEARCH_NONE
-	
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -98,10 +101,20 @@ Public Sub Initialize()
 		item = False
 	Next
 	
+	' Enable searching by title, attachments, and is_deleted by default
+	m_searchQueryItemEnabled(SEARCH_QUERY_ITEM_SEARCH_BY) = True
+	m_joinQueryItemEnabled(JOIN_QUERY_ITEM_ATTACHMENT) = True
+	SetSearchIsDeletedEnabled(True)
+	
 	SetSearchIsDeleted(False)
+	
 	
 	DateBegin.Initialize(0, 0, 0)
 	DateEnd.Initialize(0, 0, 0)
+End Sub
+
+Public Sub IsDistinct() As Boolean
+	Return m_distinct
 End Sub
 
 Public Sub IsSortingEnabled() As Boolean
@@ -114,6 +127,11 @@ End Sub
 
 Public Sub SetGroupID(query As Long)
 	m_groupId = query
+End Sub
+
+Public Sub SetGroupIDEnabled(value As Boolean)
+	m_searchQueryItemEnabled(SEARCH_QUERY_ITEM_GROUP_ID) = value
+	m_joinQueryItemEnabled(JOIN_QUERY_ITEM_GROUP) = value
 End Sub
 
 ' order - Supported values: ASC, DESC, and NONE.
@@ -158,17 +176,33 @@ Public Sub SetSearchIsDeleted(value As Boolean)
 	m_searchQueryItem(SEARCH_QUERY_ITEM_IS_DELETED) = FIELD_IS_DELETED & EQ & DatabaseUtils.BoolToInt(value)
 End Sub
 
+Public Sub SetSearchIsDeletedEnabled(value As Boolean)
+	m_searchQueryItemEnabled(SEARCH_QUERY_ITEM_IS_DELETED) = value
+End Sub
+
 Public Sub SetSearchIsReminderEnabled(value As Boolean)
 	m_searchQueryItem(SEARCH_QUERY_ITEM_IS_REMINDER_ENABLED) = FIELD_IS_REMINDER_ENABLED & EQ & _
 	DatabaseUtils.BoolToInt(value)
+End Sub
+
+Public Sub SetSearchIsReminderEnabled_Enabled(value As Boolean)
+	m_searchQueryItemEnabled(SEARCH_QUERY_ITEM_IS_REMINDER_ENABLED) = value
 End Sub
 
 Public Sub SetSearchReminder(value As Long)
 	m_searchQueryItem(SEARCH_QUERY_ITEM_REMINDER) = FIELD_REMINDER & EQ & value
 End Sub
 
+Public Sub SetSearchReminder_Enabled(value As Boolean)
+	m_searchQueryItemEnabled(SEARCH_QUERY_ITEM_REMINDER) = value
+End Sub
+
 Public Sub SetSearchPriority(value As Int)
 	m_searchQueryItem(SEARCH_QUERY_ITEM_PRIORITY) = FIELD_PRIORITY & EQ & value
+End Sub
+
+Public Sub SetSearchPriorityEnabled(value As Boolean)
+	m_searchQueryItemEnabled(SEARCH_QUERY_ITEM_PRIORITY) = value
 End Sub
 
 ' Does not support SQL query
@@ -176,10 +210,20 @@ Public Sub SetSearchRepeat(dayOfTheWeek As Int, value As Boolean)
 	m_searchRepeat(dayOfTheWeek) = value
 End Sub
 
+Public Sub SetSearchRepeatEnabled(value As Boolean)
+	m_searchQueryItemEnabled(SEARCH_QUERY_ITEM_REPEAT_QUERY) = value
+	m_joinQueryItemEnabled(JOIN_QUERY_ITEM_REPEAT) = value
+	m_distinct = value
+End Sub
+
 ' Supported values: DUE_DATE_MODE_SEARCH_NONE, DUE_DATE_MODE_SEARCH_DEFAULT, DUE_DATE_MODE_SEARCH_BY_GROUP, 
 ' and DUE_DATE_MODE_SEARCH_BY_RANGE
-Public Sub SetSearchDateMode(mode As Int)
+Public Sub SetSearchDueDateMode(mode As Int)
 	m_searchDateMode = mode
+End Sub
+
+Public Sub SetSearchDueDateEnabled(value As Boolean)
+	m_searchQueryItemEnabled(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = value
 End Sub
 
 ' Set Specific Due Date.
@@ -245,6 +289,15 @@ Public Sub GetSearchingQuery(removeWhereClause As Boolean) As String
 	End If
 End Sub
 
+' This returns an SQL SELECT clause influenced by 'DISTINCT' value.
+Public Sub GetSelectClause() As String
+	If IsDistinct Then
+		Return "SELECT DISTINCT task.* FROM task"
+	Else
+		Return "SELECT * FROM task"
+	End If
+End Sub
+
 Private Sub OnBuildJoiningQuery() As String
 	Dim query As String
 	
@@ -252,12 +305,14 @@ Private Sub OnBuildJoiningQuery() As String
 	For Each item As String In m_joinQueryItem
 		Log("m_joinQueryItem: " & item)
 		
-		If item <> "" Then
-			If itr >= 1 And query <> "" Then
-				query = query & " AND "
+		If m_joinQueryItemEnabled(itr) == True Then
+			If item <> "" Then
+				If itr >= 1 And query <> "" Then
+					query = query & " AND "
+				End If
+				
+				query = query & " " & item
 			End If
-			
-			query = query & " " & item
 		End If
 		
 		itr = itr + 1
@@ -272,6 +327,7 @@ Private Sub OnBuildSearchingQuery() As String
 	Log("m_searchDateMode: " & m_searchDateMode)
 	
 	Dim itr As Int = 0
+	Dim ctr As Int = 0
 	For Each item As String In m_searchQueryItem
 		Log("m_searchQueryItem: " & item)
 		
@@ -282,13 +338,17 @@ Private Sub OnBuildSearchingQuery() As String
 				OnBuildSearchQueryForRepeat
 		End Select
 		
-		If item <> "" Then
-			If itr >= 1 And query <> "" Then
-				query = query & " AND "
+		If m_searchQueryItemEnabled(itr) == True Then
+			If item <> "" Then
+				If ctr >= 1 And query <> "" Then
+					query = query & " AND "
+				End If
+				
+				query = query & " " & item
 			End If
-			
-			query = query & " " & item
+			ctr = ctr + 1
 		End If
+		
 		
 		itr = itr + 1
 	Next
@@ -312,44 +372,43 @@ Private Sub OnBuildSearchQueryForDate()
 End Sub
 
 Private Sub OnBuildSearchQueryForRepeat()
-	Dim searchQuery As String
-	
- 	' Set the join clause.
-	m_joinQueryItem(JOIN_QUERY_ITEM_REPEAT) = " JOIN " & TABLE_TASK_REPEAT & _ 
+	' Set the join clause.
+	m_joinQueryItem(JOIN_QUERY_ITEM_REPEAT) = " JOIN " & TABLE_TASK_REPEAT & _
 		" ON " & TABLE_TASK_REPEAT & "." & FIELD_TASK_ID & EQ _ 
 		& TABLE_TASK & "." & FIELD_TASK_ID & _
 		" JOIN " & TABLE_REPEAT & _ 
 		" ON " & TABLE_TASK_REPEAT & "." & FIELD_REPEAT_ID & EQ _ 
 		& TABLE_REPEAT & "." & FIELD_REPEAT_ID
-		
-		
+	
 	Dim counter As Int = 0
-	Dim andStr As String = ""
-	Dim orStr As String = ""
-	' Set the where clause.
-	For i = 0 To 6
-		If m_searchRepeat(i) == True Then
-			If counter >= 0 And counter < 6 Then
-				orStr = " OR "
-			Else
-				orStr = ""
+	Dim selectedRepeat As String = "("
+	For itr = 0 To 6
+		If m_searchRepeat(itr) == True Then
+			If counter == 0 Then
+				selectedRepeat = selectedRepeat & itr
+			Else If counter >= 0 And counter < 6 Then
+				selectedRepeat = selectedRepeat & ", " & itr & ")"
 			End If
 			
-			searchQuery = searchQuery & TABLE_REPEAT & "." & FIELD_REPEAT_DAY_ID & EQ & " " & i & orStr
+			counter = counter + 1
 		End If
-		
-		counter = counter + 1
 	Next
 	
-	If searchQuery <> "" Then
-		' Set the query for searching enabled field set to true.
-		m_searchQueryItem(SEARCH_QUERY_ITEM_REPEAT_QUERY) = searchQuery & " AND " & TABLE_REPEAT & "." & _
-			FIELD_REPEAT_ENABLED & EQ & DatabaseUtils.BoolToInt(True)
-	Else
-		' Set the query for searching tasks with no repeat values enabled.
-		m_searchQueryItem(SEARCH_QUERY_ITEM_REPEAT_QUERY) = TABLE_REPEAT & "." & _
-			FIELD_REPEAT_ENABLED & EQ & DatabaseUtils.BoolToInt(False)
+	If counter <= 1 Then
+		selectedRepeat = selectedRepeat & ")"
 	End If
+	
+	' Set the where clause.
+	If selectedRepeat <> "()" Then
+		m_searchQueryItem(SEARCH_QUERY_ITEM_REPEAT_QUERY) = TABLE_REPEAT & "." & FIELD_REPEAT_DAY_ID & " IN " & _ 
+		selectedRepeat & " AND " & TABLE_REPEAT & "." & FIELD_REPEAT_ENABLED & EQ & _ 
+		DatabaseUtils.BoolToInt(True)
+	Else
+		m_searchQueryItem(SEARCH_QUERY_ITEM_REPEAT_QUERY) = TABLE_REPEAT & "." & FIELD_REPEAT_DAY_ID & _ 
+		" IN (0, 1, 2, 3, 4, 5, 6) AND " & TABLE_REPEAT & "." & FIELD_REPEAT_ENABLED & EQ & _
+		DatabaseUtils.BoolToInt(False)
+	End If
+	
 	
 End Sub
 

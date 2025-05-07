@@ -1209,6 +1209,11 @@ Private Sub radioSortOrderAscending_CheckedChange(Checked As Boolean)
 End Sub
 
 Private Sub checkFilterByPriority_CheckedChange(Checked As Boolean)
+	If Checked Then
+		m_query.SetSearchPriorityEnabled(True)
+	Else
+		m_query.SetSearchPriorityEnabled(False)
+	End If
 	SetRadioButtonsEnabled(pnlFilterByPriority, Checked)
 End Sub
 
@@ -1231,6 +1236,8 @@ Private Sub checkFilterByRepeat_CheckedChange(Checked As Boolean)
 		checkRepeatThursday.Enabled = True
 		checkRepeatFriday.Enabled = True
 		checkRepeatSaturday.Enabled = True
+		
+		m_query.SetSearchRepeatEnabled(True)
 	Else
 		checkRepeatSunday.Enabled = False
 		checkRepeatSunday.Enabled = False
@@ -1239,43 +1246,53 @@ Private Sub checkFilterByRepeat_CheckedChange(Checked As Boolean)
 		checkRepeatWednesday.Enabled = False
 		checkRepeatThursday.Enabled = False
 		checkRepeatFriday.Enabled = False
-		checkRepeatSaturday.Enabled = False
+		checkRepeatSaturday.Enabled = False	
+		
+		m_query.SetSearchRepeatEnabled(False)
 	End If
 End Sub
 
 Private Sub checkFilterByDueDate_CheckedChange(Checked As Boolean)
 	If Checked Then
 		If radioDueSpecificDate.Checked Then
-			m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_DEFAULT)
+			m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_DEFAULT)
 		Else If radioDueSpecificDateRange.Checked Then
-			m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_RANGE)
+			m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_RANGE)
 		Else If radioDueSpecificDateGroup.Checked Then
-			m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_GROUP)
+			m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_GROUP)
 		Else
-			m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_NONE)
+			m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_NONE)
 		End If
+		
+		m_query.SetSearchDueDateEnabled(True)
 	Else
-		m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_NONE)
+		m_query.SetSearchDueDateEnabled(False)
+		m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_NONE)
 	End If
 	SetRadioButtonsEnabled(pnlFilterByDueDate, Checked)
 End Sub
 
 Private Sub checkFilterByGroup_CheckedChange(Checked As Boolean)
 	If Checked Then
-		SetRadioButtonsEnabled(pnlFilterByGroupName, Checked)
 		Dim groupId As Int = spnGroupName.SelectedIndex
 		groupId = spnGroupName.SelectedIndex
 		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
 			Log("Selected group index: " & groupId)
 		End If
 		m_query.SetGroupID(0)
+		
+		m_query.SetGroupIDEnabled(True)
 	Else
 		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
 			Log("Unset!")
 		End If
 		
+		m_query.SetGroupIDEnabled(False)
+		
 		m_query.UnsetSearchGroupID()
 	End If
+	
+	SetRadioButtonsEnabled(pnlFilterByGroupName, Checked)
 End Sub
 
 Private Sub radioDueSpecificDateRange_CheckedChange(Checked As Boolean)
@@ -1292,7 +1309,7 @@ Private Sub radioDueSpecificDateRange_CheckedChange(Checked As Boolean)
 		
 		spnDateGroup.Enabled = False
 		
-		m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_RANGE)
+		m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_RANGE)
 	End If
 End Sub
 
@@ -1312,7 +1329,7 @@ Private Sub radioDueSpecificDateGroup_CheckedChange(Checked As Boolean)
 	
 		spnDateGroup.Enabled = True
 		
-		m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_GROUP)
+		m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_BY_GROUP)
 	End If
 End Sub
 
@@ -1330,7 +1347,7 @@ Private Sub radioDueSpecificDate_CheckedChange(Checked As Boolean)
 	
 		spnDateGroup.Enabled = False
 		
-		m_query.SetSearchDateMode(m_query.DUE_DATE_MODE_SEARCH_DEFAULT)
+		m_query.SetSearchDueDateMode(m_query.DUE_DATE_MODE_SEARCH_DEFAULT)
 	End If
 End Sub
 
