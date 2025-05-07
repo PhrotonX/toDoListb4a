@@ -88,6 +88,11 @@ Sub Activity_Create(FirstTime As Boolean)
 	icons(4) = pnlIcon5 : icons(4).Tag = "icon4"
 	icons(5) = pnlIcon6 : icons(5).Tag = "icon5"
 	icons(6) = pnlIcon7 : icons(6).Tag = "icon6"
+	
+	Dim cd As ColorDrawable
+	cd.Initialize(Colors.Transparent, 0)
+	editAddGrpTitle.background = cd
+	editNotes.Background = cd
 End Sub
 
 Sub Activity_Resume
@@ -263,3 +268,4 @@ Sub pnlicon_Click
 	
 	
 End Sub
+
