@@ -790,6 +790,8 @@ Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 			sortMsgBox
 		Case MENU_ITEM_SETTINGS:
 			StartActivity(SettingsActivity)
+		Case MENU_ITEM_EDIT_GROUP:
+			StartActivity(TaskGroupActivity)
 	End Select
 	
 	OnHideMenuListViewItem
