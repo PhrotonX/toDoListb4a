@@ -169,7 +169,7 @@ Version=13.1
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 12
-	#VersionName: v2.0.0.6 alpha
+	#VersionName: v2.0.0.7 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -725,8 +725,7 @@ Private Sub listview_init
 	menuListView.AddSingleLine2("	Refresh", 1)
 	menuListView.AddSingleLine2("	Sort", 2)
 	menuListView.AddSingleLine2("	Settings", 3)
-	'menuListView.AddSingleLine2("	Edit Group", 4)
-	'menuListView.AddSingleLine2("	Clear Search", 5)
+	menuListView.AddSingleLine2("	Edit Group", 4)
 	menuListView.SingleLineLayout.Label.TextSize = 16
 	menuListView.SingleLineLayout.Label.TextColor = Colors.Black
 	menuListView.SingleLineLayout.ItemHeight = 70
