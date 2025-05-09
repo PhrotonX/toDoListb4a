@@ -278,3 +278,12 @@ Sub pnlicon_Click
 	
 End Sub
 
+
+
+Private Sub btnGrpDelete_Click
+	Msgbox2Async("Do you really want to delete this group?", "Question", "Yes", "Cancel", "No", Null, False)
+	Wait For Msgbox_Result (Result As Int)
+	If Result = DialogResponse.POSITIVE Then
+		Starter.GroupViewModelInstance.DeleteGroup(m_group.GetID)
+	End If
+End Sub
