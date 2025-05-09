@@ -129,7 +129,7 @@ Sub Activity_Resume
 			
 			lblCreatedAt.Text = "Created At: " & m_group.CreatedAt.GetFormattedDateAndTime( _
 				Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
-			lblUpdatedAt.Text = "Updated At: " & m_group.CreatedAt.GetFormattedDateAndTime( _
+			lblUpdatedAt.Text = "Updated At: " & m_group.UpdatedAt.GetFormattedDateAndTime( _
 				Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
 		
 			Log("TaskGroupActivity.Activity_Resume Color" & m_group.GetColor)
