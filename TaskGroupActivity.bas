@@ -99,7 +99,7 @@ Sub Activity_Resume
 	Log(Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE))
 	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
 		Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:
-			lblAddGrp.Text = "Edit Group"
+			lblAddGrp.Text = "New Group"
 			
 			' Initialize the group object.
 			m_group.Initialize(0)
@@ -111,6 +111,9 @@ Sub Activity_Resume
 			' Set the default icon.
 			' @TODO: Add functionality here if the icons has been changed into appropriate ones.
 		Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
+			' Retrieve the group.
+			m_group = Starter.GroupViewModelInstance.GetGroup(Starter.InstanceState.Get(Starter.EXTRA_EDITOR_GROUP_ID))
+			
 			' Change the title
 			lblAddGrp.Text = "Edit Group"
 			
