@@ -791,6 +791,11 @@ Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 		Case MENU_ITEM_SETTINGS:
 			StartActivity(SettingsActivity)
 		Case MENU_ITEM_EDIT_GROUP:
+			Log("m_savedGroup: " & m_savedGroup)
+			
+			Starter.InstanceState.Put(Starter.EXTRA_TASK_GROUP_EDITOR_MODE, Starter.TASK_GROUP_EDITOR_MODE_EDIT)
+			Starter.InstanceState.Put(Starter.EXTRA_EDITOR_GROUP_ID, m_savedGroup.GetID)
+			
 			StartActivity(TaskGroupActivity)
 	End Select
 	

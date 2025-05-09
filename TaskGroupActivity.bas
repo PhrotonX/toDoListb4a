@@ -96,6 +96,7 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
+	Log(Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE))
 	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
 		Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:
 			lblAddGrp.Text = "Edit Group"
