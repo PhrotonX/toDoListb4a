@@ -124,6 +124,11 @@ Sub Activity_Resume
 			' Load the default icon.
 			UpdateTileImage(tiles(m_group.GetColor()), True)
 			
+			lblCreatedAt.Text = "Created At: " & m_group.CreatedAt.GetFormattedDateAndTime( _
+				Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+			lblUpdatedAt.Text = "Updated At: " & m_group.CreatedAt.GetFormattedDateAndTime( _
+				Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+			
 			' Mark the loaded group icon as selected.
 			icons(OnLoadGroupIcon(m_group.GetIcon())).Color = Colors.LightGray
 		Case Else:
