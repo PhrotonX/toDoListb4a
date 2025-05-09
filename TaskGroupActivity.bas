@@ -121,16 +121,19 @@ Sub Activity_Resume
 			editAddGrpTitle.Text = m_group.GetTitle()
 			editNotes.Text = m_group.GetDescription()
 			
-			' Load the default icon.
+			' Load the default color.
 			UpdateTileImage(tiles(m_group.GetColor()), True)
+			
+			' Mark the loaded group icon as selected.
+			icons(OnLoadGroupIcon(m_group.GetIcon)).Color = Colors.LightGray
 			
 			lblCreatedAt.Text = "Created At: " & m_group.CreatedAt.GetFormattedDateAndTime( _
 				Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
 			lblUpdatedAt.Text = "Updated At: " & m_group.CreatedAt.GetFormattedDateAndTime( _
 				Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
-			
-			' Mark the loaded group icon as selected.
-			icons(OnLoadGroupIcon(m_group.GetIcon())).Color = Colors.LightGray
+		
+			Log("TaskGroupActivity.Activity_Resume Color" & m_group.GetColor)
+			Log("TaskGroupActivity.Activity_Resume Icon" & m_group.GetIcon)
 		Case Else:
 			MsgboxAsync("Error loading task group editor", "Error")
 	End Select
@@ -151,12 +154,20 @@ Sub btnAddGrpSave_Click
 	' Colors and icons are already set by pnlColor_Click and pnlIcon_Click events.
 	
 	' Save the group, depending if the editor mode is creating or editing a task.
-	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
-		Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:
-			Starter.GroupViewModelInstance.InsertGroup(m_group)
-		Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
-			Starter.GroupViewModelInstance.UpdateGroup(m_group)
-	End Select
+	Try
+		Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
+			Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:
+				Starter.GroupViewModelInstance.InsertGroup(m_group)
+			Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
+				Starter.GroupViewModelInstance.UpdateGroup(m_group)
+		End Select
+		
+		ToastMessageShow("Task group '" & m_group.GetTitle & "' saved successfully!", True)
+	Catch
+		ToastMessageShow("Failed to delete Task group '" & m_group.GetTitle & "'", True)
+		
+		Log(LastException)
+	End Try
 	
 	Activity.Finish
 End Sub
@@ -284,6 +295,12 @@ Private Sub btnGrpDelete_Click
 	Msgbox2Async("Do you really want to delete this group?", "Question", "Yes", "Cancel", "No", Null, False)
 	Wait For Msgbox_Result (Result As Int)
 	If Result = DialogResponse.POSITIVE Then
-		Starter.GroupViewModelInstance.DeleteGroup(m_group.GetID)
+		Try
+			Starter.GroupViewModelInstance.DeleteGroup(m_group.GetID)
+			ToastMessageShow("Task group '" & m_group.GetTitle & "' saved successfully!", True)
+		Catch
+			ToastMessageShow("Failed to delete task group '" & m_group.GetTitle & "'", True)
+			Log(LastException)
+		End Try
 	End If
 End Sub
