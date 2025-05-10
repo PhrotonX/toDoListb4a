@@ -29,11 +29,13 @@ Public Sub InsertGroup(item As Group) As Boolean
 		If CheckForDuplicates(item) Then
 			result = False
 		Else
-			m_sql.ExecNonQuery("INSERT INTO groups(title, description, color, icon, created_at, updated_at) VALUES(" & CRLF & _
+			m_sql.ExecNonQuery("INSERT INTO groups(title, description, color, icon, icon_pos, " & _ 
+			"created_at, updated_at) VALUES(" & CRLF & _
 			"'" & item.GetTitle & "'," & CRLF & _
 			"'" & item.GetDescription & "'," & CRLF & _
 			item.GetColor & "," & CRLF & _
 			"'" & item.GetIcon & "'," & CRLF & _
+			"'" & item.GetIconPos & "'," & CRLF & _
 			 DateTime.Now & "," & CRLF & _
 			DateTime.Now & CRLF & _
 			");" )
@@ -128,6 +130,8 @@ Public Sub OnGetGroup(Cursor As Cursor) As Group
 	item.SetTitle(Cursor.GetString("title"))
 	item.SetDescription(Cursor.GetString("description"))
 	item.SetColor(Cursor.GetInt("color"))
+	item.SetIcon(Cursor.GetInt("icon"))
+	item.SetIconPos(Cursor.GetInt("icon_pos"))
 	item.CreatedAt().SetUnixTime(Cursor.GetLong("created_at"))
 	item.UpdatedAt().SetUnixTime(Cursor.GetLong("updated_at"))
 	
@@ -177,6 +181,7 @@ Public Sub UpdateGroup(item As Group) As Boolean
 			"description = '" & item.GetDescription() & "', " & CRLF & _
 			"color = " & item.GetColor() & ", " & CRLF & _
 			"icon = '" & item.GetIcon() & "', " & CRLF & _
+			"iconPos = '" & item.GetIconPos() & "', " & CRLF & _
 			"updated_at = " & DateTime.Now & "" & CRLF & _
 			"WHERE group_id = " & item.GetID & CRLF & _
 			";" )

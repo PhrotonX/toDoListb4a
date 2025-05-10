@@ -10,6 +10,7 @@ Sub Class_Globals
 	Private m_description As String
 	Private m_color As Int ' Colors are stored as Int in B4X.
 	Private m_icon As String
+	Private m_iconPos As Int
 	Private m_createdAt As DateAndTime
 	Private m_updatedAt As DateAndTime
 	Public SpecialGroup As Boolean
@@ -49,6 +50,10 @@ Public Sub GetIcon As String
 	Return m_icon
 End Sub
 
+Public Sub GetIconPos As Int
+	Return m_iconPos
+End Sub
+
 Public Sub GetColor As Int
 	Return m_color
 End Sub
@@ -75,4 +80,8 @@ End Sub
 
 Public Sub SetIcon(icon As String)
 	m_icon = icon
+End Sub
+
+Public Sub SetIconPos(iconPos As Int)
+	m_iconPos = iconPos
 End Sub
