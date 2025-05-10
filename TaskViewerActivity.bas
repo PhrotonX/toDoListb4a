@@ -219,7 +219,7 @@ Private Sub OnAddAttachment(item As Attachment)
 		
 	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
 	panel.LoadLayout("AttachmentItemLayout")
-	panel.SetColorAndBorder(Theme.ForegroundColor, 0, Theme.ForegroundColor, 0)
+	panel.SetColorAndBorder(Colors.RGB(241,241,241), 15, Colors.RGB(241,241,241), 15)
 	
 	Dim viewHolder As AttachmentViewHolder
 	viewHolder.Initialize
@@ -231,7 +231,7 @@ Private Sub OnAddAttachment(item As Attachment)
 	' Hide the remove button for attachments. Attachments cannot be edited within TaskViewerActivity.
 	viewHolder.DeleteButton.Visible = False
 	viewHolder.ID = item.GetID
-	
+
 	clvAttachments.Add(panel, viewHolder)
 	
 	Log("clvAttachments: " & clvAttachments.Size)

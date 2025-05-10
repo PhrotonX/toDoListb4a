@@ -493,19 +493,17 @@ Private Sub OnAddAttachment(item As Attachment)
 		
 	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
 	panel.LoadLayout("AttachmentItemLayout")
-	panel.SetColorAndBorder(Theme.ForegroundColor, 0, Theme.ForegroundColor, 0)
+	panel.SetColorAndBorder(Colors.RGB(241,241,241), 15, Colors.RGB(241,241,241), 15)
 	
 	Dim viewHolder As AttachmentViewHolder
 	viewHolder.Initialize
 	viewHolder.Root = panel
-	viewHolder.Icon = imgAttachmentIcon
 	viewHolder.AttachmentLabel = lblAttachmentFileName
 	viewHolder.AttachmentLabel.Text = item.GetFilename
 	viewHolder.OpenButton = btnAttachmentOpen
-	viewHolder.OpenButton.Visible = False
+	viewHolder.OpenButton.Visible = True
 	viewHolder.DeleteButton = btnAttachmentRemove
 	viewHolder.ID = item.GetID
-	viewHolder.Icon.Gravity = Gravity.FILL
 	
 	clvAttachments.Add(panel, viewHolder)
 End Sub
