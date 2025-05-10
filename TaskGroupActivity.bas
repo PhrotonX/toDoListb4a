@@ -125,7 +125,7 @@ Sub Activity_Resume
 			UpdateTileImage(tiles(m_group.GetColor()), True)
 			
 			' Mark the loaded group icon as selected.
-			icons(OnLoadGroupIcon(m_group.GetIcon)).Color = Colors.LightGray
+			icons(OnLoadGroupIcon(m_group.GetIconPos)).Color = Colors.LightGray
 			
 			lblCreatedAt.Text = "Created At: " & m_group.CreatedAt.GetFormattedDateAndTime( _
 				Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
@@ -236,13 +236,12 @@ Sub GetImageViewFromPanel(pnl As Panel) As ImageView
 End Sub
 
 ' Returns the index of the icon data.
-Private Sub OnLoadGroupIcon(icon As String) As Int
+Private Sub OnLoadGroupIcon(icon As Int) As Int
 	Dim itr As Int = 0
 	
 	For Each item As Panel In icons
-		Dim textItem As Label = item.GetView(0)
-		If textItem.Text == icon Then
-			Return itr		
+		If itr == icon Then
+			Return itr
 		End If
 		
 		itr = itr + 1
@@ -263,7 +262,7 @@ Sub pnlicon_Click
 			Dim currentText As Label = pnl.GetView(0)
 			Log("View of i = " & i & ": " & currentText.Text)
 			
-			m_group.SetIcon(currentText.Text)
+			m_group.SetIconPos(i)
 			Exit
 		End If
 	Next
