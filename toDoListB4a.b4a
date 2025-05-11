@@ -382,16 +382,23 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-	'If m_savedSmartList == SMART_LIST_NONE Then
-	'	ToastMessageShow("Saved group ID: " & m_savedGroup.GetID, False)
-	'	Dim newGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_savedGroup.GetID)
-	'	Log(newGroup)
-	'	
-	'	m_savedGroup = newGroup
-	'	OnLoadPage(newGroup)
-	'Else
+	If m_savedSmartList == SMART_LIST_NONE Then
+		'ToastMessageShow("Saved group ID: " & m_savedGroup.GetID, False)
+		'Dim newGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_savedGroup.GetID)
+		'Log(newGroup)
+		
+		'm_savedGroup = newGroup
+		'OnLoadPage(newGroup)
+		
+		If TaskGroupActivity.LastSavedGroup <> Null Then
+			m_savedGroup = TaskGroupActivity.LastSavedGroup
+			TaskGroupActivity.LastSavedGroup = Null
+			OnLoadPage(m_savedGroup)
+		End If
+		
+	Else
 		OnLoadPage(m_savedGroup)
-	'End If
+	End If
 	
 End Sub
 

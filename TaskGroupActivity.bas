@@ -172,6 +172,8 @@ Sub btnAddGrpSave_Click
 		Log(LastException)
 	End Try
 	
+	LastSavedGroup = m_group
+	
 	Activity.Finish
 End Sub
 
