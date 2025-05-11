@@ -124,6 +124,8 @@ Sub Activity_Resume
 			' Load the default color.
 			UpdateTileImage(tiles(m_group.GetColor()), True)
 			
+			Log("Load: m_group.GetIconPos: " & m_group.GetIconPos)
+			
 			' Mark the loaded group icon as selected.
 			icons(OnLoadGroupIcon(m_group.GetIconPos)).Color = Colors.LightGray
 			
@@ -164,7 +166,7 @@ Sub btnAddGrpSave_Click
 		
 		ToastMessageShow("Task group '" & m_group.GetTitle & "' saved successfully!", True)
 	Catch
-		ToastMessageShow("Failed to delete Task group '" & m_group.GetTitle & "'", True)
+		ToastMessageShow("Failed to save Task group '" & m_group.GetTitle & "'", True)
 		
 		Log(LastException)
 	End Try
@@ -241,8 +243,11 @@ Private Sub OnLoadGroupIcon(icon As Int) As Int
 	
 	For Each item As Panel In icons
 		If itr == icon Then
+			item.Color = Colors.LightGray
 			Return itr
 		End If
+		
+		ToastMessageShow("Selected Icon Index: " & icon, False)
 		
 		itr = itr + 1
 	Next
@@ -263,6 +268,8 @@ Sub pnlicon_Click
 			Log("View of i = " & i & ": " & currentText.Text)
 			
 			m_group.SetIconPos(i)
+			
+			Log("Save: m_group.GetIconPos(): " & m_group.GetIconPos)
 			Exit
 		End If
 	Next
@@ -287,8 +294,6 @@ Sub pnlicon_Click
 	
 	
 End Sub
-
-
 
 Private Sub btnGrpDelete_Click
 	Msgbox2Async("Do you really want to delete this group?", "Question", "Yes", "Cancel", "No", Null, False)
