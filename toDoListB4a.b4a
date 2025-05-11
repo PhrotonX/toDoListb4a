@@ -1018,7 +1018,6 @@ Sub LoadDrawerItems
 	' Load task groups from the database
 	items.Clear
 	For Each groupObj As Group In Starter.GroupViewModelInstance.GetGroups()
-		groupObj.SetIcon("")
 		items.Add(groupObj)
 	Next
 	

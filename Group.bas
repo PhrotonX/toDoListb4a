@@ -50,6 +50,25 @@ Public Sub GetIcon As String
 	Return m_icon
 End Sub
 
+Private Sub RetrieveIconFromPos As String
+	Select m_iconPos:
+		Case 0:
+			Return Chr(0xE834)
+		Case 1:
+			Return Chr(0xE80C)
+		Case 2:
+			Return Chr(0xE8CC)
+		Case 3:
+			Return Chr(0xE865)
+		Case 4:
+			Return Chr(0xE263)
+		Case 5:
+			Return Chr(0xE338)
+		Case Else, 6:
+			Return Chr(0xE619)
+	End Select
+End Sub
+
 Public Sub GetIconPos As Int
 	Return m_iconPos
 End Sub
@@ -84,4 +103,5 @@ End Sub
 
 Public Sub SetIconPos(iconPos As Int)
 	m_iconPos = iconPos
+	m_icon = RetrieveIconFromPos
 End Sub
