@@ -1098,7 +1098,9 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 		m_savedSmartList = SMART_LIST_NONE
 		
 		' Include the edit group button for custom lists.
-		menuListView.AddSingleLine2("	Edit Group", 3)
+		If menuListView.Size < 4 Then	
+			menuListView.AddSingleLine2("	Edit Group", 3)
+		End If
 		
 		' Get the associated group based on the ID stored in the clicked view holder of the nav drawer.
 		Dim groupObj As Group = Starter.GroupViewModelInstance.GetGroup(viewHolder.ID)
