@@ -76,7 +76,7 @@ Public Sub IdentifyDate() As String
 	
 	
 End Sub
- 
+
 ' Returns the UNIX variant of the date values set into this object. May result into an error
 ' if the date is less than January 1, 1970 or greater than January 19, 2038.
 Public Sub GetUnixTime() As Long
