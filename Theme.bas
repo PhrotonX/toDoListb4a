@@ -16,9 +16,9 @@ End Sub
 
 Public Sub SetUp(darkMode As Boolean)
 	If darkMode Then
-		m_primaryColor = Colors.ARGB(255, 73, 93, 143)
-		m_textColor = Colors.ARGB(255, 73, 93, 143)
-		m_foregroundColor = Colors.ARGB(255, 224, 234, 255)
+		m_primaryColor = Colors.RGB(73, 93, 143)
+		m_textColor = Colors.RGB(73, 93, 143)
+		m_foregroundColor = Colors.RGB(224, 234, 255)
 	Else
 		
 	End If
@@ -37,12 +37,26 @@ Public Sub TextColor As Int
 	Return m_textColor
 End Sub
 
-Public Sub GetGroupColor(groupObj As Group) As Int
+Public Sub GetGroupPrimaryColor(groupObj As Group) As Int
 	If groupObj.IsInitialized Then
 		Select groupObj.GetColor():
 			Case groupObj.COLOR_RED:
-				'Colors.RGB(
+				Return Colors.RGB(244, 67, 54)
+			Case groupObj.COLOR_BLUE:
+				Return Colors.RGB(33, 150, 243)
+			Case groupObj.COLOR_GREEN:
+				Return Colors.RGB(76, 175, 80)
+			Case groupObj.COLOR_PINK:
+				Return Colors.RGB(233, 30, 99)
+			Case groupObj.COLOR_ORANGE:
+				Return Colors.RGB(255, 87, 34)
+			Case groupObj.COLOR_BROWN:
+				Return Colors.RGB(121, 85, 72)
+			Case Else, groupObj.COLOR_INDIGO:
+				Return Colors.RGB(73, 93, 143)
 		End Select
 	End If
+	
+	Return Colors.RGB(73, 93, 143)
 End Sub
 
