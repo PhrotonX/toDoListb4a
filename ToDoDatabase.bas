@@ -91,10 +91,11 @@ Public Sub CreateTable As Boolean
 	' In this case, use the plural "groups" insead.
 	Dim query_group As String = "CREATE TABLE IF NOT EXISTS groups(" & CRLF & _
 	"group_id INTEGER PRIMARY KEY AUTOINCREMENT," & CRLF & _
-	"title VARCHAR(255) NOT NULL UNIQUE," & CRLF & _
+	"title VARCHAR(50) NOT NULL UNIQUE," & CRLF & _
 	"description TEXT," & CRLF & _
-	"color INTEGER," & CRLF & _
+	"color INTEGER NOT NULL DEFAULT 5," & CRLF & _ ' 5 represents color Indigo, the primary app color.
 	"icon VARCHAR(25)," & CRLF & _
+	"icon_pos INTEGER," & CRLF & _
 	"created_at LONG NOT NULL DEFAULT 0," & CRLF & _
 	"updated_at LONG NOT NULL DEFAULT 0" & CRLF & _
 	");"

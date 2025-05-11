@@ -168,8 +168,8 @@ Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
-	#VersionCode: 12
-	#VersionName: v2.0.0.6 alpha
+	#VersionCode: 13
+	#VersionName: v2.0.0.7 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -185,6 +185,8 @@ Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
 	Private xui As XUI
+	
+	Private m_savedGroup As Group
 End Sub
 
 Sub Globals
@@ -242,7 +244,6 @@ Sub Globals
 	Private Const MENU_ITEM_CLEAR_SEARCH As Int = 4
 
 	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
-	Private m_savedGroup As Group
 	'Private m_savedSearchByDueDateIdentifer As String = ""
 	'Private m_savedSearchByDueDateRange1 As Date
 	'Private m_savedSearchByDueDateRange2 As Date
@@ -344,8 +345,6 @@ Sub Activity_Create(FirstTime As Boolean)
 	mainFragment.LoadLayout("newFragment")
 	drawer.LeftPanel.LoadLayout("drawerLayout")
 	
-	
-	LoadDrawerItems
 	listview_init
 	
 	m_tasks.Initialize
@@ -383,11 +382,24 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-	' Remove all items to update data and avoid data duplication.
-	ToDoList.Clear
-	LoadItems
+	If m_savedSmartList == SMART_LIST_NONE Then
+		'ToastMessageShow("Saved group ID: " & m_savedGroup.GetID, False)
+		'Dim newGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_savedGroup.GetID)
+		'Log(newGroup)
+		
+		'm_savedGroup = newGroup
+		'OnLoadPage(newGroup)
+		
+		If TaskGroupActivity.LastSavedGroup <> Null Then
+			m_savedGroup = TaskGroupActivity.LastSavedGroup
+			TaskGroupActivity.LastSavedGroup = Null
+			OnLoadPage(m_savedGroup)
+		End If
+		
+	Else
+		OnLoadPage(m_savedGroup)
+	End If
 	
-	Starter.CheckInstanceState
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -578,8 +590,6 @@ Private Sub LoadItems()
 	
 	' Obtain all tasks from the database, depending on the smart list mode.
 	m_query.SetSearchIsDeleted(False)
-	GroupDescription.Text = "My Tasks"
-	GroupLineDecor.Visible = True
 	
 	Select m_savedSmartList:
 		Case SMART_LIST_MY_DAY:
@@ -720,13 +730,13 @@ Private Sub LoadSearchItems()
 	FormHelper.PopulateTaskGroups(spnGroupName)
 End Sub
 
+' Load the menu items.
 Private Sub listview_init
 	menuListView.Visible = True
-	menuListView.AddSingleLine2("	Refresh", 1)
-	menuListView.AddSingleLine2("	Sort", 2)
-	menuListView.AddSingleLine2("	Settings", 3)
-	'menuListView.AddSingleLine2("	Edit Group", 4)
-	'menuListView.AddSingleLine2("	Clear Search", 5)
+	menuListView.AddSingleLine2("	Refresh", 0)
+	menuListView.AddSingleLine2("	Sort", 1)
+	menuListView.AddSingleLine2("	Settings", 2)
+	
 	menuListView.SingleLineLayout.Label.TextSize = 16
 	menuListView.SingleLineLayout.Label.TextColor = Colors.Black
 	menuListView.SingleLineLayout.ItemHeight = 70
@@ -736,14 +746,12 @@ Private Sub listview_init
 		
 	menuListView.Background = cd
 		
-		
 	menuListViewItemsize.Initialize("")
 	menuListViewItemsize.SetLayout(pnlmenuListView.Left, pnlmenuListView.Top, pnlmenuListView.Width, pnlmenuListView.Height)
 	
 	Log(menuListView.SingleLineLayout.ItemHeight)
 	Log(menuListView.Height & "menulistiv")
 	Log(pnlmenuListView.Height & "pnlmenulsitview")
-	
 		
 	'pnlmenuListView.SetLayoutAnimated(200,100%x, 0%y, 0, 114dip)
 	pnlMenuBgTouch.SendToBack
@@ -791,6 +799,14 @@ Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 			sortMsgBox
 		Case MENU_ITEM_SETTINGS:
 			StartActivity(SettingsActivity)
+		Case MENU_ITEM_EDIT_GROUP:
+			Log("m_savedGroup: " & m_savedGroup)
+			ToastMessageShow("m_savedGroup ID: " & m_savedGroup.GetID, False)
+			
+			Starter.InstanceState.Put(Starter.EXTRA_TASK_GROUP_EDITOR_MODE, Starter.TASK_GROUP_EDITOR_MODE_EDIT)
+			Starter.InstanceState.Put(Starter.EXTRA_EDITOR_GROUP_ID, m_savedGroup.GetID)
+			
+			StartActivity(TaskGroupActivity)
 	End Select
 	
 	OnHideMenuListViewItem
@@ -920,7 +936,8 @@ Private Sub drawerButton_Click
 		m_savedSmartList = SMART_LIST_ALL
 		
 		' Go to the "All" smart list by default.
-		OnLoadPage(smartLists(SMART_LIST_ALL))
+		m_savedGroup = smartLists(SMART_LIST_ALL)
+		OnLoadPage(m_savedGroup)
 	Else
 		If button_handling Then
 			drawer.LeftOpen = True
@@ -930,6 +947,9 @@ Private Sub drawerButton_Click
 End Sub
 
 Sub LoadDrawerItems
+	' CLear the navigation drawer to avoid item duplication.
+	clvItems.Clear
+	
 	clvItems.sv.ScrollViewInnerPanel.Color = xui.Color_Transparent
 	clvItems.sv.Color = xui.Color_Transparent
 	
@@ -998,7 +1018,6 @@ Sub LoadDrawerItems
 	' Load task groups from the database
 	items.Clear
 	For Each groupObj As Group In Starter.GroupViewModelInstance.GetGroups()
-		groupObj.SetIcon("")
 		items.Add(groupObj)
 	Next
 	
@@ -1067,26 +1086,69 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	If viewHolder.ID <= 0 Then
 		m_savedSmartList = Index
 		
-		OnLoadPage(smartLists(Index))
+		' Remove the edit group button for smart lists.
+		If menuListView.Size > 3 Then
+			menuListView.RemoveAt(MENU_ITEM_EDIT_GROUP)
+		End If
+		
+		m_savedGroup = smartLists(Index)
+		OnLoadPage(m_savedGroup)
 	Else
 		m_savedSmartList = SMART_LIST_NONE
+		
+		' Include the edit group button for custom lists.
+		If menuListView.Size < 4 Then	
+			menuListView.AddSingleLine2("	Edit Group", 3)
+		End If
 		
 		' Get the associated group based on the ID stored in the clicked view holder of the nav drawer.
 		Dim groupObj As Group = Starter.GroupViewModelInstance.GetGroup(viewHolder.ID)
 		
-		OnLoadPage(groupObj)
+		m_savedGroup = groupObj
+		OnLoadPage(m_savedGroup)
 	End If
 End Sub
 
-Private Sub OnLoadPage(item As Group)
-	m_savedGroup = item
-	
-	titleLabel.Text = item.GetTitle
+Private Sub OnLoadPage(item As Group)	
+	LoadDrawerItems
 	drawer.LeftOpen = False
+	
 	mainFragment.RemoveAllViews
 	mainFragment.LoadLayout("newFragment")
+	
+	' Remove all items to update data and avoid data duplication.
+	ToDoList.Clear
+	
+	pnlTitleBar.Color = Theme.GetPrimaryColor(item.GetColor)
+	mainFragment.Color = Theme.GetBackgroundColor(item.GetColor)
+	
+	titleLabel.Text = item.GetTitle
+	Log("Title: " & item.GetTitle)
+	
+	OnLoadTaskDescription(item)	
+
 	LoadItems
-	drawer.LeftOpen = False
+	
+	Starter.CheckInstanceState
+End Sub
+
+Private Sub OnLoadTaskDescription(item As Group)
+	GroupDescription.TextColor = Theme.GetPrimaryColor(item.GetColor)
+	
+	If item.GetID > 0 Then
+		If item.GetDescription <> "" Then
+			GroupDescription.Text = item.GetDescription
+		Else
+			GroupDescription.Text = "No task group description"
+		End If
+		
+		GroupDescription.TextSize = 16
+		GroupLineDecor.Visible = False
+	Else
+		GroupDescription.Text = "My Tasks"
+		GroupDescription.TextSize = 22
+		GroupLineDecor.Visible = True
+	End If
 End Sub
 
 Private Sub searchBtn_Click
@@ -1261,7 +1323,8 @@ Private Sub enterBtn_Click
 	m_query.SetSearchBy(searchEditText.Text)
 	
 	m_savedSmartList = SMART_LIST_SEARCH
-	OnLoadPage(smartLists(m_savedSmartList))
+	m_savedGroup = smartLists(m_savedSmartList)
+	OnLoadPage(m_savedGroup)
 	
 	drawerButton.Text = Chr(0xE5CD)
 End Sub
