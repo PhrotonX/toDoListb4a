@@ -1130,7 +1130,12 @@ End Sub
 
 Private Sub OnLoadTaskDescription(item As Group)
 	If item.GetID > 0 Then
-		GroupDescription.Text = item.GetDescription
+		If item.GetDescription <> "" Then
+			GroupDescription.Text = item.GetDescription
+		Else
+			GroupDescription.Text = "No task group description"
+		End If
+		
 		GroupDescription.TextSize = 16
 		GroupLineDecor.Visible = False
 	Else
