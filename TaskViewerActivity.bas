@@ -44,6 +44,7 @@ Sub Globals
 	
 	Private svAttachments As ScrollView
 	Private clvAttachments As CustomListView
+	Private pnlTaskViewBar As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -54,16 +55,6 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Add the TaskViewScrollLayout as the view of taskView of the ScrollView in TaskViewLayout.
 	taskView.Panel.LoadLayout("TaskViewScrollLayout")
 	
-	' Other supplementary code for UI design.
-	Dim c As Canvas
-	c.Initialize(Label1)
-	Dim borderColor As Int = Colors.RGB(209, 209, 209)
-	Dim borderHeight As Int = 1dip
-
-	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, _ 
-		borderHeight)
-
-	Label1.Invalidate
 End Sub
 
 Private Sub button_design
@@ -73,6 +64,7 @@ Private Sub button_design
 	
 	transparentBg.Initialize(Colors.Transparent, 0)
 	btnBack.Background = transparentBg
+	pnlTaskViewBar.Elevation = 10
 End Sub
 
 Sub Activity_Resume
@@ -219,7 +211,7 @@ Private Sub OnAddAttachment(item As Attachment)
 		
 	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
 	panel.LoadLayout("AttachmentItemLayout")
-	panel.SetColorAndBorder(Theme.ForegroundColor, 0, Theme.ForegroundColor, 0)
+	panel.SetColorAndBorder(Colors.RGB(241,241,241), 15, Colors.RGB(241,241,241), 15)
 	
 	Dim viewHolder As AttachmentViewHolder
 	viewHolder.Initialize
@@ -231,7 +223,7 @@ Private Sub OnAddAttachment(item As Attachment)
 	' Hide the remove button for attachments. Attachments cannot be edited within TaskViewerActivity.
 	viewHolder.DeleteButton.Visible = False
 	viewHolder.ID = item.GetID
-	
+
 	clvAttachments.Add(panel, viewHolder)
 	
 	Log("clvAttachments: " & clvAttachments.Size)
