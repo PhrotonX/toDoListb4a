@@ -106,8 +106,8 @@ Sub Activity_Resume
 			m_group.Initialize(0)
 			
 			' Set the default indigo color.
-			m_group.SetColor(m_group.COLOR_INDIGO)
-			UpdateTileImage(tiles(m_group.COLOR_INDIGO), True)
+			m_group.SetColor(Theme.COLOR_INDIGO)
+			UpdateTileImage(tiles(Theme.COLOR_INDIGO), True)
 			
 			' Set the default icon.
 			' @TODO: Add functionality here if the icons has been changed into appropriate ones.

@@ -1119,7 +1119,8 @@ Private Sub OnLoadPage(item As Group)
 	' Remove all items to update data and avoid data duplication.
 	ToDoList.Clear
 	
-	pnlTitleBar.Color = Theme.GetGroupPrimaryColor(item)
+	pnlTitleBar.Color = Theme.GetPrimaryColor(item.GetColor)
+	mainFragment.Color = Theme.GetBackgroundColor(item.GetColor)
 	
 	titleLabel.Text = item.GetTitle
 	Log("Title: " & item.GetTitle)
@@ -1132,6 +1133,8 @@ Private Sub OnLoadPage(item As Group)
 End Sub
 
 Private Sub OnLoadTaskDescription(item As Group)
+	GroupDescription.TextColor = Theme.GetPrimaryColor(item.GetColor)
+	
 	If item.GetID > 0 Then
 		If item.GetDescription <> "" Then
 			GroupDescription.Text = item.GetDescription

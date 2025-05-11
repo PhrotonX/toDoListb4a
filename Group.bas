@@ -4,19 +4,11 @@ ModulesStructureVersion=1
 Type=Class
 Version=13.1
 @EndOfDesignText@
-Sub Class_Globals
-	Public Const COLOR_RED As Int = 0
-	Public Const COLOR_ORANGE As Int = 1
-	Public Const COLOR_BROWN As Int = 2
-	Public Const COLOR_GREEN As Int = 3
-	Public Const COLOR_BLUE As Int = 4
-	Public Const COLOR_INDIGO As Int = 5
-	Public Const COLOR_PINK As Int = 6
-	
+Sub Class_Globals	
 	Private m_id As Long
 	Private m_title As String
 	Private m_description As String
-	Private m_color As Int = COLOR_INDIGO
+	Private m_color As Int = Theme.COLOR_INDIGO
 	Private m_icon As String
 	Private m_iconPos As Int
 	Private m_createdAt As DateAndTime
