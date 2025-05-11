@@ -583,8 +583,6 @@ Private Sub LoadItems()
 	
 	' Obtain all tasks from the database, depending on the smart list mode.
 	m_query.SetSearchIsDeleted(False)
-	GroupDescription.Text = "My Tasks"
-	GroupLineDecor.Visible = True
 	
 	Select m_savedSmartList:
 		Case SMART_LIST_MY_DAY:
@@ -1107,15 +1105,17 @@ Private Sub OnLoadPage(item As Group)
 	LoadDrawerItems
 	drawer.LeftOpen = False
 	
+	mainFragment.RemoveAllViews
+	mainFragment.LoadLayout("newFragment")
+	
 	' Remove all items to update data and avoid data duplication.
 	ToDoList.Clear
 	
 	titleLabel.Text = item.GetTitle
 	Log("Title: " & item.GetTitle)
+	
 	OnLoadTaskDescription(item)	
 
-	mainFragment.RemoveAllViews
-	mainFragment.LoadLayout("newFragment")
 	LoadItems
 	
 	Starter.CheckInstanceState
@@ -1124,10 +1124,12 @@ End Sub
 Private Sub OnLoadTaskDescription(item As Group)
 	If item.GetID > 0 Then
 		GroupDescription.Text = item.GetDescription
-		GroupDescription.TextSize = 12
+		GroupDescription.TextSize = 16
+		GroupLineDecor.Visible = False
 	Else
 		GroupDescription.Text = "My Tasks"
 		GroupDescription.TextSize = 22
+		GroupLineDecor.Visible = True
 	End If
 End Sub
 
