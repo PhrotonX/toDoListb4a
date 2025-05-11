@@ -185,6 +185,8 @@ Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
 	Private xui As XUI
+	
+	Private m_savedGroup As Group
 End Sub
 
 Sub Globals
@@ -242,7 +244,6 @@ Sub Globals
 	Private Const MENU_ITEM_CLEAR_SEARCH As Int = 4
 
 	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
-	Private m_savedGroup As Group
 	'Private m_savedSearchByDueDateIdentifer As String = ""
 	'Private m_savedSearchByDueDateRange1 As Date
 	'Private m_savedSearchByDueDateRange2 As Date
@@ -381,14 +382,17 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-	' Remove all items to update data and avoid data duplication.
-	ToDoList.Clear
-	LoadItems
+	'If m_savedSmartList == SMART_LIST_NONE Then
+	'	ToastMessageShow("Saved group ID: " & m_savedGroup.GetID, False)
+	'	Dim newGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_savedGroup.GetID)
+	'	Log(newGroup)
+	'	
+	'	m_savedGroup = newGroup
+	'	OnLoadPage(newGroup)
+	'Else
+		OnLoadPage(m_savedGroup)
+	'End If
 	
-	LoadDrawerItems
-	
-	
-	Starter.CheckInstanceState
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -792,6 +796,7 @@ Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 			StartActivity(SettingsActivity)
 		Case MENU_ITEM_EDIT_GROUP:
 			Log("m_savedGroup: " & m_savedGroup)
+			ToastMessageShow("m_savedGroup ID: " & m_savedGroup.GetID, False)
 			
 			Starter.InstanceState.Put(Starter.EXTRA_TASK_GROUP_EDITOR_MODE, Starter.TASK_GROUP_EDITOR_MODE_EDIT)
 			Starter.InstanceState.Put(Starter.EXTRA_EDITOR_GROUP_ID, m_savedGroup.GetID)
@@ -926,7 +931,8 @@ Private Sub drawerButton_Click
 		m_savedSmartList = SMART_LIST_ALL
 		
 		' Go to the "All" smart list by default.
-		OnLoadPage(smartLists(SMART_LIST_ALL))
+		m_savedGroup = smartLists(SMART_LIST_ALL)
+		OnLoadPage(m_savedGroup)
 	Else
 		If button_handling Then
 			drawer.LeftOpen = True
@@ -1081,7 +1087,8 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 			menuListView.RemoveAt(MENU_ITEM_EDIT_GROUP)
 		End If
 		
-		OnLoadPage(smartLists(Index))
+		m_savedGroup = smartLists(Index)
+		OnLoadPage(m_savedGroup)
 	Else
 		m_savedSmartList = SMART_LIST_NONE
 		
@@ -1091,19 +1098,37 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 		' Get the associated group based on the ID stored in the clicked view holder of the nav drawer.
 		Dim groupObj As Group = Starter.GroupViewModelInstance.GetGroup(viewHolder.ID)
 		
-		OnLoadPage(groupObj)
+		m_savedGroup = groupObj
+		OnLoadPage(m_savedGroup)
 	End If
 End Sub
 
-Private Sub OnLoadPage(item As Group)
-	m_savedGroup = item
+Private Sub OnLoadPage(item As Group)	
+	LoadDrawerItems
+	drawer.LeftOpen = False
+	
+	' Remove all items to update data and avoid data duplication.
+	ToDoList.Clear
 	
 	titleLabel.Text = item.GetTitle
-	drawer.LeftOpen = False
+	Log("Title: " & item.GetTitle)
+	OnLoadTaskDescription(item)	
+
 	mainFragment.RemoveAllViews
 	mainFragment.LoadLayout("newFragment")
 	LoadItems
-	drawer.LeftOpen = False
+	
+	Starter.CheckInstanceState
+End Sub
+
+Private Sub OnLoadTaskDescription(item As Group)
+	If item.GetID > 0 Then
+		GroupDescription.Text = item.GetDescription
+		GroupDescription.TextSize = 12
+	Else
+		GroupDescription.Text = "My Tasks"
+		GroupDescription.TextSize = 22
+	End If
 End Sub
 
 Private Sub searchBtn_Click
@@ -1278,7 +1303,8 @@ Private Sub enterBtn_Click
 	m_query.SetSearchBy(searchEditText.Text)
 	
 	m_savedSmartList = SMART_LIST_SEARCH
-	OnLoadPage(smartLists(m_savedSmartList))
+	m_savedGroup = smartLists(m_savedSmartList)
+	OnLoadPage(m_savedGroup)
 	
 	drawerButton.Text = Chr(0xE5CD)
 End Sub

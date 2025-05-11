@@ -10,6 +10,7 @@ Version=13.1
 #End Region
 
 Sub Process_Globals
+	Public LastSavedGroup As Group
 End Sub
 
 Sub Globals
