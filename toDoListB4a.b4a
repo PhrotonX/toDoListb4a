@@ -344,8 +344,6 @@ Sub Activity_Create(FirstTime As Boolean)
 	mainFragment.LoadLayout("newFragment")
 	drawer.LeftPanel.LoadLayout("drawerLayout")
 	
-	
-	LoadDrawerItems
 	listview_init
 	
 	m_tasks.Initialize
@@ -386,6 +384,9 @@ Sub Activity_Resume
 	' Remove all items to update data and avoid data duplication.
 	ToDoList.Clear
 	LoadItems
+	
+	LoadDrawerItems
+	
 	
 	Starter.CheckInstanceState
 End Sub
@@ -720,12 +721,13 @@ Private Sub LoadSearchItems()
 	FormHelper.PopulateTaskGroups(spnGroupName)
 End Sub
 
+' Load the menu items.
 Private Sub listview_init
 	menuListView.Visible = True
-	menuListView.AddSingleLine2("	Refresh", 1)
-	menuListView.AddSingleLine2("	Sort", 2)
-	menuListView.AddSingleLine2("	Settings", 3)
-	menuListView.AddSingleLine2("	Edit Group", 4)
+	menuListView.AddSingleLine2("	Refresh", 0)
+	menuListView.AddSingleLine2("	Sort", 1)
+	menuListView.AddSingleLine2("	Settings", 2)
+	
 	menuListView.SingleLineLayout.Label.TextSize = 16
 	menuListView.SingleLineLayout.Label.TextColor = Colors.Black
 	menuListView.SingleLineLayout.ItemHeight = 70
@@ -735,14 +737,12 @@ Private Sub listview_init
 		
 	menuListView.Background = cd
 		
-		
 	menuListViewItemsize.Initialize("")
 	menuListViewItemsize.SetLayout(pnlmenuListView.Left, pnlmenuListView.Top, pnlmenuListView.Width, pnlmenuListView.Height)
 	
 	Log(menuListView.SingleLineLayout.ItemHeight)
 	Log(menuListView.Height & "menulistiv")
 	Log(pnlmenuListView.Height & "pnlmenulsitview")
-	
 		
 	'pnlmenuListView.SetLayoutAnimated(200,100%x, 0%y, 0, 114dip)
 	pnlMenuBgTouch.SendToBack
@@ -936,6 +936,9 @@ Private Sub drawerButton_Click
 End Sub
 
 Sub LoadDrawerItems
+	' CLear the navigation drawer to avoid item duplication.
+	clvItems.Clear
+	
 	clvItems.sv.ScrollViewInnerPanel.Color = xui.Color_Transparent
 	clvItems.sv.Color = xui.Color_Transparent
 	
@@ -1073,9 +1076,17 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	If viewHolder.ID <= 0 Then
 		m_savedSmartList = Index
 		
+		' Remove the edit group button for smart lists.
+		If menuListView.Size > 3 Then
+			menuListView.RemoveAt(MENU_ITEM_EDIT_GROUP)
+		End If
+		
 		OnLoadPage(smartLists(Index))
 	Else
 		m_savedSmartList = SMART_LIST_NONE
+		
+		' Include the edit group button for custom lists.
+		menuListView.AddSingleLine2("	Edit Group", 3)
 		
 		' Get the associated group based on the ID stored in the clicked view holder of the nav drawer.
 		Dim groupObj As Group = Starter.GroupViewModelInstance.GetGroup(viewHolder.ID)
