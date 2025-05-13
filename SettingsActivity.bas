@@ -30,6 +30,7 @@ Sub Globals
 	Private TaskCompletion As ToggleButton
 	Private pnlSettingsBar As Panel
 	Private Switch1 As Switch
+	Private switchTaskCompletion As B4XSwitch
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -45,7 +46,7 @@ End Sub
 Sub LoadSettings
 	switchDarkMode.Value = Starter.SettingsViewModelInstance.IsDarkModeEnabled()
 	'DebugMode.Checked = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
-	TaskCompletion.Checked = Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled()
+	switchTaskCompletion.Value = Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled()
 End Sub
 
 Sub button_design
