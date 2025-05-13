@@ -23,28 +23,27 @@ Sub Globals
 	Private svMain As ScrollView
 	Private btnBack, help, about As Button
 
-	Private DarkMode As ToggleButton
+	Private switchDarkMode As B4XSwitch
 	Private DebugMode As ToggleButton
 	Private ExportDataBase As Button
 	Private ImportDataBase As Button
 	Private TaskCompletion As ToggleButton
 	Private pnlSettingsBar As Panel
+	Private Switch1 As Switch
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
-	'Do not forget to load the layout file created with the visual designer. For example:
-	'Activity.LoadLayout("Layout1")
-	
 	Activity.LoadLayout("settingslayout")
 	svMain.Panel.LoadLayout("sviewlayout")
 	
 	LoadSettings
 	
-	'button_design
+	button_design
+	
 End Sub
 
 Sub LoadSettings
-	DarkMode.Checked = Starter.SettingsViewModelInstance.IsDarkModeEnabled()
+	switchDarkMode.Value = Starter.SettingsViewModelInstance.IsDarkModeEnabled()
 	'DebugMode.Checked = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
 	TaskCompletion.Checked = Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled()
 End Sub
@@ -52,31 +51,8 @@ End Sub
 Sub button_design
 	pnlSettingsBar.Elevation = 10
 	
-	
-	'Makes the bg, border of the buttons transparent
-	
-	Dim transparentBg As ColorDrawable
-	
-	transparentBg.Initialize(Colors.Transparent, 0)
-	btnBack.Background = transparentBg
-	
-	Dim whiteBg As ColorDrawable
-	
-	whiteBg.Initialize(Colors.White, 8)
-		help.Background = whiteBg
-	about.Background = whiteBg
-	
-	
-	Dim c As Canvas
-	c.Initialize(Label1)
-	Dim borderColor As Int = Colors.RGB(209, 209, 209)
-	Dim borderHeight As Int = 1dip
 
 	
-	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, borderHeight)
-
-	Label1.Invalidate
-
 End Sub
 
 Sub btnBack_Click
@@ -137,4 +113,5 @@ End Sub
 
 Private Sub TaskCompletion_CheckedChange(Checked As Boolean)
 	Starter.SettingsViewModelInstance.SetTaskCompletionSound(Checked)
+	
 End Sub
