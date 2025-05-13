@@ -15,7 +15,7 @@ Sub Class_Globals
 	Public ItemPanel As Panel
 	
 	' Holds the icon of the item
-	Public Icon As ImageView
+	'Public Icon As ImageView
 	
 	' Holds the filename label of the item
 	Public AttachmentLabel As Label
