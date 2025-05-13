@@ -663,25 +663,14 @@ Private Sub LoadItems()
 						If itr <> currentDateIdentification And item.Done == False Then
 							itr = currentDateIdentification
 						
-							Dim subGroup As SubGroupViewHolder
-							subGroup.Initialize(xui)
-							subGroup.Name.Text = currentDateIdentification
-							subGroup.Root.Height = 70
-							subGroup.Name.TextSize = 16
-
-							ToDoList.Add(subGroup.BuildView(), subGroup)
+							CreateSubGroup(currentDateIdentification, Colors.RGB(0, 0, 0), 18)
 						End If
 					Case SMART_LIST_SEARCH, SMART_LIST_COMPLETED:
 					Case Else:
 						' If the Next item Is marked As completed, Then add subGroup "Completed"
 						If item.Done == True And itr == "" Then
-							Dim subGroup As SubGroupViewHolder
-							subGroup.Initialize(xui)
-							subGroup.Name.Text = "Completed"
+							CreateSubGroup("Completed", Colors.RGB(0, 0, 0), 18)
 							itr = "Completed"
-
-							subGroup.Name.Height = 68
-							ToDoList.Add(subGroup.BuildView(), subGroup)
 						End If
 				End Select
 			End If
@@ -697,29 +686,29 @@ Private Sub LoadItems()
 		Next
 	End If
 	
+	' Code for counting the items.
+	Dim text As String
+	Dim count As Int
 	' Add the item count information
 	Select m_savedSmartList
 		' Planned and Completed has a unique way of counting items.
-		Case SMART_LIST_PLANNED, SMART_LIST_COMPLETED:
-			' @TODO: Add functionality here...
-		Case Else:
-			Dim subGroup As SubGroupViewHolder
-			subGroup.Initialize(xui)
-			
-			Dim count As Int = m_tasks.Size
-			
-			subGroup.Name.Text = count & " found task"
-			
-			' Make the counting information plural if possible.
-			If count > 1 Then
-				subGroup.Name.Text = subGroup.Name.Text & "(s)"
-			End If
-			
-			subGroup.Name.TextSize = 15
-			subGroup.Name.TextColor = Colors.RGB(91,91,91)
-			ToDoList.Add(subGroup.BuildView(), subGroup)
+		Case SMART_LIST_PLANNED:
+			count = Starter.TaskViewModelInstance.LastCountedIncompleteTasks
+		Case SMART_LIST_COMPLETED:
+			count = Starter.TaskViewModelInstance.LastCountedCompleteTasks
+		Case Else:			
+			count = m_tasks.Size
 	End Select
 	
+	
+	text = count & " task"
+	' Make the counting information plural if possible.
+	If count > 1 Then
+		text = text & "(s)"
+	End If
+	text = text & " found"
+	
+	CreateSubGroup(text, Colors.RGB(91, 91, 91), 16)
 	
 End Sub
 
@@ -729,6 +718,17 @@ Private Sub LoadSearchItems()
 	FormHelper.PopulateDate(spinRangeMonthTo, spinRangeDayTo)
 	FormHelper.PopulateDateRange(spnDateGroup)
 	FormHelper.PopulateTaskGroups(spnGroupName)
+End Sub
+
+Private Sub CreateSubGroup(title As String, color As Int, textSize As Int)
+	Dim subGroup As SubGroupViewHolder
+	subGroup.Initialize(xui)
+	subGroup.Name.Text = title
+	subGroup.Root.Height = 70
+	subGroup.Name.TextSize = textSize
+	subGroup.Name.TextColor = color
+
+	ToDoList.Add(subGroup.BuildView(), subGroup)
 End Sub
 
 ' Load the menu items.
