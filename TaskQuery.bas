@@ -253,11 +253,11 @@ Public Sub SetSearchDueDateRange(rangeStr As String)
 		Case dateObj.DATE_EARLIER_THIS_WEEK:
 			OnSetSearchDueDateRange(currentDate - (dateObj.DAY_LENGTH * 4), currentDate - (dateObj.DAY_LENGTH * 2) - 1)
 		Case dateObj.DATE_YESTERDAY:
-			OnSetSearchDueDateRange(currentDate - dateObj.DAY_LENGTH, currentDate - 1)
+			OnSetSearchDueDateRange(currentDate - (dateObj.DAY_LENGTH * 2), currentDate - (dateObj.DAY_LENGTH - 1))
 		Case dateObj.DATE_TODAY:
 			OnSetSearchDueDateRange(currentDate, currentDate + dateObj.DAY_LENGTH - 1)
 		Case dateObj.DATE_TOMORROW:
-			OnSetSearchDueDateRange(currentDate + (dateObj.DAY_LENGTH), currentDate + (dateObj.DAY_LENGTH * 2) - 1)
+			OnSetSearchDueDateRange(currentDate + dateObj.DAY_LENGTH, currentDate + (dateObj.DAY_LENGTH * 2) - 1)
 		Case dateObj.DATE_THIS_WEEK:
 			OnSetSearchDueDateRange(currentDate + (dateObj.DAY_LENGTH * 2), currentDate + (dateObj.DAY_LENGTH * 4) - 1)
 		Case dateObj.DATE_NEXT_WEEK:
@@ -509,6 +509,10 @@ End Sub
 Public Sub UnsetSearchRepeat()
 	m_joinQueryItem(JOIN_QUERY_ITEM_REPEAT) = ""
 	m_searchQueryItem(SEARCH_QUERY_ITEM_REPEAT_QUERY) = ""
+	
+	For Each item In m_searchRepeat
+		item = False
+	Next
 End Sub
 
 Public Sub UnsetSearchReminder()
