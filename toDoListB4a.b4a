@@ -672,7 +672,6 @@ Private Sub LoadItems()
 							ToDoList.Add(subGroup.BuildView(), subGroup)
 						End If
 					Case SMART_LIST_SEARCH, SMART_LIST_COMPLETED:
-						ToastMessageShow("Result: " & item.GetDueDate.GetUnixTime, True)
 					Case Else:
 						' If the Next item Is marked As completed, Then add subGroup "Completed"
 						If item.Done == True And itr == "" Then

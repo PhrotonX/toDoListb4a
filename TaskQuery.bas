@@ -245,7 +245,12 @@ Public Sub SetSearchDueDateRange(rangeStr As String)
 	dateObj.Initialize(0, 0, 0)
 	
 	Dim currentDate As Long = dateObj.GetDateNoTime(DateTime.Now)
-	ToastMessageShow(currentDate, True)
+	
+	' The timezone offset in hours.
+	Dim offset As Double = DateTime.GetTimeZoneOffsetAt(currentDate)
+
+' 	3,600,000 milliseconds is 1 hour.
+	currentDate = currentDate - (3600000 * offset)
 	
 	Select rangeStr:
 		Case dateObj.DATE_A_LONG_TIME_AGO:
@@ -261,7 +266,7 @@ Public Sub SetSearchDueDateRange(rangeStr As String)
 		Case dateObj.DATE_TODAY:
 			OnSetSearchDueDateRange(currentDate, currentDate)
 		Case dateObj.DATE_TOMORROW:
-			OnSetSearchDueDateRange(currentDate, currentDate + dateObj.DAY_LENGTH - 1)
+			OnSetSearchDueDateRange(currentDate + (dateObj.DAY_LENGTH * 1), currentDate + (dateObj.DAY_LENGTH * 2) - 1)
 		Case dateObj.DATE_THIS_WEEK:
 			OnSetSearchDueDateRange(currentDate + (dateObj.DAY_LENGTH * 2), currentDate + (dateObj.DAY_LENGTH * 4) - 1)
 		Case dateObj.DATE_NEXT_WEEK:
