@@ -105,6 +105,9 @@ Public Sub Initialize()
 	' Enable searching by title, attachments, and is_deleted by default
 	m_searchQueryItemEnabled(SEARCH_QUERY_ITEM_SEARCH_BY) = True
 	m_joinQueryItemEnabled(JOIN_QUERY_ITEM_ATTACHMENT) = True
+	
+	m_searchQueryItem(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = ""
+	
 	SetSearchIsDeletedEnabled(True)
 	
 	SetSearchIsDeleted(False)
@@ -255,9 +258,9 @@ Public Sub SetSearchDueDateRange(rangeStr As String)
 		Case dateObj.DATE_YESTERDAY:
 			OnSetSearchDueDateRange(currentDate - (dateObj.DAY_LENGTH * 2), currentDate - (dateObj.DAY_LENGTH - 1))
 		Case dateObj.DATE_TODAY:
-			OnSetSearchDueDateRange(currentDate, currentDate + dateObj.DAY_LENGTH - 1)
+			OnSetSearchDueDateRange(currentDate, currentDate + dateObj.DAY_LENGTH)
 		Case dateObj.DATE_TOMORROW:
-			OnSetSearchDueDateRange(currentDate + dateObj.DAY_LENGTH, currentDate + (dateObj.DAY_LENGTH * 2) - 1)
+			OnSetSearchDueDateRange(currentDate, currentDate + dateObj.DAY_LENGTH - 1)
 		Case dateObj.DATE_THIS_WEEK:
 			OnSetSearchDueDateRange(currentDate + (dateObj.DAY_LENGTH * 2), currentDate + (dateObj.DAY_LENGTH * 4) - 1)
 		Case dateObj.DATE_NEXT_WEEK:
@@ -266,6 +269,8 @@ Public Sub SetSearchDueDateRange(rangeStr As String)
 			OnSetSearchDueDateRange(currentDate + (dateObj.DAY_LENGTH * 11), currentDate + (dateObj.DAY_LENGTH * 364) - 1)
 		Case dateObj.DATE_A_LONG_TIME_FROM_NOW:
 			OnSetSearchDueDateRange(currentDate + (dateObj.DAY_LENGTH * 364), dateObj.LAST_EPOCH_VALUE)
+		Case Else:
+			UnsetSearchDueDateRange
 	End Select
 End Sub
 

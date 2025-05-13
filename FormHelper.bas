@@ -54,6 +54,7 @@ Public Sub PopulateDateRange(spnDateRange As Spinner)
 	
 	spnDateRange.Clear
 	
+	spnDateRange.Add("Select date range...")
 	spnDateRange.Add(dateObj.DATE_A_LONG_TIME_AGO)
 	spnDateRange.Add(dateObj.DATE_EARLIER)
 	spnDateRange.Add(dateObj.DATE_LAST_WEEK)
