@@ -48,6 +48,25 @@ Public Sub PopulateDate(spnMonth As Spinner, spnDay As Spinner)
 	Next
 End Sub
 
+Public Sub PopulateDateRange(spnDateRange As Spinner)
+	Dim dateObj As Date
+	dateObj.Initialize(0, 0, 0)
+	
+	spnDateRange.Clear
+	
+	spnDateRange.Add(dateObj.DATE_A_LONG_TIME_AGO)
+	spnDateRange.Add(dateObj.DATE_EARLIER)
+	spnDateRange.Add(dateObj.DATE_LAST_WEEK)
+	spnDateRange.Add(dateObj.DATE_EARLIER_THIS_WEEK)
+	spnDateRange.Add(dateObj.DATE_YESTERDAY)
+	spnDateRange.Add(dateObj.DATE_TODAY)
+	spnDateRange.Add(dateObj.DATE_TOMORROW)
+	spnDateRange.Add(dateObj.DATE_THIS_WEEK)
+	spnDateRange.Add(dateObj.DATE_NEXT_WEEK)
+	spnDateRange.Add(dateObj.DATE_LATER)
+	spnDateRange.Add(dateObj.DATE_A_LONG_TIME_FROM_NOW)
+End Sub
+
 Public Sub PopulateTime(spnHour As Spinner, spnMinute As Spinner, spnMarker As Spinner)
 	' Make a time object
 	Dim timeObj As Time

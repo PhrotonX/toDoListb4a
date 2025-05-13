@@ -13,6 +13,7 @@ Sub Class_Globals
 	
 	' A single day in UNIX time is equal to 86,400,000 milliseconds.
 	Public Const DAY_LENGTH As Long = 86400000
+	Public Const LAST_EPOCH_VALUE As Long = 9223372036854775807
 	
 	Public Const DATE_A_LONG_TIME_AGO As String = "A long time ago"
 	Public Const DATE_EARLIER As String = "Earlier"

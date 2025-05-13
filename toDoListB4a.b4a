@@ -727,6 +727,7 @@ Private Sub LoadSearchItems()
 	FormHelper.PopulateDate(spnDateMonth, spnDateDay)
 	FormHelper.PopulateDate(spinRangeMonthFrom, spinRangeDayFrom)
 	FormHelper.PopulateDate(spinRangeMonthTo, spinRangeDayTo)
+	FormHelper.PopulateDateRange(spnDateGroup)
 	FormHelper.PopulateTaskGroups(spnGroupName)
 End Sub
 
@@ -1509,7 +1510,7 @@ Private Sub spnDateMonth_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Private Sub spnDateGroup_ItemClick (Position As Int, Value As Object)
-	ToastMessageShow("Logic not implemented: Searching for tasks based on date groups", False)
+	m_query.SetSearchDueDateRange(Value)
 End Sub
 
 Private Sub spnDateDay_ItemClick (Position As Int, Value As Object)
