@@ -966,19 +966,26 @@ Sub LoadDrawerItems
 	
 	smartLists(1).SetTitle("Tasks")
 	smartLists(1).SetIcon("")
+	smartLists(1).SetDescription("List of ungrouped tasks")
 	
 	smartLists(2).SetTitle("Planned")
 	smartLists(2).SetIcon("")
+	smartLists(2).SetColor(Theme.COLOR_BLUE)
+	smartLists(2).SetDescription("List of incomplete tasks")
 	
 	smartLists(3).SetTitle("Completed")
 	smartLists(3).SetIcon("")
+	smartLists(3).SetColor(Theme.COLOR_GREEN)
+	smartLists(3).SetDescription("List of complete tasks")
 	
 	smartLists(4).SetTitle("All")
 	smartLists(4).SetIcon("")
+	smartLists(4).SetDescription("List of all tasks")
 	
 	smartLists(5).SetTitle("Trash")
 	smartLists(5).SetIcon("")
 	smartLists(5).SetColor(Theme.COLOR_RED)
+	smartLists(5).SetDescription("List of deleted tasks")
 	
 	smartLists(6).SetTitle("Search")
 	smartLists(6).SetIcon(Chr(0xE8B6))
@@ -1138,7 +1145,7 @@ End Sub
 Private Sub OnLoadTaskDescription(item As Group)
 	GroupDescription.TextColor = Theme.GetPrimaryColor(item.GetColor)
 	
-	If item.GetID > 0 Then
+	If m_savedSmartList <> SMART_LIST_MY_DAY Then
 		If item.GetDescription <> "" Then
 			GroupDescription.Text = item.GetDescription
 		Else
