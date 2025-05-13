@@ -515,7 +515,7 @@ Private Sub spinnerDueDateMonth_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Private Sub spinnerDueDateDay_ItemClick (Position As Int, Value As Object)	
-	FormHelper.SetMonthValue(spinnerDueDateMonth, m_task.GetDueDate, Position)
+	FormHelper.SetDayValue(spinnerDueDateDay, m_task.GetDueDate, Position)
 End Sub
 
 Private Sub btnRepeatClear_Click
