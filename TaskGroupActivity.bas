@@ -97,6 +97,14 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
+	' Turn color brown option into yellow if dark mode is enabled.
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled Then
+		tiles(Theme.COLOR_BROWN).Tag = "YELLOW"
+	Else
+		tiles(Theme.COLOR_BROWN).Tag = "BROWN"
+	End If
+	UpdateTileImage(tiles(Theme.COLOR_BROWN), False)
+	
 	Log(Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE))
 	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
 		Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:

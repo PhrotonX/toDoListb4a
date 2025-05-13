@@ -11,6 +11,10 @@ Sub Class_Globals
 	
 	Public Const TASKS_DEFAULT As Long = -1
 	Public Const TASKS_NO_GROUP As Long = 0
+	
+	
+	Private m_completeTaskCtr As Int = 0
+	Private m_incompleteTaskCtr As Int = 0
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -154,6 +158,8 @@ Public Sub GetTasksCompleted(query As TaskQuery) As List
 	For Each item As ToDo In tasks
 		If item.Done Then
 			results.Add(item)
+			
+			m_incompleteTaskCtr = m_incompleteTaskCtr + 1
 		End If
 	Next
 	
@@ -162,6 +168,9 @@ End Sub
 
 ' Move logic to repository.
 Public Sub GetTasksPlanned(query As TaskQuery) As List
+	m_completeTaskCtr = 0
+	m_incompleteTaskCtr = 0
+	
 	Dim tasks As List
 	
 	If query.IsSortingEnabled() Then
@@ -176,6 +185,8 @@ Public Sub GetTasksPlanned(query As TaskQuery) As List
 	For Each item As ToDo In tasks
 		If item.Done == False Then
 			results.Add(item)
+			
+			m_incompleteTaskCtr = m_incompleteTaskCtr + 1
 		End If
 	Next
 	
@@ -272,4 +283,14 @@ Public Sub FindTasksByRepeat(group_id As Long, repeatQuery As List, ascending As
 	Next
 	
 	Return result
+End Sub
+
+' Used for completed tasks.
+Public Sub LastCountedCompleteTasks
+	Return m_completeTaskCtr
+End Sub
+
+' Used for planned tasks.
+Public Sub LastCountedIncompleteTasks
+	Return m_incompleteTaskCtr
 End Sub
