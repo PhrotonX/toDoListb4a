@@ -91,10 +91,11 @@ Public Sub CreateTable As Boolean
 	' In this case, use the plural "groups" insead.
 	Dim query_group As String = "CREATE TABLE IF NOT EXISTS groups(" & CRLF & _
 	"group_id INTEGER PRIMARY KEY AUTOINCREMENT," & CRLF & _
-	"title VARCHAR(255) NOT NULL UNIQUE," & CRLF & _
+	"title VARCHAR(50) NOT NULL UNIQUE," & CRLF & _
 	"description TEXT," & CRLF & _
-	"color INTEGER," & CRLF & _
+	"color INTEGER NOT NULL DEFAULT 5," & CRLF & _ ' 5 represents color Indigo, the primary app color.
 	"icon VARCHAR(25)," & CRLF & _
+	"icon_pos INTEGER," & CRLF & _
 	"created_at LONG NOT NULL DEFAULT 0," & CRLF & _
 	"updated_at LONG NOT NULL DEFAULT 0" & CRLF & _
 	");"
@@ -120,12 +121,13 @@ Public Sub CreateTable As Boolean
 	' Query for populating group list if and only if the days_of_the_week table has also been populated.
 	' It is guaranteed that this query will only run once since it checks if days_of_the_week table has
 	' already been made in order to be executed.
-	Dim query_populate_groups As String = "INSERT INTO groups (group_id, title, description)" & CRLF & _
-	"SELECT 1, 'Shopping', 'List of tasks for shopping' UNION ALL" & CRLF & _
-	"SELECT 2, 'Reading', 'List of tasks for reading' UNION ALL" & CRLF & _
-	"SELECT 3, 'Hobbies', 'List of tasks for your hobbies' UNION ALL" & CRLF & _
-	"SELECT 4, 'Studying', 'List of tasks for your studies' UNION ALL" & CRLF & _
-	"SELECT 5, 'Others', 'List of other tasks'" & CRLF & _
+	Dim query_populate_groups As String = "INSERT INTO groups (group_id, title, description, color, icon_pos)" & CRLF & _
+	"SELECT 1, 'Shopping', 'List of tasks for shopping', 1, 2 UNION ALL" & CRLF & _
+	"SELECT 2, 'Reading', 'List of tasks for reading', 4, 3 UNION ALL" & CRLF & _
+	"SELECT 3, 'Hobbies', 'List of tasks for your hobbies', 3, 5 UNION ALL" & CRLF & _
+	"SELECT 4, 'Studying', 'List of tasks for your studies', 2, 1 UNION ALL" & CRLF & _
+	"SELECT 5, 'Others', 'List of other tasks', 6, 6 UNION ALL" & CRLF & _
+	"SELECT 6, '', '', 0, 0 " & CRLF & _
 	"WHERE NOT EXISTS (SELECT 1 FROM days_of_the_week);"
 	
 	' Mark the beginning of SQL transaction.
