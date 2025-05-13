@@ -31,6 +31,13 @@ Sub Globals
 	Private pnlSettingsBar As Panel
 	Private Switch1 As Switch
 	Private switchTaskCompletion As B4XSwitch
+	Private lbl24hrFormat As Label
+	Private lblDarkMode As Label
+	Private lblDetailedDueDate As Label
+	Private lblLanguage As Label
+	Private lblTaskCompletionSound As Label
+	Private switchDetailedDueDate As B4XSwitch
+	Private switchHourFormat24 As B4XSwitch
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -115,4 +122,41 @@ End Sub
 Private Sub TaskCompletion_CheckedChange(Checked As Boolean)
 	Starter.SettingsViewModelInstance.SetTaskCompletionSound(Checked)
 	
+End Sub
+
+Private Sub lblTaskCompletionSound_Click
+	If switchTaskCompletion.Value = True Then
+		switchTaskCompletion.Value = False
+	
+	Else
+		switchTaskCompletion.Value = True
+	End If
+End Sub
+
+
+Private Sub lblDetailedDueDate_Click
+	If switchDetailedDueDate.Value = True Then
+		switchDetailedDueDate.Value = False
+	
+	Else
+		switchDetailedDueDate.Value = True
+	End If
+End Sub
+
+Private Sub lblDarkMode_Click
+	If switchDarkMode.Value = True Then
+		switchDarkMode.Value = False
+	
+	Else
+		switchDarkMode.Value = True
+	End If
+End Sub
+
+Private Sub lbl24hrFormat_Click
+	If switchHourFormat24.Value = True Then
+		switchHourFormat24.Value = False
+	
+	Else
+		switchHourFormat24.Value = True
+	End If
 End Sub
