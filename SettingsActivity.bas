@@ -36,7 +36,7 @@ End Sub
 Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("settingslayout")
 	svMain.Panel.LoadLayout("sviewlayout")
-	
+		
 	LoadSettings
 	
 	button_design
