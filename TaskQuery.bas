@@ -105,6 +105,9 @@ Public Sub Initialize()
 	' Enable searching by title, attachments, and is_deleted by default
 	m_searchQueryItemEnabled(SEARCH_QUERY_ITEM_SEARCH_BY) = True
 	m_joinQueryItemEnabled(JOIN_QUERY_ITEM_ATTACHMENT) = True
+	
+	m_searchQueryItem(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = ""
+	
 	SetSearchIsDeletedEnabled(True)
 	
 	SetSearchIsDeleted(False)
@@ -237,6 +240,46 @@ Public Sub SetSearchDueDateMode(mode As Int)
 	m_searchDateMode = mode
 End Sub
 
+Public Sub SetSearchDueDateRange(rangeStr As String)
+	Dim dateObj As Date
+	dateObj.Initialize(0, 0, 0)
+	
+	Dim currentDate As Long = dateObj.GetDateNoTime(DateTime.Now)
+	
+	' The timezone offset in hours.
+	Dim offset As Double = DateTime.GetTimeZoneOffsetAt(currentDate)
+
+' 	3,600,000 milliseconds is 1 hour.
+	currentDate = currentDate - (3600000 * offset)
+	
+	Select rangeStr:
+		Case dateObj.DATE_A_LONG_TIME_AGO:
+			OnSetSearchDueDateRange(0, currentDate - (dateObj.DAY_LENGTH * 364) - 1)
+		Case dateObj.DATE_EARLIER:
+			OnSetSearchDueDateRange(currentDate - (dateObj.DAY_LENGTH * 364), currentDate - (dateObj.DAY_LENGTH * 11) - 1)
+		Case dateObj.DATE_LAST_WEEK:
+			OnSetSearchDueDateRange(currentDate - (dateObj.DAY_LENGTH * 11), currentDate - (dateObj.DAY_LENGTH * 4) - 1)
+		Case dateObj.DATE_EARLIER_THIS_WEEK:
+			OnSetSearchDueDateRange(currentDate - (dateObj.DAY_LENGTH * 4), currentDate - (dateObj.DAY_LENGTH * 2) - 1)
+		Case dateObj.DATE_YESTERDAY:
+			OnSetSearchDueDateRange(currentDate - (dateObj.DAY_LENGTH * 2), currentDate - (dateObj.DAY_LENGTH - 1))
+		Case dateObj.DATE_TODAY:
+			OnSetSearchDueDateRange(currentDate, currentDate)
+		Case dateObj.DATE_TOMORROW:
+			OnSetSearchDueDateRange(currentDate + (dateObj.DAY_LENGTH * 1), currentDate + (dateObj.DAY_LENGTH * 2) - 1)
+		Case dateObj.DATE_THIS_WEEK:
+			OnSetSearchDueDateRange(currentDate + (dateObj.DAY_LENGTH * 2), currentDate + (dateObj.DAY_LENGTH * 4) - 1)
+		Case dateObj.DATE_NEXT_WEEK:
+			OnSetSearchDueDateRange(currentDate + (dateObj.DAY_LENGTH * 4), currentDate + (dateObj.DAY_LENGTH * 11) - 1)
+		Case dateObj.DATE_LATER:
+			OnSetSearchDueDateRange(currentDate + (dateObj.DAY_LENGTH * 11), currentDate + (dateObj.DAY_LENGTH * 364) - 1)
+		Case dateObj.DATE_A_LONG_TIME_FROM_NOW:
+			OnSetSearchDueDateRange(currentDate + (dateObj.DAY_LENGTH * 364), dateObj.LAST_EPOCH_VALUE)
+		Case Else:
+			UnsetSearchDueDateRange
+	End Select
+End Sub
+
 Public Sub SetSearchDueDateEnabled(value As Boolean)
 	m_searchQueryItemEnabled(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = value
 End Sub
@@ -244,14 +287,24 @@ End Sub
 ' Set Specific Due Date.
 Private Sub SetSearchDueDate(dateObj As Date)
 	Dim unixTime As Long = dateObj.GetUnixTime()
-	SetSearchDueDateRange(unixTime, unixTime + dateObj.DAY_LENGTH)
+	OnSetSearchDueDateRange(unixTime, unixTime + dateObj.DAY_LENGTH)
 End Sub
 
-Private Sub SetSearchDueDateRange(tickBegin As Long, tickEnd As Long)
-	Log(FIELD_DUE_DATE & GTE & tickBegin & " AND " & FIELD_DUE_DATE & LTE & tickEnd)
+' Builds a date range search SQL query if tickBegin and tickEnd do not match. Else, it builds an SQL query
+' for a specific date.
+Private Sub OnSetSearchDueDateRange(tickBegin As Long, tickEnd As Long)
 	
-	m_searchQueryItem(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = FIELD_DUE_DATE & GTE & tickBegin & " AND " & _
-	 FIELD_DUE_DATE & LTE & tickEnd
+	If tickBegin <> tickEnd Then
+		Log(FIELD_DUE_DATE & GTE & tickBegin & " AND " & FIELD_DUE_DATE & LTE & tickEnd)
+	
+		m_searchQueryItem(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = FIELD_DUE_DATE & GTE & tickBegin & " AND " & _
+		FIELD_DUE_DATE & LTE & tickEnd
+	Else
+		Log(FIELD_DUE_DATE & EQ & tickBegin)
+	
+		m_searchQueryItem(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = FIELD_DUE_DATE & EQ & tickBegin
+	End If
+	
 End Sub
 
 Public Sub GetGroupID() As Long
@@ -394,7 +447,7 @@ Private Sub OnBuildSearchQueryForDate()
 		Case DUE_DATE_MODE_SEARCH_DEFAULT:
 			SetSearchDueDate(DateBegin)
 		Case DUE_DATE_MODE_SEARCH_BY_RANGE:
-			SetSearchDueDateRange(DateBegin.GetUnixTime, DateEnd.GetUnixTime)
+			OnSetSearchDueDateRange(DateBegin.GetUnixTime, DateEnd.GetUnixTime)
 		Case DUE_DATE_MODE_SEARCH_BY_GROUP:
 			If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
 				Log("OnBuildSearchQueryForDate() SEARCH_QUERY_ITEM_SEARCH_DUE_DATE_BY_GROUP is not implemented.")
@@ -477,6 +530,10 @@ End Sub
 Public Sub UnsetSearchRepeat()
 	m_joinQueryItem(JOIN_QUERY_ITEM_REPEAT) = ""
 	m_searchQueryItem(SEARCH_QUERY_ITEM_REPEAT_QUERY) = ""
+	
+	For Each item In m_searchRepeat
+		item = False
+	Next
 End Sub
 
 Public Sub UnsetSearchReminder()

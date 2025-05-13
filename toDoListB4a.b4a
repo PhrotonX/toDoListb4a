@@ -727,6 +727,7 @@ Private Sub LoadSearchItems()
 	FormHelper.PopulateDate(spnDateMonth, spnDateDay)
 	FormHelper.PopulateDate(spinRangeMonthFrom, spinRangeDayFrom)
 	FormHelper.PopulateDate(spinRangeMonthTo, spinRangeDayTo)
+	FormHelper.PopulateDateRange(spnDateGroup)
 	FormHelper.PopulateTaskGroups(spnGroupName)
 End Sub
 
@@ -1060,8 +1061,9 @@ Private Sub OnClearSearchQuery
 	
 	If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
 		Log("Query has been initialized!")
-		m_query.Initialize
 	End If
+	
+	m_query.Initialize
 	
 End Sub
 
@@ -1249,6 +1251,7 @@ Private Sub RefillSearchFields
 	
 	' Fill-up Date field
 	checkFilterByDueDate.Checked = m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_DUE_DATE_RANGE)
+	Log("m_query.GetSearchDateMode " & m_query.GetSearchDateMode )
 	Select m_query.GetSearchDateMode:
 		Case m_query.DUE_DATE_MODE_SEARCH_DEFAULT:
 			radioDueSpecificDate.Checked = True
@@ -1509,7 +1512,7 @@ Private Sub spnDateMonth_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Private Sub spnDateGroup_ItemClick (Position As Int, Value As Object)
-	ToastMessageShow("Logic not implemented: Searching for tasks based on date groups", False)
+	m_query.SetSearchDueDateRange(Value)
 End Sub
 
 Private Sub spnDateDay_ItemClick (Position As Int, Value As Object)
