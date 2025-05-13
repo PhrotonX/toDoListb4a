@@ -978,6 +978,7 @@ Sub LoadDrawerItems
 	
 	smartLists(5).SetTitle("Trash")
 	smartLists(5).SetIcon("")
+	smartLists(5).SetColor(Theme.COLOR_RED)
 	
 	smartLists(6).SetTitle("Search")
 	smartLists(6).SetIcon(Chr(0xE8B6))
