@@ -245,6 +245,7 @@ Public Sub SetSearchDueDateRange(rangeStr As String)
 	dateObj.Initialize(0, 0, 0)
 	
 	Dim currentDate As Long = dateObj.GetDateNoTime(DateTime.Now)
+	ToastMessageShow(currentDate, True)
 	
 	Select rangeStr:
 		Case dateObj.DATE_A_LONG_TIME_AGO:
@@ -258,7 +259,7 @@ Public Sub SetSearchDueDateRange(rangeStr As String)
 		Case dateObj.DATE_YESTERDAY:
 			OnSetSearchDueDateRange(currentDate - (dateObj.DAY_LENGTH * 2), currentDate - (dateObj.DAY_LENGTH - 1))
 		Case dateObj.DATE_TODAY:
-			OnSetSearchDueDateRange(currentDate, currentDate + dateObj.DAY_LENGTH)
+			OnSetSearchDueDateRange(currentDate, currentDate)
 		Case dateObj.DATE_TOMORROW:
 			OnSetSearchDueDateRange(currentDate, currentDate + dateObj.DAY_LENGTH - 1)
 		Case dateObj.DATE_THIS_WEEK:
@@ -284,11 +285,21 @@ Private Sub SetSearchDueDate(dateObj As Date)
 	OnSetSearchDueDateRange(unixTime, unixTime + dateObj.DAY_LENGTH)
 End Sub
 
+' Builds a date range search SQL query if tickBegin and tickEnd do not match. Else, it builds an SQL query
+' for a specific date.
 Private Sub OnSetSearchDueDateRange(tickBegin As Long, tickEnd As Long)
-	Log(FIELD_DUE_DATE & GTE & tickBegin & " AND " & FIELD_DUE_DATE & LTE & tickEnd)
 	
-	m_searchQueryItem(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = FIELD_DUE_DATE & GTE & tickBegin & " AND " & _
-	 FIELD_DUE_DATE & LTE & tickEnd
+	If tickBegin <> tickEnd Then
+		Log(FIELD_DUE_DATE & GTE & tickBegin & " AND " & FIELD_DUE_DATE & LTE & tickEnd)
+	
+		m_searchQueryItem(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = FIELD_DUE_DATE & GTE & tickBegin & " AND " & _
+		FIELD_DUE_DATE & LTE & tickEnd
+	Else
+		Log(FIELD_DUE_DATE & EQ & tickBegin)
+	
+		m_searchQueryItem(SEARCH_QUERY_ITEM_DUE_DATE_RANGE) = FIELD_DUE_DATE & EQ & tickBegin
+	End If
+	
 End Sub
 
 Public Sub GetGroupID() As Long

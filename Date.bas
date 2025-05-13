@@ -29,7 +29,7 @@ Sub Class_Globals
 End Sub
 
 'Initializes the object.
-' month data shall be "January" - "December"
+' month data shall be "1" - "12"
 ' day data shall be "1" to "31" such that "1" to "9" does not have leading zeroes.
 Public Sub Initialize(month As Int, DAY As Int, year As Int)
 	m_month = month
