@@ -150,6 +150,28 @@ Sub btnAddGrpCancel_Click
 End Sub
 
 Sub btnAddGrpSave_Click
+	
+	' Validation
+	If editAddGrpTitle.Text.Length > 50 Then
+		MsgboxAsync("Title cannot be longer than 50!", "Error")
+		Return
+	End If
+	
+	If editNotes.Text.Length > 255 Then
+		MsgboxAsync("Notes cannot be longer than 255!", "Error")
+		Return
+	End If
+	
+	If m_group.GetColor > 7 Then
+		MsgboxAsync("Invalid color!" & CRLF & "Color code: " & m_group.GetColor , "Error")
+		Return
+	End If
+	
+	If m_group.GetIconPos > 7 Then
+		MsgboxAsync("Invalid icon!" & CRLF & "Icon code: " & m_group.GetIconPos, "Error")
+		Return
+	End If
+	
 	' Set the title and description.
 	m_group.SetTitle(editAddGrpTitle.Text)
 	m_group.SetDescription(editNotes.Text)
