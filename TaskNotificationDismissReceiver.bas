@@ -66,14 +66,17 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 						
 						' Save the computed value into the DB.
 						RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(0), computedSchedule)
-						' Make another schedule if possible.
-						StartServiceAtExact(TaskNotificationService, computedSchedule, True)
-					
+						
 						toastMsg = "Task Dimissed. Next task will be on: " & dateObj.GetFormattedDateAndTime( _
 						SettingsViewModelInstance.Is24HourFormatEnabled)
 					End If
 				End If
-								
+				
+				' Close the notification.
+				nb.Cancel(notificationId)
+						
+				' Make another schedule if possible.
+				StartServiceAtExact(TaskNotificationScheduler, DateTime.Now, True)
 			End If
 		Else
 			toastMsg = "Error in dismissing task (task id: " & itemId

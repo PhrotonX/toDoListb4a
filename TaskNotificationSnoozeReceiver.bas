@@ -68,6 +68,8 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 			End If
 		End If
 		
+		nb.Cancel(notificationId)
+		
 		'Run the task notification scheudler service to start the next scheduled task.
 		StartServiceAtExact(TaskNotificationScheduler, DateTime.Now, True)
 	End If
