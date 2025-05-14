@@ -11,11 +11,10 @@ Version=13.1
 
 Sub Process_Globals
 	Public LastSavedGroup As Group
-	
-	Private m_group As Group
 End Sub
 
 Sub Globals
+	Private m_group As Group
 	Private tiles(7) As Panel
 	Private icons(7) As Panel
 	Private selectedTileIndex As Int = -1
@@ -290,7 +289,6 @@ Sub GetImageViewFromPanel(pnl As Panel) As ImageView
 End Sub
 
 Private Sub OnCloseActivity
-	m_group = Null
 	Activity.Finish
 End Sub
 
