@@ -170,13 +170,20 @@ Private Sub btnEdit_Click
 End Sub
 
 ' Make update transactions into the database if checkbox tick occured.
-Private Sub viewTitle_CheckedChange(Checked As Boolean)
-	' Toggle the completions status of the task
-	m_task.Done = Checked
+Private Sub viewTitle_CheckedChange(Checked As Boolean)	
+	If m_task.Done <> Checked Then
+		' Toggle the completions status of the task
+		m_task.Done = Checked
+		
+		' Play task completion sound.
+		If Checked Then
+			Starter.TaskViewModelInstance.PlayTaskCompletionSound
+		End If
 	
-	' Update the task to reflect changes with the completion value.
-	Starter.TaskViewModelInstance.UpdateTask(m_task)
-	Starter.RepeatViewModelInstance.CalculateSchedule(m_task)
+		' Update the task to reflect changes with the completion value.
+		Starter.TaskViewModelInstance.UpdateTask(m_task)
+		Starter.RepeatViewModelInstance.CalculateSchedule(m_task)
+	End If
 End Sub
 
 Private Sub pnlAttachmentRoot_Click
