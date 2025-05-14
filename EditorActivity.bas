@@ -57,7 +57,7 @@ Sub Globals
 	Private clvAttachments As CustomListView
 	Private btnAttachmentOpen As Button
 	Private btnAttachmentRemove As Button
-	Private imgAttachmentIcon As ImageView
+	'Private imgAttachmentIcon As ImageView
 	Private lblAttachmentFileName As Label
 	Private pnlAttachmentRoot As Panel
 	Private spnTaskGroup As Spinner
@@ -498,14 +498,14 @@ Private Sub OnAddAttachment(item As Attachment)
 	Dim viewHolder As AttachmentViewHolder
 	viewHolder.Initialize
 	viewHolder.Root = panel
-	viewHolder.Icon = imgAttachmentIcon
+	'viewHolder.Icon = imgAttachmentIcon
 	viewHolder.AttachmentLabel = lblAttachmentFileName
 	viewHolder.AttachmentLabel.Text = item.GetFilename
 	viewHolder.OpenButton = btnAttachmentOpen
 	viewHolder.OpenButton.Visible = False
 	viewHolder.DeleteButton = btnAttachmentRemove
 	viewHolder.ID = item.GetID
-	viewHolder.Icon.Gravity = Gravity.FILL
+	'viewHolder.Icon.Gravity = Gravity.FILL
 	
 	clvAttachments.Add(panel, viewHolder)
 End Sub
@@ -515,7 +515,7 @@ Private Sub spinnerDueDateMonth_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Private Sub spinnerDueDateDay_ItemClick (Position As Int, Value As Object)	
-	FormHelper.SetMonthValue(spinnerDueDateMonth, m_task.GetDueDate, Position)
+	FormHelper.SetDayValue(spinnerDueDateDay, m_task.GetDueDate, Position)
 End Sub
 
 Private Sub btnRepeatClear_Click

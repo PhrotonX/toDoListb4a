@@ -10,6 +10,7 @@ Version=13.1
 #End Region
 
 Sub Process_Globals
+	Public LastSavedGroup As Group
 End Sub
 
 Sub Globals
@@ -96,20 +97,32 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
+	' Turn color brown option into yellow if dark mode is enabled.
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled Then
+		tiles(Theme.COLOR_BROWN).Tag = "YELLOW"
+	Else
+		tiles(Theme.COLOR_BROWN).Tag = "BROWN"
+	End If
+	UpdateTileImage(tiles(Theme.COLOR_BROWN), False)
+	
+	Log(Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE))
 	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
 		Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:
-			lblAddGrp.Text = "Edit Group"
+			lblAddGrp.Text = "New Group"
 			
 			' Initialize the group object.
 			m_group.Initialize(0)
 			
 			' Set the default indigo color.
-			m_group.SetColor(m_group.COLOR_INDIGO)
-			UpdateTileImage(tiles(m_group.COLOR_INDIGO), True)
+			m_group.SetColor(Theme.COLOR_INDIGO)
+			UpdateTileImage(tiles(Theme.COLOR_INDIGO), True)
 			
 			' Set the default icon.
 			' @TODO: Add functionality here if the icons has been changed into appropriate ones.
 		Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
+			' Retrieve the group.
+			m_group = Starter.GroupViewModelInstance.GetGroup(Starter.InstanceState.Get(Starter.EXTRA_EDITOR_GROUP_ID))
+			
 			' Change the title
 			lblAddGrp.Text = "Edit Group"
 			
@@ -117,11 +130,21 @@ Sub Activity_Resume
 			editAddGrpTitle.Text = m_group.GetTitle()
 			editNotes.Text = m_group.GetDescription()
 			
-			' Load the default icon.
+			' Load the default color.
 			UpdateTileImage(tiles(m_group.GetColor()), True)
 			
+			Log("Load: m_group.GetIconPos: " & m_group.GetIconPos)
+			
 			' Mark the loaded group icon as selected.
-			icons(OnLoadGroupIcon(m_group.GetIcon())).Color = Colors.LightGray
+			icons(OnLoadGroupIcon(m_group.GetIconPos)).Color = Colors.LightGray
+			
+			lblCreatedAt.Text = "Created At: " & m_group.CreatedAt.GetFormattedDateAndTime( _
+				Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+			lblUpdatedAt.Text = "Updated At: " & m_group.UpdatedAt.GetFormattedDateAndTime( _
+				Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+		
+			Log("TaskGroupActivity.Activity_Resume Color" & m_group.GetColor)
+			Log("TaskGroupActivity.Activity_Resume Icon" & m_group.GetIcon)
 		Case Else:
 			MsgboxAsync("Error loading task group editor", "Error")
 	End Select
@@ -135,6 +158,28 @@ Sub btnAddGrpCancel_Click
 End Sub
 
 Sub btnAddGrpSave_Click
+	
+	' Validation
+	If editAddGrpTitle.Text.Length > 50 Then
+		MsgboxAsync("Title cannot be longer than 50!", "Error")
+		Return
+	End If
+	
+	If editNotes.Text.Length > 255 Then
+		MsgboxAsync("Notes cannot be longer than 255!", "Error")
+		Return
+	End If
+	
+	If m_group.GetColor > 7 Then
+		MsgboxAsync("Invalid color!" & CRLF & "Color code: " & m_group.GetColor , "Error")
+		Return
+	End If
+	
+	If m_group.GetIconPos > 7 Then
+		MsgboxAsync("Invalid icon!" & CRLF & "Icon code: " & m_group.GetIconPos, "Error")
+		Return
+	End If
+	
 	' Set the title and description.
 	m_group.SetTitle(editAddGrpTitle.Text)
 	m_group.SetDescription(editNotes.Text)
@@ -142,12 +187,22 @@ Sub btnAddGrpSave_Click
 	' Colors and icons are already set by pnlColor_Click and pnlIcon_Click events.
 	
 	' Save the group, depending if the editor mode is creating or editing a task.
-	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
-		Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:
-			Starter.GroupViewModelInstance.InsertGroup(m_group)
-		Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
-			Starter.GroupViewModelInstance.UpdateGroup(m_group)
-	End Select
+	Try
+		Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
+			Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:
+				Starter.GroupViewModelInstance.InsertGroup(m_group)
+			Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
+				Starter.GroupViewModelInstance.UpdateGroup(m_group)
+		End Select
+		
+		ToastMessageShow("Task group '" & m_group.GetTitle & "' saved successfully!", True)
+	Catch
+		ToastMessageShow("Failed to save Task group '" & m_group.GetTitle & "'", True)
+		
+		Log(LastException)
+	End Try
+	
+	LastSavedGroup = m_group
 	
 	Activity.Finish
 End Sub
@@ -216,14 +271,16 @@ Sub GetImageViewFromPanel(pnl As Panel) As ImageView
 End Sub
 
 ' Returns the index of the icon data.
-Private Sub OnLoadGroupIcon(icon As String) As Int
+Private Sub OnLoadGroupIcon(icon As Int) As Int
 	Dim itr As Int = 0
 	
 	For Each item As Panel In icons
-		Dim textItem As Label = item.GetView(0)
-		If textItem.Text == icon Then
-			Return itr		
+		If itr == icon Then
+			item.Color = Colors.LightGray
+			Return itr
 		End If
+		
+		ToastMessageShow("Selected Icon Index: " & icon, False)
 		
 		itr = itr + 1
 	Next
@@ -243,7 +300,9 @@ Sub pnlicon_Click
 			Dim currentText As Label = pnl.GetView(0)
 			Log("View of i = " & i & ": " & currentText.Text)
 			
-			m_group.SetIcon(currentText.Text)
+			m_group.SetIconPos(i)
+			
+			Log("Save: m_group.GetIconPos(): " & m_group.GetIconPos)
 			Exit
 		End If
 	Next
@@ -269,3 +328,16 @@ Sub pnlicon_Click
 	
 End Sub
 
+Private Sub btnGrpDelete_Click
+	Msgbox2Async("Do you really want to delete this group?", "Question", "Yes", "Cancel", "No", Null, False)
+	Wait For Msgbox_Result (Result As Int)
+	If Result = DialogResponse.POSITIVE Then
+		Try
+			Starter.GroupViewModelInstance.DeleteGroup(m_group.GetID)
+			ToastMessageShow("Task group '" & m_group.GetTitle & "' saved successfully!", True)
+		Catch
+			ToastMessageShow("Failed to delete task group '" & m_group.GetTitle & "'", True)
+			Log(LastException)
+		End Try
+	End If
+End Sub

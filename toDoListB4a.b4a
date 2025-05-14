@@ -1,4 +1,4 @@
-Build1=Default,com.cm.todolist
+﻿Build1=Default,com.cm.todolist
 File1=3528206.png
 File10=drawerlayout.bal
 File11=EditorLayout.bal
@@ -97,19 +97,20 @@ FileGroup8=Default Group
 FileGroup9=Default Group
 Group=Default Group
 Library1=animation
-Library10=runtimepermissions
-Library11=sql
-Library12=xcustomlistview
-Library13=xui
-Library14=fileprovider
+Library10=reflection
+Library11=runtimepermissions
+Library12=sql
+Library13=xcustomlistview
+Library14=xui
+Library15=xui views
 Library2=b4xdrawer
 Library3=contentresolver
 Library4=core
-Library5=javaobject
-Library6=keyvaluestore
-Library7=nb6
-Library8=phone
-Library9=reflection
+Library5=fileprovider
+Library6=javaobject
+Library7=keyvaluestore
+Library8=nb6
+Library9=phone
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="33" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddPermission("android.permission.SCHEDULE_EXACT_ALARM")~\n~AddApplicationText(~\n~  <provider~\n~  android:name="android.support.v4.content.FileProvider"~\n~  android:authorities="$PACKAGE$.provider"~\n~  android:exported="false"~\n~  android:grantUriPermissions="true">~\n~  <meta-data~\n~  android:name="android.support.FILE_PROVIDER_PATHS"~\n~  android:resource="@xml/provider_paths"/>~\n~  </provider>~\n~)~\n~CreateResource(xml, provider_paths,~\n~   <files-path name="name" path="" />~\n~)~\n~~\n~#BridgeLogger: True~\n~'End of default text.~\n~
 Module1=Attachment
 Module10=DaysOfTheWeek
@@ -162,14 +163,14 @@ Module7=DatabaseUtils
 Module8=Date
 Module9=DateAndTime
 NumberOfFiles=48
-NumberOfLibraries=14
+NumberOfLibraries=15
 NumberOfModules=50
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
-	#VersionCode: 12
-	#VersionName: v2.0.0.6 alpha
+	#VersionCode: 13
+	#VersionName: v2.0.0.7 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -185,6 +186,8 @@ Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
 	Private xui As XUI
+	
+	Private m_savedGroup As Group
 End Sub
 
 Sub Globals
@@ -242,7 +245,6 @@ Sub Globals
 	Private Const MENU_ITEM_CLEAR_SEARCH As Int = 4
 
 	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
-	Private m_savedGroup As Group
 	'Private m_savedSearchByDueDateIdentifer As String = ""
 	'Private m_savedSearchByDueDateRange1 As Date
 	'Private m_savedSearchByDueDateRange2 As Date
@@ -344,8 +346,6 @@ Sub Activity_Create(FirstTime As Boolean)
 	mainFragment.LoadLayout("newFragment")
 	drawer.LeftPanel.LoadLayout("drawerLayout")
 	
-	
-	LoadDrawerItems
 	listview_init
 	
 	m_tasks.Initialize
@@ -383,11 +383,24 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-	' Remove all items to update data and avoid data duplication.
-	ToDoList.Clear
-	LoadItems
+	If m_savedSmartList == SMART_LIST_NONE Then
+		'ToastMessageShow("Saved group ID: " & m_savedGroup.GetID, False)
+		'Dim newGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_savedGroup.GetID)
+		'Log(newGroup)
+		
+		'm_savedGroup = newGroup
+		'OnLoadPage(newGroup)
+		
+		If TaskGroupActivity.LastSavedGroup <> Null Then
+			m_savedGroup = TaskGroupActivity.LastSavedGroup
+			TaskGroupActivity.LastSavedGroup = Null
+			OnLoadPage(m_savedGroup)
+		End If
+		
+	Else
+		OnLoadPage(m_savedGroup)
+	End If
 	
-	Starter.CheckInstanceState
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -578,8 +591,6 @@ Private Sub LoadItems()
 	
 	' Obtain all tasks from the database, depending on the smart list mode.
 	m_query.SetSearchIsDeleted(False)
-	GroupDescription.Text = "My Tasks"
-	GroupLineDecor.Visible = True
 	
 	Select m_savedSmartList:
 		Case SMART_LIST_MY_DAY:
@@ -653,25 +664,14 @@ Private Sub LoadItems()
 						If itr <> currentDateIdentification And item.Done == False Then
 							itr = currentDateIdentification
 						
-							Dim subGroup As SubGroupViewHolder
-							subGroup.Initialize(xui)
-							subGroup.Name.Text = currentDateIdentification
-							subGroup.Root.Height = 70
-							subGroup.Name.TextSize = 16
-
-							ToDoList.Add(subGroup.BuildView(), subGroup)
+							CreateSubGroup(currentDateIdentification, Colors.RGB(0, 0, 0), 18)
 						End If
 					Case SMART_LIST_SEARCH, SMART_LIST_COMPLETED:
 					Case Else:
 						' If the Next item Is marked As completed, Then add subGroup "Completed"
 						If item.Done == True And itr == "" Then
-							Dim subGroup As SubGroupViewHolder
-							subGroup.Initialize(xui)
-							subGroup.Name.Text = "Completed"
+							CreateSubGroup("Completed", Colors.RGB(0, 0, 0), 18)
 							itr = "Completed"
-
-							subGroup.Name.Height = 68
-							ToDoList.Add(subGroup.BuildView(), subGroup)
 						End If
 				End Select
 			End If
@@ -687,29 +687,29 @@ Private Sub LoadItems()
 		Next
 	End If
 	
+	' Code for counting the items.
+	Dim text As String
+	Dim count As Int
 	' Add the item count information
 	Select m_savedSmartList
 		' Planned and Completed has a unique way of counting items.
-		Case SMART_LIST_PLANNED, SMART_LIST_COMPLETED:
-			' @TODO: Add functionality here...
-		Case Else:
-			Dim subGroup As SubGroupViewHolder
-			subGroup.Initialize(xui)
-			
-			Dim count As Int = m_tasks.Size
-			
-			subGroup.Name.Text = count & " found task"
-			
-			' Make the counting information plural if possible.
-			If count > 1 Then
-				subGroup.Name.Text = subGroup.Name.Text & "(s)"
-			End If
-			
-			subGroup.Name.TextSize = 15
-			subGroup.Name.TextColor = Colors.RGB(91,91,91)
-			ToDoList.Add(subGroup.BuildView(), subGroup)
+		Case SMART_LIST_PLANNED:
+			count = Starter.TaskViewModelInstance.LastCountedIncompleteTasks
+		Case SMART_LIST_COMPLETED:
+			count = Starter.TaskViewModelInstance.LastCountedCompleteTasks
+		Case Else:			
+			count = m_tasks.Size
 	End Select
 	
+	
+	text = count & " task"
+	' Make the counting information plural if possible.
+	If count > 1 Then
+		text = text & "(s)"
+	End If
+	text = text & " found"
+	
+	CreateSubGroup(text, Colors.RGB(91, 91, 91), 16)
 	
 End Sub
 
@@ -717,16 +717,28 @@ Private Sub LoadSearchItems()
 	FormHelper.PopulateDate(spnDateMonth, spnDateDay)
 	FormHelper.PopulateDate(spinRangeMonthFrom, spinRangeDayFrom)
 	FormHelper.PopulateDate(spinRangeMonthTo, spinRangeDayTo)
+	FormHelper.PopulateDateRange(spnDateGroup)
 	FormHelper.PopulateTaskGroups(spnGroupName)
 End Sub
 
+Private Sub CreateSubGroup(title As String, color As Int, textSize As Int)
+	Dim subGroup As SubGroupViewHolder
+	subGroup.Initialize(xui)
+	subGroup.Name.Text = title
+	subGroup.Root.Height = 70
+	subGroup.Name.TextSize = textSize
+	subGroup.Name.TextColor = color
+
+	ToDoList.Add(subGroup.BuildView(), subGroup)
+End Sub
+
+' Load the menu items.
 Private Sub listview_init
 	menuListView.Visible = True
-	menuListView.AddSingleLine2("	Refresh", 1)
-	menuListView.AddSingleLine2("	Sort", 2)
-	menuListView.AddSingleLine2("	Settings", 3)
-	'menuListView.AddSingleLine2("	Edit Group", 4)
-	'menuListView.AddSingleLine2("	Clear Search", 5)
+	menuListView.AddSingleLine2("	Refresh", 0)
+	menuListView.AddSingleLine2("	Sort", 1)
+	menuListView.AddSingleLine2("	Settings", 2)
+	
 	menuListView.SingleLineLayout.Label.TextSize = 16
 	menuListView.SingleLineLayout.Label.TextColor = Colors.Black
 	menuListView.SingleLineLayout.ItemHeight = 70
@@ -736,14 +748,12 @@ Private Sub listview_init
 		
 	menuListView.Background = cd
 		
-		
 	menuListViewItemsize.Initialize("")
 	menuListViewItemsize.SetLayout(pnlmenuListView.Left, pnlmenuListView.Top, pnlmenuListView.Width, pnlmenuListView.Height)
 	
 	Log(menuListView.SingleLineLayout.ItemHeight)
 	Log(menuListView.Height & "menulistiv")
 	Log(pnlmenuListView.Height & "pnlmenulsitview")
-	
 		
 	'pnlmenuListView.SetLayoutAnimated(200,100%x, 0%y, 0, 114dip)
 	pnlMenuBgTouch.SendToBack
@@ -791,6 +801,14 @@ Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 			sortMsgBox
 		Case MENU_ITEM_SETTINGS:
 			StartActivity(SettingsActivity)
+		Case MENU_ITEM_EDIT_GROUP:
+			Log("m_savedGroup: " & m_savedGroup)
+			ToastMessageShow("m_savedGroup ID: " & m_savedGroup.GetID, False)
+			
+			Starter.InstanceState.Put(Starter.EXTRA_TASK_GROUP_EDITOR_MODE, Starter.TASK_GROUP_EDITOR_MODE_EDIT)
+			Starter.InstanceState.Put(Starter.EXTRA_EDITOR_GROUP_ID, m_savedGroup.GetID)
+			
+			StartActivity(TaskGroupActivity)
 	End Select
 	
 	OnHideMenuListViewItem
@@ -920,7 +938,8 @@ Private Sub drawerButton_Click
 		m_savedSmartList = SMART_LIST_ALL
 		
 		' Go to the "All" smart list by default.
-		OnLoadPage(smartLists(SMART_LIST_ALL))
+		m_savedGroup = smartLists(SMART_LIST_ALL)
+		OnLoadPage(m_savedGroup)
 	Else
 		If button_handling Then
 			drawer.LeftOpen = True
@@ -930,6 +949,9 @@ Private Sub drawerButton_Click
 End Sub
 
 Sub LoadDrawerItems
+	' CLear the navigation drawer to avoid item duplication.
+	clvItems.Clear
+	
 	clvItems.sv.ScrollViewInnerPanel.Color = xui.Color_Transparent
 	clvItems.sv.Color = xui.Color_Transparent
 	
@@ -945,18 +967,26 @@ Sub LoadDrawerItems
 	
 	smartLists(1).SetTitle("Tasks")
 	smartLists(1).SetIcon("")
+	smartLists(1).SetDescription("List of ungrouped tasks")
 	
 	smartLists(2).SetTitle("Planned")
 	smartLists(2).SetIcon("")
+	smartLists(2).SetColor(Theme.COLOR_BLUE)
+	smartLists(2).SetDescription("List of incomplete tasks")
 	
 	smartLists(3).SetTitle("Completed")
 	smartLists(3).SetIcon("")
+	smartLists(3).SetColor(Theme.COLOR_GREEN)
+	smartLists(3).SetDescription("List of complete tasks")
 	
 	smartLists(4).SetTitle("All")
 	smartLists(4).SetIcon("")
+	smartLists(4).SetDescription("List of all tasks")
 	
 	smartLists(5).SetTitle("Trash")
 	smartLists(5).SetIcon("")
+	smartLists(5).SetColor(Theme.COLOR_RED)
+	smartLists(5).SetDescription("List of deleted tasks")
 	
 	smartLists(6).SetTitle("Search")
 	smartLists(6).SetIcon(Chr(0xE8B6))
@@ -998,7 +1028,6 @@ Sub LoadDrawerItems
 	' Load task groups from the database
 	items.Clear
 	For Each groupObj As Group In Starter.GroupViewModelInstance.GetGroups()
-		groupObj.SetIcon("")
 		items.Add(groupObj)
 	Next
 	
@@ -1041,8 +1070,9 @@ Private Sub OnClearSearchQuery
 	
 	If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
 		Log("Query has been initialized!")
-		m_query.Initialize
 	End If
+	
+	m_query.Initialize
 	
 End Sub
 
@@ -1067,26 +1097,69 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	If viewHolder.ID <= 0 Then
 		m_savedSmartList = Index
 		
-		OnLoadPage(smartLists(Index))
+		' Remove the edit group button for smart lists.
+		If menuListView.Size > 3 Then
+			menuListView.RemoveAt(MENU_ITEM_EDIT_GROUP)
+		End If
+		
+		m_savedGroup = smartLists(Index)
+		OnLoadPage(m_savedGroup)
 	Else
 		m_savedSmartList = SMART_LIST_NONE
+		
+		' Include the edit group button for custom lists.
+		If menuListView.Size < 4 Then	
+			menuListView.AddSingleLine2("	Edit Group", 3)
+		End If
 		
 		' Get the associated group based on the ID stored in the clicked view holder of the nav drawer.
 		Dim groupObj As Group = Starter.GroupViewModelInstance.GetGroup(viewHolder.ID)
 		
-		OnLoadPage(groupObj)
+		m_savedGroup = groupObj
+		OnLoadPage(m_savedGroup)
 	End If
 End Sub
 
-Private Sub OnLoadPage(item As Group)
-	m_savedGroup = item
-	
-	titleLabel.Text = item.GetTitle
+Private Sub OnLoadPage(item As Group)	
+	LoadDrawerItems
 	drawer.LeftOpen = False
+	
 	mainFragment.RemoveAllViews
 	mainFragment.LoadLayout("newFragment")
+	
+	' Remove all items to update data and avoid data duplication.
+	ToDoList.Clear
+	
+	pnlTitleBar.Color = Theme.GetPrimaryColor(item.GetColor)
+	mainFragment.Color = Theme.GetBackgroundColor(item.GetColor)
+	
+	titleLabel.Text = item.GetTitle
+	Log("Title: " & item.GetTitle)
+	
+	OnLoadTaskDescription(item)	
+
 	LoadItems
-	drawer.LeftOpen = False
+	
+	Starter.CheckInstanceState
+End Sub
+
+Private Sub OnLoadTaskDescription(item As Group)
+	GroupDescription.TextColor = Theme.GetPrimaryColor(item.GetColor)
+	
+	If m_savedSmartList <> SMART_LIST_MY_DAY Then
+		If item.GetDescription <> "" Then
+			GroupDescription.Text = item.GetDescription
+		Else
+			GroupDescription.Text = "No task group description"
+		End If
+		
+		GroupDescription.TextSize = 16
+		GroupLineDecor.Visible = False
+	Else
+		GroupDescription.Text = "My Tasks"
+		GroupDescription.TextSize = 22
+		GroupLineDecor.Visible = True
+	End If
 End Sub
 
 Private Sub searchBtn_Click
@@ -1187,6 +1260,7 @@ Private Sub RefillSearchFields
 	
 	' Fill-up Date field
 	checkFilterByDueDate.Checked = m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_DUE_DATE_RANGE)
+	Log("m_query.GetSearchDateMode " & m_query.GetSearchDateMode )
 	Select m_query.GetSearchDateMode:
 		Case m_query.DUE_DATE_MODE_SEARCH_DEFAULT:
 			radioDueSpecificDate.Checked = True
@@ -1261,7 +1335,8 @@ Private Sub enterBtn_Click
 	m_query.SetSearchBy(searchEditText.Text)
 	
 	m_savedSmartList = SMART_LIST_SEARCH
-	OnLoadPage(smartLists(m_savedSmartList))
+	m_savedGroup = smartLists(m_savedSmartList)
+	OnLoadPage(m_savedGroup)
 	
 	drawerButton.Text = Chr(0xE5CD)
 End Sub
@@ -1446,7 +1521,7 @@ Private Sub spnDateMonth_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Private Sub spnDateGroup_ItemClick (Position As Int, Value As Object)
-	ToastMessageShow("Logic not implemented: Searching for tasks based on date groups", False)
+	m_query.SetSearchDueDateRange(Value)
 End Sub
 
 Private Sub spnDateDay_ItemClick (Position As Int, Value As Object)
