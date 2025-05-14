@@ -176,7 +176,7 @@ Version=13.1
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 13
-	#VersionName: v2.0.0.7 alpha
+	#VersionName: v2.0.0.8 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -390,24 +390,7 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-	If SavedSmartList == SMART_LIST_NONE Then
-		'ToastMessageShow("Saved group ID: " & m_savedGroup.GetID, False)
-		'Dim newGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_savedGroup.GetID)
-		'Log(newGroup)
-		
-		'm_savedGroup = newGroup
-		'OnLoadPage(newGroup)
-		
-		If TaskGroupActivity.LastSavedGroup <> Null Then
-			m_savedGroup = TaskGroupActivity.LastSavedGroup
-			TaskGroupActivity.LastSavedGroup = Null
-			OnLoadPage(m_savedGroup)
-		End If
-		
-	Else
-		OnLoadPage(smartLists(SavedSmartList))
-	End If
-	
+	OnRefresh	
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -803,7 +786,7 @@ End Sub
 Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 	Select Position
 		Case MENU_ITEM_REFRESH:
-			
+			OnRefresh
 		Case MENU_ITEM_SORT:
 			sortMsgBox
 		Case MENU_ITEM_SETTINGS:
@@ -1069,6 +1052,14 @@ Private Sub OnLoadTaskGroups(items As List)
 		
 		clvItems.Add(p, viewHolder)
 	Next
+End Sub
+
+Private Sub OnRefresh
+	If SavedSmartList == SMART_LIST_NONE Then
+		OnLoadPage(m_savedGroup)
+	Else
+		OnLoadPage(smartLists(SavedSmartList))
+	End If
 End Sub
 
 Private Sub OnClearSearchQuery
