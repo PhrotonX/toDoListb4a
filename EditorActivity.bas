@@ -480,6 +480,8 @@ Private Sub ClearRadioButtons
 	checkRepeatThu.Checked = False
 	checkRepeatFri.Checked = False
 	checkRepeatSat.Checked = False
+	
+	
 End Sub
 
 Private Sub LoadAttachments
@@ -655,13 +657,11 @@ Private Sub EditText_removeunderline
 End Sub
 
 Private Sub btnClearTitle_Click
-	
+	editTitle.Text = ""
+	m_task.SetTitle("")
 End Sub
 
 Private Sub btnClearNotes_Click
-	
-End Sub
-
-Private Sub btnClearDueDate_LongClick
-	
+	editNotes.Text = ""
+	m_task.SetNotes("")
 End Sub
