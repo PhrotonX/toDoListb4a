@@ -59,9 +59,11 @@ Sub Service_Start (StartingIntent As Intent)
 			Log("TaskNotificationScheduler: task_id" & task_id)
 			
 			Log("TaskNotificationScheduler: item.Reminder.GetUnixTime " & item.Reminder.GetUnixTime)
+			Log("TaskNotificationScheduler: repeatItem.GetSchedule(0) + item.Reminder.GetUnixTime " & _
+				(repeatItem.GetSchedule(0) + item.Reminder.GetUnixTime))
 			
 			' Make a notification
-			StartServiceAtExact(TaskNotificationService, item.Reminder.GetUnixTime, True)
+			StartServiceAtExact(TaskNotificationService, repeatItem.GetSchedule(0) + item.Reminder.GetUnixTime, True)
 		Else
 			Log("No new tasks")
 		End If
