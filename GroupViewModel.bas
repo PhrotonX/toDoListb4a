@@ -19,6 +19,14 @@ Public Sub Initialize(dbRepo As GroupRepository)
 	m_defaultGroup.SetIcon("")
 End Sub
 
+Public Sub CheckForDuplicateOnInsert(item As String) As Boolean
+	Return m_dbRepository.CheckForDuplicates(item, m_dbRepository.CHECK_ON_INSERT)
+End Sub
+
+Public Sub CheckForDuplicateOnUpdate(item As String) As Boolean
+	Return m_dbRepository.CheckForDuplicates(item, m_dbRepository.CHECK_ON_UPDATE)
+End Sub
+
 Public Sub DefaultGroup() As Group
 	Return m_defaultGroup
 End Sub

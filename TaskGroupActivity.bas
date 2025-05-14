@@ -187,6 +187,22 @@ Sub btnAddGrpSave_Click
 		Return
 	End If
 	
+	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
+		Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
+			If Starter.GroupViewModelInstance.CheckForDuplicateOnUpdate(editAddGrpTitle.Text) == True Then
+				MsgboxAsync("Title duplicate found!", "Error")
+				Return
+			End If
+		Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:
+			If Starter.GroupViewModelInstance.CheckForDuplicateOnInsert(editAddGrpTitle.Text) == True Then
+				MsgboxAsync("Title duplicate found!", "Error")
+				Return
+			End If
+		Case Else:
+			MsgboxAsync("Failed validating data!", "Error")
+			Return
+	End Select
+	
 	If editNotes.Text.Length > 255 Then
 		MsgboxAsync("Notes cannot be longer than 255!", "Error")
 		Return
