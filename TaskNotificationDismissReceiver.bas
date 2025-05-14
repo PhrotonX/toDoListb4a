@@ -80,7 +80,6 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 		End If
 	End If
 	
-	'ToastMessageShow(, False)
-	ToastMessageShow(toastMsg, False)
+	ToastMessageShow(toastMsg, True)
 End Sub
 

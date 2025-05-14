@@ -62,11 +62,14 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 					RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(currentDayOfTheWeek), _
 					repeatItem.GetSchedule(currentDayOfTheWeek))
 					
-					StartServiceAtExact(TaskNotificationService, calculatedTime, True)
+					ToastMessageShow("Task snoozed!", True)
 				End If
 				
 			End If
 		End If
+		
+		'Run the task notification scheudler service to start the next scheduled task.
+		StartServiceAtExact(TaskNotificationScheduler, DateTime.Now, True)
 	End If
 End Sub
 
