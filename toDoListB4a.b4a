@@ -1,14 +1,8 @@
 ﻿Build1=Default,com.cm.todolist
 File1=3528206.png
-<<<<<<< HEAD
-File10=brown-selected.png
-File11=canvas.bal
-File12=done_sound.mp3
-=======
 File10=brown.png
 File11=brown-selected.png
 File12=canvas.bal
->>>>>>> 0d0800d (adv settings added)
 File13=draweritems.bal
 File14=drawerlayout.bal
 File15=EditorLayout.bal
@@ -49,16 +43,6 @@ File46=sviewlayout.bal
 File47=TaskItemLayout.bal
 File48=taskviewlayout.bal
 File49=taskviewscrolllayout.bal
-<<<<<<< HEAD
-File5=AttachmentItemLayout.bal
-File50=test.bal
-File51=YELLOW.png
-File52=YELLOW-SELECTED.png
-File6=AttachmentListLayout.bal
-File7=BLUE.png
-File8=BLUE-SELECTED.png
-File9=brown.png
-=======
 File5=AdvancedSettingsLayout.bal
 File50=test.bal
 File51=YELLOW.png
@@ -67,7 +51,6 @@ File6=AttachmentItemLayout.bal
 File7=AttachmentListLayout.bal
 File8=BLUE.png
 File9=BLUE-SELECTED.png
->>>>>>> 0d0800d (adv settings added)
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
@@ -137,58 +120,6 @@ Library7=keyvaluestore
 Library8=nb6
 Library9=phone
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="33" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddPermission("android.permission.SCHEDULE_EXACT_ALARM")~\n~AddApplicationText(~\n~  <provider~\n~  android:name="android.support.v4.content.FileProvider"~\n~  android:authorities="$PACKAGE$.provider"~\n~  android:exported="false"~\n~  android:grantUriPermissions="true">~\n~  <meta-data~\n~  android:name="android.support.FILE_PROVIDER_PATHS"~\n~  android:resource="@xml/provider_paths"/>~\n~  </provider>~\n~)~\n~CreateResource(xml, provider_paths,~\n~   <files-path name="name" path="" />~\n~)~\n~~\n~#BridgeLogger: True~\n~'End of default text.~\n~
-<<<<<<< HEAD
-Module1=Attachment
-Module10=DaysOfTheWeek
-Module11=Dimen
-Module12=EditorActivity
-Module13=FileUtils
-Module14=FormHelper
-Module15=Group
-Module16=GroupDao
-Module17=GroupRepository
-Module18=GroupViewHolder
-Module19=GroupViewModel
-Module2=AttachmentDao
-Module20=Repeat
-Module21=RepeatDao
-Module22=RepeatRepository
-Module23=RepeatViewModel
-Module24=SettingsAbout
-Module25=SettingsActivity
-Module26=SettingsHelp
-Module27=SettingsRepository
-Module28=SettingsViewModel
-Module29=Snooze
-Module3=AttachmentFileRepository
-Module30=Starter
-Module31=SubGroupViewHolder
-Module32=TaskDao
-Module33=TaskGroupActivity
-Module34=TaskNotificationCompat
-Module35=TaskNotificationCompleteReceiver
-Module36=TaskNotificationDismissReceiver
-Module37=TaskNotificationScheduler
-Module38=TaskNotificationService
-Module39=TaskNotificationSnoozeReceiver
-Module4=AttachmentRepository
-Module40=TaskQuery
-Module41=TaskRepository
-Module42=TaskViewerActivity
-Module43=TaskViewHolder
-Module44=TaskViewModel
-Module45=Theme
-Module46=Time
-Module47=ToDo
-Module48=ToDoDatabase
-Module49=ToDoDatabaseViewModel
-Module5=AttachmentViewHolder
-Module50=ToDoFileSystem
-Module6=AttachmentViewModel
-Module7=DatabaseUtils
-Module8=Date
-Module9=DateAndTime
-=======
 Module1=AdvancedSettingsActivity
 Module10=DateAndTime
 Module11=DaysOfTheWeek
@@ -240,7 +171,6 @@ Module6=AttachmentViewHolder
 Module7=AttachmentViewModel
 Module8=DatabaseUtils
 Module9=Date
->>>>>>> 0d0800d (adv settings added)
 NumberOfFiles=52
 NumberOfLibraries=15
 NumberOfModules=51
