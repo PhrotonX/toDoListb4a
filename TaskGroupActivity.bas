@@ -160,6 +160,15 @@ Sub Activity_Pause (UserClosed As Boolean)
 End Sub
 
 Sub btnAddGrpCancel_Click
+	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
+		Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
+			LastSavedGroup = m_group
+		Case Else:
+			' Do nothing.
+	End Select
+		
+	ToastMessageShow("Editing cancelled", False)
+		
 	Activity.Finish
 End Sub
 
@@ -243,7 +252,7 @@ Sub pnlColor_Click
 	UpdateTileImage(pnl, True)
 
 
-	Log("Selected index: " & clickedIndex) '0 = red, 1 = orange, 2 = yellow, 3 = green, 4 = blue, 5 = indigo, 6 = pink
+	'Log("Selected index: " & clickedIndex) '0 = red, 1 = orange, 2 = yellow, 3 = green, 4 = blue, 5 = indigo, 6 = pink
 	
 	' Update the color value of the m_group variable.
 	m_group.SetColor(clickedIndex)
@@ -328,7 +337,7 @@ Sub pnlicon_Click
 	pnl.Color = Colors.LightGray
 	selectedIconsIndex = clickedIndex
 
-	Log("Selected index: " & clickedIndex)
+	'Log("Selected index: " & clickedIndex)
 
 	
 	
