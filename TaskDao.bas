@@ -55,6 +55,11 @@ End Sub
 Public Sub UpdateTask(item As ToDo)
 	m_sql.BeginTransaction
 	Try
+		Dim deletedAt As Long = 0
+		If item.IsDeleted Then
+			deletedAt = DateTime.Now
+		End If
+		
 		' Update a specific item and takes their new values into the query.
 		m_sql.ExecNonQuery("UPDATE task SET title = '"&item.GetTitle& "', " & CRLF & _
 		"notes = '" & item.GetNotes & "', " & CRLF & _
@@ -64,7 +69,9 @@ Public Sub UpdateTask(item As ToDo)
 		"is_reminder_enabled = " & DatabaseUtils.BoolToInt(item.IsReminderEnabled) & ", " & CRLF & _
 		"reminder = " & item.Reminder.GetUnixTime & ", " & CRLF & _
 		"snooze = " & item.Snooze.GetSnooze & ", " & CRLF & _
-		"updated_at = " & DateTime.Now & CRLF & _
+		"updated_at = " & DateTime.Now & ", " & CRLF & _
+		"deleted_at = " & deletedAt & ", " & CRLF & _
+		"is_deleted  = " & DatabaseUtils.BoolToInt(item.IsDeleted) & CRLF & _
 		"WHERE task_id = " & item.GetId & CRLF & _
 		";")
 		
@@ -78,23 +85,27 @@ End Sub
 ' Retrieves multiple tasks.
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
-Public Sub GetTasks(searchingQuery As String, sortingQuery As String) As List
-	Return OnGetTask("SELECT * FROM task " & searchingQuery & " " & sortingQuery)
+Public Sub GetTasks(selectClause As String, joinQuery As String, searchingQuery As String, sortingQuery As String) _ 
+	As List
+	
+	Return OnGetTask(selectClause & " " & joinQuery & " " & searchingQuery & " " & sortingQuery)
 End Sub
 
 ' Retrieves multiple tasks based on a task group
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
-Public Sub GetGroupedTasks(group_id As Long, searchingQuery As String, sortingQuery As String) As List
-	Return OnGetTask("SELECT * FROM task JOIN task_group " & CRLF & _ 
-	"ON task_group.task_id = task.task_id WHERE group_id = " & group_id & " " & searchingQuery & " " & sortingQuery)
+Public Sub GetGroupedTasks(selectClause As String, group_id As Long, searchingQuery As String, _ 
+	sortingQuery As String) As List
+	Return OnGetTask(selectClause & " JOIN task_group " & CRLF & _ 
+	"ON task_group.task_id = task.task_id WHERE group_id = " & group_id & " AND " & searchingQuery & " " & sortingQuery)
 End Sub
 
 ' Retrieves multiple tasks based on a task group
 ' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
 ' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
-Public Sub GetUngroupedTasks(searchingQuery As String, sortingQuery As String) As List	
-	Return OnGetTask("SELECT * FROM task WHERE task_id NOT IN (SELECT task_id FROM task_group);")
+Public Sub GetUngroupedTasks(selectClause As String, searchingQuery As String, sortingQuery As String) As List
+	Return OnGetTask(selectClause & " WHERE task_id NOT IN (SELECT task_id FROM task_group) AND " & searchingQuery _
+	& " " & sortingQuery)
 End Sub
 
 Private Sub OnGetTask(query As String) As List
@@ -106,6 +117,9 @@ Private Sub OnGetTask(query As String) As List
 		' Iterate over all tasks and add it into the list.
 		Dim cursorTask As Cursor
 		cursorTask = m_sql.ExecQuery(query)
+		
+		Log(query)
+		
 		For i = 0 To cursorTask.RowCount - 1
 			cursorTask.Position = i
 			

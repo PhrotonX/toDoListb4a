@@ -224,8 +224,9 @@ Private Sub OnAddAttachment(item As Attachment)
 	Dim viewHolder As AttachmentViewHolder
 	viewHolder.Initialize
 	viewHolder.Root = panel
-	viewHolder.Icon = imgAttachmentIcon
+	'viewHolder.Icon = imgAttachmentIcon
 	viewHolder.AttachmentLabel = lblAttachmentFileName
+	viewHolder.AttachmentLabel.Text = item.GetFilename
 	viewHolder.OpenButton = btnAttachmentOpen
 	viewHolder.DeleteButton = btnAttachmentRemove
 	' Hide the remove button for attachments. Attachments cannot be edited within TaskViewerActivity.

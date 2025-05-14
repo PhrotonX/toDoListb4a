@@ -11,6 +11,10 @@ Sub Class_Globals
 	
 	Public Const TASKS_DEFAULT As Long = -1
 	Public Const TASKS_NO_GROUP As Long = 0
+	
+	
+	Private m_completeTaskCtr As Int = 0
+	Private m_incompleteTaskCtr As Int = 0
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -36,16 +40,16 @@ Public Sub GetTask(id As Long) As ToDo
 	Return m_repository.GetTask(id)
 End Sub
 
+Public Sub GetTasks(query As TaskQuery) As List
+	Return m_repository.GetTasks(query)
+End Sub
+
 Private Sub GetAllTasks() As List
 	Return m_repository.GetAllTasks
 End Sub
 
 Public Sub GetAllTasksSorted(query As TaskQuery) As List
-	If query.IsSortingEnabled() Then
 		Return GetSortedTasks(query)
-	Else
-		Return GetAllTasks
-	End If
 End Sub
 
 Public Sub GetSortedTasks(query As TaskQuery) As List
@@ -123,7 +127,7 @@ Public Sub GetTasksToday(query As TaskQuery) As List
 	If query.IsSortingEnabled() Then
 		tasks = GetSortedTasks(query)
 	Else
-		tasks = GetAllTasks
+		tasks = GetTasks(query)
 	End If
 	
 	Dim results As List
@@ -154,6 +158,8 @@ Public Sub GetTasksCompleted(query As TaskQuery) As List
 	For Each item As ToDo In tasks
 		If item.Done Then
 			results.Add(item)
+			
+			m_incompleteTaskCtr = m_incompleteTaskCtr + 1
 		End If
 	Next
 	
@@ -162,6 +168,9 @@ End Sub
 
 ' Move logic to repository.
 Public Sub GetTasksPlanned(query As TaskQuery) As List
+	m_completeTaskCtr = 0
+	m_incompleteTaskCtr = 0
+	
 	Dim tasks As List
 	
 	If query.IsSortingEnabled() Then
@@ -176,6 +185,8 @@ Public Sub GetTasksPlanned(query As TaskQuery) As List
 	For Each item As ToDo In tasks
 		If item.Done == False Then
 			results.Add(item)
+			
+			m_incompleteTaskCtr = m_incompleteTaskCtr + 1
 		End If
 	Next
 	
@@ -183,19 +194,19 @@ Public Sub GetTasksPlanned(query As TaskQuery) As List
 End Sub
 
 ' Move logic to repository.
+' This clears the search query and then replaces it with FIELD_IS_DELETED set to true.
 Public Sub GetDeletedTasks(query As TaskQuery) As List
 	Dim tasks As List
-	
-	' Shall be tasks sorted by deleted_at at default.
-	If query.IsSortingEnabled() Then
-		tasks = GetAllTasksSorted(query)
-	Else
-		tasks = GetTasksSortedByDueDate(TASKS_DEFAULT, False)
-	End If
-	
 	Dim results As List
-	results.Initialize
+	results.Initialize()
 	
+	' Avoid updating the referenced TaskQuery.
+	Dim queryCopy As TaskQuery = query
+	
+	'The query system needs to be fixed before using this functions.
+	queryCopy.SetSearchIsDeleted(True)
+	
+	tasks = GetAllTasksSorted(queryCopy)
 	For Each item As ToDo In tasks
 		If item.IsDeleted == True Then
 			results.Add(item)
@@ -235,6 +246,7 @@ Public Sub FindTasksByDueDate(group_id As Long, tickBegin As Long, tickEnd As Lo
 	Return m_repository.FindTasksByDueDate(group_id, tickBegin, tickEnd, ascending)
 End Sub
 
+' @Deprecated
 ' repeat - Expects a list of 7 boolean values.
 Public Sub FindTasksByRepeat(group_id As Long, repeatQuery As List, ascending As Boolean) As List
 	Dim tasks As List = GetTasksSortedById(group_id, ascending)
@@ -271,4 +283,14 @@ Public Sub FindTasksByRepeat(group_id As Long, repeatQuery As List, ascending As
 	Next
 	
 	Return result
+End Sub
+
+' Used for completed tasks.
+Public Sub LastCountedCompleteTasks
+	Return m_completeTaskCtr
+End Sub
+
+' Used for planned tasks.
+Public Sub LastCountedIncompleteTasks
+	Return m_incompleteTaskCtr
 End Sub

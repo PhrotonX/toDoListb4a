@@ -6,6 +6,9 @@ Version=13.1
 @EndOfDesignText@
 Sub Class_Globals
 	Private m_sql As SQL	
+	
+	Public Const CHECK_ON_INSERT As Int = 1
+	Public Const CHECK_ON_UPDATE As Int = 2
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -13,8 +16,9 @@ Public Sub Initialize(sql As SQL)
 	m_sql = sql
 End Sub
 
-Private Sub CheckForDuplicates(item As Group) As Boolean
-	If m_sql.ExecQuerySingleResult("SELECT count(*) FROM groups WHERE title = " & item.GetTitle) >= 1 Then
+' count- Supported values: CHECK_ON_INSERT, CHECK_ON_UPDATE
+Public Sub CheckForDuplicates(item As Group, count As Int) As Boolean
+	If m_sql.ExecQuerySingleResult("SELECT count(*) FROM groups WHERE title = '" & item.GetTitle & "';") >= count Then
 		Return True
 	Else
 		Return False
@@ -26,13 +30,16 @@ Public Sub InsertGroup(item As Group) As Boolean
 	
 	m_sql.BeginTransaction
 	Try
-		If CheckForDuplicates(item) Then
+		If CheckForDuplicates(item, CHECK_ON_INSERT) Then
 			result = False
 		Else
-			m_sql.ExecNonQuery("INSERT INTO groups(title, description, color, created_at, updated_at) VALUES(" & CRLF & _
-			item.GetTitle & "," & CRLF & _
-			item.GetDescription & "," & CRLF & _
+			m_sql.ExecNonQuery("INSERT INTO groups(title, description, color, icon, icon_pos, " & _ 
+			"created_at, updated_at) VALUES(" & CRLF & _
+			"'" & item.GetTitle & "'," & CRLF & _
+			"'" & item.GetDescription & "'," & CRLF & _
 			item.GetColor & "," & CRLF & _
+			"'" & item.GetIcon & "'," & CRLF & _
+			item.GetIconPos & "," & CRLF & _
 			 DateTime.Now & "," & CRLF & _
 			DateTime.Now & CRLF & _
 			");" )
@@ -127,6 +134,8 @@ Public Sub OnGetGroup(Cursor As Cursor) As Group
 	item.SetTitle(Cursor.GetString("title"))
 	item.SetDescription(Cursor.GetString("description"))
 	item.SetColor(Cursor.GetInt("color"))
+	item.SetIcon(Cursor.GetString("icon"))
+	item.SetIconPos(Cursor.GetInt("icon_pos"))
 	item.CreatedAt().SetUnixTime(Cursor.GetLong("created_at"))
 	item.UpdatedAt().SetUnixTime(Cursor.GetLong("updated_at"))
 	
@@ -137,6 +146,7 @@ Public Sub DeleteGroup(group_id As Long)
 	m_sql.BeginTransaction
 	Try
 		m_sql.ExecNonQuery("DELETE FROM groups WHERE group_id = " & group_id)
+		m_sql.ExecNonQuery("DELETE FROM task_group WHERE group_id = " & group_id)
 		m_sql.TransactionSuccessful
 	Catch
 		Log(LastException)
@@ -167,16 +177,22 @@ Public Sub UpdateGroup(item As Group) As Boolean
 	Dim Result As Boolean
 	m_sql.BeginTransaction
 	Try
-		If CheckForDuplicates(item) Then
+		If CheckForDuplicates(item, CHECK_ON_UPDATE) Then
 			Result = False
 		Else
-			m_sql.ExecNonQuery("UPDATE groups SET " & CRLF & _
-			"title = " & item.GetTitle() & "," & CRLF & _
-			"description = " & item.GetDescription() & "," & CRLF & _
-			"color = " & item.GetColor() & "," & CRLF & _
+			Dim query As String = "UPDATE groups SET " & CRLF & _
+			"title = '" & item.GetTitle() & "', " & CRLF & _
+			"description = '" & item.GetDescription() & "', " & CRLF & _
+			"color = " & item.GetColor() & ", " & CRLF & _
+			"icon = '" & item.GetIcon() & "', " & CRLF & _
+			"icon_pos = " & item.GetIconPos() & ", " & CRLF & _
 			"updated_at = " & DateTime.Now & "" & CRLF & _
 			"WHERE group_id = " & item.GetID & CRLF & _
-			";" )
+			";" 
+			
+			Log(query)
+			
+			m_sql.ExecNonQuery(query)
 			
 			m_sql.TransactionSuccessful			
 			
