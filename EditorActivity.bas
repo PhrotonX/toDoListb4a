@@ -70,6 +70,12 @@ Sub Globals
 	Private btnRestore As Button
 	Private pnlEditorBar As Panel
 	Private pnlRepeat As Panel
+	Private btnClearAll As Button
+	Private btnClearDueDate As Button
+	Private btnClearNotes As Button
+	Private btnClearTitle As Button
+	Private btnPriorityClear As Button
+	Private btnRepeatClear As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -474,6 +480,8 @@ Private Sub ClearRadioButtons
 	checkRepeatThu.Checked = False
 	checkRepeatFri.Checked = False
 	checkRepeatSat.Checked = False
+	
+	
 End Sub
 
 Private Sub LoadAttachments
@@ -646,4 +654,14 @@ Private Sub EditText_removeunderline
 	editTitle.Background = cd
 	editNotes.Background = cd
 	editDueDateYear.Background = cd
+End Sub
+
+Private Sub btnClearTitle_Click
+	editTitle.Text = ""
+	m_task.SetTitle("")
+End Sub
+
+Private Sub btnClearNotes_Click
+	editNotes.Text = ""
+	m_task.SetNotes("")
 End Sub

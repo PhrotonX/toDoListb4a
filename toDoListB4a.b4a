@@ -1,52 +1,56 @@
 ﻿Build1=Default,com.cm.todolist
 File1=3528206.png
-File10=drawerlayout.bal
-File11=EditorLayout.bal
-File12=EditorScrollLayout.bal
-File13=emptytasks.bal
-File14=folder.png
-File15=GREEN.png
-File16=GREEN-SELECTED.png
-File17=groupTasksLayout.bal
-File18=groupTasksSVLayout.bal
-File19=helpitems.bal
+File10=brown-selected.png
+File11=canvas.bal
+File12=done_sound.mp3
+File13=draweritems.bal
+File14=drawerlayout.bal
+File15=EditorLayout.bal
+File16=EditorScrollLayout.bal
+File17=emptytasks.bal
+File18=folder.png
+File19=GREEN.png
 File2=486023921_623831243812785_3842496593750662642_n (1).png
-File20=ic_launcher.png
-File21=ic_launcher_small.png
-File22=ic_launcher_xl.png
-File23=INDIGO.png
-File24=INDIGO-SELECTED.png
-File25=Layout.bal
-File26=newfragment.bal
-File27=ORANGE.png
-File28=ORANGE-SELECTED.PNG
-File29=pencil.png
-File3=aboutitems.bal
-File30=PINK.png
-File31=PINK-SELECTED.png
-File32=RED.png
-File33=RED-SELECTED.png
-File34=searchByLayout.bal
-File35=searchFragmentSVLayout.bal
-File36=separatorlayout.bal
-File37=settingsabout.bal
-File38=settingshelp.bal
-File39=settingslayout.bal
-File4=AttachmentItemLayout.bal
-File40=solid_white.png
-File41=stock4.png
-File42=sviewlayout.bal
-File43=TaskItemLayout.bal
-File44=taskviewlayout.bal
-File45=taskviewscrolllayout.bal
-File46=test.bal
-File47=YELLOW.png
-File48=YELLOW-SELECTED.png
-File5=AttachmentListLayout.bal
-File6=BLUE.png
-File7=BLUE-SELECTED.png
-File8=canvas.bal
-File9=draweritems.bal
+File20=GREEN-SELECTED.png
+File21=groupTasksLayout.bal
+File22=groupTasksSVLayout.bal
+File23=helpitems.bal
+File24=ic_launcher.png
+File25=ic_launcher_small.png
+File26=ic_launcher_xl.png
+File27=INDIGO.png
+File28=INDIGO-SELECTED.png
+File29=Layout.bal
+File3=486023921_623831243812785_3842496593750662642_n.jpg
+File30=newfragment.bal
+File31=ORANGE.png
+File32=ORANGE-SELECTED.PNG
+File33=pencil.png
+File34=PINK.png
+File35=PINK-SELECTED.png
+File36=RED.png
+File37=RED-SELECTED.png
+File38=searchByLayout.bal
+File39=searchFragmentSVLayout.bal
+File4=aboutitems.bal
+File40=separatorlayout.bal
+File41=settingsabout.bal
+File42=settingshelp.bal
+File43=settingslayout.bal
+File44=solid_white.png
+File45=stock4.png
+File46=sviewlayout.bal
+File47=TaskItemLayout.bal
+File48=taskviewlayout.bal
+File49=taskviewscrolllayout.bal
+File5=AttachmentItemLayout.bal
+File50=test.bal
+File51=YELLOW.png
+File52=YELLOW-SELECTED.png
+File6=AttachmentListLayout.bal
+File7=BLUE.png
+File8=BLUE-SELECTED.png
+File9=brown.png
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
@@ -90,26 +94,31 @@ FileGroup45=Default Group
 FileGroup46=Default Group
 FileGroup47=Default Group
 FileGroup48=Default Group
+FileGroup49=Default Group
 FileGroup5=Default Group
+FileGroup50=Default Group
+FileGroup51=Default Group
+FileGroup52=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
 FileGroup8=Default Group
 FileGroup9=Default Group
 Group=Default Group
 Library1=animation
-Library10=runtimepermissions
-Library11=sql
-Library12=xcustomlistview
-Library13=xui
-Library14=fileprovider
+Library10=reflection
+Library11=runtimepermissions
+Library12=sql
+Library13=xcustomlistview
+Library14=xui
+Library15=xui views
 Library2=b4xdrawer
 Library3=contentresolver
 Library4=core
-Library5=javaobject
-Library6=keyvaluestore
-Library7=nb6
-Library8=phone
-Library9=reflection
+Library5=fileprovider
+Library6=javaobject
+Library7=keyvaluestore
+Library8=nb6
+Library9=phone
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="33" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddPermission("android.permission.SCHEDULE_EXACT_ALARM")~\n~AddApplicationText(~\n~  <provider~\n~  android:name="android.support.v4.content.FileProvider"~\n~  android:authorities="$PACKAGE$.provider"~\n~  android:exported="false"~\n~  android:grantUriPermissions="true">~\n~  <meta-data~\n~  android:name="android.support.FILE_PROVIDER_PATHS"~\n~  android:resource="@xml/provider_paths"/>~\n~  </provider>~\n~)~\n~CreateResource(xml, provider_paths,~\n~   <files-path name="name" path="" />~\n~)~\n~~\n~#BridgeLogger: True~\n~'End of default text.~\n~
 Module1=Attachment
 Module10=DaysOfTheWeek
@@ -161,15 +170,15 @@ Module6=AttachmentViewModel
 Module7=DatabaseUtils
 Module8=Date
 Module9=DateAndTime
-NumberOfFiles=48
-NumberOfLibraries=14
+NumberOfFiles=52
+NumberOfLibraries=15
 NumberOfModules=50
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 13
-	#VersionName: v2.0.0.7 alpha
+	#VersionName: v2.0.0.8 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -187,6 +196,18 @@ Sub Process_Globals
 	Private xui As XUI
 	
 	Private m_savedGroup As Group
+	
+	Public Const SMART_LIST_NONE As Int = -1
+	Public Const SMART_LIST_MY_DAY As Int = 0
+	Public Const SMART_LIST_TASKS As Int = 1
+	Public Const SMART_LIST_PLANNED As Int = 2
+	Public Const SMART_LIST_COMPLETED As Int = 3
+	Public Const SMART_LIST_ALL As Int = 4
+	Public Const SMART_LIST_TRASH As Int = 5
+	Public Const SMART_LIST_SEARCH As Int = 6
+	Public Const SMART_LIST_ARRAY_SIZE As Int = 7
+	
+	Public SavedSmartList As Int = SMART_LIST_MY_DAY
 End Sub
 
 Sub Globals
@@ -225,16 +246,6 @@ Sub Globals
 	Private Panel1 As Panel
 	Private pnlmenuListView As Panel
 	
-	Private Const SMART_LIST_NONE As Int = -1
-	Private Const SMART_LIST_MY_DAY As Int = 0
-	Private Const SMART_LIST_TASKS As Int = 1
-	Private Const SMART_LIST_PLANNED As Int = 2
-	Private Const SMART_LIST_COMPLETED As Int = 3
-	Private Const SMART_LIST_ALL As Int = 4
-	Private Const SMART_LIST_TRASH As Int = 5
-	Private Const SMART_LIST_SEARCH As Int = 6
-	Private Const SMART_LIST_ARRAY_SIZE As Int = 7
-	
 	Private smartLists(SMART_LIST_ARRAY_SIZE) As Group
 	
 	Private Const MENU_ITEM_REFRESH As Int = 0
@@ -243,7 +254,6 @@ Sub Globals
 	Private Const MENU_ITEM_EDIT_GROUP As Int = 3
 	Private Const MENU_ITEM_CLEAR_SEARCH As Int = 4
 
-	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
 	'Private m_savedSearchByDueDateIdentifer As String = ""
 	'Private m_savedSearchByDueDateRange1 As Date
 	'Private m_savedSearchByDueDateRange2 As Date
@@ -382,24 +392,7 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-	If m_savedSmartList == SMART_LIST_NONE Then
-		'ToastMessageShow("Saved group ID: " & m_savedGroup.GetID, False)
-		'Dim newGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_savedGroup.GetID)
-		'Log(newGroup)
-		
-		'm_savedGroup = newGroup
-		'OnLoadPage(newGroup)
-		
-		If TaskGroupActivity.LastSavedGroup <> Null Then
-			m_savedGroup = TaskGroupActivity.LastSavedGroup
-			TaskGroupActivity.LastSavedGroup = Null
-			OnLoadPage(m_savedGroup)
-		End If
-		
-	Else
-		OnLoadPage(m_savedGroup)
-	End If
-	
+	OnRefresh	
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -461,12 +454,18 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 		' Update the checked value of the task.
 		item.Done = Checked
 		
+		' Play task completion sound.
+		If Checked Then
+			Starter.TaskViewModelInstance.PlayTaskCompletionSound
+		End If
+		
+		' Toggle the completions status of the task
 		Starter.TaskViewModelInstance.UpdateTask(item)
 		Starter.RepeatViewModelInstance.CalculateSchedule(item)
 	End If
 	
 	If m_query.IsSortingEnabled() == False Then
-		Select m_savedSmartList:
+		Select SavedSmartList:
 			Case SMART_LIST_PLANNED:
 				If Checked == True Then
 					' Hide the completed task if the current smart list is in "Planned"
@@ -584,14 +583,14 @@ Private Sub LoadItems()
 	
 	'm_tasks = Starter.TaskViewModelInstance.FindTasksByRepeat(repeat, True)
 	
-	If m_savedSmartList <> SMART_LIST_SEARCH Then
+	If SavedSmartList <> SMART_LIST_SEARCH Then
 		m_query.SetGroupID(m_savedGroup.GetID)
 	End If
 	
 	' Obtain all tasks from the database, depending on the smart list mode.
 	m_query.SetSearchIsDeleted(False)
 	
-	Select m_savedSmartList:
+	Select SavedSmartList:
 		Case SMART_LIST_MY_DAY:
 			m_tasks = Starter.TaskViewModelInstance.GetTasksToday(m_query)
 		Case SMART_LIST_TASKS:
@@ -656,7 +655,7 @@ Private Sub LoadItems()
 			
 			' Create subgroups.
 			If m_query.IsSortingEnabled() == False Then
-				Select m_savedSmartList:
+				Select SavedSmartList:
 					Case SMART_LIST_PLANNED:
 						Dim currentDateIdentification As String = item.GetDueDate.IdentifyDate
 					
@@ -690,7 +689,7 @@ Private Sub LoadItems()
 	Dim text As String
 	Dim count As Int
 	' Add the item count information
-	Select m_savedSmartList
+	Select SavedSmartList
 		' Planned and Completed has a unique way of counting items.
 		Case SMART_LIST_PLANNED:
 			count = Starter.TaskViewModelInstance.LastCountedIncompleteTasks
@@ -795,7 +794,7 @@ End Sub
 Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 	Select Position
 		Case MENU_ITEM_REFRESH:
-			
+			OnRefresh
 		Case MENU_ITEM_SORT:
 			sortMsgBox
 		Case MENU_ITEM_SETTINGS:
@@ -931,10 +930,10 @@ Public Sub OnChkboxViewAreaClick(percentage As Int, viewHolder As TaskViewHolder
 End Sub
 
 Private Sub drawerButton_Click
-	If m_savedSmartList == SMART_LIST_SEARCH Then
+	If SavedSmartList == SMART_LIST_SEARCH Then
 		OnClearSearchQuery
 		
-		m_savedSmartList = SMART_LIST_ALL
+		SavedSmartList = SMART_LIST_ALL
 		
 		' Go to the "All" smart list by default.
 		m_savedGroup = smartLists(SMART_LIST_ALL)
@@ -1063,6 +1062,14 @@ Private Sub OnLoadTaskGroups(items As List)
 	Next
 End Sub
 
+Private Sub OnRefresh
+	If SavedSmartList == SMART_LIST_NONE Then
+		OnLoadPage(m_savedGroup)
+	Else
+		OnLoadPage(smartLists(SavedSmartList))
+	End If
+End Sub
+
 Private Sub OnClearSearchQuery
 	' Bring back the drawer icon into menu icon.
 	drawerButton.Text = Chr(0xE5D2)
@@ -1094,7 +1101,7 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	' 0 ID for groups cannot exist on the database. Therefore, it is reserved
 	' for special groups such as smart lists.
 	If viewHolder.ID <= 0 Then
-		m_savedSmartList = Index
+		SavedSmartList = Index
 		
 		' Remove the edit group button for smart lists.
 		If menuListView.Size > 3 Then
@@ -1104,7 +1111,7 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 		m_savedGroup = smartLists(Index)
 		OnLoadPage(m_savedGroup)
 	Else
-		m_savedSmartList = SMART_LIST_NONE
+		SavedSmartList = SMART_LIST_NONE
 		
 		' Include the edit group button for custom lists.
 		If menuListView.Size < 4 Then	
@@ -1145,7 +1152,7 @@ End Sub
 Private Sub OnLoadTaskDescription(item As Group)
 	GroupDescription.TextColor = Theme.GetPrimaryColor(item.GetColor)
 	
-	If m_savedSmartList <> SMART_LIST_MY_DAY Then
+	If SavedSmartList <> SMART_LIST_MY_DAY Then
 		If item.GetDescription <> "" Then
 			GroupDescription.Text = item.GetDescription
 		Else
@@ -1333,8 +1340,8 @@ Private Sub enterBtn_Click
 	' Set the query values
 	m_query.SetSearchBy(searchEditText.Text)
 	
-	m_savedSmartList = SMART_LIST_SEARCH
-	m_savedGroup = smartLists(m_savedSmartList)
+	SavedSmartList = SMART_LIST_SEARCH
+	m_savedGroup = smartLists(SavedSmartList)
 	OnLoadPage(m_savedGroup)
 	
 	drawerButton.Text = Chr(0xE5CD)

@@ -59,7 +59,8 @@ End Sub
 Public Sub GetNextTaskRepeat(task_id As Long) As Repeat
 	Return OnGetTaskRepeat("SELECT * FROM repeat JOIN task_repeat " & CRLF & _
 		" ON task_repeat.repeat_id = repeat.repeat_id " & CRLF & _
-		" WHERE task_repeat.task_id = " & task_id & " AND repeat.schedule > 0 ORDER BY schedule Asc LIMIT 1")
+		" WHERE task_repeat.task_id = " & task_id & " AND repeat.schedule > 0 " & _ 
+		" ORDER BY schedule Asc LIMIT 1")
 End Sub
 
 Public Sub GetTaskIdFromRepeat(repeat_id As Long) As Long
@@ -91,7 +92,8 @@ End Sub
 
 ' Returns only single repeat item. Indexes 1-6 cannot be accessed other than 0.
 Public Sub GetFirstScheduledRepeat() As Repeat
-	Return OnGetTaskRepeat("SELECT * FROM repeat WHERE schedule > 0 ORDER BY schedule ASC LIMIT 1")
+	Return OnGetTaskRepeat("SELECT * FROM repeat WHERE schedule > 0 ORDER BY schedule " & _ 
+		" ASC LIMIT 1")
 End Sub
 
 Public Sub OnGetTaskRepeat(query As String) As Repeat

@@ -78,7 +78,7 @@ Sub Service_Start (StartingIntent As Intent)
 			notificationBuilder.ShowBadge(True)
 			notificationBuilder.SmallIcon(LoadBitmap(File.DirAssets, "ic_launcher_small.png"))
 			notificationBuilder.AutoCancel(True)
-			
+			notificationBuilder.ShowWhen(repeatItem.GetSchedule(0) + task.Reminder.GetUnixTime)
 			notificationBuilder.AddButtonAction(Null, "Dismiss", TaskNotificationDismissReceiver, repeatItem.GetID(0))
 			If task.Snooze.GetSnooze <> task.Snooze.SNOOZE_OFF Then
 				notificationBuilder.AddButtonAction(Null, "Snooze", TaskNotificationSnoozeReceiver, repeatItem.GetID(0))

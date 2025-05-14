@@ -294,3 +294,13 @@ End Sub
 Public Sub LastCountedIncompleteTasks
 	Return m_incompleteTaskCtr
 End Sub
+
+' Expects Starter.SettingsViewModelInstance to be initialized.
+Public Sub PlayTaskCompletionSound
+	If Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled Then
+		Dim mp As MediaPlayer
+		mp.Initialize
+		mp.Load(File.DirAssets, "done_sound.mp3")
+		mp.Play
+	End If
+End Sub

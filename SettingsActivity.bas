@@ -23,60 +23,42 @@ Sub Globals
 	Private svMain As ScrollView
 	Private btnBack, help, about As Button
 
-	Private DarkMode As ToggleButton
+	Private switchDarkMode As B4XSwitch
 	Private DebugMode As ToggleButton
 	Private ExportDataBase As Button
 	Private ImportDataBase As Button
 	Private TaskCompletion As ToggleButton
 	Private pnlSettingsBar As Panel
+	Private Switch1 As Switch
+	Private switchTaskCompletion As B4XSwitch
+	Private lbl24hrFormat As Label
+	Private lblDarkMode As Label
+	Private lblDetailedDueDate As Label
+	Private lblLanguage As Label
+	Private lblTaskCompletionSound As Label
+	Private switchDetailedDueDate As B4XSwitch
+	Private switchHourFormat24 As B4XSwitch
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
-	'Do not forget to load the layout file created with the visual designer. For example:
-	'Activity.LoadLayout("Layout1")
-	
 	Activity.LoadLayout("settingslayout")
 	svMain.Panel.LoadLayout("sviewlayout")
-	
+		
 	LoadSettings
 	
-	'button_design
+	button_design
+	
 End Sub
 
 Sub LoadSettings
-	DarkMode.Checked = Starter.SettingsViewModelInstance.IsDarkModeEnabled()
+	switchDarkMode.Value = Starter.SettingsViewModelInstance.IsDarkModeEnabled()
 	'DebugMode.Checked = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
-	TaskCompletion.Checked = Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled()
+	switchTaskCompletion.Value = Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled()
+	switchHourFormat24.Value = Starter.SettingsViewModelInstance.Is24HourFormatEnabled()
 End Sub
 
 Sub button_design
-	pnlSettingsBar.Elevation = 10
-	
-	
-	'Makes the bg, border of the buttons transparent
-	
-	Dim transparentBg As ColorDrawable
-	
-	transparentBg.Initialize(Colors.Transparent, 0)
-	btnBack.Background = transparentBg
-	
-	Dim whiteBg As ColorDrawable
-	
-	whiteBg.Initialize(Colors.White, 8)
-		help.Background = whiteBg
-	about.Background = whiteBg
-	
-	
-	Dim c As Canvas
-	c.Initialize(Label1)
-	Dim borderColor As Int = Colors.RGB(209, 209, 209)
-	Dim borderHeight As Int = 1dip
-
-	
-	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, borderHeight)
-
-	Label1.Invalidate
-
+	pnlSettingsBar.Elevation = 10	
 End Sub
 
 Sub btnBack_Click
@@ -127,14 +109,42 @@ Private Sub ExportDatabase_Click
 	
 End Sub
 
-Private Sub DebugMode_CheckedChange(Checked As Boolean)
-	Starter.SettingsViewModelInstance.SetDebugMode(Checked)
+Private Sub lblTaskCompletionSound_Click
+	If switchTaskCompletion.Value = True Then
+		switchTaskCompletion.Value = False
+		Starter.SettingsViewModelInstance.SetTaskCompletionSound(False)
+	Else
+		switchTaskCompletion.Value = True
+		Starter.SettingsViewModelInstance.SetTaskCompletionSound(True)
+	End If
 End Sub
 
-Private Sub DarkMode_CheckedChange(Checked As Boolean)
-	Starter.SettingsViewModelInstance.SetDarkMode(Checked)
+
+Private Sub lblDetailedDueDate_Click
+	If switchDetailedDueDate.Value = True Then
+		switchDetailedDueDate.Value = False
+		'Starter.SettingsViewModelInstance.Set(False)
+	Else
+		switchDetailedDueDate.Value = True
+	End If
 End Sub
 
-Private Sub TaskCompletion_CheckedChange(Checked As Boolean)
-	Starter.SettingsViewModelInstance.SetTaskCompletionSound(Checked)
+Private Sub lblDarkMode_Click
+	If switchDarkMode.Value = True Then
+		switchDarkMode.Value = False
+		Starter.SettingsViewModelInstance.SetDarkMode(False)
+	Else
+		switchDarkMode.Value = True
+		Starter.SettingsViewModelInstance.SetDarkMode(True)
+	End If
+End Sub
+
+Private Sub lbl24hrFormat_Click
+	If switchHourFormat24.Value = True Then
+		switchHourFormat24.Value = False
+		Starter.SettingsViewModelInstance.Set24HourFormat(False)
+	Else
+		switchHourFormat24.Value = True
+		Starter.SettingsViewModelInstance.Set24HourFormat(True)
+	End If
 End Sub
