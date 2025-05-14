@@ -47,7 +47,7 @@ End Sub
 Private Sub lblResetApp_Click
 	pnlResetApp.SetColorAnimated(50, Colors.White, Colors.LightGray)
 	pnlResetApp.SetColorAnimated(150, Colors.LightGray, Colors.White)
-	Msgbox2("Resetting will erase all data, including settings and saved information. This action cannot be undone.", "Reset app?", "YES", "CANCEL", "NO", Null)
+	Msgbox2("Resetting will erase all data, including settings and saved information. This action cannot be undone." & CRLF, "Reset app?", "YES", "CANCEL", "NO", Null)
 End Sub
 
 Private Sub lblImport_Click
