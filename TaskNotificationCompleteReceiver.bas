@@ -41,7 +41,7 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 		
 		Dim item As ToDo = TaskViewModelInstance.GetTask(itemId)
 		
-		nb.Cancel(itemId)
+		nb.Cancel(notificationId)
 		If item.IsInitialized Then
 			item.Done = True
 			
