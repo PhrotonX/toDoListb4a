@@ -1102,7 +1102,7 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	' 0 ID for groups cannot exist on the database. Therefore, it is reserved
 	' for special groups such as smart lists.
 	If viewHolder.ID <= 0 Then
-		m_savedSmartList = Index
+		SavedSmartList = Index
 		
 		' Remove the edit group button for smart lists.
 		If menuListView.Size > 3 Then
@@ -1112,7 +1112,7 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 		m_savedGroup = smartLists(Index)
 		OnLoadPage(m_savedGroup)
 	Else
-		m_savedSmartList = SMART_LIST_NONE
+		SavedSmartList = SMART_LIST_NONE
 		
 		' Include the edit group button for custom lists.
 		If menuListView.Size < 4 Then	
@@ -1341,8 +1341,8 @@ Private Sub enterBtn_Click
 	' Set the query values
 	m_query.SetSearchBy(searchEditText.Text)
 	
-	m_savedSmartList = SMART_LIST_SEARCH
-	m_savedGroup = smartLists(m_savedSmartList)
+	SavedSmartList = SMART_LIST_SEARCH
+	m_savedGroup = smartLists(SavedSmartList)
 	OnLoadPage(m_savedGroup)
 	
 	drawerButton.Text = Chr(0xE5CD)

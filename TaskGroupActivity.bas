@@ -124,6 +124,8 @@ Sub Activity_Resume
 			' Set the default icon.
 			' @TODO: Add functionality here if the icons has been changed into appropriate ones.
 		Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
+			Main.SavedSmartList = Main.SMART_LIST_NONE
+			
 			' Retrieve the group.
 			m_group = Starter.GroupViewModelInstance.GetGroup(Starter.InstanceState.Get(Starter.EXTRA_EDITOR_GROUP_ID))
 			
@@ -200,15 +202,15 @@ Sub btnAddGrpSave_Click
 		End Select
 		
 		ToastMessageShow("Task group '" & m_group.GetTitle & "' saved successfully!", True)
+		
+		LastSavedGroup = m_group
+		
+		Activity.Finish
 	Catch
 		ToastMessageShow("Failed to save Task group '" & m_group.GetTitle & "'", True)
 		
 		Log(LastException)
 	End Try
-	
-	LastSavedGroup = m_group
-	
-	Activity.Finish
 End Sub
 
 
