@@ -2,50 +2,51 @@
 File1=3528206.png
 File10=brown-selected.png
 File11=canvas.bal
-File12=draweritems.bal
-File13=drawerlayout.bal
-File14=EditorLayout.bal
-File15=EditorScrollLayout.bal
-File16=emptytasks.bal
-File17=folder.png
-File18=GREEN.png
-File19=GREEN-SELECTED.png
+File12=done_sound.mp3
+File13=draweritems.bal
+File14=drawerlayout.bal
+File15=EditorLayout.bal
+File16=EditorScrollLayout.bal
+File17=emptytasks.bal
+File18=folder.png
+File19=GREEN.png
 File2=486023921_623831243812785_3842496593750662642_n (1).png
-File20=groupTasksLayout.bal
-File21=groupTasksSVLayout.bal
-File22=helpitems.bal
-File23=ic_launcher.png
-File24=ic_launcher_small.png
-File25=ic_launcher_xl.png
-File26=INDIGO.png
-File27=INDIGO-SELECTED.png
-File28=Layout.bal
-File29=newfragment.bal
+File20=GREEN-SELECTED.png
+File21=groupTasksLayout.bal
+File22=groupTasksSVLayout.bal
+File23=helpitems.bal
+File24=ic_launcher.png
+File25=ic_launcher_small.png
+File26=ic_launcher_xl.png
+File27=INDIGO.png
+File28=INDIGO-SELECTED.png
+File29=Layout.bal
 File3=486023921_623831243812785_3842496593750662642_n.jpg
-File30=ORANGE.png
-File31=ORANGE-SELECTED.PNG
-File32=pencil.png
-File33=PINK.png
-File34=PINK-SELECTED.png
-File35=RED.png
-File36=RED-SELECTED.png
-File37=searchByLayout.bal
-File38=searchFragmentSVLayout.bal
-File39=separatorlayout.bal
+File30=newfragment.bal
+File31=ORANGE.png
+File32=ORANGE-SELECTED.PNG
+File33=pencil.png
+File34=PINK.png
+File35=PINK-SELECTED.png
+File36=RED.png
+File37=RED-SELECTED.png
+File38=searchByLayout.bal
+File39=searchFragmentSVLayout.bal
 File4=aboutitems.bal
-File40=settingsabout.bal
-File41=settingshelp.bal
-File42=settingslayout.bal
-File43=solid_white.png
-File44=stock4.png
-File45=sviewlayout.bal
-File46=TaskItemLayout.bal
-File47=taskviewlayout.bal
-File48=taskviewscrolllayout.bal
-File49=test.bal
+File40=separatorlayout.bal
+File41=settingsabout.bal
+File42=settingshelp.bal
+File43=settingslayout.bal
+File44=solid_white.png
+File45=stock4.png
+File46=sviewlayout.bal
+File47=TaskItemLayout.bal
+File48=taskviewlayout.bal
+File49=taskviewscrolllayout.bal
 File5=AttachmentItemLayout.bal
-File50=YELLOW.png
-File51=YELLOW-SELECTED.png
+File50=test.bal
+File51=YELLOW.png
+File52=YELLOW-SELECTED.png
 File6=AttachmentListLayout.bal
 File7=BLUE.png
 File8=BLUE-SELECTED.png
@@ -97,6 +98,7 @@ FileGroup49=Default Group
 FileGroup5=Default Group
 FileGroup50=Default Group
 FileGroup51=Default Group
+FileGroup52=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
 FileGroup8=Default Group
@@ -168,7 +170,7 @@ Module6=AttachmentViewModel
 Module7=DatabaseUtils
 Module8=Date
 Module9=DateAndTime
-NumberOfFiles=51
+NumberOfFiles=52
 NumberOfLibraries=15
 NumberOfModules=50
 Version=13.1
@@ -452,6 +454,12 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 		' Update the checked value of the task.
 		item.Done = Checked
 		
+		' Play task completion sound.
+		If Checked Then
+			Starter.TaskViewModelInstance.PlayTaskCompletionSound
+		End If
+		
+		' Toggle the completions status of the task
 		Starter.TaskViewModelInstance.UpdateTask(item)
 		Starter.RepeatViewModelInstance.CalculateSchedule(item)
 	End If
