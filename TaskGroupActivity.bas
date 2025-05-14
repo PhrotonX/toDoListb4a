@@ -339,6 +339,7 @@ Private Sub btnGrpDelete_Click
 		Try
 			Starter.GroupViewModelInstance.DeleteGroup(m_group.GetID)
 			ToastMessageShow("Task group '" & m_group.GetTitle & "' saved successfully!", True)
+			Main.SavedSmartList = Main.SMART_LIST_MY_DAY
 			Activity.Finish
 		Catch
 			ToastMessageShow("Failed to delete task group '" & m_group.GetTitle & "'", True)

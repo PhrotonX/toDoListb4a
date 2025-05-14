@@ -1,52 +1,55 @@
 ﻿Build1=Default,com.cm.todolist
 File1=3528206.png
-File10=drawerlayout.bal
-File11=EditorLayout.bal
-File12=EditorScrollLayout.bal
-File13=emptytasks.bal
-File14=folder.png
-File15=GREEN.png
-File16=GREEN-SELECTED.png
-File17=groupTasksLayout.bal
-File18=groupTasksSVLayout.bal
-File19=helpitems.bal
+File10=brown-selected.png
+File11=canvas.bal
+File12=draweritems.bal
+File13=drawerlayout.bal
+File14=EditorLayout.bal
+File15=EditorScrollLayout.bal
+File16=emptytasks.bal
+File17=folder.png
+File18=GREEN.png
+File19=GREEN-SELECTED.png
 File2=486023921_623831243812785_3842496593750662642_n (1).png
-File20=ic_launcher.png
-File21=ic_launcher_small.png
-File22=ic_launcher_xl.png
-File23=INDIGO.png
-File24=INDIGO-SELECTED.png
-File25=Layout.bal
-File26=newfragment.bal
-File27=ORANGE.png
-File28=ORANGE-SELECTED.PNG
-File29=pencil.png
-File3=aboutitems.bal
-File30=PINK.png
-File31=PINK-SELECTED.png
-File32=RED.png
-File33=RED-SELECTED.png
-File34=searchByLayout.bal
-File35=searchFragmentSVLayout.bal
-File36=separatorlayout.bal
-File37=settingsabout.bal
-File38=settingshelp.bal
-File39=settingslayout.bal
-File4=AttachmentItemLayout.bal
-File40=solid_white.png
-File41=stock4.png
-File42=sviewlayout.bal
-File43=TaskItemLayout.bal
-File44=taskviewlayout.bal
-File45=taskviewscrolllayout.bal
-File46=test.bal
-File47=YELLOW.png
-File48=YELLOW-SELECTED.png
-File5=AttachmentListLayout.bal
-File6=BLUE.png
-File7=BLUE-SELECTED.png
-File8=canvas.bal
-File9=draweritems.bal
+File20=groupTasksLayout.bal
+File21=groupTasksSVLayout.bal
+File22=helpitems.bal
+File23=ic_launcher.png
+File24=ic_launcher_small.png
+File25=ic_launcher_xl.png
+File26=INDIGO.png
+File27=INDIGO-SELECTED.png
+File28=Layout.bal
+File29=newfragment.bal
+File3=486023921_623831243812785_3842496593750662642_n.jpg
+File30=ORANGE.png
+File31=ORANGE-SELECTED.PNG
+File32=pencil.png
+File33=PINK.png
+File34=PINK-SELECTED.png
+File35=RED.png
+File36=RED-SELECTED.png
+File37=searchByLayout.bal
+File38=searchFragmentSVLayout.bal
+File39=separatorlayout.bal
+File4=aboutitems.bal
+File40=settingsabout.bal
+File41=settingshelp.bal
+File42=settingslayout.bal
+File43=solid_white.png
+File44=stock4.png
+File45=sviewlayout.bal
+File46=TaskItemLayout.bal
+File47=taskviewlayout.bal
+File48=taskviewscrolllayout.bal
+File49=test.bal
+File5=AttachmentItemLayout.bal
+File50=YELLOW.png
+File51=YELLOW-SELECTED.png
+File6=AttachmentListLayout.bal
+File7=BLUE.png
+File8=BLUE-SELECTED.png
+File9=brown.png
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
@@ -90,7 +93,10 @@ FileGroup45=Default Group
 FileGroup46=Default Group
 FileGroup47=Default Group
 FileGroup48=Default Group
+FileGroup49=Default Group
 FileGroup5=Default Group
+FileGroup50=Default Group
+FileGroup51=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
 FileGroup8=Default Group
@@ -162,7 +168,7 @@ Module6=AttachmentViewModel
 Module7=DatabaseUtils
 Module8=Date
 Module9=DateAndTime
-NumberOfFiles=48
+NumberOfFiles=51
 NumberOfLibraries=15
 NumberOfModules=50
 Version=13.1
@@ -188,6 +194,18 @@ Sub Process_Globals
 	Private xui As XUI
 	
 	Private m_savedGroup As Group
+	
+	Public Const SMART_LIST_NONE As Int = -1
+	Public Const SMART_LIST_MY_DAY As Int = 0
+	Public Const SMART_LIST_TASKS As Int = 1
+	Public Const SMART_LIST_PLANNED As Int = 2
+	Public Const SMART_LIST_COMPLETED As Int = 3
+	Public Const SMART_LIST_ALL As Int = 4
+	Public Const SMART_LIST_TRASH As Int = 5
+	Public Const SMART_LIST_SEARCH As Int = 6
+	Public Const SMART_LIST_ARRAY_SIZE As Int = 7
+	
+	Public SavedSmartList As Int = SMART_LIST_MY_DAY
 End Sub
 
 Sub Globals
@@ -226,16 +244,6 @@ Sub Globals
 	Private Panel1 As Panel
 	Private pnlmenuListView As Panel
 	
-	Private Const SMART_LIST_NONE As Int = -1
-	Private Const SMART_LIST_MY_DAY As Int = 0
-	Private Const SMART_LIST_TASKS As Int = 1
-	Private Const SMART_LIST_PLANNED As Int = 2
-	Private Const SMART_LIST_COMPLETED As Int = 3
-	Private Const SMART_LIST_ALL As Int = 4
-	Private Const SMART_LIST_TRASH As Int = 5
-	Private Const SMART_LIST_SEARCH As Int = 6
-	Private Const SMART_LIST_ARRAY_SIZE As Int = 7
-	
 	Private smartLists(SMART_LIST_ARRAY_SIZE) As Group
 	
 	Private Const MENU_ITEM_REFRESH As Int = 0
@@ -244,7 +252,6 @@ Sub Globals
 	Private Const MENU_ITEM_EDIT_GROUP As Int = 3
 	Private Const MENU_ITEM_CLEAR_SEARCH As Int = 4
 
-	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
 	'Private m_savedSearchByDueDateIdentifer As String = ""
 	'Private m_savedSearchByDueDateRange1 As Date
 	'Private m_savedSearchByDueDateRange2 As Date
@@ -383,7 +390,7 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-	If m_savedSmartList == SMART_LIST_NONE Then
+	If SavedSmartList == SMART_LIST_NONE Then
 		'ToastMessageShow("Saved group ID: " & m_savedGroup.GetID, False)
 		'Dim newGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_savedGroup.GetID)
 		'Log(newGroup)
@@ -398,7 +405,7 @@ Sub Activity_Resume
 		End If
 		
 	Else
-		OnLoadPage(m_savedGroup)
+		OnLoadPage(smartLists(SavedSmartList))
 	End If
 	
 End Sub
@@ -467,7 +474,7 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 	End If
 	
 	If m_query.IsSortingEnabled() == False Then
-		Select m_savedSmartList:
+		Select SavedSmartList:
 			Case SMART_LIST_PLANNED:
 				If Checked == True Then
 					' Hide the completed task if the current smart list is in "Planned"
@@ -585,14 +592,14 @@ Private Sub LoadItems()
 	
 	'm_tasks = Starter.TaskViewModelInstance.FindTasksByRepeat(repeat, True)
 	
-	If m_savedSmartList <> SMART_LIST_SEARCH Then
+	If SavedSmartList <> SMART_LIST_SEARCH Then
 		m_query.SetGroupID(m_savedGroup.GetID)
 	End If
 	
 	' Obtain all tasks from the database, depending on the smart list mode.
 	m_query.SetSearchIsDeleted(False)
 	
-	Select m_savedSmartList:
+	Select SavedSmartList:
 		Case SMART_LIST_MY_DAY:
 			m_tasks = Starter.TaskViewModelInstance.GetTasksToday(m_query)
 		Case SMART_LIST_TASKS:
@@ -657,7 +664,7 @@ Private Sub LoadItems()
 			
 			' Create subgroups.
 			If m_query.IsSortingEnabled() == False Then
-				Select m_savedSmartList:
+				Select SavedSmartList:
 					Case SMART_LIST_PLANNED:
 						Dim currentDateIdentification As String = item.GetDueDate.IdentifyDate
 					
@@ -691,7 +698,7 @@ Private Sub LoadItems()
 	Dim text As String
 	Dim count As Int
 	' Add the item count information
-	Select m_savedSmartList
+	Select SavedSmartList
 		' Planned and Completed has a unique way of counting items.
 		Case SMART_LIST_PLANNED:
 			count = Starter.TaskViewModelInstance.LastCountedIncompleteTasks
@@ -932,10 +939,10 @@ Public Sub OnChkboxViewAreaClick(percentage As Int, viewHolder As TaskViewHolder
 End Sub
 
 Private Sub drawerButton_Click
-	If m_savedSmartList == SMART_LIST_SEARCH Then
+	If SavedSmartList == SMART_LIST_SEARCH Then
 		OnClearSearchQuery
 		
-		m_savedSmartList = SMART_LIST_ALL
+		SavedSmartList = SMART_LIST_ALL
 		
 		' Go to the "All" smart list by default.
 		m_savedGroup = smartLists(SMART_LIST_ALL)
@@ -1146,7 +1153,7 @@ End Sub
 Private Sub OnLoadTaskDescription(item As Group)
 	GroupDescription.TextColor = Theme.GetPrimaryColor(item.GetColor)
 	
-	If m_savedSmartList <> SMART_LIST_MY_DAY Then
+	If SavedSmartList <> SMART_LIST_MY_DAY Then
 		If item.GetDescription <> "" Then
 			GroupDescription.Text = item.GetDescription
 		Else
