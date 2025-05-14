@@ -66,6 +66,7 @@ Sub Globals
 	Private pnlAddGrpBar As Panel
 	Private btnAddGrpCancel As Button
 	Private btnAddGrpSave As Button
+	Private btnGrpDelete As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -116,6 +117,9 @@ Sub Activity_Resume
 			' Set the default indigo color.
 			m_group.SetColor(Theme.COLOR_INDIGO)
 			UpdateTileImage(tiles(Theme.COLOR_INDIGO), True)
+			
+			' Hide the delete button if the page is in creating mode.
+			btnGrpDelete.Visible = False
 			
 			' Set the default icon.
 			' @TODO: Add functionality here if the icons has been changed into appropriate ones.
@@ -335,6 +339,7 @@ Private Sub btnGrpDelete_Click
 		Try
 			Starter.GroupViewModelInstance.DeleteGroup(m_group.GetID)
 			ToastMessageShow("Task group '" & m_group.GetTitle & "' saved successfully!", True)
+			Activity.Finish
 		Catch
 			ToastMessageShow("Failed to delete task group '" & m_group.GetTitle & "'", True)
 			Log(LastException)
