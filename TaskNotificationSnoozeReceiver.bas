@@ -41,7 +41,6 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 		
 		Dim item As ToDo = TaskViewModelInstance.GetTask(itemId)
 		
-		nb.Cancel(itemId)
 		If item.IsInitialized Then
 			' Reschedule the task based on the snooze value and the current time.
 			
@@ -62,16 +61,16 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 					RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(currentDayOfTheWeek), _
 					repeatItem.GetSchedule(currentDayOfTheWeek))
 					
-					ToastMessageShow("Task snoozed!", True)
+					ToastMessageShow("Task snoozed! (" & item.Snooze.GetSnoozeText(item.Snooze.GetSnooze) & ")", True)
+					
+					nb.Cancel(notificationId)
+		
+					'Run the task notification scheduler service to start the next scheduled task.
+					StartServiceAtExact(TaskNotificationService, calculatedTime, True)
 				End If
 				
 			End If
 		End If
-		
-		nb.Cancel(notificationId)
-		
-		'Run the task notification scheudler service to start the next scheduled task.
-		StartServiceAtExact(TaskNotificationScheduler, DateTime.Now, True)
 	End If
 End Sub
 
