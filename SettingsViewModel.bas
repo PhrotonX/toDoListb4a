@@ -21,6 +21,10 @@ Public Sub IsDebugModeEnabled() As Boolean
 	Return m_dtRepository.IsDebugModeEnabled()
 End Sub
 
+Public Sub IsDetailedDueDateEnabled() As Boolean
+	Return m_dtRepository.IsDetailedDueDateEnabled()
+End Sub
+
 Public Sub IsDarkModeEnabled() As Boolean
 	Return m_dtRepository.IsDarkModeEnabled()
 End Sub
@@ -47,6 +51,10 @@ End Sub
 
 Public Sub SetDebugMode(value As Boolean)
 	m_dtRepository.SetDebugMode(value)
+End Sub
+
+Public Sub SetDetailedDueDate(value As Boolean)
+	m_dtRepository.SetDetailedDueDate(value)
 End Sub
 
 Public Sub SetDarkMode(value As Boolean)

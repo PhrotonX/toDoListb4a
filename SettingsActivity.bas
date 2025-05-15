@@ -142,10 +142,10 @@ End Sub
 Private Sub lblDetailedDueDate_Click
 	If switchDetailedDueDate.Value = True Then
 		switchDetailedDueDate.Value = False
-		'Starter.SettingsViewModelInstance.Set(False)
-
+		Starter.SettingsViewModelInstance.SetDetailedDueDate(False)
 	Else
 		switchDetailedDueDate.Value = True
+		Starter.SettingsViewModelInstance.SetDetailedDueDate(True)
 	End If
 End Sub
 

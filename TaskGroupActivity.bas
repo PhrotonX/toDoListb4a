@@ -318,7 +318,7 @@ Private Sub OnLoadGroupIcon(icon As Int) As Int
 			Return itr
 		End If
 		
-		ToastMessageShow("Selected Icon Index: " & icon, False)
+		'ToastMessageShow("Selected Icon Index: " & icon, False)
 		
 		itr = itr + 1
 	Next
