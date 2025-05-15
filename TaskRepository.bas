@@ -41,7 +41,7 @@ End Sub
 
 Public Sub GetTasks(query As TaskQuery) As List
 	Return m_database.TaskDao().GetTasks(query.GetSelectClause(), query.GetJoinQuery(True), _ 
-	query.GetSearchingQuery(False), "ORDER BY done ASC")
+	query.GetSearchingQuery(False), query.GetSortingQuery)
 End Sub
 
 Public Sub GetAllTasks() As List
@@ -73,40 +73,40 @@ Public Sub GetSortedTasks(query As TaskQuery) As List
 	End If
 End Sub
 
-Public Sub FindTasksByTitle(group_id As Long, query As String, ascending As Boolean) As List
-	Return FindTasks(group_id, query, ascending, "title")
-End Sub
+'Public Sub FindTasksByTitle(group_id As Long, query As String, ascending As Boolean) As List
+'	Return FindTasks(group_id, query, ascending, "title")
+'End Sub
 
-Public Sub FindTasksByNotes(group_id As Long, query As String, ascending As Boolean) As List
-	Return FindTasks(group_id, query, ascending, "notes")
-End Sub
+'Public Sub FindTasksByNotes(group_id As Long, query As String, ascending As Boolean) As List
+'	Return FindTasks(group_id, query, ascending, "notes")
+'End Sub
 
-Public Sub FindTasksByPriority(group_id As Long, query As Int, ascending As Boolean) As List
-	Return FindTasks(group_id, query, ascending, "priority")
-End Sub
+'Public Sub FindTasksByPriority(group_id As Long, query As Int, ascending As Boolean) As List
+'	Return FindTasks(group_id, query, ascending, "priority")
+'End Sub
 
-Public Sub FindTasksByDueDate(group_id As Long, tickBegin As Long, tickEnd As Long, ascending As Boolean) As List
-	If group_id == TASKS_DEFAULT Then
-		Return m_database.TaskDao().GetTasks("SELECT * FROM task", "", "WHERE due_date >= " & tickBegin & _ 
-		 " AND due_date <= " & tickEnd, "ORDER BY due_date " & DatabaseUtils.IsAscending(ascending))
-	Else If group_id == TASKS_NO_GROUP Then
-		Return m_database.TaskDao().GetUngroupedTasks("SELECT * FROM task", "WHERE due_date >= " & tickBegin & _ 
-		" AND due_date <= " & tickEnd, "ORDER BY due_date " & DatabaseUtils.IsAscending(ascending))
-	Else
-		Return m_database.TaskDao().GetGroupedTasks("SELECT * FROM task", group_id, "WHERE due_date >= " & _ 
-		tickBegin & " AND due_date <= " & tickEnd, "ORDER BY due_date " & DatabaseUtils.IsAscending(ascending))
-	End If
-End Sub
+'Public Sub FindTasksByDueDate(group_id As Long, tickBegin As Long, tickEnd As Long, ascending As Boolean) As List
+'	If group_id == TASKS_DEFAULT Then
+'		Return m_database.TaskDao().GetTasks("SELECT * FROM task", "", "WHERE due_date >= " & tickBegin & _ 
+'		 " AND due_date <= " & tickEnd, "ORDER BY due_date " & DatabaseUtils.IsAscending(ascending))
+'	Else If group_id == TASKS_NO_GROUP Then
+'		Return m_database.TaskDao().GetUngroupedTasks("SELECT * FROM task", "WHERE due_date >= " & tickBegin & _ 
+'		" AND due_date <= " & tickEnd, "ORDER BY due_date " & DatabaseUtils.IsAscending(ascending))
+'	Else
+'		Return m_database.TaskDao().GetGroupedTasks("SELECT * FROM task", group_id, "WHERE due_date >= " & _ 
+'		tickBegin & " AND due_date <= " & tickEnd, "ORDER BY due_date " & DatabaseUtils.IsAscending(ascending))
+'	End If
+'End Sub
 
-Private Sub FindTasks(group_id As Long, query As String, ascending As Boolean, field As String) As List
-	If group_id == TASKS_DEFAULT Then
-		Return m_database.TaskDao().GetTasks("SELECT * FROM task", "", "WHERE "&field&" LIKE '%"&query&"%'", _ 
-		"ORDER BY " & field & " " & DatabaseUtils.IsAscending(ascending))
-	Else If group_id == TASKS_NO_GROUP Then
-		Return m_database.TaskDao().GetUngroupedTasks("SELECT * FROM task", "WHERE "&field&" LIKE '%"&query&"%'", _ 
-		"ORDER BY "&field&" " & DatabaseUtils.IsAscending(ascending))
-	Else
-		Return m_database.TaskDao().GetGroupedTasks("SELECT * FROM task", group_id, "WHERE "&field&" LIKE '%"& _ 
-		query&"%'", "ORDER BY "&field&" " & DatabaseUtils.IsAscending(ascending))
-	End If
-End Sub
+'Private Sub FindTasks(group_id As Long, query As String, ascending As Boolean, field As String) As List
+'	If group_id == TASKS_DEFAULT Then
+'		Return m_database.TaskDao().GetTasks("SELECT * FROM task", "", "WHERE "&field&" LIKE '%"&query&"%'", _ 
+'		"ORDER BY " & field & " " & DatabaseUtils.IsAscending(ascending))
+'	Else If group_id == TASKS_NO_GROUP Then
+'		Return m_database.TaskDao().GetUngroupedTasks("SELECT * FROM task", "WHERE "&field&" LIKE '%"&query&"%'", _ 
+'		"ORDER BY "&field&" " & DatabaseUtils.IsAscending(ascending))
+'	Else
+'		Return m_database.TaskDao().GetGroupedTasks("SELECT * FROM task", group_id, "WHERE "&field&" LIKE '%"& _ 
+'		query&"%'", "ORDER BY "&field&" " & DatabaseUtils.IsAscending(ascending))
+'	End If
+'End Sub
