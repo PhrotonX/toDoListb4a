@@ -89,6 +89,36 @@ Public Sub GetAttachments(searchingQuery As String, sortingQuery As String) As L
 	Return result
 End Sub
 
+' Retrieves multiple attachments.
+' searchingQuery - Requires an SQL syntax that begins with WHERE table_name LIKE clause.
+' sortingQuery - Requires an SQL syntax that begins with ORDER BY clause.
+Public Sub GetSearchedAttachments(task_id As Long, query As String) As List
+	Dim result As List
+	
+	result.Initialize
+	
+	m_sql.BeginTransaction
+	Try
+		Dim cur As Cursor = m_sql.ExecQuery("SELECT * FROM attachment " & CRLF & _
+		    "JOIN task_attachment ON attachment.attachment_id = task_attachment.attachment_id " & CRLF & _
+		    "WHERE attachment.filename LIKE '%" & query & "%' AND task_attachment.task_id = " & task_id)
+
+		For i = 0 To cur.RowCount - 1
+			cur.Position = i
+			result.Add(OnGetAttachment(cur))
+		Next
+		
+		cur.Close
+		
+		m_sql.TransactionSuccessful
+	Catch
+		Log(LastException)
+	End Try
+	m_sql.EndTransaction
+	
+	Return result
+End Sub
+
 Public Sub GetTaskAttachments(task_id As Long) As List
 	Dim result As List
 	result.Initialize()

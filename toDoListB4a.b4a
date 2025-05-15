@@ -567,8 +567,22 @@ Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewH
 	' Bind the glance information
 	
 	If m_query.GetSearchBy == m_query.FIELD_ATTACHMENT_FILENAME Then
-		'm_query.Get
-		'viewHolder.TaskInfo.Text = item.GetGlance(item., repeatItem.GetRepeatInfo)
+		Dim results As List = Starter.AttachmentViewModelInstance.GetSearchedAttachments(item.GetId, _ 
+			m_query.GetSearchValue(m_query.SEARCH_QUERY_ITEM_SEARCH_BY))
+			
+		Dim resultStr As String = ""
+		
+		If results.IsInitialized Then
+			Dim attachmentObj As Attachment = results.Get(0)
+			If attachmentObj.IsInitialized Then
+				resultStr =  attachmentObj.GetFilename
+			Else
+				resultStr = "Attachment found"
+			End If
+			
+		End If
+		
+		viewHolder.TaskInfo.Text = item.GetGlance(resultStr, repeatItem.GetRepeatInfo)
 	Else If m_query.GetSearchBy == m_query.FIELD_NOTES Then
 		Dim cutString As String = item.GetNotes
 		If cutString.Length > 35 Then
