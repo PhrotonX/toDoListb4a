@@ -40,6 +40,8 @@ Sub Globals
 	Private switchHourFormat24 As B4XSwitch
 	Private lblAdvancedSettings As Label
 	Private pnlAdvancedSettings As Panel
+	Private lblGeneralSettings As Label
+	Private spnLanguage As Spinner
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -175,4 +177,24 @@ Private Sub lblAdvancedSettings_Click
 	pnlAdvancedSettings.SetColorAnimated(250, Colors.White, Colors.LightGray)
 	pnlAdvancedSettings.SetColorAnimated(250, Colors.LightGray, Colors.White)
 	StartActivity(AdvancedSettingsActivity)
+End Sub
+
+Private Sub switchTaskCompletion_ValueChanged (Value As Boolean)
+	
+End Sub
+
+Private Sub switchHourFormat24_ValueChanged (Value As Boolean)
+	
+End Sub
+
+Private Sub switchDetailedDueDate_ValueChanged (Value As Boolean)
+	
+End Sub
+
+Private Sub switchDarkMode_ValueChanged (Value As Boolean)
+	
+End Sub
+
+Private Sub spnLanguage_ItemClick (Position As Int, Value As Object)
+	
 End Sub
