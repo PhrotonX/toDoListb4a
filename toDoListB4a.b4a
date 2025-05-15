@@ -346,6 +346,7 @@ Sub Globals
 	Private spinRangeMonthFrom As Spinner
 	Private spinRangeMonthTo As Spinner
 	Private checkDeleted As CheckBox
+	Private pnlEmptyTasks As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -700,13 +701,25 @@ Private Sub LoadItems()
 			count = m_tasks.Size
 	End Select
 	
-	
-	text = count & " task"
+	If count = 1 Then
+		text = count & " task"
+		pnlEmptyTasks.SendToBack
+		pnlEmptyTasks.Visible = False
+	Else if count < 1 Then
+		'text = count & " task"
+		'text = text & "(s)"
+			pnlEmptyTasks.BringToFront
+			pnlEmptyTasks.LoadLayout("emptytasks")
+			pnlEmptyTasks.Visible = True
+
 	' Make the counting information plural if possible.
-	If count > 1 Then
+	Else If count > 1 Then
+		text = count & " task"
 		text = text & "(s)"
+		pnlEmptyTasks.SendToBack
+		pnlEmptyTasks.Visible = False
 	End If
-	text = text & " found"
+	'text = text & " found"
 	
 	CreateSubGroup(text, Colors.RGB(91, 91, 91), 16)
 	
@@ -1092,7 +1105,7 @@ End Sub
 ' Function for task group click.
 Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	Dim viewHolder As GroupViewHolder = Value
-	
+	pageindex = Index
 	If viewHolder.IsSeparator == True Then
 		' Reset selection to previous item
 		clvItems.GetPanel(Index).Color = xui.Color_Transparent
@@ -1125,29 +1138,31 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 		m_savedGroup = groupObj
 		OnLoadPage(m_savedGroup)
 	End If
+	
 End Sub
 
 Private Sub OnLoadPage(item As Group)	
 	LoadDrawerItems
 	drawer.LeftOpen = False
 	
-	mainFragment.RemoveAllViews
-	mainFragment.LoadLayout("newFragment")
 	
-	' Remove all items to update data and avoid data duplication.
-	ToDoList.Clear
-	
-	pnlTitleBar.Color = Theme.GetPrimaryColor(item.GetColor)
-	mainFragment.Color = Theme.GetBackgroundColor(item.GetColor)
-	
-	titleLabel.Text = item.GetTitle
-	Log("Title: " & item.GetTitle)
-	
-	OnLoadTaskDescription(item)	
+		mainFragment.RemoveAllViews
+		mainFragment.LoadLayout("newFragment")
+		
+		' Remove all items to update data and avoid data duplication.
+		ToDoList.Clear
+		
+		
+		titleLabel.Text = item.GetTitle
+		Log("Title: " & item.GetTitle)
+		
+		OnLoadTaskDescription(item)	
 
-	LoadItems
-	
-	Starter.CheckInstanceState
+		LoadItems
+		
+		Starter.CheckInstanceState
+		pnlTitleBar.Color = Theme.GetPrimaryColor(item.GetColor)
+		mainFragment.Color = Theme.GetBackgroundColor(item.GetColor)
 End Sub
 
 Private Sub OnLoadTaskDescription(item As Group)
