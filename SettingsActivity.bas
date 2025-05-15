@@ -56,6 +56,7 @@ Sub LoadSettings
 	switchDarkMode.Value = Starter.SettingsViewModelInstance.IsDarkModeEnabled()
 	'DebugMode.Checked = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
 	switchTaskCompletion.Value = Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled()
+	switchHourFormat24.Value = Starter.SettingsViewModelInstance.Is24HourFormatEnabled()
 End Sub
 
 Sub button_design
@@ -129,9 +130,11 @@ End Sub
 Private Sub lblTaskCompletionSound_Click
 	If switchTaskCompletion.Value = True Then
 		switchTaskCompletion.Value = False
-	
+		Starter.SettingsViewModelInstance.SetTaskCompletionSound(False)
+
 	Else
 		switchTaskCompletion.Value = True
+		Starter.SettingsViewModelInstance.SetTaskCompletionSound(True)
 	End If
 End Sub
 
@@ -139,32 +142,37 @@ End Sub
 Private Sub lblDetailedDueDate_Click
 	If switchDetailedDueDate.Value = True Then
 		switchDetailedDueDate.Value = False
-	
+		Starter.SettingsViewModelInstance.SetDetailedDueDate(False)
 	Else
 		switchDetailedDueDate.Value = True
+		Starter.SettingsViewModelInstance.SetDetailedDueDate(True)
 	End If
 End Sub
 
 Private Sub lblDarkMode_Click
 	If switchDarkMode.Value = True Then
 		switchDarkMode.Value = False
-	
+		Starter.SettingsViewModelInstance.SetDarkMode(False)
+
 	Else
 		switchDarkMode.Value = True
+		Starter.SettingsViewModelInstance.SetDarkMode(True)
 	End If
 End Sub
 
 Private Sub lbl24hrFormat_Click
 	If switchHourFormat24.Value = True Then
 		switchHourFormat24.Value = False
-	
+		Starter.SettingsViewModelInstance.Set24HourFormat(False)
+
 	Else
 		switchHourFormat24.Value = True
+		Starter.SettingsViewModelInstance.Set24HourFormat(True)
 	End If
 End Sub
 
 Private Sub lblAdvancedSettings_Click
-	pnlAdvancedSettings.SetColorAnimated(50, Colors.White, Colors.LightGray)
-	pnlAdvancedSettings.SetColorAnimated(150, Colors.LightGray, Colors.White)
+	pnlAdvancedSettings.SetColorAnimated(250, Colors.White, Colors.LightGray)
+	pnlAdvancedSettings.SetColorAnimated(250, Colors.LightGray, Colors.White)
 	StartActivity(AdvancedSettingsActivity)
 End Sub
