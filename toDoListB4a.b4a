@@ -181,7 +181,7 @@ Version=13.1
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 13
-	#VersionName: v2.0.0.8 alpha
+	#VersionName: v2.0.0.9 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -565,7 +565,20 @@ Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewH
 	' Bind the task title
 	viewHolder.TaskCheckbox.Text = item.GetTitle
 	' Bind the glance information
-	viewHolder.TaskInfo.Text = item.GetGlance(repeatItem.GetRepeatInfo)
+	
+	If m_query.GetSearchBy == m_query.FIELD_ATTACHMENT_FILENAME Then
+		'm_query.Get
+		'viewHolder.TaskInfo.Text = item.GetGlance(item., repeatItem.GetRepeatInfo)
+	Else If m_query.GetSearchBy == m_query.FIELD_NOTES Then
+		Dim cutString As String = item.GetNotes
+		If cutString.Length > 35 Then
+			cutString = cutString.SubString2(0, 35) & "..."
+		End If
+		viewHolder.TaskInfo.Text = item.GetGlance(cutString, repeatItem.GetRepeatInfo)
+	Else
+		viewHolder.TaskInfo.Text = item.GetGlance(item.GetDueDate.GetFormattedDate2, repeatItem.GetRepeatInfo)
+	End If
+	
 	' Make a reference to the task_id from the database.
 	viewHolder.ID = item.GetId
 	' Bind the panel into the view holder.
