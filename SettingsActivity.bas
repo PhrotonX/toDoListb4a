@@ -172,7 +172,7 @@ Private Sub lbl24hrFormat_Click
 End Sub
 
 Private Sub lblAdvancedSettings_Click
-	pnlAdvancedSettings.SetColorAnimated(50, Colors.White, Colors.LightGray)
-	pnlAdvancedSettings.SetColorAnimated(150, Colors.LightGray, Colors.White)
+	pnlAdvancedSettings.SetColorAnimated(250, Colors.White, Colors.LightGray)
+	pnlAdvancedSettings.SetColorAnimated(250, Colors.LightGray, Colors.White)
 	StartActivity(AdvancedSettingsActivity)
 End Sub
