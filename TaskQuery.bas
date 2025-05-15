@@ -336,6 +336,10 @@ Public Sub GetSortingQuery() As String
 	End If
 End Sub
 
+Public Sub GetSortQuery() As String
+	Return m_sortQuery
+End Sub
+
 ' Returns values ORDER_NONE, ORDER_DESC, and ORDER_ASC.
 Public Sub GetSortOrder() As String
 	Return m_order

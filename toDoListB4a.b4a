@@ -9,45 +9,46 @@ File15=drawerlayout.bal
 File16=EditorLayout.bal
 File17=EditorScrollLayout.bal
 File18=emptytasks.bal
-File19=folder.png
+File19=en_us.json
 File2=486023921_623831243812785_3842496593750662642_n (1).png
-File20=GREEN.png
-File21=GREEN-SELECTED.png
-File22=groupTasksLayout.bal
-File23=groupTasksSVLayout.bal
-File24=helpitems.bal
-File25=ic_launcher.png
-File26=ic_launcher_small.png
-File27=ic_launcher_xl.png
-File28=INDIGO.png
-File29=INDIGO-SELECTED.png
+File20=folder.png
+File21=GREEN.png
+File22=GREEN-SELECTED.png
+File23=groupTasksLayout.bal
+File24=groupTasksSVLayout.bal
+File25=helpitems.bal
+File26=ic_launcher.png
+File27=ic_launcher_small.png
+File28=ic_launcher_xl.png
+File29=INDIGO.png
 File3=486023921_623831243812785_3842496593750662642_n.jpg
-File30=Layout.bal
-File31=newfragment.bal
-File32=ORANGE.png
-File33=ORANGE-SELECTED.PNG
-File34=pencil.png
-File35=PINK.png
-File36=PINK-SELECTED.png
-File37=RED.png
-File38=RED-SELECTED.png
-File39=searchByLayout.bal
+File30=INDIGO-SELECTED.png
+File31=Layout.bal
+File32=newfragment.bal
+File33=ORANGE.png
+File34=ORANGE-SELECTED.PNG
+File35=pencil.png
+File36=PINK.png
+File37=PINK-SELECTED.png
+File38=RED.png
+File39=RED-SELECTED.png
 File4=aboutitems.bal
-File40=searchFragmentSVLayout.bal
-File41=separatorlayout.bal
-File42=settingsabout.bal
-File43=settingshelp.bal
-File44=settingslayout.bal
-File45=solid_white.png
-File46=stock4.png
-File47=sviewlayout.bal
-File48=TaskItemLayout.bal
-File49=taskviewlayout.bal
+File40=searchByLayout.bal
+File41=searchFragmentSVLayout.bal
+File42=separatorlayout.bal
+File43=settingsabout.bal
+File44=settingshelp.bal
+File45=settingslayout.bal
+File46=solid_white.png
+File47=stock4.png
+File48=sviewlayout.bal
+File49=TaskItemLayout.bal
 File5=AdvancedSettingsLayout.bal
-File50=taskviewscrolllayout.bal
-File51=test.bal
-File52=YELLOW.png
-File53=YELLOW-SELECTED.png
+File50=taskviewlayout.bal
+File51=taskviewscrolllayout.bal
+File52=test.bal
+File53=YELLOW.png
+File54=YELLOW-SELECTED.png
 File6=AttachmentItemLayout.bal
 File7=AttachmentListLayout.bal
 File8=BLUE.png
@@ -101,6 +102,7 @@ FileGroup50=Default Group
 FileGroup51=Default Group
 FileGroup52=Default Group
 FileGroup53=Default Group
+FileGroup54=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
 FileGroup8=Default Group
@@ -173,7 +175,7 @@ Module6=AttachmentViewHolder
 Module7=AttachmentViewModel
 Module8=DatabaseUtils
 Module9=Date
-NumberOfFiles=53
+NumberOfFiles=54
 NumberOfLibraries=15
 NumberOfModules=51
 Version=13.1
@@ -181,7 +183,7 @@ Version=13.1
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 13
-	#VersionName: v2.0.0.8 alpha
+	#VersionName: v2.0.0.9 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -256,6 +258,8 @@ Sub Globals
 	Private Const MENU_ITEM_SETTINGS As Int = 2
 	Private Const MENU_ITEM_EDIT_GROUP As Int = 3
 	Private Const MENU_ITEM_CLEAR_SEARCH As Int = 4
+	
+	Private m_sortingByPriority As Boolean = False
 
 	'Private m_savedSearchByDueDateIdentifer As String = ""
 	'Private m_savedSearchByDueDateRange1 As Date
@@ -352,6 +356,9 @@ Sub Globals
 	Private radioNone As RadioButton
 	Private radioAsc As RadioButton
 	Private radioDesc As RadioButton
+	Private radioSortByCreaion As RadioButton
+	Private radioSortByDD As RadioButton
+	Private radioSortByPrio As RadioButton
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -565,7 +572,41 @@ Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewH
 	' Bind the task title
 	viewHolder.TaskCheckbox.Text = item.GetTitle
 	' Bind the glance information
-	viewHolder.TaskInfo.Text = item.GetGlance(repeatItem.GetRepeatInfo)
+	
+	If m_query.GetSearchBy == m_query.FIELD_ATTACHMENT_FILENAME Then
+		Dim results As List = Starter.AttachmentViewModelInstance.GetSearchedAttachments(item.GetId, _ 
+			m_query.GetSearchValue(m_query.SEARCH_QUERY_ITEM_SEARCH_BY))
+			
+		Dim resultStr As String = ""
+		
+		If results.IsInitialized Then
+			Dim attachmentObj As Attachment = results.Get(0)
+			If attachmentObj.IsInitialized Then
+				resultStr =  attachmentObj.GetFilename
+			Else
+				resultStr = "Attachment found"
+			End If
+			
+		End If
+		
+		viewHolder.TaskInfo.Text = item.GetGlance(resultStr, repeatItem.GetRepeatInfo)
+	Else If m_query.GetSearchBy == m_query.FIELD_NOTES Then
+		Dim cutString As String = item.GetNotes
+		If cutString.Length > 35 Then
+			cutString = cutString.SubString2(0, 35) & "..."
+		End If
+		viewHolder.TaskInfo.Text = item.GetGlance(cutString, repeatItem.GetRepeatInfo)
+	Else If m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_PRIORITY) Or _
+		m_sortingByPriority == True Then
+		viewHolder.TaskInfo.Text = item.GetGlance(item.GetPriorityInfo, repeatItem.GetRepeatInfo)
+	Else
+		If Starter.SettingsViewModelInstance.IsDetailedDueDateEnabled() And SavedSmartList <> SMART_LIST_PLANNED Then
+			viewHolder.TaskInfo.Text = item.GetGlance(item.GetDueDate.IdentifyDate, repeatItem.GetRepeatInfo)
+		Else
+			viewHolder.TaskInfo.Text = item.GetGlance(item.GetDueDate.GetFormattedDate2, repeatItem.GetRepeatInfo)
+		End If
+	End If
+	
 	' Make a reference to the task_id from the database.
 	viewHolder.ID = item.GetId
 	' Bind the panel into the view holder.
@@ -1378,22 +1419,27 @@ End Sub
 
 Private Sub radioSortByNone_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_TASK_ID)
+	m_sortingByPriority = False
 End Sub
 
 Private Sub radioSortByTitle_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_TITLE)
+	m_sortingByPriority = False
 End Sub
 
-Private Sub radioSortByPriority_CheckedChange(Checked As Boolean)
+Private Sub radioSortByPrio_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_PRIORITY)
+	m_sortingByPriority = Checked
 End Sub
 
-Private Sub radioSortByDueDate_CheckedChange(Checked As Boolean)
+Private Sub radioSortByDD_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_DUE_DATE)
+	m_sortingByPriority = False
 End Sub
 
-Private Sub radioSortByCreation_CheckedChange(Checked As Boolean)
+Private Sub radioSortByCreaion_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_CREATED_AT)
+	m_sortingByPriority = False
 End Sub
 
 Private Sub radioSortOrderDescending_CheckedChange(Checked As Boolean)
