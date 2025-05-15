@@ -3,50 +3,51 @@ File1=3528206.png
 File10=brown.png
 File11=brown-selected.png
 File12=canvas.bal
-File13=draweritems.bal
-File14=drawerlayout.bal
-File15=EditorLayout.bal
-File16=EditorScrollLayout.bal
-File17=emptytasks.bal
-File18=folder.png
-File19=GREEN.png
+File13=done_sound.mp3
+File14=draweritems.bal
+File15=drawerlayout.bal
+File16=EditorLayout.bal
+File17=EditorScrollLayout.bal
+File18=emptytasks.bal
+File19=folder.png
 File2=486023921_623831243812785_3842496593750662642_n (1).png
-File20=GREEN-SELECTED.png
-File21=groupTasksLayout.bal
-File22=groupTasksSVLayout.bal
-File23=helpitems.bal
-File24=ic_launcher.png
-File25=ic_launcher_small.png
-File26=ic_launcher_xl.png
-File27=INDIGO.png
-File28=INDIGO-SELECTED.png
-File29=Layout.bal
+File20=GREEN.png
+File21=GREEN-SELECTED.png
+File22=groupTasksLayout.bal
+File23=groupTasksSVLayout.bal
+File24=helpitems.bal
+File25=ic_launcher.png
+File26=ic_launcher_small.png
+File27=ic_launcher_xl.png
+File28=INDIGO.png
+File29=INDIGO-SELECTED.png
 File3=486023921_623831243812785_3842496593750662642_n.jpg
-File30=newfragment.bal
-File31=ORANGE.png
-File32=ORANGE-SELECTED.PNG
-File33=pencil.png
-File34=PINK.png
-File35=PINK-SELECTED.png
-File36=RED.png
-File37=RED-SELECTED.png
-File38=searchByLayout.bal
-File39=searchFragmentSVLayout.bal
+File30=Layout.bal
+File31=newfragment.bal
+File32=ORANGE.png
+File33=ORANGE-SELECTED.PNG
+File34=pencil.png
+File35=PINK.png
+File36=PINK-SELECTED.png
+File37=RED.png
+File38=RED-SELECTED.png
+File39=searchByLayout.bal
 File4=aboutitems.bal
-File40=separatorlayout.bal
-File41=settingsabout.bal
-File42=settingshelp.bal
-File43=settingslayout.bal
-File44=solid_white.png
-File45=stock4.png
-File46=sviewlayout.bal
-File47=TaskItemLayout.bal
-File48=taskviewlayout.bal
-File49=taskviewscrolllayout.bal
+File40=searchFragmentSVLayout.bal
+File41=separatorlayout.bal
+File42=settingsabout.bal
+File43=settingshelp.bal
+File44=settingslayout.bal
+File45=solid_white.png
+File46=stock4.png
+File47=sviewlayout.bal
+File48=TaskItemLayout.bal
+File49=taskviewlayout.bal
 File5=AdvancedSettingsLayout.bal
-File50=test.bal
-File51=YELLOW.png
-File52=YELLOW-SELECTED.png
+File50=taskviewscrolllayout.bal
+File51=test.bal
+File52=YELLOW.png
+File53=YELLOW-SELECTED.png
 File6=AttachmentItemLayout.bal
 File7=AttachmentListLayout.bal
 File8=BLUE.png
@@ -99,6 +100,7 @@ FileGroup5=Default Group
 FileGroup50=Default Group
 FileGroup51=Default Group
 FileGroup52=Default Group
+FileGroup53=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
 FileGroup8=Default Group
@@ -171,7 +173,7 @@ Module6=AttachmentViewHolder
 Module7=AttachmentViewModel
 Module8=DatabaseUtils
 Module9=Date
-NumberOfFiles=52
+NumberOfFiles=53
 NumberOfLibraries=15
 NumberOfModules=51
 Version=13.1
@@ -346,6 +348,10 @@ Sub Globals
 	Private spinRangeMonthFrom As Spinner
 	Private spinRangeMonthTo As Spinner
 	Private checkDeleted As CheckBox
+	Private radioSortByNone As RadioButton
+	Private radioNone As RadioButton
+	Private radioAsc As RadioButton
+	Private radioDesc As RadioButton
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -1370,6 +1376,10 @@ Private Sub sortMsgBox_disappear
 	pnlSortDialogue.SendToBack
 End Sub
 
+Private Sub radioSortByNone_CheckedChange(Checked As Boolean)
+	m_query.SetSortField(m_query.FIELD_TASK_ID)
+End Sub
+
 Private Sub radioSortByTitle_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_TITLE)
 End Sub
@@ -1715,4 +1725,16 @@ End Sub
 
 Private Sub checkDeleted_CheckedChange(Checked As Boolean)
 	m_query.SetSearchIsDeleted(Checked)
+End Sub
+
+Private Sub radioNone_CheckedChange(Checked As Boolean)
+	m_query.SetSortOrder(m_query.ORDER_NONE)
+End Sub
+
+Private Sub radioDesc_CheckedChange(Checked As Boolean)
+	m_query.SetSortOrder(m_query.ORDER_DESC)
+End Sub
+
+Private Sub radioAsc_CheckedChange(Checked As Boolean)
+	m_query.SetSortOrder(m_query.ORDER_ASC)
 End Sub
