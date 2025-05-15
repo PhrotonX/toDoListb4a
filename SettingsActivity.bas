@@ -38,6 +38,8 @@ Sub Globals
 	Private lblTaskCompletionSound As Label
 	Private switchDetailedDueDate As B4XSwitch
 	Private switchHourFormat24 As B4XSwitch
+	Private lblAdvancedSettings As Label
+	Private pnlAdvancedSettings As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -58,7 +60,10 @@ Sub LoadSettings
 End Sub
 
 Sub button_design
-	pnlSettingsBar.Elevation = 10	
+	pnlSettingsBar.Elevation = 10
+	
+
+	
 End Sub
 
 Sub btnBack_Click
@@ -109,10 +114,24 @@ Private Sub ExportDatabase_Click
 	
 End Sub
 
+Private Sub DebugMode_CheckedChange(Checked As Boolean)
+	Starter.SettingsViewModelInstance.SetDebugMode(Checked)
+End Sub
+
+Private Sub DarkMode_CheckedChange(Checked As Boolean)
+	Starter.SettingsViewModelInstance.SetDarkMode(Checked)
+End Sub
+
+Private Sub TaskCompletion_CheckedChange(Checked As Boolean)
+	Starter.SettingsViewModelInstance.SetTaskCompletionSound(Checked)
+	
+End Sub
+
 Private Sub lblTaskCompletionSound_Click
 	If switchTaskCompletion.Value = True Then
 		switchTaskCompletion.Value = False
 		Starter.SettingsViewModelInstance.SetTaskCompletionSound(False)
+
 	Else
 		switchTaskCompletion.Value = True
 		Starter.SettingsViewModelInstance.SetTaskCompletionSound(True)
@@ -124,6 +143,7 @@ Private Sub lblDetailedDueDate_Click
 	If switchDetailedDueDate.Value = True Then
 		switchDetailedDueDate.Value = False
 		'Starter.SettingsViewModelInstance.Set(False)
+
 	Else
 		switchDetailedDueDate.Value = True
 	End If
@@ -133,6 +153,7 @@ Private Sub lblDarkMode_Click
 	If switchDarkMode.Value = True Then
 		switchDarkMode.Value = False
 		Starter.SettingsViewModelInstance.SetDarkMode(False)
+
 	Else
 		switchDarkMode.Value = True
 		Starter.SettingsViewModelInstance.SetDarkMode(True)
@@ -143,8 +164,15 @@ Private Sub lbl24hrFormat_Click
 	If switchHourFormat24.Value = True Then
 		switchHourFormat24.Value = False
 		Starter.SettingsViewModelInstance.Set24HourFormat(False)
+
 	Else
 		switchHourFormat24.Value = True
 		Starter.SettingsViewModelInstance.Set24HourFormat(True)
 	End If
+End Sub
+
+Private Sub lblAdvancedSettings_Click
+	pnlAdvancedSettings.SetColorAnimated(50, Colors.White, Colors.LightGray)
+	pnlAdvancedSettings.SetColorAnimated(150, Colors.LightGray, Colors.White)
+	StartActivity(AdvancedSettingsActivity)
 End Sub
