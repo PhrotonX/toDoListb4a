@@ -42,6 +42,8 @@ Sub Globals
 	Private pnlAdvancedSettings As Panel
 	Private lblGeneralSettings As Label
 	Private spnLanguage As Spinner
+	Private lblSettings As Label
+	Private lblTaskSettings As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -59,6 +61,15 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	button_design
 	
+	lbl24hrFormat.Text = Starter.Lang.Get("24_hour_format")
+	lblAdvancedSettings.Text = Starter.Lang.Get("advanced_settings")
+	lblDarkMode.Text = Starter.Lang.Get("dark_mode")
+	lblDetailedDueDate.Text = Starter.Lang.Get("detailed_due_date")
+	lblGeneralSettings.Text = Starter.Lang.Get("general_settings")
+	lblLanguage.Text = Starter.Lang.Get("language")
+	lblSettings.Text = Starter.Lang.Get("settings")
+	lblTaskCompletionSound.Text = Starter.Lang.Get("task_completion_sound")
+	lblTaskSettings.Text = Starter.Lang.Get("task_settings")
 End Sub
 
 Sub Activity_Resume
