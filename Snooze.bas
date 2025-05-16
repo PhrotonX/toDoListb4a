@@ -38,31 +38,31 @@ End Sub
 Public Sub GetSnoozeText(value As Long) As String
 	Select value
 		Case SNOOZE_OFF:
-			Return "Off"
+			Return "off"
 		Case SNOOZE_1_MINUTE:
-			Return "1 Minute"
+			Return "1_minute"
 		Case SNOOZE_3_MINUTES:
-			Return "3 Minutes"
+			Return "3_minutes"
 		Case SNOOZE_5_MINUTES:
-			Return "5 Minutes"
+			Return "5_minutes"
 		Case SNOOZE_10_MINUTES:
-			Return "10 Minutes"
+			Return "10_minutes"
 		Case SNOOZE_15_MINUTES:
-			Return "15 Minutes"
+			Return "15_minutes"
 		Case SNOOZE_20_MINUTES:
-			Return "20 Minutes"
+			Return "20_minutes"
 		Case SNOOZE_30_MINUTES:
-			Return "30 Minutes"
+			Return "30_minutes"
 		Case SNOOZE_1_HOUR:
-			Return "1 Hour"
+			Return "1_hour"
 		Case SNOOZE_2_HOURS:
-			Return "2 Hours"
+			Return "2_hours"
 		Case SNOOZE_5_HOURS:
-			Return "5 Hours"
+			Return "5_hours"
 		Case SNOOZE_12_HOURS:
-			Return "12 Hours"
+			Return "12_hours"
 		Case SNOOZE_1_DAY:
-			Return "1 Day"
+			Return "1_day"
 		Case Else:
 			Return ""
 	End Select
@@ -70,31 +70,31 @@ End Sub
 
 Public Sub GetSnoozeFromText(value As String) As Long
 	Select value
-		Case "Off":
+		Case "off":
 			Return SNOOZE_OFF
-		Case "1 Minute":
+		Case "1_minute":
 			Return SNOOZE_1_MINUTE
-		Case "3 Minutes":
+		Case "3_minutes":
 			Return SNOOZE_3_MINUTES
-		Case "5 Minutes":
+		Case "5_minutes":
 			Return SNOOZE_5_MINUTES
-		Case "10 Minutes":
+		Case "10_minutes":
 			Return SNOOZE_10_MINUTES
-		Case "15 Minutes":
+		Case "15_minutes":
 			Return SNOOZE_15_MINUTES
-		Case "20 Minutes":
+		Case "20_minutes":
 			Return SNOOZE_20_MINUTES
-		Case "30 Minutes":
+		Case "30_minutes":
 			Return SNOOZE_30_MINUTES
-		Case "1 Hour":
+		Case "1_hour":
 			Return SNOOZE_1_HOUR
-		Case "2 Hours":
+		Case "2_hours":
 			Return SNOOZE_2_HOURS
-		Case "5 Hours":
+		Case "5_hours":
 			Return SNOOZE_5_HOURS
-		Case "12 Hours":
+		Case "12_hours":
 			Return SNOOZE_12_HOURS
-		Case "1 Day":
+		Case "1_day":
 			Return SNOOZE_1_DAY
 		Case Else:
 			Return 0
