@@ -19,16 +19,16 @@ Sub Class_Globals
 	Private Const SETTINGS_KEY_24_HOUR_FORMAT As String = "24_hour_format"
 	Private Const 
 	
-	Private Const LANGUAGE_ARABIC As String = "ar"
-	Private Const LANGUAGE_ENGLISH As String = "en_us"
-	Private Const LANGUAGE_TAGALOG As String = "tl"
-	Private Const LANGUAGE_KAPAMPANGAN As String = "pam"
-	Private Const LANGUAGE_ESPANOL As String = "es"
-	Private Const LANGUAGE_HANYU As String = "zh"
-	Private Const LANGUAGE_RUSSKIY As String = "ru"
-	Private Const LANGUAGE_BAHASA_INDONESIA As String = "id"
+	Public Const LANGUAGE_AL_LOGHA_AL_3ARABIYAH As String = "ar"
+	Public Const LANGUAGE_ENGLISH As String = "en_us"
+	Public Const LANGUAGE_TAGALOG As String = "tl"
+	Public Const LANGUAGE_KAPAMPANGAN As String = "pam"
+	Public Const LANGUAGE_ESPANOL As String = "es"
+	Public Const LANGUAGE_HANYU As String = "zh"
+	Public Const LANGUAGE_RUSSKIY As String = "ru"
+	Public Const LANGUAGE_BAHASA_INDONESIA As String = "id"
 	
-	Private Const DEFAULT_LANGUAGE As String = "en_us"
+	Public Const DEFAULT_LANGUAGE As String = LANGUAGE_ENGLISH
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -71,7 +71,7 @@ Public Sub IsExperimentalModeEnabled() As Boolean
 End Sub
 
 Public Sub GetLanguage() As String
-	Return m_kvs.Get(SETTINGS_KEY_EXPERIMENTAL_MODE)
+	Return m_kvs.Get(SETTINGS_KEY_LANGUAGE)
 End Sub
 
 Public Sub IsTaskCompetionSoundEnabled() As Boolean

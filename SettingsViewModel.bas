@@ -43,6 +43,29 @@ Public Sub IsExperimentalModeEnabled() As Boolean
 End Sub
 
 Public Sub GetLanguage() As String
+	Select GetLanguageCode
+		Case m_dtRepository.LANGUAGE_ENGLISH:
+			Return SETTING_LANG_ENGLISH
+		Case m_dtRepository.LANGUAGE_TAGALOG:
+			Return SETTING_LANG_TAGALOG
+		Case m_dtRepository.LANGUAGE_KAPAMPANGAN:
+			Return SETTING_LANG_KAPAMPANGAN
+		Case m_dtRepository.LANGUAGE_ESPANOL:
+			Return SETTING_LANG_ESPANOL
+		Case m_dtRepository.LANGUAGE_HANYU:
+			Return SETTING_LANG_HANYU
+		Case m_dtRepository.LANGUAGE_AL_LOGHA_AL_3ARABIYAH:
+			Return SETTING_LANG_AL_LOGHA_AL_3ARABIYAH
+		Case m_dtRepository.LANGUAGE_RUSSKIY:
+			Return SETTING_LANG_RUSSKIY
+		Case m_dtRepository.LANGUAGE_BAHASA_INDONESIA:
+			Return SETTING_LANG_BAHASA_INDONESIA
+		Case Else, Case m_dtRepository.DEFAULT_LANGUAGE:
+			Return SETTING_LANG_ENGLISH
+	End Select
+End Sub
+
+Public Sub GetLanguageCode() As String
 	Return m_dtRepository.GetLanguage()
 End Sub
 
@@ -74,25 +97,25 @@ Public Sub SetExperimentalMode(value As Boolean)
 	m_dtRepository.SetExperimentalMode(value)
 End Sub
 
-' Supports the following values: en_us (English), tl (Tagalog), ar, zh, pam
 Public Sub SetLanguage(value As String)
 	Select value:
-		Case "English":
-			m_dtRepository.SetLanguage(SETTING_LANG_ENGLISH)
-		Case "Tagalog":
-			m_dtRepository.SetLanguage(SETTING_LANG_TAGALOG)
-		Case "Kapampangan":
-			m_dtRepository.SetLanguage(SETTING_LANG_KAPAMPANGAN)
-		Case "Español":
-			m_dtRepository.SetLanguage(SETTING_LANG_ESPANOL)
-		Case "汉语":
-			m_dtRepository.SetLanguage(SETTING_LANG_HANYU)
-		Case "اللغة العربية":
-			m_dtRepository.SetLanguage(SETTING_LANG_AL_LOGHA_AL_3ARABIYAH)
-		Case "Bahasa Indonesia":
-			m_dtRepository.SetLanguage(SETTING_LANG_BAHASA_INDONESIA)
+		Case SETTING_LANG_ENGLISH:
+			m_dtRepository.SetLanguage(m_dtRepository.LANGUAGE_ENGLISH)
+		Case SETTING_LANG_TAGALOG:
+			m_dtRepository.SetLanguage(m_dtRepository.LANGUAGE_TAGALOG)
+		Case SETTING_LANG_KAPAMPANGAN:
+			m_dtRepository.SetLanguage(m_dtRepository.LANGUAGE_KAPAMPANGAN)
+		Case SETTING_LANG_ESPANOL:
+			m_dtRepository.SetLanguage(m_dtRepository.LANGUAGE_ESPANOL)
+		Case SETTING_LANG_HANYU:
+			m_dtRepository.SetLanguage(m_dtRepository.LANGUAGE_HANYU)
+		Case SETTING_LANG_RUSSKIY:
+			m_dtRepository.SetLanguage(m_dtRepository.LANGUAGE_RUSSKIY)
+		Case SETTING_LANG_AL_LOGHA_AL_3ARABIYAH:
+			m_dtRepository.SetLanguage(m_dtRepository.LANGUAGE_AL_LOGHA_AL_3ARABIYAH)
+		Case SETTING_LANG_BAHASA_INDONESIA:
+			m_dtRepository.SetLanguage(m_dtRepository.LANGUAGE_BAHASA_INDONESIA)
 	End Select
-	
 End Sub
 
 Public Sub SetTaskCompletionSound(value As Boolean)

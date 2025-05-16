@@ -47,11 +47,22 @@ End Sub
 Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("settingslayout")
 	svMain.Panel.LoadLayout("sviewlayout")
-		
-	LoadSettings
+	
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_ENGLISH)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_TAGALOG)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_KAPAMPANGAN)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_ESPANOL)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_HANYU)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_AL_LOGHA_AL_3ARABIYAH)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_RUSSKIY)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_BAHASA_INDONESIA)
 	
 	button_design
 	
+End Sub
+
+Sub Activity_Resume
+	LoadSettings
 End Sub
 
 Sub LoadSettings
@@ -59,13 +70,12 @@ Sub LoadSettings
 	'DebugMode.Checked = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
 	switchTaskCompletion.Value = Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled()
 	switchHourFormat24.Value = Starter.SettingsViewModelInstance.Is24HourFormatEnabled()
+
+	spnLanguage.SelectedIndex = spnLanguage.IndexOf(Starter.SettingsViewModelInstance.GetLanguage)
 End Sub
 
 Sub button_design
 	pnlSettingsBar.Elevation = 10
-	
-
-	
 End Sub
 
 Sub btnBack_Click
@@ -196,5 +206,11 @@ Private Sub switchDarkMode_ValueChanged (Value As Boolean)
 End Sub
 
 Private Sub spnLanguage_ItemClick (Position As Int, Value As Object)
+	Msgbox2Async("language_question", "Title", "Yes", "Cancel", "No", Null, False)
+	Wait For Msgbox_Result (Result As Int)
+	If Result = DialogResponse.POSITIVE Then
+		ToastMessageShow(Value, True)
+		Starter.SettingsViewModelInstance.SetLanguage(Value)
+	End If
 	
 End Sub
