@@ -1,4 +1,4 @@
-﻿B4A=true
+B4A=true
 Group=Default Group
 ModulesStructureVersion=1
 Type=Activity
@@ -36,7 +36,7 @@ End Sub
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("AdvancedSettingsLayout")
-
+  
 	lblAdvancedSettings.Text = Starter.Lang.Get("advanced_settings")
 	lblDebug.Text = Starter.Lang.Get("debug_mode")
 	lblExperimental.Text = Starter.Lang.Get("experimental_mode")
