@@ -380,7 +380,7 @@ Private Sub btnGrpDelete_Click
 	If Result = DialogResponse.POSITIVE Then
 		Try
 			Starter.GroupViewModelInstance.DeleteGroup(m_group.GetID)
-			ToastMessageShow("Task group '" & m_group.GetTitle & "' saved successfully!", True)
+			ToastMessageShow("Task group '" & m_group.GetTitle & "' deleted successfully!", True)
 			Main.SavedSmartList = Main.SMART_LIST_MY_DAY
 			OnCloseActivity
 		Catch

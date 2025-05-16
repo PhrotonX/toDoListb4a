@@ -361,6 +361,7 @@ Sub Globals
 	Private radioSortByCreaion As RadioButton
 	Private radioSortByDD As RadioButton
 	Private radioSortByPrio As RadioButton
+	Private lblTitle As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -851,7 +852,7 @@ Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 			StartActivity(SettingsActivity)
 		Case MENU_ITEM_EDIT_GROUP:
 			Log("m_savedGroup: " & m_savedGroup)
-			ToastMessageShow("m_savedGroup ID: " & m_savedGroup.GetID, False)
+			'ToastMessageShow("m_savedGroup ID: " & m_savedGroup.GetID, False)
 			
 			Starter.InstanceState.Put(Starter.EXTRA_TASK_GROUP_EDITOR_MODE, Starter.TASK_GROUP_EDITOR_MODE_EDIT)
 			Starter.InstanceState.Put(Starter.EXTRA_EDITOR_GROUP_ID, m_savedGroup.GetID)

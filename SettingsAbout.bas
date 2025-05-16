@@ -22,6 +22,14 @@ Sub Globals
 
 	Private svAbout As ScrollView
 	Private aboutLabel As Label
+	Private aboutContact As Label
+	Private aboutDev As Label
+	Private aboutWhat As Label
+	Private membersLbl As Label
+	Private paraContact As Label
+	Private paraDev As Label
+	Private paraWhat As Label
+	Private lblAppTitle As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)

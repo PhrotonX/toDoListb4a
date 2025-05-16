@@ -25,6 +25,8 @@ Sub Class_Globals
 	Private Const LANGUAGE_KAPAMPANGAN As String = "pam"
 	Private Const LANGUAGE_ESPANOL As String = "es"
 	Private Const LANGUAGE_HANYU As String = "zh"
+	Private Const LANGUAGE_RUSSKIY As String = "ru"
+	Private Const LANGUAGE_BAHASA_INDONESIA As String = "id"
 	
 	Private Const DEFAULT_LANGUAGE As String = "en_us"
 End Sub
