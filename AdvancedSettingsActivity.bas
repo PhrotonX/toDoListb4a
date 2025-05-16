@@ -30,21 +30,32 @@ Sub Globals
 	Private lblExportDatabase As Label
 	Private switchDebug As B4XSwitch
 	Private switchExperimental As B4XSwitch
+	Private lblImport As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("AdvancedSettingsLayout")
 
+	lblAdvancedSettings.Text = Starter.Lang.Get("advanced_settings")
+	lblDebug.Text = Starter.Lang.Get("debug_mode")
+	lblExperimental.Text = Starter.Lang.Get("experimental_mode")
+	lblExportDatabase.Text = Starter.Lang.Get("export_database")
+	lblImport.Text = Starter.Lang.Get("import_database")
+	lblResetApp.Text = Starter.Lang.Get("reset_app")
 End Sub
 
 Sub Activity_Resume
-	switchDebug.Value = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
-	switchExperimental.Value = Starter.SettingsViewModelInstance.IsExperimentalModeEnabled()
+	LoadSettings
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
 
+End Sub
+
+Private Sub LoadSettings
+	switchDebug.Value = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
+	switchExperimental.Value = Starter.SettingsViewModelInstance.IsExperimentalModeEnabled()
 End Sub
 
 Private Sub btnBack_Click
@@ -54,7 +65,35 @@ End Sub
 Private Sub lblResetApp_Click
 	pnlResetApp.SetColorAnimated(50, Colors.White, Colors.LightGray)
 	pnlResetApp.SetColorAnimated(150, Colors.LightGray, Colors.White)
-	Msgbox2("Resetting will erase all data, including settings and saved information. This action cannot be undone." & CRLF, "Reset app?", "YES", "CANCEL", "NO", Null)
+	Dim result As Int
+	result = Msgbox2(Starter.Lang.Get("reset_app_warning"), Starter.Lang.Get("reset_app") & "?", Starter.Lang.Get("yes"), _ 
+		Starter.Lang.Get("cancel"), Starter.Lang.Get("no"), Null)
+		
+	If result == DialogResponse.POSITIVE Then
+		ProgressDialogShow(Starter.Lang.Get("resetting") & "...")
+		Try
+			If Starter.ToDoDatabaseViewModelInstance.ResetDatabase() Then
+				Starter.AttachmentViewModelInstance.DropAttachmentsFromFS()
+			End If
+		
+			Starter.SettingsViewModelInstance.LoadDefaults()
+		
+			LoadSettings
+		
+			MsgboxAsync(Starter.Lang.Get("reset_complete"), Starter.Lang.Get("alert"))
+		Catch
+			Log(LastException)
+		
+			If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+				MsgboxAsync(LastException.Message, Starter.Lang.Get("error"))
+			Else
+				MsgboxAsync(Starter.Lang.Get("reset_failed"), Starter.Lang.Get("error"))
+			End If
+		
+		End Try
+	
+		ProgressDialogHide
+	End If
 End Sub
 
 Private Sub lblImport_Click

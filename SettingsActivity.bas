@@ -101,33 +101,6 @@ Sub about_Click
 	StartActivity(SettingsAbout)
 End Sub
 
-
-Private Sub ResetApp_Click
-	ProgressDialogShow(Starter.Lang.Get("resetting") & "...")
-	Try
-		If Starter.ToDoDatabaseViewModelInstance.ResetDatabase() Then
-			Starter.AttachmentViewModelInstance.DropAttachmentsFromFS()
-		End If
-		
-		Starter.SettingsViewModelInstance.LoadDefaults()
-		
-		LoadSettings
-		
-		MsgboxAsync(Starter.Lang.Get("reset_complete"), Starter.Lang.Get("alert"))
-	Catch
-		Log(LastException)
-		
-		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
-			MsgboxAsync(LastException.Message, Starter.Lang.Get("error"))
-		Else
-			MsgboxAsync(Starter.Lang.Get("reset_failed"), Starter.Lang.Get("error"))
-		End If
-		
-	End Try
-	
-	ProgressDialogHide
-End Sub
-
 Private Sub ImportDatabase_Click
 	
 End Sub
