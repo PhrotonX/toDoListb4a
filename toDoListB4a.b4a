@@ -1787,3 +1787,17 @@ End Sub
 Private Sub radioAsc_CheckedChange(Checked As Boolean)
 	m_query.SetSortOrder(m_query.ORDER_ASC)
 End Sub
+
+Private Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the event
+	Dim Answ As Int
+	Dim Txt As String
+	If KeyCode = KeyCodes.KEYCODE_BACK Then
+		Txt = "Do you really want to quit the program?"
+		Answ = Msgbox2(Txt, "Attention", "Yes", "", "No", Null)
+		If Answ = DialogResponse.POSITIVE Then
+			Return False
+		Else
+			Return True
+		End If
+	End If
+End Sub

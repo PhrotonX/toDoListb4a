@@ -19,7 +19,7 @@ Sub Class_Globals
 	Private Const SETTINGS_KEY_24_HOUR_FORMAT As String = "24_hour_format"
 	
 	Public Const LANGUAGE_AL_LOGHA_AL_3ARABIYAH As String = "ar"
-	Public Const LANGUAGE_ENGLISH As String = "en_US"
+	Public Const LANGUAGE_ENGLISH As String = "en-US"
 	Public Const LANGUAGE_TAGALOG As String = "tl-PH"
 	Public Const LANGUAGE_KAPAMPANGAN As String = "pam"
 	Public Const LANGUAGE_ESPANOL As String = "es-ES"
