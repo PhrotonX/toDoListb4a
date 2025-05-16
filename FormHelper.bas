@@ -54,18 +54,18 @@ Public Sub PopulateDateRange(spnDateRange As Spinner)
 	
 	spnDateRange.Clear
 	
-	spnDateRange.Add("Select date range...")
-	spnDateRange.Add(dateObj.DATE_A_LONG_TIME_AGO)
-	spnDateRange.Add(dateObj.DATE_EARLIER)
-	spnDateRange.Add(dateObj.DATE_LAST_WEEK)
-	spnDateRange.Add(dateObj.DATE_EARLIER_THIS_WEEK)
-	spnDateRange.Add(dateObj.DATE_YESTERDAY)
-	spnDateRange.Add(dateObj.DATE_TODAY)
-	spnDateRange.Add(dateObj.DATE_TOMORROW)
-	spnDateRange.Add(dateObj.DATE_THIS_WEEK)
-	spnDateRange.Add(dateObj.DATE_NEXT_WEEK)
-	spnDateRange.Add(dateObj.DATE_LATER)
-	spnDateRange.Add(dateObj.DATE_A_LONG_TIME_FROM_NOW)
+	spnDateRange.Add(Starter.Lang.Get("select_date_range"))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_A_LONG_TIME_AGO))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_EARLIER))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_LAST_WEEK))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_EARLIER_THIS_WEEK))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_YESTERDAY))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_TODAY))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_TOMORROW))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_THIS_WEEK))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_NEXT_WEEK))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_LATER))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_A_LONG_TIME_FROM_NOW))
 End Sub
 
 Public Sub PopulateTime(spnHour As Spinner, spnMinute As Spinner, spnMarker As Spinner)
@@ -109,19 +109,19 @@ Public Sub PopulateSnooze(spnSnooze As Spinner)
 	' Clear the items before adding new items.
 	spnSnooze.Clear
 	
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_OFF))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_MINUTE))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_3_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_10_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_15_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_20_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_30_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_HOUR))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_2_HOURS))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_HOURS))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_12_HOURS))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_DAY))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_OFF)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_MINUTE)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_3_MINUTES)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_MINUTES)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_10_MINUTES)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_15_MINUTES)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_20_MINUTES)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_30_MINUTES)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_HOUR)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_2_HOURS)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_HOURS)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_12_HOURS)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_DAY)))
 End Sub
 
 ' Populates the task group spinner based on the database contents.
@@ -149,7 +149,8 @@ Public Sub SetMonthValue(spnMonth As Spinner, dateObj As Date, Position As Int)
 		dateObj.SetMonth(0)
 	Else
 		' Convert the month String retrieved from the spinner into an int.
-		Dim month As Int = dateObj.GetNumericMonth(monthStr)
+		'Dim month As Int = dateObj.GetNumericMonth(monthStr)
+		Dim month As Int = Position
 		
 		' Set the month value into the task based on the month item that is
 		' clicked from the spinner.

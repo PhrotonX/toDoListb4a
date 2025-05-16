@@ -105,6 +105,7 @@ Sub Globals
 	Private pnlTaskGrplbl As Panel
 	Private pnlTitlelbl As Panel
 	Private reminderlbl As Label
+	Private btnSave As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -148,7 +149,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Check the editor mode to set the appropriate EditorActivity functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
 		' Rename the activity if editing.
-		lblAddTask.Text = "Edit Task"
+		lblAddTask.Text = Starter.Lang.Get("edit_task")
 		
 		' Retrieve the stored ID that is sent from MainActivity.
 		Dim itemId As Int = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_TASK_ID)
@@ -346,12 +347,30 @@ Private Sub OnLoadText
 	lblTitle.Text = Starter.Lang.Get("title") & ":"
 	editTitle.Hint = Starter.Lang.Get("title_hint")
 	editNotes.Hint = Starter.Lang.Get("notes_hint")
+	reminderlbl.Text = Starter.Lang.Get("reminder")
 	editDueDateYear.Hint = Starter.Lang.Get("year")
 	
 	radioPriorityCritical.Text = Starter.Lang.Get("critical")
 	radioPriorityHigh.Text = Starter.Lang.Get("high")
 	radioPriorityMedium.Text = Starter.Lang.Get("medium")
 	radioPriorityLow.Text = Starter.Lang.Get("low")
+	
+	btnClearAll.Text = Starter.Lang.Get("clear_all")
+	btnClearDueDate.Text = Starter.Lang.Get("clear")
+	btnClearNotes.Text = Starter.Lang.Get("clear_uppercase")
+	btnClearTitle.Text = Starter.Lang.Get("clear_uppercase")
+	btnPriorityClear.Text = Starter.Lang.Get("clear_uppercase")
+	btnRepeatClear.Text = Starter.Lang.Get("clear_uppercase")
+	
+	btnRestore.Text = Starter.Lang.Get("restore")
+	btnAddAttachment.Text = Starter.Lang.Get("add_attachment_plus")
+	btnMoveToTrash.Text = Starter.Lang.Get("move_to_trash")
+	btnSave.Text = Starter.Lang.Get("save_uppercase")
+	btnOpenCanvas.Text = Starter.Lang.Get("canvas")
+	
+	toggleReminder.TextOn = Starter.Lang.Get("on_uppercase")
+	toggleReminder.TextOff = Starter.Lang.Get("off_uppercase")
+	
 End Sub
 
 Private Sub btnSave_Click
