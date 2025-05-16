@@ -89,6 +89,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	pnlEditorBar.Elevation = 10
 	EditText_removeunderline
 	
+	If GetDeviceLayoutValues.Scale > 2 Then
+		editorScrollView.Panel.Height = 7912
+	End If
 	
 	Dim cd As ColorDrawable
 	cd.Initialize(Colors.Transparent, 0) ' 0 is the corner radius

@@ -365,6 +365,7 @@ Sub Globals
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
+
 	'ToDoList.AnimationDuration = 0
 	clvItems.Initialize(Me, "clvItems")
 	drawer.Initialize(Me, "Drawer", Activity, 300dip)
@@ -787,7 +788,11 @@ Private Sub CreateSubGroup(title As String, color As Int, textSize As Int)
 	Dim subGroup As SubGroupViewHolder
 	subGroup.Initialize(xui)
 	subGroup.Name.Text = title
-	subGroup.Root.Height = 70
+	If GetDeviceLayoutValues.Scale > 2 Then
+		subGroup.Root.Height = 120
+	Else
+		subGroup.Root.Height = 70
+	End If
 	subGroup.Name.TextSize = textSize
 	subGroup.Name.TextColor = color
 
@@ -1235,6 +1240,12 @@ End Sub
 
 Private Sub searchBtn_Click
 	If button_handling Then
+		
+		If GetDeviceLayoutValues.Scale > 2 Then
+			svSearchBody.Panel.Height = 6400
+		End If
+		
+		
 		pnlTitleBar.Elevation = 0
 		pnlSearch.SetLayout(pnlTitleBar.Left, pnlTitleBar.Top, pnlTitleBar.Width, pnlTitleBar.Height)
 		pnlSearch.SetVisibleAnimated(150, True)
