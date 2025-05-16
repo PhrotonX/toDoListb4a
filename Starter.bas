@@ -62,6 +62,8 @@ Sub Process_Globals
 	Public Provider As FileProvider
 	Public Permissions As RuntimePermissions
 	Public Phone As Phone
+	
+	Public Lang As LanguageManager
 End Sub
 
 Sub CheckInstanceState
@@ -96,6 +98,10 @@ Sub Service_Create
 	' Initialize the variables
 	InstanceState.Initialize
 	
+	SettingsViewModelInstance.Initialize()
+	
+	Lang.Initialize(SettingsViewModelInstance)
+	
 	ToDoDatabaseViewModelInstance.Initialize
 	ToDoFileSystemInstance.Initialize
 	
@@ -110,7 +116,7 @@ Sub Service_Create
 	GroupViewModelInstance.Initialize(groupRepo)
 	RepeatViewModelInstance.Initialize(repeatRepo)
 	
-	SettingsViewModelInstance.Initialize()
+	
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)

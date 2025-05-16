@@ -92,7 +92,7 @@ End Sub
 
 
 Private Sub ResetApp_Click
-	ProgressDialogShow("Resetting...")
+	ProgressDialogShow(Starter.Lang.Get("resetting") & "...")
 	Try
 		If Starter.ToDoDatabaseViewModelInstance.ResetDatabase() Then
 			Starter.AttachmentViewModelInstance.DropAttachmentsFromFS()
@@ -102,15 +102,14 @@ Private Sub ResetApp_Click
 		
 		LoadSettings
 		
-		MsgboxAsync("Application has been successfully reset! You may need to restart your application for changes " & _
-		"to take effect.", "Alert")
+		MsgboxAsync(Starter.Lang.Get("reset_complete"), Starter.Lang.Get("alert"))
 	Catch
 		Log(LastException)
 		
 		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
-			MsgboxAsync(LastException.Message, "Error")
+			MsgboxAsync(LastException.Message, Starter.Lang.Get("error"))
 		Else
-			MsgboxAsync("Failed to reset application", "Error")
+			MsgboxAsync(Starter.Lang.Get("reset_failed"), Starter.Lang.Get("error"))
 		End If
 		
 	End Try
@@ -206,11 +205,14 @@ Private Sub switchDarkMode_ValueChanged (Value As Boolean)
 End Sub
 
 Private Sub spnLanguage_ItemClick (Position As Int, Value As Object)
-	Msgbox2Async("language_question", "Title", "Yes", "Cancel", "No", Null, False)
+	Msgbox2Async(Starter.Lang.Get("language_question_info") & CRLF & Starter.Lang.Get("language_question_info_2"), _ 
+	Starter.Lang.Get("language_question"), Starter.Lang.Get("yes"), Starter.Lang.Get("cancel"), _ 
+	Starter.Lang.Get("no"), Null, False)
 	Wait For Msgbox_Result (Result As Int)
 	If Result = DialogResponse.POSITIVE Then
 		ToastMessageShow(Value, True)
 		Starter.SettingsViewModelInstance.SetLanguage(Value)
+		Starter.Lang.Initialize(Starter.SettingsViewModelInstance)
 	End If
 	
 End Sub

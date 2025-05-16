@@ -17,10 +17,12 @@ Public Sub Initialize(settingsObj As SettingsViewModel)
 	m_settings = settingsObj
 	m_words.Initialize
 	
-	m_json.Initialize(File.ReadString(File.DirAssets, m_settings.GetLanguage & ".json"))
+	Log("LanguageManager: " & m_settings.GetLanguageCode)
+	
+	m_json.Initialize(File.ReadString(File.DirAssets, m_settings.GetLanguageCode & ".json"))
 	m_words = m_json.NextObject
 End Sub
 
-Public Sub GetWord(property As String) As String
+Public Sub Get(property As String) As String
 	Return m_words.Get(property)
 End Sub
