@@ -15,6 +15,7 @@ Sub Class_Globals
 	Public Const DAY_LENGTH As Long = 86400000
 	Public Const LAST_EPOCH_VALUE As Long = 9223372036854775807
 	
+	' Relpace values into property name on JSON-based language files.
 	Public Const DATE_A_LONG_TIME_AGO As String = "A long time ago"
 	Public Const DATE_EARLIER As String = "Earlier"
 	Public Const DATE_LAST_WEEK As String = "Last week"
