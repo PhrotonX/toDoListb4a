@@ -208,6 +208,7 @@
 	"permission_granted": "Permiso concedido para ",
 	"permission_failed_to_grant": "Error al conceder el permiso para ",
 	"validation_error_title_50": "¡El título no puede tener más de 50 caracteres!",
+	"validation_error_title_empty": "¡El título no puede estar vacío!",
 	"validation_error_title_255": "¡El título no puede tener más de 255 caracteres!",
 	"validation_error_notes_255": "¡Las notas no pueden tener más de 255 caracteres!",
 	"validation_error_title_duplicate": "¡Título duplicado encontrado!",

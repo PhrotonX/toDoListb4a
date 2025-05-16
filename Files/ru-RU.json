@@ -208,6 +208,7 @@
 	"permission_granted": "Разрешение предоставлено для ",
 	"permission_failed_to_grant": "Не удалось предоставить разрешение для ",
 	"validation_error_title_50": "Название не может быть длиннее 50 символов!",
+	"validation_error_title_empty": "Заголовок не может быть пустым!",
 	"validation_error_title_255": "Название не может быть длиннее 255 символов!",
 	"validation_error_notes_255": "Заметки не могут быть длиннее 255 символов!",
 	"validation_error_title_duplicate": "Найдено повторяющееся название!",

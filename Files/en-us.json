@@ -208,6 +208,7 @@
 	"permission_granted": "Permission granted for ",
 	"permission_failed_to_grant": "Permission failed to grant for ",
 	"validation_error_title_50": "Title cannot be longer than 50!",
+	"validation_error_title_empty": "Title cannot be empty!",
 	"validation_error_title_255": "Title cannot be longer than 255!",
 	"validation_error_notes_255": "Notes cannot be longer than 255!",
 	"validation_error_title_duplicate": "Title duplicate found!",
