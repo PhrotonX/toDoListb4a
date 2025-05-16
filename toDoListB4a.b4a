@@ -1,4 +1,4 @@
-Build1=Default,com.cm.todolist
+﻿Build1=Default,com.cm.todolist
 File1=3528206.png
 File10=brown.png
 File11=brown-selected.png
@@ -39,16 +39,17 @@ File42=separatorlayout.bal
 File43=settingsabout.bal
 File44=settingshelp.bal
 File45=settingslayout.bal
-File46=solid_white.png
-File47=stock4.png
-File48=sviewlayout.bal
-File49=TaskItemLayout.bal
+File46=smiley.png
+File47=solid_white.png
+File48=stock4.png
+File49=sviewlayout.bal
 File5=AdvancedSettingsLayout.bal
-File50=taskviewlayout.bal
-File51=taskviewscrolllayout.bal
-File52=test.bal
-File53=YELLOW.png
-File54=YELLOW-SELECTED.png
+File50=TaskItemLayout.bal
+File51=taskviewlayout.bal
+File52=taskviewscrolllayout.bal
+File53=test.bal
+File54=YELLOW.png
+File55=YELLOW-SELECTED.png
 File6=AttachmentItemLayout.bal
 File7=AttachmentListLayout.bal
 File8=BLUE.png
@@ -103,6 +104,7 @@ FileGroup51=Default Group
 FileGroup52=Default Group
 FileGroup53=Default Group
 FileGroup54=Default Group
+FileGroup55=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
 FileGroup8=Default Group
@@ -175,7 +177,7 @@ Module6=AttachmentViewHolder
 Module7=AttachmentViewModel
 Module8=DatabaseUtils
 Module9=Date
-NumberOfFiles=54
+NumberOfFiles=55
 NumberOfLibraries=15
 NumberOfModules=51
 Version=13.1
@@ -755,6 +757,7 @@ Private Sub LoadItems()
 	Else if count < 1 Then
 		'text = count & " task"
 		'text = text & "(s)"
+			pnlEmptyTasks.RemoveAllViews
 			pnlEmptyTasks.BringToFront
 			pnlEmptyTasks.LoadLayout("emptytasks")
 			pnlEmptyTasks.Visible = True
@@ -800,7 +803,7 @@ Private Sub listview_init
 	
 	menuListView.SingleLineLayout.Label.TextSize = 16
 	menuListView.SingleLineLayout.Label.TextColor = Colors.Black
-	menuListView.SingleLineLayout.ItemHeight = 70
+	menuListView.SingleLineLayout.ItemHeight = (menuListView.Height / 3)
 		
 	Dim cd As ColorDrawable
 	cd.Initialize(Colors.White, 3dip)
@@ -829,7 +832,7 @@ Sub menuBtn_Click
 		pnlMenuBgTouch.BringToFront
 		pnlMenuBgTouch.Elevation = 20
 		pnlmenuListView.SetVisibleAnimated(250, True)
-		pnlmenuListView.Elevation = 20
+		pnlmenuListView.Elevation = 40
 		menuListView.BringToFront
 		pnlmenuListView.BringToFront
 		pnlmenuListView.SetLayoutAnimated(250, menuListViewItemsize.Left, menuListViewItemsize.Top, _
@@ -1152,7 +1155,6 @@ End Sub
 ' Function for task group click.
 Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	Dim viewHolder As GroupViewHolder = Value
-	pageindex = Index
 	If viewHolder.IsSeparator == True Then
 		' Reset selection to previous item
 		clvItems.GetPanel(Index).Color = xui.Color_Transparent
