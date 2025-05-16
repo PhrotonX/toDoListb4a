@@ -99,6 +99,16 @@ End Sub
 Private Sub lblImport_Click
 	pnlImport.SetColorAnimated(50, Colors.White, Colors.LightGray)
 	pnlImport.SetColorAnimated(150, Colors.LightGray, Colors.White)
+	
+	Msgbox2Async(Starter.Lang.Get("import_question_info") & CRLF & CRLF & _
+	Starter.Lang.Get("import_question_info_2") & CRLF & CRLF & _
+	Starter.Lang.Get("import_question_info_3"), _ 
+	Starter.Lang.Get("import_question"), _ 
+	Starter.Lang.Get("continue"), Starter.Lang.Get("cancel"),"", Null, False)
+	Wait For Msgbox_Result (Result As Int)
+	If Result = DialogResponse.POSITIVE Then
+		
+	End If
 End Sub
 
 Private Sub lblExportDatabase_Click
@@ -107,34 +117,71 @@ Private Sub lblExportDatabase_Click
 End Sub
 
 Private Sub switchExperimental_ValueChanged (Value As Boolean)
-	Starter.SettingsViewModelInstance.SetExperimentalMode(Value)
+	OnSwitchExperimentalMode(Value)
 End Sub
 
 Private Sub switchDebug_ValueChanged (Value As Boolean)
-	Starter.SettingsViewModelInstance.SetDebugMode(Value)
+	OnSwitchDebugMode(Value)
 End Sub
 
 Private Sub lblExperimental_Click
 	If switchExperimental.Value = True Then
 		switchExperimental.Value = False
-		Starter.SettingsViewModelInstance.SetExperimentalMode(False)
+		OnSwitchExperimentalMode(False)
 	Else
 		switchExperimental.Value = True
-		Starter.SettingsViewModelInstance.SetExperimentalMode(True)
+		OnSwitchExperimentalMode(True)
 	End If
 End Sub
 
 Private Sub lblDebug_Click
 	If switchDebug.Value = True Then
 		switchDebug.Value = False
-		Starter.SettingsViewModelInstance.SetDebugMode(False)
-
+		OnSwitchDebugMode(False)
 	Else
 		switchDebug.Value = True
-		Starter.SettingsViewModelInstance.SetDebugMode(True)
+		OnSwitchDebugMode(True)
 	End If
 End Sub
 
 Private Sub lblAdvancedSettings_Click
 	
+End Sub
+
+Private Sub OnSwitchDebugMode(Value As Boolean)
+	If Value Then
+		Msgbox2Async(Starter.Lang.Get("debug_mode_question_info") & CRLF & CRLF & _
+		Starter.Lang.Get("debug_mode_question_info_2") & CRLF & CRLF & _
+		Starter.Lang.Get("debug_mode_question_info_3"), _ 
+		Starter.Lang.Get("debug_mode_question"), _ 
+		Starter.Lang.Get("continue"), Starter.Lang.Get("cancel"),"", Null, False)
+		Wait For Msgbox_Result (Result As Int)
+		If Result = DialogResponse.POSITIVE Then
+			Starter.SettingsViewModelInstance.SetDebugMode(Value)
+			switchDebug.Value = Value
+		Else
+			switchDebug.Value = False
+		End If
+	Else
+		Starter.SettingsViewModelInstance.SetDebugMode(Value)
+	End If
+End Sub
+
+Private Sub OnSwitchExperimentalMode(Value As Boolean)
+	If Value Then
+		Msgbox2Async(Starter.Lang.Get("experimental_mode_question_info") & CRLF & CRLF & _
+		Starter.Lang.Get("experimental_mode_question_info_2") & CRLF & CRLF & _
+		Starter.Lang.Get("experimental_mode_question_info_3"), _ 
+		Starter.Lang.Get("experimental_mode_question"), _ 
+		Starter.Lang.Get("continue"), Starter.Lang.Get("cancel"),"", Null, False)
+		Wait For Msgbox_Result (Result As Int)
+		If Result = DialogResponse.POSITIVE Then
+			Starter.SettingsViewModelInstance.SetExperimentalMode(Value)
+			switchExperimental.Value = Value
+		Else
+			switchExperimental.Value = False
+		End If
+	Else
+		Starter.SettingsViewModelInstance.SetExperimentalMode(Value)
+	End If
 End Sub

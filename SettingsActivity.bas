@@ -77,10 +77,10 @@ Sub Activity_Resume
 End Sub
 
 Sub LoadSettings
-	switchDarkMode.Value = Starter.SettingsViewModelInstance.IsDarkModeEnabled()
-	'DebugMode.Checked = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
-	switchTaskCompletion.Value = Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled()
-	switchHourFormat24.Value = Starter.SettingsViewModelInstance.Is24HourFormatEnabled()
+	switchDarkMode.Value = Starter.SettingsViewModelInstance.IsDarkModeEnabled
+	switchDetailedDueDate.Value = Starter.SettingsViewModelInstance.IsDetailedDueDateEnabled
+	switchTaskCompletion.Value = Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled
+	switchHourFormat24.Value = Starter.SettingsViewModelInstance.Is24HourFormatEnabled
 
 	spnLanguage.SelectedIndex = spnLanguage.IndexOf(Starter.SettingsViewModelInstance.GetLanguage)
 End Sub
@@ -107,10 +107,6 @@ End Sub
 
 Private Sub ExportDatabase_Click
 	
-End Sub
-
-Private Sub DebugMode_CheckedChange(Checked As Boolean)
-	Starter.SettingsViewModelInstance.SetDebugMode(Checked)
 End Sub
 
 Private Sub DarkMode_CheckedChange(Checked As Boolean)
@@ -147,11 +143,10 @@ End Sub
 Private Sub lblDarkMode_Click
 	If switchDarkMode.Value = True Then
 		switchDarkMode.Value = False
-		Starter.SettingsViewModelInstance.SetDarkMode(False)
-
+		OnSwitchDarkMode(False)
 	Else
 		switchDarkMode.Value = True
-		Starter.SettingsViewModelInstance.SetDarkMode(True)
+		OnSwitchDarkMode(True)
 	End If
 End Sub
 
@@ -159,7 +154,6 @@ Private Sub lbl24hrFormat_Click
 	If switchHourFormat24.Value = True Then
 		switchHourFormat24.Value = False
 		Starter.SettingsViewModelInstance.Set24HourFormat(False)
-
 	Else
 		switchHourFormat24.Value = True
 		Starter.SettingsViewModelInstance.Set24HourFormat(True)
@@ -172,26 +166,45 @@ Private Sub lblAdvancedSettings_Click
 	StartActivity(AdvancedSettingsActivity)
 End Sub
 
+Private Sub OnSwitchDarkMode(Value As Boolean)
+	If Value Then
+		Msgbox2Async(Starter.Lang.Get("dark_mode_question_info") & CRLF & CRLF & _
+		Starter.Lang.Get("dark_mode_question_info_2"), _ 
+		Starter.Lang.Get("dark_mode_question"), _ 
+		Starter.Lang.Get("continue"), Starter.Lang.Get("cancel"),"", Null, False)
+		Wait For Msgbox_Result (Result As Int)
+		If Result = DialogResponse.POSITIVE Then
+			Starter.SettingsViewModelInstance.SetDarkMode(Value)
+			switchDarkMode.Value = Value
+		Else
+			switchDarkMode.Value = False
+		End If
+	Else
+		Starter.SettingsViewModelInstance.SetDarkMode(Value)
+	End If
+End Sub
+
 Private Sub switchTaskCompletion_ValueChanged (Value As Boolean)
-	
+	Starter.SettingsViewModelInstance.SetTaskCompletionSound(Value)
 End Sub
 
 Private Sub switchHourFormat24_ValueChanged (Value As Boolean)
-	
+	Starter.SettingsViewModelInstance.Set24HourFormat(Value)
 End Sub
 
 Private Sub switchDetailedDueDate_ValueChanged (Value As Boolean)
-	
+	Starter.SettingsViewModelInstance.SetDetailedDueDate(Value)
 End Sub
 
 Private Sub switchDarkMode_ValueChanged (Value As Boolean)
-	
+	OnSwitchDarkMode(Value)
 End Sub
 
 Private Sub spnLanguage_ItemClick (Position As Int, Value As Object)
-	Msgbox2Async(Starter.Lang.Get("language_question_info") & CRLF & Starter.Lang.Get("language_question_info_2"), _ 
-	Starter.Lang.Get("language_question"), Starter.Lang.Get("yes"), Starter.Lang.Get("cancel"), _ 
-	Starter.Lang.Get("no"), Null, False)
+	Msgbox2Async(Starter.Lang.Get("language_question_info") & CRLF & CRLF & _ 
+		Starter.Lang.Get("language_question_info_2"), _ 
+		Starter.Lang.Get("language_question"), Starter.Lang.Get("yes"), Starter.Lang.Get("cancel"), _ 
+		Starter.Lang.Get("no"), Null, False)
 	Wait For Msgbox_Result (Result As Int)
 	If Result = DialogResponse.POSITIVE Then
 		ToastMessageShow(Value, True)
