@@ -208,6 +208,7 @@
 	"permission_granted": "已授予权限 ",
 	"permission_failed_to_grant": "授予权限失败 ",
 	"validation_error_title_50": "标题不能超过 50 个字符！",
+	"validation_error_title_empty": "标题不能为空！",
 	"validation_error_title_255": "标题不能超过 255 个字符！",
 	"validation_error_notes_255": "备注不能超过 255 个字符！",
 	"validation_error_title_duplicate": "找到重复的标题！",

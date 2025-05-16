@@ -208,6 +208,7 @@
 	"permission_granted": "Izin diberikan untuk ",
 	"permission_failed_to_grant": "Izin gagal diberikan untuk ",
 	"validation_error_title_50": "Judul tidak boleh lebih panjang dari 50!",
+	"validation_error_title_empty": "Judul tidak boleh kosong!",
 	"validation_error_title_255": "Judul tidak boleh lebih panjang dari 255!",
 	"validation_error_notes_255": "Catatan tidak boleh lebih panjang dari 255!",
 	"validation_error_title_duplicate": "Judul duplikat ditemukan!",
