@@ -79,7 +79,7 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 				StartServiceAtExact(TaskNotificationScheduler, DateTime.Now, True)
 			End If
 		Else
-			toastMsg = "Error in dismissing task (task id: " & itemId
+			toastMsg = "Error in dismissing task - task id: " & itemId
 		End If
 	End If
 	

@@ -115,6 +115,7 @@ Library12=sql
 Library13=xcustomlistview
 Library14=xui
 Library15=xui views
+Library16=json
 Library2=b4xdrawer
 Library3=contentresolver
 Library4=core
@@ -137,47 +138,48 @@ Module18=GroupRepository
 Module19=GroupViewHolder
 Module2=Attachment
 Module20=GroupViewModel
-Module21=Repeat
-Module22=RepeatDao
-Module23=RepeatRepository
-Module24=RepeatViewModel
-Module25=SettingsAbout
-Module26=SettingsActivity
-Module27=SettingsHelp
-Module28=SettingsRepository
-Module29=SettingsViewModel
+Module21=LanguageManager
+Module22=Repeat
+Module23=RepeatDao
+Module24=RepeatRepository
+Module25=RepeatViewModel
+Module26=SettingsAbout
+Module27=SettingsActivity
+Module28=SettingsHelp
+Module29=SettingsRepository
 Module3=AttachmentDao
-Module30=Snooze
-Module31=Starter
-Module32=SubGroupViewHolder
-Module33=TaskDao
-Module34=TaskGroupActivity
-Module35=TaskNotificationCompat
-Module36=TaskNotificationCompleteReceiver
-Module37=TaskNotificationDismissReceiver
-Module38=TaskNotificationScheduler
-Module39=TaskNotificationService
+Module30=SettingsViewModel
+Module31=Snooze
+Module32=Starter
+Module33=SubGroupViewHolder
+Module34=TaskDao
+Module35=TaskGroupActivity
+Module36=TaskNotificationCompat
+Module37=TaskNotificationCompleteReceiver
+Module38=TaskNotificationDismissReceiver
+Module39=TaskNotificationScheduler
 Module4=AttachmentFileRepository
-Module40=TaskNotificationSnoozeReceiver
-Module41=TaskQuery
-Module42=TaskRepository
-Module43=TaskViewerActivity
-Module44=TaskViewHolder
-Module45=TaskViewModel
-Module46=Theme
-Module47=Time
-Module48=ToDo
-Module49=ToDoDatabase
+Module40=TaskNotificationService
+Module41=TaskNotificationSnoozeReceiver
+Module42=TaskQuery
+Module43=TaskRepository
+Module44=TaskViewerActivity
+Module45=TaskViewHolder
+Module46=TaskViewModel
+Module47=Theme
+Module48=Time
+Module49=ToDo
 Module5=AttachmentRepository
-Module50=ToDoDatabaseViewModel
-Module51=ToDoFileSystem
+Module50=ToDoDatabase
+Module51=ToDoDatabaseViewModel
+Module52=ToDoFileSystem
 Module6=AttachmentViewHolder
 Module7=AttachmentViewModel
 Module8=DatabaseUtils
 Module9=Date
 NumberOfFiles=54
-NumberOfLibraries=15
-NumberOfModules=51
+NumberOfLibraries=16
+NumberOfModules=52
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
@@ -360,6 +362,7 @@ Sub Globals
 	Private radioSortByCreaion As RadioButton
 	Private radioSortByDD As RadioButton
 	Private radioSortByPrio As RadioButton
+	Private lblTitle As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -862,7 +865,7 @@ Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 			StartActivity(SettingsActivity)
 		Case MENU_ITEM_EDIT_GROUP:
 			Log("m_savedGroup: " & m_savedGroup)
-			ToastMessageShow("m_savedGroup ID: " & m_savedGroup.GetID, False)
+			'ToastMessageShow("m_savedGroup ID: " & m_savedGroup.GetID, False)
 			
 			Starter.InstanceState.Put(Starter.EXTRA_TASK_GROUP_EDITOR_MODE, Starter.TASK_GROUP_EDITOR_MODE_EDIT)
 			Starter.InstanceState.Put(Starter.EXTRA_EDITOR_GROUP_ID, m_savedGroup.GetID)
@@ -1798,4 +1801,18 @@ End Sub
 
 Private Sub radioAsc_CheckedChange(Checked As Boolean)
 	m_query.SetSortOrder(m_query.ORDER_ASC)
+End Sub
+
+Private Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the event
+	Dim Answ As Int
+	Dim Txt As String
+	If KeyCode = KeyCodes.KEYCODE_BACK Then
+		Txt = "Do you really want to quit the program?"
+		Answ = Msgbox2(Txt, "Attention", "Yes", "", "No", Null)
+		If Answ = DialogResponse.POSITIVE Then
+			Return False
+		Else
+			Return True
+		End If
+	End If
 End Sub
