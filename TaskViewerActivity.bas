@@ -119,11 +119,11 @@ Sub Activity_Resume
 		viewNotes.Text = m_task.GetNotes
 		viewRepeat.Text = m_repeat.GetRepeatInfo
 		viewPriority.Text = m_task.GetPriorityInfo
-		viewDueDate.Text = m_task.GetDueDate.GetFormattedDate
+		viewDueDate.Text = m_task.GetDueDate.GetFormattedDate(Starter.Lang)
 		viewCreatedAt.Text = m_task.GetCreatedAt.GetFormattedDateAndTime( _
-			Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+			Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
 		viewModifiedAt.Text = m_task.GetUpdatedAt.GetFormattedDateAndTime( _
-			Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+			Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
 			
 		LoadAttachments
 		
