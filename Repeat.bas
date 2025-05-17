@@ -116,7 +116,7 @@ Public Sub GetRepeatInfo As String
 			repeatStr = ""
 		Case 1:
 			' If only 1 day is enabled, then set the information as "Every [day of the week]"
-			repeatStr = m_lang.Get("every") & " " & DaysOfTheWeek.Days(repeatingIndexes.Get(0))
+			repeatStr = m_lang.Get("every") & " " & m_lang.Get(DaysOfTheWeek.Days(repeatingIndexes.Get(0)))
 		Case 7:
 			' Set the repeat information as "Everyday" if all repeat options are enabled.
 			repeatStr = m_lang.Get("everyday")
@@ -125,7 +125,8 @@ Public Sub GetRepeatInfo As String
 			' such that 6 is the maximum possible days to be displayed.
 			repeatStr = m_lang.Get("every") & " "
 			For Each index In repeatingIndexes
-				repeatStr = repeatStr & DaysOfTheWeek.ShortenedDay(index) & " "
+				Log(DaysOfTheWeek.Days(index) & "_abbr")
+				repeatStr = repeatStr & m_lang.Get(DaysOfTheWeek.Days(index) & "_abbr") & " "
 			Next
 	End Select
 
