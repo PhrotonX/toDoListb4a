@@ -459,7 +459,19 @@ Sub Activity_PermissionResult (Permission As String, Result As Boolean)
 End Sub
 
 Private Sub OnLoadText
+	' Sort Dialog text
+	lblSortBy.Text = Starter.Lang.Get("sort_by") & ":"
+	radioNone.Text = Starter.Lang.Get("none")
+	radioAsc.Text = Starter.Lang.Get("ascending")
+	radioDesc.Text = Starter.Lang.Get("descending")
+	radioSortByNone.Text = Starter.Lang.Get("none") & Starter.Lang.Get("default_parenthesis")
+	radioSortByCreaion.Text = Starter.Lang.Get("by_creation")
+	radioSortByTitle.Text = Starter.Lang.Get("by_title")
+	radioSortByDD.Text = Starter.Lang.Get("by_due_date")
+	radioSortByPrio.Text = Starter.Lang.Get("by_priority")
 	
+	btnCancel.Text = Starter.Lang.Get("cancel")
+	btnConfirm.Text = Starter.Lang.Get("confirm")
 End Sub
 
 Private Sub OnLoadSearchText
@@ -472,9 +484,7 @@ Private Sub OnLoadSearchText
 	lblRepeatWed.Text = Starter.Lang.Get("wednesday_abbr")
 	lblRepeatThu.Text = Starter.Lang.Get("thursday_abbr")
 	lblSearchSearchBy.Text = Starter.Lang.Get("search_by")
-	'lblSortBy.Text = Starter.Lang.Get("sort_by") & ":"
 	lblSortOrderBy.Text = Starter.Lang.Get("order_by") & ":"
-	'lblTitle.Text = Starter.Lang.Get("title") & ":"
 	radioFilterByPriorityCritical.Text = Starter.Lang.Get("critical")
 	radioFilterByPriorityHigh.Text = Starter.Lang.Get("high")
 	radioFilterByPriorityMedium.Text = Starter.Lang.Get("medium")
@@ -493,13 +503,10 @@ Private Sub OnLoadSearchText
 	radioDueSpecificDate.Text = Starter.Lang.Get("specific_date")
 	radioDueSpecificDateRange.Text = Starter.Lang.Get("specific_date_range")
 	radioDueSpecificDateGroup.Text = Starter.Lang.Get("specific_date_group")
-	'btnCancel.Text = Starter.Lang.Get("cancel")
-	'btnConfirm.Text = Starter.Lang.Get("confirm")
 	searchEditText.Hint = Starter.Lang.Get("search")
 	editDateYear.Text = Starter.Lang.Get("year")
 	editRangeYearFrom.Text = Starter.Lang.Get("year")
 	editRangeYearTo.Text = Starter.Lang.Get("year")
-	'titleLabel.Text = Starter.Lang.Get("title")
 End Sub
 
 ' Only run if Android SDK version is >= 31.
@@ -1179,11 +1186,18 @@ Sub LoadDrawerItems
 	
 End Sub
 
+Private Sub OnLoadDrawerText
+	lblGroupName.Text = Starter.Lang.Get("new_group")
+	lblTitle.Text = Starter.Lang.Get("app_title")
+End Sub
+
 Private Sub OnLoadTaskGroups(items As List)
 	For Each item As Group In items
 		Dim p As B4XView = xui.CreatePanel("")
 		p.SetLayoutAnimated(0, 0, 0, 100%x, 60dip)
 		p.LoadLayout("drawerItems")
+		
+		OnLoadDrawerText
 		
 		Dim viewHolder As GroupViewHolder
 		viewHolder.Initialize
