@@ -162,9 +162,9 @@ Sub Activity_Resume
 	icons(OnLoadGroupIcon(m_group.GetIconPos)).Color = Colors.LightGray
 	
 	lblCreatedAt.Text = Starter.Lang.Get("created_at") & ": " & m_group.CreatedAt.GetFormattedDateAndTime( _
-		Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+		Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
 	lblUpdatedAt.Text = Starter.Lang.Get("updated_at") & ": " & m_group.UpdatedAt.GetFormattedDateAndTime( _
-		Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+		Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
 
 	Log("TaskGroupActivity.Activity_Resume Color" & m_group.GetColor)
 	Log("TaskGroupActivity.Activity_Resume Icon" & m_group.GetIcon)
