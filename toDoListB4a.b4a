@@ -381,6 +381,10 @@ Sub Globals
 	Private lblTitle As Label
 	Private lblSmiley As Label
 	Private pnlNewGroup As Panel
+	Private backBtn As Button
+	Private btnCancel As Button
+	Private btnConfirm As Button
+	Private lblSortBy As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -391,6 +395,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	drawer.CenterPanel.LoadLayout("layout")
 	mainFragment.LoadLayout("newFragment")
 	drawer.LeftPanel.LoadLayout("drawerLayout")
+	
+	OnLoadText
 	
 	listview_init
 	
@@ -404,12 +410,11 @@ Sub Activity_Create(FirstTime As Boolean)
 	If Starter.Phone.SdkVersion >= 31 Then
 		Dim am As JavaObject = GetAlarmManager
 		If am.RunMethod("canScheduleExactAlarms", Null).As(Boolean) == False Then
-			Msgbox2Async("This application may not work correctly if is not granted with a special access" & _
-					" to Alarms & Reminders permission." & CRLF & CRLF & "To enable this permission, go to Settings >" & _
-					" Apps > Special app access > Alarms & reminders > To Do List Application > Allow setting alarms " & _ 
-					"And reminders." & CRLF & CRLF & "Click 'Open Settings' button to continue or click 'Cancel' to " & _ 
-					"exit this Application.", "Some permissions are disabled For this Application.", "Open Settings", _ 
-					"Cancel", "", Null, False)
+			Msgbox2Async(Starter.Lang.Get("notification_permission_warning_1") & CRLF & CRLF & _
+				Starter.Lang.Get("notification_permission_warning_2") & CRLF & CRLF & _ 
+				Starter.Lang.Get("notification_permission_warning_3"), _ 
+				Starter.Lang.Get("notification_permission_warning_title"), Starter.Lang.Get("open_settings"), _ 
+				Starter.Lang.Get("cancel"), "", Null, False)
 				
 			Wait For Msgbox_Result (MsgBoxResult As Int)
 			If MsgBoxResult == DialogResponse.POSITIVE Then
@@ -439,11 +444,15 @@ End Sub
 Sub Activity_PermissionResult (Permission As String, Result As Boolean)
 	If Starter.SettingsViewModelInstance.IsDebugModeEnabled() == True Then
 		If Result == True Then
-			ToastMessageShow("Permission granted for " & Permission, False)
+			ToastMessageShow(Starter.Lang.Get("permission_granted") & Permission, False)
 		Else
-			ToastMessageShow("Permission failed to grant for " & Permission, False)
+			ToastMessageShow(Starter.Lang.Get("permission_failed_to_grant") & Permission, False)
 		End If
 	End If
+End Sub
+
+Private Sub OnLoadText
+	
 End Sub
 
 ' Only run if Android SDK version is >= 31.
@@ -607,7 +616,7 @@ Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewH
 			If attachmentObj.IsInitialized Then
 				resultStr =  attachmentObj.GetFilename
 			Else
-				resultStr = "Attachment found"
+				resultStr = Starter.Lang.Get("attachment_found")
 			End If
 			
 		End If
@@ -686,7 +695,7 @@ Private Sub LoadItems()
 					m_query.DateEnd.SetYear(editRangeYearTo.Text)
 			End Select
 			
-			GroupDescription.Text = "Results for " & searchEditText.Text
+			GroupDescription.Text = Starter.Lang.Get("results_for") & searchEditText.Text
 			GroupLineDecor.Visible = False
 			
 			Dim groupId As Int = m_query.GetGroupID()
@@ -822,9 +831,9 @@ End Sub
 ' Load the menu items.
 Private Sub listview_init
 	menuListView.Visible = True
-	menuListView.AddSingleLine2("	Refresh", 0)
-	menuListView.AddSingleLine2("	Sort", 1)
-	menuListView.AddSingleLine2("	Settings", 2)
+	menuListView.AddSingleLine2("	" & Starter.Lang.Get("refresh"), 0)
+	menuListView.AddSingleLine2("	" & Starter.Lang.Get("sort"), 1)
+	menuListView.AddSingleLine2("	" & Starter.Lang.Get("settings"), 2)
 	
 	menuListView.SingleLineLayout.Label.TextSize = 16
 	menuListView.SingleLineLayout.Label.TextColor = Colors.Black
@@ -1049,33 +1058,33 @@ Sub LoadDrawerItems
 		obj.Initialize(-1)
 	Next
 	
-	smartLists(0).SetTitle("My Day")
+	smartLists(0).SetTitle(Starter.Lang.Get("my_day"))
 	smartLists(0).SetIcon("")
 	
-	smartLists(1).SetTitle("Tasks")
+	smartLists(1).SetTitle(Starter.Lang.Get("tasks"))
 	smartLists(1).SetIcon("")
-	smartLists(1).SetDescription("List of ungrouped tasks")
+	smartLists(1).SetDescription(Starter.Lang.Get("tasks_description"))
 	
-	smartLists(2).SetTitle("Planned")
+	smartLists(2).SetTitle(Starter.Lang.Get("planned"))
 	smartLists(2).SetIcon("")
 	smartLists(2).SetColor(Theme.COLOR_BLUE)
-	smartLists(2).SetDescription("List of incomplete tasks")
+	smartLists(2).SetDescription(Starter.Lang.Get("planned_description"))
 	
-	smartLists(3).SetTitle("Completed")
+	smartLists(3).SetTitle(Starter.Lang.Get("completed"))
 	smartLists(3).SetIcon("")
 	smartLists(3).SetColor(Theme.COLOR_GREEN)
-	smartLists(3).SetDescription("List of complete tasks")
+	smartLists(3).SetDescription(Starter.Lang.Get("completed_description"))
 	
-	smartLists(4).SetTitle("All")
+	smartLists(4).SetTitle(Starter.Lang.Get("all"))
 	smartLists(4).SetIcon("")
-	smartLists(4).SetDescription("List of all tasks")
+	smartLists(4).SetDescription(Starter.Lang.Get("all_description"))
 	
-	smartLists(5).SetTitle("Trash")
+	smartLists(5).SetTitle(Starter.Lang.Get("trash"))
 	smartLists(5).SetIcon("")
 	smartLists(5).SetColor(Theme.COLOR_RED)
-	smartLists(5).SetDescription("List of deleted tasks")
+	smartLists(5).SetDescription(Starter.Lang.Get("trash_description"))
 	
-	smartLists(6).SetTitle("Search")
+	smartLists(6).SetTitle(Starter.Lang.Get("search"))
 	smartLists(6).SetIcon(Chr(0xE8B6))
 
 	Dim itr As Int = 0
