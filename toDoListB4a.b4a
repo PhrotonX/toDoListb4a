@@ -392,6 +392,7 @@ Sub Globals
 	Private lblRepeatThu As Label
 	Private lblRepeatTue As Label
 	Private lblRepeatWed As Label
+	Private lblNewGroup As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -684,7 +685,7 @@ Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewH
 		viewHolder.TaskInfo.Text = item.GetGlance(cutString, repeatItem.GetRepeatInfo)
 	Else If m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_PRIORITY) Or _
 		m_sortingByPriority == True Then
-		viewHolder.TaskInfo.Text = item.GetGlance(item.GetPriorityInfo, repeatItem.GetRepeatInfo)
+		viewHolder.TaskInfo.Text = item.GetGlance(Starter.Lang.Get(item.GetPriorityInfo), repeatItem.GetRepeatInfo)
 	Else
 		If Starter.SettingsViewModelInstance.IsDetailedDueDateEnabled() And SavedSmartList <> SMART_LIST_PLANNED Then
 			viewHolder.TaskInfo.Text = item.GetGlance(Starter.Lang.Get(item.GetDueDate.IdentifyDate), repeatItem.GetRepeatInfo)
@@ -833,27 +834,17 @@ Private Sub LoadItems()
 			count = m_tasks.Size
 	End Select
 	
-	If count = 1 Then
-		text = count & " task"
-		pnlEmptyTasks.SendToBack
-		pnlEmptyTasks.Visible = False
-	Else if count < 1 Then
-		'text = count & " task"
-		'text = text & "(s)"
-			pnlEmptyTasks.RemoveAllViews
-			pnlEmptyTasks.BringToFront
-			pnlEmptyTasks.LoadLayout("emptytasks")
-			lblSmiley.TextSize = 25%y
-			pnlEmptyTasks.Visible = True
-
-	' Make the counting information plural if possible.
-	Else If count > 1 Then
-		text = count & " task"
-		text = text & "(s)"
+	If count < 1 Then
+		pnlEmptyTasks.RemoveAllViews
+		pnlEmptyTasks.BringToFront
+		pnlEmptyTasks.LoadLayout("emptytasks")
+		lblSmiley.TextSize = 25%y
+		pnlEmptyTasks.Visible = True
+	Else
+		text = count & " " & Starter.Lang.Get("tasks_found")
 		pnlEmptyTasks.SendToBack
 		pnlEmptyTasks.Visible = False
 	End If
-	'text = text & " found"
 	
 	CreateSubGroup(text, Colors.RGB(91, 91, 91), 16)
 	
@@ -1187,8 +1178,8 @@ Sub LoadDrawerItems
 End Sub
 
 Private Sub OnLoadDrawerText
-	lblGroupName.Text = Starter.Lang.Get("new_group")
 	lblTitle.Text = Starter.Lang.Get("app_title")
+	lblNewGroup.Text = Starter.Lang.Get("new_group")
 End Sub
 
 Private Sub OnLoadTaskGroups(items As List)
