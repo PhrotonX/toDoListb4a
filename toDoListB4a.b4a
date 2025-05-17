@@ -687,8 +687,10 @@ Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewH
 		m_sortingByPriority == True Then
 		viewHolder.TaskInfo.Text = item.GetGlance(Starter.Lang.Get(item.GetPriorityInfo), repeatItem.GetRepeatInfo)
 	Else
-		If Starter.SettingsViewModelInstance.IsDetailedDueDateEnabled() And SavedSmartList <> SMART_LIST_PLANNED Then
-			viewHolder.TaskInfo.Text = item.GetGlance(Starter.Lang.Get(item.GetDueDate.IdentifyDate), repeatItem.GetRepeatInfo)
+		If Starter.SettingsViewModelInstance.IsDetailedDueDateEnabled() == False And SavedSmartList <> _ 
+			SMART_LIST_PLANNED Then
+			viewHolder.TaskInfo.Text = item.GetGlance(Starter.Lang.Get(item.GetDueDate.IdentifyDate), _ 
+			repeatItem.GetRepeatInfo)
 		Else
 			viewHolder.TaskInfo.Text = item.GetGlance(item.GetDueDate.GetFormattedDate2, repeatItem.GetRepeatInfo)
 		End If

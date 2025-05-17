@@ -221,16 +221,16 @@ Public Sub DropTables As Boolean
 	Return result
 End Sub
 
-Public Sub CopyDatabase()
+Public Sub CopyDatabase(Lang As LanguageManager)
 	
 	Dim source As String = File.DirInternal & "/todo_db.db"
 	Dim dest As String = File.Combine(File.DirDefaultExternal, "todo_db.db")
 
 	If File.Exists(source, "") Then 
 		File.Copy(source, "", dest, "")
-		ToastMessageShow("Database copied to /Download/", True)
+		ToastMessageShow(Lang.Get("database_copied") & " /Download/", True)
 	Else
-		ToastMessageShow("Database not found!", True)
+		ToastMessageShow(Lang.Get("database_not_found"), True)
 	End If
 End Sub
 

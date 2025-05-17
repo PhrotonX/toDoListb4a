@@ -205,6 +205,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		
 		' Load whether reminder field is enabled or not.
 		toggleReminder.Checked = m_task.IsReminderEnabled
+		OnToggleReminder(m_task.IsReminderEnabled)
 		
 		' Load reminder field data.
 		spnReminderHour.SelectedIndex = _
@@ -254,8 +255,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		spinnerDueDateMonth.SelectedIndex = DateTime.GetMonth(DateTime.Now)
 		editDueDateYear.Text = DateTime.GetYear(DateTime.Now)
 		
-		' Set the reminder field as enabled by default.
+		' Set the reminder field as disabled by default.
 		toggleReminder.Checked = False
+		OnToggleReminder(False)
 		
 		radioPriorityMedium.Checked = True
 		m_task.SetPriority(m_task.PRIORITY_MEDIUM)
@@ -405,12 +407,13 @@ Private Sub OnSaveTask
 	
 	' Get the selected value whether reminders are enabled or not.
 	toggleReminder.Checked = m_task.IsReminderEnabled
+	OnToggleReminder(m_task.IsReminderEnabled)
 	
 	' Get the selected value of reminders field.
 	FormHelper.GetSelectedTime(m_task.Reminder, spnReminderHour, spnReminderMinute, spnReminderMarker)
 	
 	' Get the selected snooze
-	m_task.Snooze.SetSnooze(m_task.Snooze.GetSnoozeFromText(spnSnooze.SelectedItem))
+	m_task.Snooze.SetSnooze(m_task.Snooze.GetSnoozeFromText(spnSnooze.SelectedItem, Starter.Lang))
 	
 	' Get the selected group
 	Dim selectedGroup As Group	
@@ -695,6 +698,10 @@ Private Sub spnTaskGroup_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Private Sub toggleReminder_CheckedChange(Checked As Boolean)
+	OnToggleReminder(Checked)
+End Sub
+
+Private Sub OnToggleReminder(Checked As Boolean)
 	toggleReminder.TextColor = Colors.RGB(73, 93, 143)
 	m_task.SetReminderEnabled(Checked)
 	
