@@ -15,14 +15,18 @@ Sub Process_Globals
 	Public TaskViewModelInstance As TaskViewModel
 	Public RepeatViewModelInstance As RepeatViewModel
 
-	'Public SettingsViewModelInstance As SettingsViewModel
+	Public SettingsViewModelInstance As SettingsViewModel
+	Public Lang As LanguageManager
 End Sub
 
 'Called when an intent is received. 
 'Do not assume that anything else, including the starter service, has run before this method.
 Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 	' Initialize the database.
-	ToDoDatabaseInstance.Initialize
+	SettingsViewModelInstance.Initialize
+	Lang.Initialize(SettingsViewModelInstance)
+	
+	ToDoDatabaseInstance.Initialize(Lang)
 	taskRepo.Initialize(ToDoDatabaseInstance)
 	repeatRepo.Initialize(ToDoDatabaseInstance)
 	TaskViewModelInstance.Initialize(taskRepo)

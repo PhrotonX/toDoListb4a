@@ -98,11 +98,11 @@ Sub Service_Create
 	' Initialize the variables
 	InstanceState.Initialize
 	
-	SettingsViewModelInstance.Initialize()
+	SettingsViewModelInstance.Initialize
 	
 	Lang.Initialize(SettingsViewModelInstance)
 	
-	ToDoDatabaseViewModelInstance.Initialize
+	ToDoDatabaseViewModelInstance.Initialize(Lang)
 	ToDoFileSystemInstance.Initialize
 	
 	taskRepo.Initialize(ToDoDatabaseViewModelInstance.GetInstance)

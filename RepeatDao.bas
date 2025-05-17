@@ -6,11 +6,15 @@ Version=13.1
 @EndOfDesignText@
 Sub Class_Globals
 	Private m_sql As SQL
+	
+	Private m_lang As LanguageManager
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
-Public Sub Initialize(sql As SQL)
+Public Sub Initialize(sql As SQL, lang As LanguageManager)
 	m_sql = sql
+	
+	m_lang = lang
 End Sub
 
 Public Sub InsertTaskRepeat(task_id As Long, item As Repeat) As Boolean
@@ -106,7 +110,7 @@ Public Sub OnGetTaskRepeat(query As String) As Repeat
 		Dim Cursor As Cursor
 		Cursor = m_sql.ExecQuery(query)
 		
-		item.Initialize()
+		item.Initialize(m_lang)
 		
 		' Iterate the cursor or each rows. This iteration checks if days Sunday to Saturday have
 		' thier repeat option enabled.

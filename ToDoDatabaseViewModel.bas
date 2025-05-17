@@ -6,11 +6,14 @@ Version=13.1
 @EndOfDesignText@
 Sub Class_Globals
 	Private m_database As ToDoDatabase
+	
+	Private m_lang As LanguageManager
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
-Public Sub Initialize
-	m_database.Initialize
+Public Sub Initialize(lang As LanguageManager)
+	m_lang = lang
+	m_database.Initialize(m_lang)
 End Sub
 
 Public Sub GetInstance() As ToDoDatabase

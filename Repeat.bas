@@ -19,10 +19,12 @@ Sub Class_Globals
 	Public Const REPEAT_THURSDAY As Int = 4
 	Public Const REPEAT_FRIDAY As Int = 5
 	Public Const REPEAT_SATURDAY As Int = 6
+	
+	Private m_lang As LanguageManager
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
-Public Sub Initialize
+Public Sub Initialize(lang As LanguageManager)
 	For Each enabledItem As Boolean In m_enabled
 		enabledItem = False
 	Next
@@ -30,6 +32,8 @@ Public Sub Initialize
 	For Each dayItem As Int In m_dayId
 		dayItem = 0
 	Next
+	
+	m_lang = lang
 End Sub
 
 ' Check if all repeat options are disabled. A return value of True indicates that no repeat option is used and
@@ -76,7 +80,7 @@ Public Sub GetRepeatInfo As String
 	IsEnabled(REPEAT_THURSDAY) == False And _
 	IsEnabled(REPEAT_FRIDAY) == False And _
 	IsEnabled(REPEAT_SATURDAY) == True Then
-		repeatStr = "Weekends"
+		repeatStr = m_lang.Get("weekends")
 		Return repeatStr
 	End If
 	
@@ -88,7 +92,7 @@ Public Sub GetRepeatInfo As String
 	IsEnabled(REPEAT_THURSDAY) == True And _
 	IsEnabled(REPEAT_FRIDAY) == True And _
 	IsEnabled(REPEAT_SATURDAY) == False Then
-		repeatStr = "Weekdays"
+		repeatStr = m_lang.Get("weekdays")
 		Return repeatStr
 	End If
 	
@@ -112,14 +116,14 @@ Public Sub GetRepeatInfo As String
 			repeatStr = ""
 		Case 1:
 			' If only 1 day is enabled, then set the information as "Every [day of the week]"
-			repeatStr = "Every " & DaysOfTheWeek.Days(repeatingIndexes.Get(0))
+			repeatStr = m_lang.Get("every") & " " & DaysOfTheWeek.Days(repeatingIndexes.Get(0))
 		Case 7:
 			' Set the repeat information as "Everyday" if all repeat options are enabled.
-			repeatStr = "Everyday"
+			repeatStr = m_lang.Get("everyday")
 		Case Else:
 			' Set the repeat information as "Every [shortened day of the week 1] [shortened day of the week 2] ... [shortened day of the week 6]"
 			' such that 6 is the maximum possible days to be displayed.
-			repeatStr = "Every "
+			repeatStr = m_lang.Get("every") & " "
 			For Each index In repeatingIndexes
 				repeatStr = repeatStr & DaysOfTheWeek.ShortenedDay(index) & " "
 			Next

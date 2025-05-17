@@ -23,7 +23,8 @@ Sub Process_Globals
 	Public TaskViewModelInstance As TaskViewModel
 	Public RepeatViewModelInstance As RepeatViewModel
 
-	'Public SettingsViewModelInstance As SettingsViewModel
+	Public SettingsViewModelInstance As SettingsViewModel
+	Public Lang As LanguageManager
 	
 	Public Const ACTION_TASK_NOTIFICATION_DISMISS As String = Application.PackageName & ".ACTION_TASK_NOTIFICATION_DISMISS"
 	Public Const CHANNEL_TASK_NOTIFICATION As String = "Task Notification"
@@ -40,8 +41,10 @@ Sub Service_Start (StartingIntent As Intent)
 	Service.StopAutomaticForeground 'Call this when the background task completes (if there is one)
 	Log("=========================================")
 	
+	SettingsViewModelInstance.Initialize
+	Lang.Initialize(SettingsViewModelInstance)
 	' Initialize the database.
-	ToDoDatabaseInstance.Initialize
+	ToDoDatabaseInstance.Initialize(Lang)
 	taskRepo.Initialize(ToDoDatabaseInstance)
 	TaskViewModelInstance.Initialize(taskRepo)
 	repeatRepo.Initialize(ToDoDatabaseInstance)

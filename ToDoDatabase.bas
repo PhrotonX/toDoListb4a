@@ -11,20 +11,24 @@ Sub Class_Globals
 	Private m_attachmentDao As AttachmentDao
 	Private m_groupDao As GroupDao
 	Private m_repeatDao As RepeatDao
+	
+	Private m_lang As LanguageManager
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
-Public Sub Initialize
+Public Sub Initialize(lang As LanguageManager)
 	' Create a database file based on SQLite
 	sql.Initialize(File.DirInternal, "todo_db.db", True)
 	
 	CreateTable
 	
+	m_lang = lang
+	
 	' Initialize data access objects.
 	m_taskDao.Initialize(sql)
 	m_attachmentDao.Initialize(sql)
 	m_groupDao.Initialize(sql)
-	m_repeatDao.Initialize(sql)
+	m_repeatDao.Initialize(sql, m_lang)
 End Sub
 
 ' Creates tables for Database in SQL syntax, not MySQL.

@@ -33,5 +33,7 @@ Public Sub Days(day As Int) As String
 			Return "friday"
 		Case 6:
 			Return "saturday"
+		Case Else:
+			Return "error"
 	End Select
 End Sub

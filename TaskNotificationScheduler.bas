@@ -23,7 +23,8 @@ Sub Process_Globals
 	Public TaskViewModelInstance As TaskViewModel
 	Public RepeatViewModelInstance As RepeatViewModel
 
-	'Public SettingsViewModelInstance As SettingsViewModel
+	Public SettingsViewModelInstance As SettingsViewModel
+	Public Lang As LanguageManager
 End Sub
 
 Sub Service_Create
@@ -34,8 +35,10 @@ Sub Service_Start (StartingIntent As Intent)
 	' Make this service only start if the app has been started or a notification has occured.
 	Service.StopAutomaticForeground 'Call this when the background task completes (if there is one)
 	
+	SettingsViewModelInstance.Initialize
+	Lang.Initialize(SettingsViewModelInstance)
 	' Initialize the database.
-	ToDoDatabaseInstance.Initialize
+	ToDoDatabaseInstance.Initialize(Lang)
 	taskRepo.Initialize(ToDoDatabaseInstance)
 	TaskViewModelInstance.Initialize(taskRepo)
 	repeatRepo.Initialize(ToDoDatabaseInstance)
