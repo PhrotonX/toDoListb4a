@@ -99,15 +99,15 @@ End Sub
 Public Sub GetPriorityInfo As String
 	Select GetPriority
 		Case PRIORITY_CRITICAL:
-			Return "Critical"
+			Return "critical"
 		Case PRIORITY_HIGH:
-			Return "High"
+			Return "high"
 		Case PRIORITY_MEDIUM:
-			Return "Medium"
+			Return "medium"
 		Case PRIORITY_LOW:
-			Return "Low"
+			Return "low"
 		Case Else:
-			Return "Error retrieving task priority"
+			Return "priority_error"
 	End Select
 End Sub
 

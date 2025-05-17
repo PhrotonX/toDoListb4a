@@ -18,7 +18,7 @@ Public Sub Initialize(xuiObj As XUI)
 	Root = m_xui.CreatePanel("")
 	Root.SetLayoutAnimated(200, 0, 0, 100%x, 60dip)
 	
-	Name.Initialize("Unknown")
+	Name.Initialize(Starter.Lang.Get("unknown"))
 	Name.TextSize = 18
 	Name.TextColor = Colors.Black
 End Sub

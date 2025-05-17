@@ -381,6 +381,18 @@ Sub Globals
 	Private lblTitle As Label
 	Private lblSmiley As Label
 	Private pnlNewGroup As Panel
+	Private backBtn As Button
+	Private btnCancel As Button
+	Private btnConfirm As Button
+	Private lblSortBy As Label
+	Private lblRepeatFri As Label
+	Private lblRepeatMon As Label
+	Private lblRepeatSat As Label
+	Private lblRepeatSun As Label
+	Private lblRepeatThu As Label
+	Private lblRepeatTue As Label
+	Private lblRepeatWed As Label
+	Private lblNewGroup As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -391,6 +403,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	drawer.CenterPanel.LoadLayout("layout")
 	mainFragment.LoadLayout("newFragment")
 	drawer.LeftPanel.LoadLayout("drawerLayout")
+	
+	OnLoadText
 	
 	listview_init
 	
@@ -404,12 +418,11 @@ Sub Activity_Create(FirstTime As Boolean)
 	If Starter.Phone.SdkVersion >= 31 Then
 		Dim am As JavaObject = GetAlarmManager
 		If am.RunMethod("canScheduleExactAlarms", Null).As(Boolean) == False Then
-			Msgbox2Async("This application may not work correctly if is not granted with a special access" & _
-					" to Alarms & Reminders permission." & CRLF & CRLF & "To enable this permission, go to Settings >" & _
-					" Apps > Special app access > Alarms & reminders > To Do List Application > Allow setting alarms " & _ 
-					"And reminders." & CRLF & CRLF & "Click 'Open Settings' button to continue or click 'Cancel' to " & _ 
-					"exit this Application.", "Some permissions are disabled For this Application.", "Open Settings", _ 
-					"Cancel", "", Null, False)
+			Msgbox2Async(Starter.Lang.Get("notification_permission_warning_1") & CRLF & CRLF & _
+				Starter.Lang.Get("notification_permission_warning_2") & CRLF & CRLF & _ 
+				Starter.Lang.Get("notification_permission_warning_3"), _ 
+				Starter.Lang.Get("notification_permission_warning_title"), Starter.Lang.Get("open_settings"), _ 
+				Starter.Lang.Get("cancel"), "", Null, False)
 				
 			Wait For Msgbox_Result (MsgBoxResult As Int)
 			If MsgBoxResult == DialogResponse.POSITIVE Then
@@ -425,7 +438,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	End If
 	
 	m_taskObj.Initialize()
-	m_repeatObj.Initialize()
+	m_repeatObj.Initialize(Starter.Lang)
 End Sub
 
 Sub Activity_Resume
@@ -439,11 +452,62 @@ End Sub
 Sub Activity_PermissionResult (Permission As String, Result As Boolean)
 	If Starter.SettingsViewModelInstance.IsDebugModeEnabled() == True Then
 		If Result == True Then
-			ToastMessageShow("Permission granted for " & Permission, False)
+			ToastMessageShow(Starter.Lang.Get("permission_granted") & Permission, False)
 		Else
-			ToastMessageShow("Permission failed to grant for " & Permission, False)
+			ToastMessageShow(Starter.Lang.Get("permission_failed_to_grant") & Permission, False)
 		End If
 	End If
+End Sub
+
+Private Sub OnLoadText
+	' Sort Dialog text
+	lblSortBy.Text = Starter.Lang.Get("sort_by") & ":"
+	radioNone.Text = Starter.Lang.Get("none")
+	radioAsc.Text = Starter.Lang.Get("ascending")
+	radioDesc.Text = Starter.Lang.Get("descending")
+	radioSortByNone.Text = Starter.Lang.Get("none") & Starter.Lang.Get("default_parenthesis")
+	radioSortByCreaion.Text = Starter.Lang.Get("by_creation")
+	radioSortByTitle.Text = Starter.Lang.Get("by_title")
+	radioSortByDD.Text = Starter.Lang.Get("by_due_date")
+	radioSortByPrio.Text = Starter.Lang.Get("by_priority")
+	
+	btnCancel.Text = Starter.Lang.Get("cancel")
+	btnConfirm.Text = Starter.Lang.Get("confirm")
+End Sub
+
+Private Sub OnLoadSearchText
+	lblFilterFilterBy.Text = Starter.Lang.Get("filter_by") & ":"
+	lblRepeatFri.Text = Starter.Lang.Get("friday_abbr")
+	lblRepeatSat.Text = Starter.Lang.Get("saturday_abbr")
+	lblRepeatSun.Text = Starter.Lang.Get("sunday_abbr")
+	lblRepeatMon.Text = Starter.Lang.Get("monday_abbr")
+	lblRepeatTue.Text = Starter.Lang.Get("tuesday_abbr")
+	lblRepeatWed.Text = Starter.Lang.Get("wednesday_abbr")
+	lblRepeatThu.Text = Starter.Lang.Get("thursday_abbr")
+	lblSearchSearchBy.Text = Starter.Lang.Get("search_by")
+	lblSortOrderBy.Text = Starter.Lang.Get("order_by") & ":"
+	radioFilterByPriorityCritical.Text = Starter.Lang.Get("critical")
+	radioFilterByPriorityHigh.Text = Starter.Lang.Get("high")
+	radioFilterByPriorityMedium.Text = Starter.Lang.Get("medium")
+	radioFilterByPriorityLow.Text = Starter.Lang.Get("low")
+	radioSearchByTitle.Text = Starter.Lang.Get("title")
+	radioSearchByNotes.Text = Starter.Lang.Get("notes")
+	radioSearchByFilename.Text = Starter.Lang.Get("filename_of_attachment")
+	radioSortOrderByNone.Text = Starter.Lang.Get("none")
+	radioSortOrderByAscending.Text = Starter.Lang.Get("ascending")
+	radioSortOrderByDescending.Text = Starter.Lang.Get("descending")
+	checkFilterByPriority.Text = Starter.Lang.Get("priority")
+	checkFilterByRepeat.Text = Starter.Lang.Get("repeat")
+	checkFilterByDueDate.Text = Starter.Lang.Get("due_date")
+	checkFilterByGroup.Text = Starter.Lang.Get("group")
+	checkDeleted.Text = Starter.Lang.Get("deleted")
+	radioDueSpecificDate.Text = Starter.Lang.Get("specific_date")
+	radioDueSpecificDateRange.Text = Starter.Lang.Get("specific_date_range")
+	radioDueSpecificDateGroup.Text = Starter.Lang.Get("specific_date_group")
+	searchEditText.Hint = Starter.Lang.Get("search")
+	editDateYear.Text = Starter.Lang.Get("year")
+	editRangeYearFrom.Text = Starter.Lang.Get("year")
+	editRangeYearTo.Text = Starter.Lang.Get("year")
 End Sub
 
 ' Only run if Android SDK version is >= 31.
@@ -607,7 +671,7 @@ Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewH
 			If attachmentObj.IsInitialized Then
 				resultStr =  attachmentObj.GetFilename
 			Else
-				resultStr = "Attachment found"
+				resultStr = Starter.Lang.Get("attachment_found")
 			End If
 			
 		End If
@@ -621,10 +685,12 @@ Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewH
 		viewHolder.TaskInfo.Text = item.GetGlance(cutString, repeatItem.GetRepeatInfo)
 	Else If m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_PRIORITY) Or _
 		m_sortingByPriority == True Then
-		viewHolder.TaskInfo.Text = item.GetGlance(item.GetPriorityInfo, repeatItem.GetRepeatInfo)
+		viewHolder.TaskInfo.Text = item.GetGlance(Starter.Lang.Get(item.GetPriorityInfo), repeatItem.GetRepeatInfo)
 	Else
-		If Starter.SettingsViewModelInstance.IsDetailedDueDateEnabled() And SavedSmartList <> SMART_LIST_PLANNED Then
-			viewHolder.TaskInfo.Text = item.GetGlance(item.GetDueDate.IdentifyDate, repeatItem.GetRepeatInfo)
+		If Starter.SettingsViewModelInstance.IsDetailedDueDateEnabled() == False And SavedSmartList <> _ 
+			SMART_LIST_PLANNED Then
+			viewHolder.TaskInfo.Text = item.GetGlance(Starter.Lang.Get(item.GetDueDate.IdentifyDate), _ 
+			repeatItem.GetRepeatInfo)
 		Else
 			viewHolder.TaskInfo.Text = item.GetGlance(item.GetDueDate.GetFormattedDate2, repeatItem.GetRepeatInfo)
 		End If
@@ -686,7 +752,7 @@ Private Sub LoadItems()
 					m_query.DateEnd.SetYear(editRangeYearTo.Text)
 			End Select
 			
-			GroupDescription.Text = "Results for " & searchEditText.Text
+			GroupDescription.Text = Starter.Lang.Get("results_for") & searchEditText.Text
 			GroupLineDecor.Visible = False
 			
 			Dim groupId As Int = m_query.GetGroupID()
@@ -739,8 +805,8 @@ Private Sub LoadItems()
 					Case Else:
 						' If the Next item Is marked As completed, Then add subGroup "Completed"
 						If item.Done == True And itr == "" Then
-							CreateSubGroup("Completed", Colors.RGB(0, 0, 0), 18)
-							itr = "Completed"
+							CreateSubGroup(Starter.Lang.Get("completed"), Colors.RGB(0, 0, 0), 18)
+							itr = Starter.Lang.Get("completed")
 						End If
 				End Select
 			End If
@@ -748,7 +814,7 @@ Private Sub LoadItems()
 			' Add items into the list view by binding the viewholder and the data.
 			
 			ToDoList.Add(CreateItem(viewHolder), viewHolder)
-			viewHolder.Root.SetColorAndBorder(Colors.z, 1, Colors.White, 15)
+			viewHolder.Root.SetColorAndBorder(Colors.White, 1, Colors.White, 15)
 			' Bind the currently referenced vieHolder that ToDoList points to into there
 			' currently iterated data.
 			BindItem(item, repeatItem, viewHolder)
@@ -770,27 +836,17 @@ Private Sub LoadItems()
 			count = m_tasks.Size
 	End Select
 	
-	If count = 1 Then
-		text = count & " task"
-		pnlEmptyTasks.SendToBack
-		pnlEmptyTasks.Visible = False
-	Else if count < 1 Then
-		'text = count & " task"
-		'text = text & "(s)"
-			pnlEmptyTasks.RemoveAllViews
-			pnlEmptyTasks.BringToFront
-			pnlEmptyTasks.LoadLayout("emptytasks")
-			lblSmiley.TextSize = 25%y
-			pnlEmptyTasks.Visible = True
-
-	' Make the counting information plural if possible.
-	Else If count > 1 Then
-		text = count & " task"
-		text = text & "(s)"
+	If count < 1 Then
+		pnlEmptyTasks.RemoveAllViews
+		pnlEmptyTasks.BringToFront
+		pnlEmptyTasks.LoadLayout("emptytasks")
+		lblSmiley.TextSize = 25%y
+		pnlEmptyTasks.Visible = True
+	Else
+		text = count & " " & Starter.Lang.Get("tasks_found")
 		pnlEmptyTasks.SendToBack
 		pnlEmptyTasks.Visible = False
 	End If
-	'text = text & " found"
 	
 	CreateSubGroup(text, Colors.RGB(91, 91, 91), 16)
 	
@@ -822,9 +878,9 @@ End Sub
 ' Load the menu items.
 Private Sub listview_init
 	menuListView.Visible = True
-	menuListView.AddSingleLine2("	Refresh", 0)
-	menuListView.AddSingleLine2("	Sort", 1)
-	menuListView.AddSingleLine2("	Settings", 2)
+	menuListView.AddSingleLine2("	" & Starter.Lang.Get("refresh"), 0)
+	menuListView.AddSingleLine2("	" & Starter.Lang.Get("sort"), 1)
+	menuListView.AddSingleLine2("	" & Starter.Lang.Get("settings"), 2)
 	
 	menuListView.SingleLineLayout.Label.TextSize = 16
 	menuListView.SingleLineLayout.Label.TextColor = Colors.Black
@@ -1049,33 +1105,33 @@ Sub LoadDrawerItems
 		obj.Initialize(-1)
 	Next
 	
-	smartLists(0).SetTitle("My Day")
+	smartLists(0).SetTitle(Starter.Lang.Get("my_day"))
 	smartLists(0).SetIcon("")
 	
-	smartLists(1).SetTitle("Tasks")
+	smartLists(1).SetTitle(Starter.Lang.Get("tasks"))
 	smartLists(1).SetIcon("")
-	smartLists(1).SetDescription("List of ungrouped tasks")
+	smartLists(1).SetDescription(Starter.Lang.Get("tasks_description"))
 	
-	smartLists(2).SetTitle("Planned")
+	smartLists(2).SetTitle(Starter.Lang.Get("planned"))
 	smartLists(2).SetIcon("")
 	smartLists(2).SetColor(Theme.COLOR_BLUE)
-	smartLists(2).SetDescription("List of incomplete tasks")
+	smartLists(2).SetDescription(Starter.Lang.Get("planned_description"))
 	
-	smartLists(3).SetTitle("Completed")
+	smartLists(3).SetTitle(Starter.Lang.Get("completed"))
 	smartLists(3).SetIcon("")
 	smartLists(3).SetColor(Theme.COLOR_GREEN)
-	smartLists(3).SetDescription("List of complete tasks")
+	smartLists(3).SetDescription(Starter.Lang.Get("completed_description"))
 	
-	smartLists(4).SetTitle("All")
+	smartLists(4).SetTitle(Starter.Lang.Get("all"))
 	smartLists(4).SetIcon("")
-	smartLists(4).SetDescription("List of all tasks")
+	smartLists(4).SetDescription(Starter.Lang.Get("all_description"))
 	
-	smartLists(5).SetTitle("Trash")
+	smartLists(5).SetTitle(Starter.Lang.Get("trash"))
 	smartLists(5).SetIcon("")
 	smartLists(5).SetColor(Theme.COLOR_RED)
-	smartLists(5).SetDescription("List of deleted tasks")
+	smartLists(5).SetDescription(Starter.Lang.Get("trash_description"))
 	
-	smartLists(6).SetTitle("Search")
+	smartLists(6).SetTitle(Starter.Lang.Get("search"))
 	smartLists(6).SetIcon(Chr(0xE8B6))
 
 	Dim itr As Int = 0
@@ -1123,11 +1179,18 @@ Sub LoadDrawerItems
 	
 End Sub
 
+Private Sub OnLoadDrawerText
+	lblTitle.Text = Starter.Lang.Get("app_title")
+	lblNewGroup.Text = Starter.Lang.Get("new_group")
+End Sub
+
 Private Sub OnLoadTaskGroups(items As List)
 	For Each item As Group In items
 		Dim p As B4XView = xui.CreatePanel("")
 		p.SetLayoutAnimated(0, 0, 0, 100%x, 60dip)
 		p.LoadLayout("drawerItems")
+		
+		OnLoadDrawerText
 		
 		Dim viewHolder As GroupViewHolder
 		viewHolder.Initialize
@@ -1203,7 +1266,7 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 		
 		' Include the edit group button for custom lists.
 		If menuListView.Size < 4 Then	
-			menuListView.AddSingleLine2("	Edit Group", 3)
+			menuListView.AddSingleLine2("	" & Starter.Lang.Get("edit_group"), 3)
 		End If
 		
 		' Get the associated group based on the ID stored in the clicked view holder of the nav drawer.
@@ -1246,13 +1309,13 @@ Private Sub OnLoadTaskDescription(item As Group)
 		If item.GetDescription <> "" Then
 			GroupDescription.Text = item.GetDescription
 		Else
-			GroupDescription.Text = "No task group description"
+			GroupDescription.Text = Starter.Lang.Get("no_description")
 		End If
 		
 		GroupDescription.TextSize = 16
 		GroupLineDecor.Visible = False
 	Else
-		GroupDescription.Text = "My Tasks"
+		GroupDescription.Text = Starter.Lang.Get("my_tasks")
 		GroupDescription.TextSize = 22
 		GroupLineDecor.Visible = True
 	End If
@@ -1275,6 +1338,9 @@ Private Sub searchBtn_Click
 		searchFragment.SetLayout(mainFragment.Left, mainFragment.Top, mainFragment.Width, mainFragment.Height)
 		svSearchBody.SetLayout(searchFragment.Left, 0, searchFragment.Width, searchFragment.Height)
 		svSearchBody.Panel.LoadLayout("searchFragmentSVLayout")
+		
+		OnLoadSearchText
+		
 		EditTextTransparentUnderline
 		pnlSearchSeparator1.SetLayout(50dip, pnlSearchSeparator1.Top, 100%x - 100dip, 2dip)
 		pnlSearchSeparator2.SetLayout(50dip, pnlSearchSeparator2.Top, 100%x - 100dip, 2dip)
@@ -1442,7 +1508,6 @@ Private Sub enterBtn_Click
 	
 	drawerButton.Text = Chr(0xE5CD)
 End Sub
-
 
 Private Sub btnCancel_Click
 	sortMsgBox_disappear
@@ -1616,7 +1681,7 @@ Private Sub spnGroupName_ItemClick (Position As Int, Value As Object)
 		ToastMessageShow("Value: " & Value, False)
 	End If
 	
-	If Value == "Tasks" Then
+	If Value == FormHelper.DEFAULT_TASK_NAME Then
 		m_query.SetGroupID(0)
 	Else
 		Dim groupId As Int = Starter.GroupViewModelInstance.GetGroupByTitle(Value).GetID

@@ -76,6 +76,36 @@ Sub Globals
 	Private btnClearTitle As Button
 	Private btnPriorityClear As Button
 	Private btnRepeatClear As Button
+	Private btnAddAttachment As Button
+	Private btnOpenCanvas As Button
+	Private Label2 As Label
+	Private Label3 As Label
+	Private lblAttachments As Label
+	Private lblDueDate As Label
+	Private lblNotes As Label
+	Private lblPrority As Label
+	Private lblRepeat As Label
+	Private lblRepeatFri As Label
+	Private lblRepeatMon As Label
+	Private lblRepeatSat As Label
+	Private lblRepeatSun As Label
+	Private lblRepeatThu As Label
+	Private lblRepeatTue As Label
+	Private lblRepeatWed As Label
+	Private lblSnooze As Label
+	Private lblTaskGroup As Label
+	Private lblTitle As Label
+	Private pnlAttachmentslbl As Panel
+	Private pnlContainerLblRepeat As Panel
+	Private pnlNoteslbl As Panel
+	Private pnlPrioritylbl As Panel
+	Private pnlReminderlbl As Panel
+	Private pnlRepeatlbl As Panel
+	Private pnlSnoozelbl As Panel
+	Private pnlTaskGrplbl As Panel
+	Private pnlTitlelbl As Panel
+	Private reminderlbl As Label
+	Private btnSave As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -86,6 +116,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	m_pendingAttachmentDelete.Initialize
 	
 	editorScrollView.Panel.LoadLayout("EditorScrollLayout")
+	
+	OnLoadText
+	
 	pnlEditorBar.Elevation = 10
 	EditText_removeunderline
 	
@@ -100,7 +133,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Initialize variables
 	m_task.Initialize
 	
-	m_repeat.Initialize
+	m_repeat.Initialize(Starter.Lang)
 	
 	' Retrieve the data sent by MainActivity to check the editor mode.
 	m_mode = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_MODE)
@@ -116,7 +149,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Check the editor mode to set the appropriate EditorActivity functionalities.
 	If m_mode == Starter.EDITOR_MODE_EDIT Then
 		' Rename the activity if editing.
-		lblAddTask.Text = "Edit Task"
+		lblAddTask.Text = Starter.Lang.Get("edit_task")
 		
 		' Retrieve the stored ID that is sent from MainActivity.
 		Dim itemId As Int = Starter.InstanceState.Get(Starter.EXTRA_EDITOR_TASK_ID)
@@ -172,6 +205,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		
 		' Load whether reminder field is enabled or not.
 		toggleReminder.Checked = m_task.IsReminderEnabled
+		OnToggleReminder(m_task.IsReminderEnabled)
 		
 		' Load reminder field data.
 		spnReminderHour.SelectedIndex = _
@@ -221,8 +255,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		spinnerDueDateMonth.SelectedIndex = DateTime.GetMonth(DateTime.Now)
 		editDueDateYear.Text = DateTime.GetYear(DateTime.Now)
 		
-		' Set the reminder field as enabled by default.
+		' Set the reminder field as disabled by default.
 		toggleReminder.Checked = False
+		OnToggleReminder(False)
 		
 		radioPriorityMedium.Checked = True
 		m_task.SetPriority(m_task.PRIORITY_MEDIUM)
@@ -295,6 +330,51 @@ Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
+Private Sub OnLoadText
+	lblAddTask.Text = Starter.Lang.Get("add_task")
+	lblAttachments.Text = Starter.Lang.Get("attachments") & ":"
+	lblDueDate.Text = Starter.Lang.Get("due_date") & ":"
+	lblNotes.Text = Starter.Lang.Get("notes") & ":"
+	lblPrority.Text = Starter.Lang.Get("priority") & ":"
+	lblRepeat.Text = Starter.Lang.Get("repeat") & ":"
+	lblRepeatFri.Text = Starter.Lang.Get("friday_abbr")
+	lblRepeatMon.Text = Starter.Lang.Get("monday_abbr")
+	lblRepeatSat.Text = Starter.Lang.Get("saturday_abbr")
+	lblRepeatSun.Text = Starter.Lang.Get("sunday_abbr")
+	lblRepeatThu.Text = Starter.Lang.Get("thursday_abbr")
+	lblRepeatTue.Text = Starter.Lang.Get("tuesday_abbr")
+	lblRepeatWed.Text = Starter.Lang.Get("wednesday_abbr")
+	lblSnooze.Text = Starter.Lang.Get("snooze") & ":"
+	lblTaskGroup.Text = Starter.Lang.Get("task_group")
+	lblTitle.Text = Starter.Lang.Get("title") & ":"
+	editTitle.Hint = Starter.Lang.Get("title_hint")
+	editNotes.Hint = Starter.Lang.Get("notes_hint")
+	reminderlbl.Text = Starter.Lang.Get("reminder")
+	editDueDateYear.Hint = Starter.Lang.Get("year")
+	
+	radioPriorityCritical.Text = Starter.Lang.Get("critical")
+	radioPriorityHigh.Text = Starter.Lang.Get("high")
+	radioPriorityMedium.Text = Starter.Lang.Get("medium")
+	radioPriorityLow.Text = Starter.Lang.Get("low")
+	
+	btnClearAll.Text = Starter.Lang.Get("clear_all")
+	btnClearDueDate.Text = Starter.Lang.Get("clear")
+	btnClearNotes.Text = Starter.Lang.Get("clear_uppercase")
+	btnClearTitle.Text = Starter.Lang.Get("clear_uppercase")
+	btnPriorityClear.Text = Starter.Lang.Get("clear_uppercase")
+	btnRepeatClear.Text = Starter.Lang.Get("clear_uppercase")
+	
+	btnRestore.Text = Starter.Lang.Get("restore")
+	btnAddAttachment.Text = Starter.Lang.Get("add_attachment_plus")
+	btnMoveToTrash.Text = Starter.Lang.Get("move_to_trash")
+	btnSave.Text = Starter.Lang.Get("save_uppercase")
+	btnOpenCanvas.Text = Starter.Lang.Get("canvas")
+	
+	toggleReminder.TextOn = Starter.Lang.Get("on_uppercase")
+	toggleReminder.TextOff = Starter.Lang.Get("off_uppercase")
+	
+End Sub
+
 Private Sub btnSave_Click
 	OnSaveTask
 End Sub
@@ -327,12 +407,13 @@ Private Sub OnSaveTask
 	
 	' Get the selected value whether reminders are enabled or not.
 	toggleReminder.Checked = m_task.IsReminderEnabled
+	OnToggleReminder(m_task.IsReminderEnabled)
 	
 	' Get the selected value of reminders field.
 	FormHelper.GetSelectedTime(m_task.Reminder, spnReminderHour, spnReminderMinute, spnReminderMarker)
 	
 	' Get the selected snooze
-	m_task.Snooze.SetSnooze(m_task.Snooze.GetSnoozeFromText(spnSnooze.SelectedItem))
+	m_task.Snooze.SetSnooze(m_task.Snooze.GetSnoozeFromText(spnSnooze.SelectedItem, Starter.Lang))
 	
 	' Get the selected group
 	Dim selectedGroup As Group	
@@ -369,7 +450,7 @@ Private Sub OnSaveTask
 	' Save the attachments that are pending for insertion.
 	For Each item As Attachment In m_pendingAttachmentInsert
 		If Starter.AttachmentViewModelInstance.InsertAttachment(item, m_task.GetId) == False Then
-			MsgboxAsync("Failed to insert attachment: " & item.GetFilename, "Error")
+			MsgboxAsync(Starter.Lang.Get("attachment_insert_failed") & ": " & item.GetFilename, "Error")
 		End If
 	Next
 	
@@ -377,7 +458,7 @@ Private Sub OnSaveTask
 	For Each item As Attachment In m_pendingAttachmentDelete
 		Log("Pending delete:" & item.GetFilename)
 		If Starter.AttachmentViewModelInstance.DeleteAttachment(item) == False Then
-			MsgboxAsync("Failed to delete attachment: " & item.GetFilename, "Error")
+			MsgboxAsync(Starter.Lang.Get("attachment_delete_failed") & ": " & item.GetFilename, "Error")
 		End If
 	Next
 	
@@ -442,7 +523,8 @@ Private Sub radioPriorityCritical_CheckedChange(Checked As Boolean)
 End Sub
 
 Private Sub btnDelete_Click
-	Msgbox2Async("Do you really want to delete this task?", "Alert", "Yes", "Cancel", "No", _
+	Msgbox2Async(Starter.Lang.Get("task_delete_question"), Starter.Lang.Get("alert"), _ 
+	Starter.Lang.Get("yes"), Starter.Lang.Get("cancel"), Starter.Lang.Get("no"), _
 	Null, False)
 	Wait For Msgbox_Result (Result As Int)
 	If Result = DialogResponse.POSITIVE Then
@@ -594,7 +676,7 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 			' Obtain a list of Attachments based on the URI retrieved from ContentChooser.
 			Dim item As Attachment = Starter.AttachmentViewModelInstance.GetAttachmentsFromUri(FileName)
 			
-			MsgboxAsync("Title: " & item.GetFilename, "Info")
+			MsgboxAsync(Starter.Lang.Get("title") & ": " & item.GetFilename, Starter.Lang.Get("info"))
 			
 			' Add the attachment into the list.
 			OnAddAttachment(item)
@@ -607,7 +689,7 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 			Log(LastException)
 		End Try
 	Else
-		MsgboxAsync("Unable to retrieve attachment", "Error")
+		MsgboxAsync(Starter.Lang.Get("attachment_retrieve_failed"), Starter.Lang.Get("error"))
 	End If
 End Sub
 
@@ -616,6 +698,10 @@ Private Sub spnTaskGroup_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Private Sub toggleReminder_CheckedChange(Checked As Boolean)
+	OnToggleReminder(Checked)
+End Sub
+
+Private Sub OnToggleReminder(Checked As Boolean)
 	toggleReminder.TextColor = Colors.RGB(73, 93, 143)
 	m_task.SetReminderEnabled(Checked)
 	
@@ -630,8 +716,9 @@ Private Sub toggleReminder_CheckedChange(Checked As Boolean)
 End Sub
 
 Private Sub btnRestore_Click
-	Msgbox2Async("Do you really want to restore this task from the recycle bin?", "Alert", "Yes", "Cancel", _
-	"No", Null, True)
+	Msgbox2Async(Starter.Lang.Get("task_restore_question"), Starter.Lang.Get("alert"), _
+	Starter.Lang.Get("yes"), Starter.Lang.Get("cancel"), Starter.Lang.Get("no"), _
+	Null, False)
 	Wait For Msgbox_Result (Result As Int)
 	If Result = DialogResponse.POSITIVE Then
 		m_task.SetDeleted(False)
@@ -641,8 +728,9 @@ Private Sub btnRestore_Click
 End Sub
 
 Private Sub btnMoveToTrash_Click
-	Msgbox2Async("Do you really want to move this task into the recycle bin?", "Alert", "Yes", "Cancel", _
-	"No", Null, True)
+	Msgbox2Async(Starter.Lang.Get("task_move_to_trash_questions"), Starter.Lang.Get("alert"), _
+	Starter.Lang.Get("yes"), Starter.Lang.Get("cancel"), Starter.Lang.Get("no"), _
+	Null, True)
 	Wait For Msgbox_Result (Result As Int)
 	If Result = DialogResponse.POSITIVE Then
 		m_task.SetDeleted(True)

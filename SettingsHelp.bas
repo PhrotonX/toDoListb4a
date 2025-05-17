@@ -21,6 +21,12 @@ Sub Globals
 	Private helpBack As Button
 	Private svHelp As ScrollView
 	Private helpLabel As Label
+	Private paragraphFAQ As Label
+	Private paragraphHow As Label
+	Private paragraphTrouble As Label
+	Private titleFAQ As Label
+	Private titleHow As Label
+	Private titleTroubleshooting As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -30,7 +36,30 @@ Sub Activity_Create(FirstTime As Boolean)
 	svHelp.Panel.LoadLayout("helpItems")
 	button_design
 
+	OnLoadText
+End Sub
 
+Private Sub OnLoadText
+	helpLabel.Text = Starter.Lang.Get("help")
+	titleHow.Text = Starter.Lang.Get("title_how")
+	titleFAQ.Text = Starter.Lang.Get("faq")
+	titleTroubleshooting.Text = Starter.Lang.Get("troubleshooting")
+	
+	paragraphHow.Text = Starter.Lang.Get("paragraph_how_1") & CRLF & _
+						Starter.Lang.Get("paragraph_how_2") & CRLF & _
+						Starter.Lang.Get("paragraph_how_3") & CRLF & _
+						Starter.Lang.Get("paragraph_how_4")
+						
+	paragraphFAQ.Text = Starter.Lang.Get("faq_1") & CRLF & _
+						Starter.Lang.Get("faq_2") & CRLF & _
+						Starter.Lang.Get("faq_3") & CRLF & _
+						Starter.Lang.Get("faq_4") & CRLF & _
+						Starter.Lang.Get("faq_5")
+					
+	paragraphTrouble.Text = Starter.Lang.Get("troubleshooting_1") & CRLF & _
+							Starter.Lang.Get("troubleshooting_2") & CRLF & _
+							Starter.Lang.Get("troubleshooting_3") & CRLF & _
+							Starter.Lang.Get("troubleshooting_4")
 End Sub
 
 Sub button_design

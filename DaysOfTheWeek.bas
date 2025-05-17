@@ -20,18 +20,20 @@ End Sub
 Public Sub Days(day As Int) As String
 	Select day:
 		Case 0:
-			Return "Sunday"
+			Return "sunday"
 		Case 1:
-			Return "Monday"
+			Return "monday"
 		Case 2:
-			Return "Tuesday"
+			Return "tuesday"
 		Case 3:
-			Return "Wednesday"
+			Return "wednesday"
 		Case 4:
-			Return "Thursday"
+			Return "thursday"
 		Case 5:
-			Return "Friday"
+			Return "friday"
 		Case 6:
-			Return "Saturday"
+			Return "saturday"
+		Case Else:
+			Return "error"
 	End Select
 End Sub

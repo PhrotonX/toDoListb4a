@@ -16,17 +16,17 @@ Sub Class_Globals
 	Public Const LAST_EPOCH_VALUE As Long = 9223372036854775807
 	
 	' Relpace values into property name on JSON-based language files.
-	Public Const DATE_A_LONG_TIME_AGO As String = "A long time ago"
-	Public Const DATE_EARLIER As String = "Earlier"
-	Public Const DATE_LAST_WEEK As String = "Last week"
-	Public Const DATE_EARLIER_THIS_WEEK As String = "Earlier this week"
-	Public Const DATE_YESTERDAY As String = "Yesterday"
-	Public Const DATE_TODAY As String = "Today"
-	Public Const DATE_TOMORROW As String = "Tomorrow"
-	Public Const DATE_THIS_WEEK As String = "This week"
-	Public Const DATE_NEXT_WEEK As String = "Next week"
-	Public Const DATE_LATER As String = "Later"
-	Public Const DATE_A_LONG_TIME_FROM_NOW As String = "A long time from now"
+	Public Const DATE_A_LONG_TIME_AGO As String = "a_long_time_ago"
+	Public Const DATE_EARLIER As String = "earlier"
+	Public Const DATE_LAST_WEEK As String = "last_week"
+	Public Const DATE_EARLIER_THIS_WEEK As String = "earlier_this_week"
+	Public Const DATE_YESTERDAY As String = "yesterday"
+	Public Const DATE_TODAY As String = "today"
+	Public Const DATE_TOMORROW As String = "tomorrow"
+	Public Const DATE_THIS_WEEK As String = "this_week"
+	Public Const DATE_NEXT_WEEK As String = "next_week"
+	Public Const DATE_LATER As String = "later"
+	Public Const DATE_A_LONG_TIME_FROM_NOW As String = "a_long_time_from_now"
 End Sub
 
 'Initializes the object.
@@ -73,7 +73,7 @@ Public Sub IdentifyDate() As String
 		Return DATE_A_LONG_TIME_FROM_NOW
 	End If
 	
-	Return "Error"
+	Return "error"
 	
 	
 	
@@ -90,29 +90,29 @@ End Sub
 ' Gets the numeric value of months, in which the m_month is stored as String.
 Public Sub GetNumericMonth(month As String) As Int
 	Select month
-		Case "January":
+		Case "january":
 			Return 1
-		Case "February":
+		Case "february":
 			Return 2
-		Case "March":
+		Case "march":
 			Return 3
-		Case "April":
+		Case "april":
 			Return 4
-		Case "May":
+		Case "may":
 			Return 5
-		Case "June":
+		Case "june":
 			Return 6
-		Case "July":
+		Case "july":
 			Return 7
-		Case "August":
+		Case "august":
 			Return 8
-		Case "September":
+		Case "september":
 			Return 9
-		Case "October":
+		Case "october":
 			Return 10
-		Case "November":
+		Case "november":
 			Return 11
-		Case "December":
+		Case "december":
 			Return 12
 		Case Else:
 			Return 0
@@ -182,29 +182,29 @@ End Sub
 Public Sub GetMonthFromNum(month As Int) As String
 	Select month
 		Case 1:
-			Return "January"
+			Return "january"
 		Case 2:
-			Return "February"
+			Return "february"
 		Case 3:
-			Return "March"
+			Return "march"
 		Case 4:
-			Return "April"
+			Return "april"
 		Case 5:
-			Return "May"
+			Return "may"
 		Case 6:
-			Return "June"
+			Return "june"
 		Case 7:
-			Return "July"
+			Return "july"
 		Case 8:
-			Return "August"
+			Return "august"
 		Case 9:
-			Return "September"
+			Return "september"
 		Case 10:
-			Return "October"
+			Return "october"
 		Case 11:
-			Return "November"
+			Return "november"
 		Case 12:
-			Return "December"
+			Return "december"
 		Case Else:
 			Return ""
 	End Select
@@ -212,8 +212,8 @@ End Sub
 
 ' Returns the date with the "Month DD, YYYY" format as a String based
 ' on the values set on this date object.
-Public Sub GetFormattedDate As String
-	Return GetMonthFromNum(m_month) & " " & m_day & ", " & m_year
+Public Sub GetFormattedDate(Lang As LanguageManager) As String
+	Return Lang.Get(GetMonthFromNum(m_month)) & " " & m_day & ", " & m_year
 End Sub
 
 ' Returns the date with the "mm/dd/YYYY" format as a String based
