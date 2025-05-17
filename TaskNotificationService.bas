@@ -82,11 +82,11 @@ Sub Service_Start (StartingIntent As Intent)
 			notificationBuilder.SmallIcon(LoadBitmap(File.DirAssets, "ic_launcher_small.png"))
 			notificationBuilder.AutoCancel(True)
 			notificationBuilder.ShowWhen(repeatItem.GetSchedule(0) + task.Reminder.GetUnixTime)
-			notificationBuilder.AddButtonAction(Null, "Dismiss", TaskNotificationDismissReceiver, repeatItem.GetID(0))
+			notificationBuilder.AddButtonAction(Null, Lang.Get("dismiss"), TaskNotificationDismissReceiver, repeatItem.GetID(0))
 			If task.Snooze.GetSnooze <> task.Snooze.SNOOZE_OFF Then
-				notificationBuilder.AddButtonAction(Null, "Snooze", TaskNotificationSnoozeReceiver, repeatItem.GetID(0))
+				notificationBuilder.AddButtonAction(Null, Lang.Get("snooze"), TaskNotificationSnoozeReceiver, repeatItem.GetID(0))
 			End If
-			notificationBuilder.AddButtonAction(Null, "Complete", TaskNotificationCompleteReceiver, repeatItem.GetID(0))
+			notificationBuilder.AddButtonAction(Null, Lang.Get("complete"), TaskNotificationCompleteReceiver, repeatItem.GetID(0))
 			notificationBuilder.DeleteAction(TaskNotificationDismissReceiver, repeatItem.GetID(0))
 	
 			notification = notificationBuilder.Build(GetTitle(task), task.GetNotes, _
@@ -154,7 +154,7 @@ Private Sub GetTitle(item As ToDo) As Object
 	
 	Select item.GetPriority
 		Case item.PRIORITY_CRITICAL:
-			Return cs.Initialize().Bold.Color(Colors.RGB(255, 0, 0)).Append("Critical: " & item.GetTitle)
+			Return cs.Initialize().Bold.Color(Colors.RGB(255, 0, 0)).Append(Lang.Get("critical") & ": " & item.GetTitle)
 		Case Else:
 			Return item.GetTitle
 	End Select

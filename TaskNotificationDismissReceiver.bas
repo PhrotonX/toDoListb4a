@@ -37,7 +37,7 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 	Dim nb As Notification
 	nb.Initialize
 	
-	Dim toastMsg As String = "Task Dimissed. No recurring task follows."
+	Dim toastMsg As String  = Lang.Get("dismiss_msg")
 	
 	If StartingIntent.IsInitialized Then
 		' Notification ID is the same as the repeat ID.
@@ -71,8 +71,8 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 						' Save the computed value into the DB.
 						RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(0), computedSchedule)
 						
-						toastMsg = "Task Dimissed. Next task will be on: " & dateObj.GetFormattedDateAndTime( _
-						SettingsViewModelInstance.Is24HourFormatEnabled)
+						toastMsg = Lang.Get("dismiss_msg_next_task") & dateObj.GetFormattedDateAndTime( _
+						SettingsViewModelInstance.Is24HourFormatEnabled, Lang)
 					End If
 				End If
 				
@@ -83,7 +83,7 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 				StartServiceAtExact(TaskNotificationScheduler, DateTime.Now, True)
 			End If
 		Else
-			toastMsg = "Error in dismissing task - task id: " & itemId
+			toastMsg = Lang.Get("dismiss_msg_error") & itemId
 		End If
 	End If
 	

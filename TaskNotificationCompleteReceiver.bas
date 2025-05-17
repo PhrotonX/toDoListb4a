@@ -51,6 +51,8 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 			
 			TaskViewModelInstance.UpdateTask(item)
 			RepeatViewModelInstance.CalculateSchedule(item)
+			
+			ToastMessageShow(Lang.Get("completed") & "!", False)
 		End If
 	End If
 End Sub
