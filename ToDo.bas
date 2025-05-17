@@ -56,8 +56,8 @@ End Sub
 
 ' Retrieves the glance information to be displayed on TaskItemLayout.
 ' repeat - The repeat information from Repeat object.
-Public Sub GetGlance(repeatStr As String) As String
-	Dim dueDate As String = m_dueDate.GetFormattedDate2
+Public Sub GetGlance(firstText As String, secondText As String) As String
+	'Dim dueDate As String = m_dueDate.GetFormattedDate2
 	'Dim repeat As String = GetRepeatInfo
 	
 	' Separate variable for hyphen is used to toggle it if either repeat is not
@@ -65,12 +65,12 @@ Public Sub GetGlance(repeatStr As String) As String
 	Dim hyphen As String = " - "
 	
 	' Remove hyphen for if repeat information is not available.
-	If repeatStr == "" Then
+	If secondText == "" Then
 		hyphen = ""
 	End If
 	
 	
-	Return dueDate & hyphen & repeatStr
+	Return firstText & hyphen & secondText
 End Sub
 
 Public Sub GetDueDate As Date
@@ -99,15 +99,15 @@ End Sub
 Public Sub GetPriorityInfo As String
 	Select GetPriority
 		Case PRIORITY_CRITICAL:
-			Return "Critical"
+			Return "critical"
 		Case PRIORITY_HIGH:
-			Return "High"
+			Return "high"
 		Case PRIORITY_MEDIUM:
-			Return "Medium"
+			Return "medium"
 		Case PRIORITY_LOW:
-			Return "Low"
+			Return "low"
 		Case Else:
-			Return "Error retrieving task priority"
+			Return "priority_error"
 	End Select
 End Sub
 

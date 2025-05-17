@@ -48,6 +48,10 @@ Public Sub GetAttachmentsFromUri(FileUri As String) As Attachment
 	Return m_fileRepository.GetAttachmentsFromUri(FileUri).Get(0)
 End Sub
 
+Public Sub GetSearchedAttachments(task_id As Long, query As String) As List
+	Return m_dbRepository.GetSearchedAttachments(task_id, query)
+End Sub
+
 Public Sub GetTaskAttachments(task_id As Long) As List
 	Return m_dbRepository.GetTaskAttachments(task_id)
 End Sub

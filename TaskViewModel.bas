@@ -216,73 +216,12 @@ Public Sub GetDeletedTasks(query As TaskQuery) As List
 	Return results
 End Sub
 
-' @Deprecated
 Public Sub GetGroupedTasks(query As TaskQuery) As List
 	Return m_repository.GetGroupedTasks(query)
 End Sub
 
-' @Deprecated
 Public Sub GetUngroupedTasks(query As TaskQuery) As List
 	Return m_repository.GetUngroupedTasks(query)
-End Sub
-
-' @Deprecated
-Public Sub FindTasksByTitle(group_id As Long, query As String, ascending As Boolean) As List
-	Return m_repository.FindTasksByTitle(group_id, query, ascending)
-End Sub
-
-' @Deprecated
-Public Sub FindTasksByNotes(group_id As Long, query As String, ascending As Boolean) As List
-	Return m_repository.FindTasksByNotes(group_id, query, ascending)
-End Sub
-
-' @Deprecated
-Public Sub FindTasksByPriority(group_id As Long, query As Int, ascending As Boolean) As List
-	Return m_repository.FindTasksByPriority(group_id, query, ascending)
-End Sub
-
-' @Deprecated
-Public Sub FindTasksByDueDate(group_id As Long, tickBegin As Long, tickEnd As Long, ascending As Boolean) As List
-	Return m_repository.FindTasksByDueDate(group_id, tickBegin, tickEnd, ascending)
-End Sub
-
-' @Deprecated
-' repeat - Expects a list of 7 boolean values.
-Public Sub FindTasksByRepeat(group_id As Long, repeatQuery As List, ascending As Boolean) As List
-	Dim tasks As List = GetTasksSortedById(group_id, ascending)
-	
-	Dim result As List
-	result.Initialize
-	
-	' Check each task if they consist of correct repeat items.
-	For Each task As ToDo In tasks
-		' Track an iterator to also compare with the task's repeat information into the
-		' queried repeat information. Also the iterator for the day of the week.
-		Dim i As Int = 0
-		Dim skip As Boolean = False
-		
-		Dim taskRepeat As Repeat = Starter.RepeatViewModelInstance.GetTaskRepeat(task.GetId)
-		
-		' Compare if the current queried repeat boolean matches with the tasks repeat boolean.
-		' If it did not match, set the skip value as true.
-		For Each item In repeatQuery
-			If item <> taskRepeat.IsEnabled(i) Then
-				skip = True
-			End If
-			
-			' Iterate into the next day of the week.
-			i = i + 1
-		Next
-		
-		' Skip the task if matching has failed. Else, add the current task as a result.
-		If skip == True Then
-			Continue
-		Else
-			result.Add(task)
-		End If
-	Next
-	
-	Return result
 End Sub
 
 ' Used for completed tasks.

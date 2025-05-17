@@ -38,27 +38,55 @@ Sub Globals
 	Private lblTaskCompletionSound As Label
 	Private switchDetailedDueDate As B4XSwitch
 	Private switchHourFormat24 As B4XSwitch
+	Private lblAdvancedSettings As Label
+	Private pnlAdvancedSettings As Panel
+	Private lblGeneralSettings As Label
+	Private spnLanguage As Spinner
+	Private lblSettings As Label
+	Private lblTaskSettings As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("settingslayout")
 	svMain.Panel.LoadLayout("sviewlayout")
-		
-	LoadSettings
+	
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_ENGLISH)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_TAGALOG)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_KAPAMPANGAN)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_ESPANOL)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_HANYU)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_AL_LOGHA_AL_3ARABIYAH)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_RUSSKIY)
+	spnLanguage.Add(Starter.SettingsViewModelInstance.SETTING_LANG_BAHASA_INDONESIA)
 	
 	button_design
 	
+	lbl24hrFormat.Text = Starter.Lang.Get("24_hour_format")
+	lblAdvancedSettings.Text = Starter.Lang.Get("advanced_settings")
+	lblDarkMode.Text = Starter.Lang.Get("dark_mode")
+	lblDetailedDueDate.Text = Starter.Lang.Get("detailed_due_date")
+	lblGeneralSettings.Text = Starter.Lang.Get("general_settings")
+	lblLanguage.Text = Starter.Lang.Get("language")
+	lblSettings.Text = Starter.Lang.Get("settings")
+	lblTaskCompletionSound.Text = Starter.Lang.Get("task_completion_sound")
+	lblTaskSettings.Text = Starter.Lang.Get("task_settings")
+End Sub
+
+Sub Activity_Resume
+	LoadSettings
 End Sub
 
 Sub LoadSettings
-	switchDarkMode.Value = Starter.SettingsViewModelInstance.IsDarkModeEnabled()
-	'DebugMode.Checked = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
-	switchTaskCompletion.Value = Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled()
-	switchHourFormat24.Value = Starter.SettingsViewModelInstance.Is24HourFormatEnabled()
+	switchDarkMode.Value = Starter.SettingsViewModelInstance.IsDarkModeEnabled
+	switchDetailedDueDate.Value = Starter.SettingsViewModelInstance.IsDetailedDueDateEnabled
+	switchTaskCompletion.Value = Starter.SettingsViewModelInstance.IsTaskCompetionSoundEnabled
+	switchHourFormat24.Value = Starter.SettingsViewModelInstance.Is24HourFormatEnabled
+
+	spnLanguage.SelectedIndex = spnLanguage.IndexOf(Starter.SettingsViewModelInstance.GetLanguage)
 End Sub
 
 Sub button_design
-	pnlSettingsBar.Elevation = 10	
+	pnlSettingsBar.Elevation = 10
 End Sub
 
 Sub btnBack_Click
@@ -73,34 +101,6 @@ Sub about_Click
 	StartActivity(SettingsAbout)
 End Sub
 
-
-Private Sub ResetApp_Click
-	ProgressDialogShow("Resetting...")
-	Try
-		If Starter.ToDoDatabaseViewModelInstance.ResetDatabase() Then
-			Starter.AttachmentViewModelInstance.DropAttachmentsFromFS()
-		End If
-		
-		Starter.SettingsViewModelInstance.LoadDefaults()
-		
-		LoadSettings
-		
-		MsgboxAsync("Application has been successfully reset! You may need to restart your application for changes " & _
-		"to take effect.", "Alert")
-	Catch
-		Log(LastException)
-		
-		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
-			MsgboxAsync(LastException.Message, "Error")
-		Else
-			MsgboxAsync("Failed to reset application", "Error")
-		End If
-		
-	End Try
-	
-	ProgressDialogHide
-End Sub
-
 Private Sub ImportDatabase_Click
 	
 End Sub
@@ -109,10 +109,20 @@ Private Sub ExportDatabase_Click
 	
 End Sub
 
+Private Sub DarkMode_CheckedChange(Checked As Boolean)
+	Starter.SettingsViewModelInstance.SetDarkMode(Checked)
+End Sub
+
+Private Sub TaskCompletion_CheckedChange(Checked As Boolean)
+	Starter.SettingsViewModelInstance.SetTaskCompletionSound(Checked)
+	
+End Sub
+
 Private Sub lblTaskCompletionSound_Click
 	If switchTaskCompletion.Value = True Then
 		switchTaskCompletion.Value = False
 		Starter.SettingsViewModelInstance.SetTaskCompletionSound(False)
+
 	Else
 		switchTaskCompletion.Value = True
 		Starter.SettingsViewModelInstance.SetTaskCompletionSound(True)
@@ -123,19 +133,20 @@ End Sub
 Private Sub lblDetailedDueDate_Click
 	If switchDetailedDueDate.Value = True Then
 		switchDetailedDueDate.Value = False
-		'Starter.SettingsViewModelInstance.Set(False)
+		Starter.SettingsViewModelInstance.SetDetailedDueDate(False)
 	Else
 		switchDetailedDueDate.Value = True
+		Starter.SettingsViewModelInstance.SetDetailedDueDate(True)
 	End If
 End Sub
 
 Private Sub lblDarkMode_Click
 	If switchDarkMode.Value = True Then
 		switchDarkMode.Value = False
-		Starter.SettingsViewModelInstance.SetDarkMode(False)
+		OnSwitchDarkMode(False)
 	Else
 		switchDarkMode.Value = True
-		Starter.SettingsViewModelInstance.SetDarkMode(True)
+		OnSwitchDarkMode(True)
 	End If
 End Sub
 
@@ -147,4 +158,58 @@ Private Sub lbl24hrFormat_Click
 		switchHourFormat24.Value = True
 		Starter.SettingsViewModelInstance.Set24HourFormat(True)
 	End If
+End Sub
+
+Private Sub lblAdvancedSettings_Click
+	pnlAdvancedSettings.SetColorAnimated(250, Colors.White, Colors.LightGray)
+	pnlAdvancedSettings.SetColorAnimated(250, Colors.LightGray, Colors.White)
+	StartActivity(AdvancedSettingsActivity)
+End Sub
+
+Private Sub OnSwitchDarkMode(Value As Boolean)
+	If Value Then
+		Msgbox2Async(Starter.Lang.Get("dark_mode_question_info") & CRLF & CRLF & _
+		Starter.Lang.Get("dark_mode_question_info_2"), _ 
+		Starter.Lang.Get("dark_mode_question"), _ 
+		Starter.Lang.Get("continue"), Starter.Lang.Get("cancel"),"", Null, False)
+		Wait For Msgbox_Result (Result As Int)
+		If Result = DialogResponse.POSITIVE Then
+			Starter.SettingsViewModelInstance.SetDarkMode(Value)
+			switchDarkMode.Value = Value
+		Else
+			switchDarkMode.Value = False
+		End If
+	Else
+		Starter.SettingsViewModelInstance.SetDarkMode(Value)
+	End If
+End Sub
+
+Private Sub switchTaskCompletion_ValueChanged (Value As Boolean)
+	Starter.SettingsViewModelInstance.SetTaskCompletionSound(Value)
+End Sub
+
+Private Sub switchHourFormat24_ValueChanged (Value As Boolean)
+	Starter.SettingsViewModelInstance.Set24HourFormat(Value)
+End Sub
+
+Private Sub switchDetailedDueDate_ValueChanged (Value As Boolean)
+	Starter.SettingsViewModelInstance.SetDetailedDueDate(Value)
+End Sub
+
+Private Sub switchDarkMode_ValueChanged (Value As Boolean)
+	OnSwitchDarkMode(Value)
+End Sub
+
+Private Sub spnLanguage_ItemClick (Position As Int, Value As Object)
+	Msgbox2Async(Starter.Lang.Get("language_question_info") & CRLF & CRLF & _ 
+		Starter.Lang.Get("language_question_info_2"), _ 
+		Starter.Lang.Get("language_question"), Starter.Lang.Get("yes"), Starter.Lang.Get("cancel"), _ 
+		Starter.Lang.Get("no"), Null, False)
+	Wait For Msgbox_Result (Result As Int)
+	If Result = DialogResponse.POSITIVE Then
+		ToastMessageShow(Value, True)
+		Starter.SettingsViewModelInstance.SetLanguage(Value)
+		Starter.Lang.Initialize(Starter.SettingsViewModelInstance)
+	End If
+	
 End Sub

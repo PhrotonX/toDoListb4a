@@ -22,6 +22,20 @@ Sub Globals
 
 	Private svAbout As ScrollView
 	Private aboutLabel As Label
+	Private aboutContact As Label
+	Private aboutDev As Label
+	Private aboutWhat As Label
+	Private membersLbl As Label
+	Private paraContact As Label
+	Private paraDev As Label
+	Private paraWhat As Label
+	Private lblAppTitle As Label
+	Private leaderLbl As Label
+	Private name1Lbl As Label
+	Private name2Lbl As Label
+	Private name3Lbl As Label
+	Private name4Lbl As Label
+	Private name5Lbl As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -31,10 +45,24 @@ Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("settingsabout")
 	svAbout.Panel.LoadLayout("aboutItems")
 	button_design
+	
+	OnLoadText
 End Sub
 
 Sub aboutBack_Click
 	Activity.Finish
+End Sub
+
+Private Sub OnLoadText
+	aboutLabel.Text = Starter.Lang.Get("about")
+	aboutWhat.Text = Starter.Lang.Get("about_what")
+	aboutContact.Text = Starter.Lang.Get("faq")
+	aboutDev.Text = Starter.Lang.Get("about_dev")
+	paraWhat.Text = Starter.Lang.Get("paragraph_what")
+	paraContact.Text = Starter.Lang.Get("paragraph_faq")
+	paraDev.Text = Starter.Lang.Get("para_dev")
+	lblAppTitle.Text = Starter.Lang.Get("app_title")
+	membersLbl.Text = Starter.Lang.Get("members")
 End Sub
 
 Sub button_design

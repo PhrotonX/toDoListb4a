@@ -19,8 +19,8 @@ Public Sub GetDay As Date
 	Return m_date
 End Sub
 
-Public Sub GetFormattedDateAndTime(hour24 As Boolean) As String
-	Return m_date.GetFormattedDate & " " & m_time.GetFormattedTime(hour24)
+Public Sub GetFormattedDateAndTime(hour24 As Boolean, Lang As LanguageManager) As String
+	Return m_date.GetFormattedDate(Lang) & " " & m_time.GetFormattedTime(hour24)
 End Sub
 
 Public Sub GetTime As Time

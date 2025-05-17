@@ -66,12 +66,17 @@ Sub Globals
 	Private btnAddGrpCancel As Button
 	Private btnAddGrpSave As Button
 	Private btnGrpDelete As Button
+	Private lblIcons As Label
+	Private lblNotes As Label
+	Private lblTitle As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("groupTasksLayout")
 	svAddGrpBody.Panel.LoadLayout("groupTasksSVLayout")
 	pnlAddGrpBar.Elevation = 10
+
+	OnLoadText
 
 	' Assign panels and tags (color names)
 	tiles(0) = pnlColorRed : tiles(0).Tag = "RED"
@@ -98,7 +103,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	' Create the group object.
 	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
 		Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:
-			lblAddGrp.Text = "New Group"
+			lblAddGrp.Text = Starter.Lang.Get("new_group")
 
 			If m_group.IsInitialized == False Then
 				' Initialize the group object.
@@ -110,6 +115,10 @@ Sub Activity_Create(FirstTime As Boolean)
 				
 				' Hide the delete button if the page is in creating mode.
 				btnGrpDelete.Visible = False
+				
+				' Hide certain elements if the page is in creating mode.
+				lblCreatedAt.Visible = False
+				lblUpdatedAt.Visible = False
 			End If
 			
 		Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
@@ -120,11 +129,11 @@ Sub Activity_Create(FirstTime As Boolean)
 				m_group = Starter.GroupViewModelInstance.GetGroup(Starter.InstanceState.Get(Starter.EXTRA_EDITOR_GROUP_ID))
 				
 				' Change the title
-				lblAddGrp.Text = "Edit Group"
+				lblAddGrp.Text = Starter.Lang.Get("edit_group")
 			End If
 			
 		Case Else:
-			MsgboxAsync("Error opening TaskGroupActivity", "Error")
+			MsgboxAsync(Starter.Lang.Get("error_opening_task_group_editor"), Starter.Lang.Get("error"))
 			OnCloseActivity
 	End Select
 End Sub
@@ -152,10 +161,10 @@ Sub Activity_Resume
 	' Mark the loaded group icon as selected.
 	icons(OnLoadGroupIcon(m_group.GetIconPos)).Color = Colors.LightGray
 	
-	lblCreatedAt.Text = "Created At: " & m_group.CreatedAt.GetFormattedDateAndTime( _
-		Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
-	lblUpdatedAt.Text = "Updated At: " & m_group.UpdatedAt.GetFormattedDateAndTime( _
-		Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+	lblCreatedAt.Text = Starter.Lang.Get("created_at") & ": " & m_group.CreatedAt.GetFormattedDateAndTime( _
+		Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
+	lblUpdatedAt.Text = Starter.Lang.Get("updated_at") & ": " & m_group.UpdatedAt.GetFormattedDateAndTime( _
+		Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
 
 	Log("TaskGroupActivity.Activity_Resume Color" & m_group.GetColor)
 	Log("TaskGroupActivity.Activity_Resume Icon" & m_group.GetIcon)
@@ -166,6 +175,16 @@ Sub Activity_Pause (UserClosed As Boolean)
 	OnSaveGroup
 End Sub
 
+Private Sub OnLoadText
+	lblTitle.Text = Starter.Lang.Get("title") & "*"
+	lblNotes.Text = Starter.Lang.Get("notes")
+	lblIcons.Text = Starter.Lang.Get("icon")
+	lblColor.Text = Starter.Lang.Get("color")
+	btnAddGrpSave.Text = Starter.Lang.Get("save_uppercase")
+	editAddGrpTitle.Hint = Starter.Lang.Get("title_hint")
+	editNotes.Hint = Starter.Lang.Get("notes_hint")
+End Sub
+
 Sub btnAddGrpCancel_Click
 	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
 		Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
@@ -174,7 +193,7 @@ Sub btnAddGrpCancel_Click
 			' Do nothing.
 	End Select
 		
-	ToastMessageShow("Editing cancelled", False)
+	ToastMessageShow(Starter.Lang.Get("editing_cancelled"), False)
 		
 	OnCloseActivity
 End Sub
@@ -182,39 +201,44 @@ End Sub
 Sub btnAddGrpSave_Click
 	
 	' Validation
+	If editAddGrpTitle.Text == "" Then
+		MsgboxAsync(Starter.Lang.Get("validation_error_title_empty"), Starter.Lang.Get("error"))
+		Return
+	End If
+	
 	If editAddGrpTitle.Text.Length > 50 Then
-		MsgboxAsync("Title cannot be longer than 50!", "Error")
+		MsgboxAsync(Starter.Lang.Get("validation_error_title_50"), Starter.Lang.Get("error"))
 		Return
 	End If
 	
 	Select Starter.InstanceState.Get(Starter.EXTRA_TASK_GROUP_EDITOR_MODE):
 		Case Starter.TASK_GROUP_EDITOR_MODE_EDIT:
 			If Starter.GroupViewModelInstance.CheckForDuplicateOnUpdate(editAddGrpTitle.Text) == True Then
-				MsgboxAsync("Title duplicate found!", "Error")
+				MsgboxAsync(Starter.Lang.Get("validation_error_title_duplicate"), Starter.Lang.Get("error"))
 				Return
 			End If
 		Case Starter.TASK_GROUP_EDITOR_MODE_CREATE:
 			If Starter.GroupViewModelInstance.CheckForDuplicateOnInsert(editAddGrpTitle.Text) == True Then
-				MsgboxAsync("Title duplicate found!", "Error")
+				MsgboxAsync(Starter.Lang.Get("validation_error_title_duplicate"), Starter.Lang.Get("error"))
 				Return
 			End If
 		Case Else:
-			MsgboxAsync("Failed validating data!", "Error")
+			MsgboxAsync(Starter.Lang.Get("validation_failed"), Starter.Lang.Get("error"))
 			Return
 	End Select
 	
 	If editNotes.Text.Length > 255 Then
-		MsgboxAsync("Notes cannot be longer than 255!", "Error")
+		MsgboxAsync(Starter.Lang.Get("validation_error_notes_255"), Starter.Lang.Get("error"))
 		Return
 	End If
 	
 	If m_group.GetColor > 7 Then
-		MsgboxAsync("Invalid color!" & CRLF & "Color code: " & m_group.GetColor , "Error")
+		MsgboxAsync(Starter.Lang.Get("validation_error_color") & CRLF & "Color code: " & m_group.GetColor , Starter.Lang.Get("error"))
 		Return
 	End If
 	
 	If m_group.GetIconPos > 7 Then
-		MsgboxAsync("Invalid icon!" & CRLF & "Icon code: " & m_group.GetIconPos, "Error")
+		MsgboxAsync(Starter.Lang.Get("validation_error_icon") & CRLF & "Icon code: " & m_group.GetIconPos, Starter.Lang.Get("error"))
 		Return
 	End If
 	
@@ -229,13 +253,13 @@ Sub btnAddGrpSave_Click
 				Starter.GroupViewModelInstance.UpdateGroup(m_group)
 		End Select
 		
-		ToastMessageShow("Task group '" & m_group.GetTitle & "' saved successfully!", True)
+		ToastMessageShow(Starter.Lang.Get("task_group_saved_successfully") & ": " & m_group.GetTitle, True)
 		
 		LastSavedGroup = m_group
 		
 		OnCloseActivity
 	Catch
-		ToastMessageShow("Failed to save Task group '" & m_group.GetTitle & "'", True)
+		ToastMessageShow(Starter.Lang.Get("failed_to_save_task_group") & ": " & m_group.GetTitle, True)
 		
 		Log(LastException)
 	End Try
@@ -318,12 +342,12 @@ Private Sub OnLoadGroupIcon(icon As Int) As Int
 			Return itr
 		End If
 		
-		ToastMessageShow("Selected Icon Index: " & icon, False)
+		'ToastMessageShow("Selected Icon Index: " & icon, False)
 		
 		itr = itr + 1
 	Next
 	
-	MsgboxAsync("Failed to retrieve group icon " & itr, "Error")
+	MsgboxAsync(Starter.Lang.Get("failed_to_retrieve_group_icon") & ": " & itr, Starter.Lang.Get("error"))
 	
 	Return 0
 End Sub
@@ -375,16 +399,17 @@ Sub pnlicon_Click
 End Sub
 
 Private Sub btnGrpDelete_Click
-	Msgbox2Async("Do you really want to delete this group?", "Question", "Yes", "Cancel", "No", Null, False)
+	Msgbox2Async(Starter.Lang.Get("task_group_delete_question"), Starter.Lang.Get("question"), _ 
+		Starter.Lang.Get("yes"), Starter.Lang.Get("cancel"), Starter.Lang.Get("no"), Null, False)
 	Wait For Msgbox_Result (Result As Int)
 	If Result = DialogResponse.POSITIVE Then
 		Try
 			Starter.GroupViewModelInstance.DeleteGroup(m_group.GetID)
-			ToastMessageShow("Task group '" & m_group.GetTitle & "' saved successfully!", True)
+			ToastMessageShow(Starter.Lang.Get("task_group_deleted_successfully") & ": " & m_group.GetTitle, True)
 			Main.SavedSmartList = Main.SMART_LIST_MY_DAY
 			OnCloseActivity
 		Catch
-			ToastMessageShow("Failed to delete task group '" & m_group.GetTitle & "'", True)
+			ToastMessageShow(Starter.Lang.Get("failed_to_delete_task_group") & ": " & m_group.GetTitle, True)
 			Log(LastException)
 		End Try
 	End If

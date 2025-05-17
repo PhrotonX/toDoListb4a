@@ -44,6 +44,23 @@ Sub Globals
 	
 	Private svAttachments As ScrollView
 	Private clvAttachments As CustomListView
+	Private pnlTaskViewBar As Panel
+	Private lblListofAttachments As Label
+	Private lblListofCanvas As Label
+	Private viewCreatedAtLbl As Label
+	Private viewDueDateLbl As Label
+	Private viewModifiedlbl As Label
+	Private viewNotesLbl As Label
+	Private viewPriorityLbl As Label
+	Private viewReminderlbl As Label
+	Private viewReminders As Label
+	Private viewRepeatLbl As Label
+	Private viewSnooze As Label
+	Private viewSnoozeLbl As Label
+	Private viewTaskGrouplbl As Label
+	Private viewTitleLbl As Label
+	Private lblTask As Label
+	Private btnEdit As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -53,17 +70,27 @@ Sub Activity_Create(FirstTime As Boolean)
 
 	' Add the TaskViewScrollLayout as the view of taskView of the ScrollView in TaskViewLayout.
 	taskView.Panel.LoadLayout("TaskViewScrollLayout")
+	pnlTaskViewBar.Elevation = 10
+
+	OnLoadTasks
+End Sub
+
+Private Sub OnLoadTasks()
+	lblTask.Text = Starter.Lang.Get("task")
+	btnEdit.Text = Starter.Lang.Get("edit_uppercase")
 	
-	' Other supplementary code for UI design.
-	Dim c As Canvas
-	c.Initialize(Label1)
-	Dim borderColor As Int = Colors.RGB(209, 209, 209)
-	Dim borderHeight As Int = 1dip
-
-	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, _ 
-		borderHeight)
-
-	Label1.Invalidate
+	viewCreatedAtLbl.Text = Starter.Lang.Get("created_at")
+	viewModifiedlbl.Text = Starter.Lang.Get("updated_at")
+	viewTitleLbl.Text = Starter.Lang.Get("title")
+	viewNotesLbl.Text = Starter.Lang.Get("notes")
+	viewDueDateLbl.Text = Starter.Lang.Get("due_date")
+	viewPriorityLbl.Text = Starter.Lang.Get("priority")
+	viewReminderlbl.Text = Starter.Lang.Get("reminder")
+	viewRepeatLbl.Text = Starter.Lang.Get("repeat")
+	viewSnoozeLbl.Text = Starter.Lang.Get("snooze")
+	viewTaskGrouplbl.Text = Starter.Lang.Get("task_group")
+	lblListofCanvas.Text = Starter.Lang.Get("canvas")
+	lblListofAttachments.Text = Starter.Lang.Get("attachments")
 End Sub
 
 Private Sub button_design
@@ -123,15 +150,44 @@ Sub Activity_Resume
 		
 		' Display the retrieved task into the views.
 		viewTitle.Text = m_task.GetTitle
+		
 		viewTitle.Checked = m_task.Done
-		viewNotes.Text = m_task.GetNotes
-		viewRepeat.Text = m_repeat.GetRepeatInfo
-		viewPriority.Text = m_task.GetPriorityInfo
-		viewDueDate.Text = m_task.GetDueDate.GetFormattedDate
+		
+		' Notes
+		If m_task.GetNotes == "" Then
+			viewNotes.Text = Starter.Lang.Get("none")
+		Else
+			viewNotes.Text = m_task.GetNotes
+		End If
+		
+		' Repeat
+		If m_repeat.GetRepeatInfo == "" Then
+			viewRepeat.Text = Starter.Lang.Get("none")
+		Else
+			viewRepeat.Text = m_repeat.GetRepeatInfo
+		End If
+		
+		' Reminder
+		If m_task.IsReminderEnabled == True Then
+			Dim reminderStr As String = m_task.Reminder.GetFormattedTime(Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+			If reminderStr == "" Then
+				viewReminders.Text = Starter.Lang.Get("none")
+			Else
+				viewReminders.Text = reminderStr
+			End If
+		Else
+			viewReminders.Text = Starter.Lang.Get("off")
+		End If
+		
+		
+		viewSnooze.Text = Starter.Lang.Get(m_task.Snooze.GetSnoozeInfo)
+		
+		viewPriority.Text = Starter.Lang.Get(m_task.GetPriorityInfo)
+		viewDueDate.Text = m_task.GetDueDate.GetFormattedDate(Starter.Lang)
 		viewCreatedAt.Text = m_task.GetCreatedAt.GetFormattedDateAndTime( _
-			Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+			Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
 		viewModifiedAt.Text = m_task.GetUpdatedAt.GetFormattedDateAndTime( _
-			Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+			Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
 			
 		LoadAttachments
 		

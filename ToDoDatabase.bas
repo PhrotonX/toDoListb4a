@@ -11,20 +11,24 @@ Sub Class_Globals
 	Private m_attachmentDao As AttachmentDao
 	Private m_groupDao As GroupDao
 	Private m_repeatDao As RepeatDao
+	
+	Private m_lang As LanguageManager
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
-Public Sub Initialize
+Public Sub Initialize(lang As LanguageManager)
 	' Create a database file based on SQLite
 	sql.Initialize(File.DirInternal, "todo_db.db", True)
 	
 	CreateTable
 	
+	m_lang = lang
+	
 	' Initialize data access objects.
 	m_taskDao.Initialize(sql)
 	m_attachmentDao.Initialize(sql)
 	m_groupDao.Initialize(sql)
-	m_repeatDao.Initialize(sql)
+	m_repeatDao.Initialize(sql, m_lang)
 End Sub
 
 ' Creates tables for Database in SQL syntax, not MySQL.
@@ -217,16 +221,16 @@ Public Sub DropTables As Boolean
 	Return result
 End Sub
 
-Public Sub CopyDatabase()
+Public Sub CopyDatabase(Lang As LanguageManager)
 	
 	Dim source As String = File.DirInternal & "/todo_db.db"
 	Dim dest As String = File.Combine(File.DirDefaultExternal, "todo_db.db")
 
 	If File.Exists(source, "") Then 
 		File.Copy(source, "", dest, "")
-		ToastMessageShow("Database copied to /Download/", True)
+		ToastMessageShow(Lang.Get("database_copied") & " /Download/", True)
 	Else
-		ToastMessageShow("Database not found!", True)
+		ToastMessageShow(Lang.Get("database_not_found"), True)
 	End If
 End Sub
 

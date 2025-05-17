@@ -12,49 +12,49 @@ Sub Process_Globals
 
 End Sub
 
-Sub GetFileInfoByIndex(column As String, uri As String) As String
-	
-	Dim results As String
-	Dim Cur As Cursor
-	Dim Uri1 As Uri
-	Dim cr As ContentResolver
-	cr.Initialize("")
+'Sub GetFileInfoByIndex(column As String, uri As String) As String
+'	
+'	Dim results As String
+'	Dim Cur As Cursor
+'	Dim Uri1 As Uri
+'	Dim cr As ContentResolver
+'	cr.Initialize("")
 
-	'if viewing by gallery
-	If uri.StartsWith("content://media/") Then
-		Dim i As Int = uri.LastIndexOf("/")
-		Dim id As String = uri.SubString(i + 1)
-		Uri1.Parse(uri)
-		Cur = cr.Query(Uri1, Null, "_id = ?", Array As String(id), Null)
-		Cur.Position = 0
-		If Cur.RowCount <> 0 Then
-			For i = 0 To Cur.ColumnCount - 1
-				If Cur.GetColumnName(i) <> Null Then
-					If Cur.GetColumnName(i) = column Then
-						results = Cur.GetString2(i)
-						Exit
-					End If
-				End If
-			Next
-		End If
-	Else
-		Uri1.Parse(uri)
-		Cur = cr.Query(Uri1, Null, Null, Null, Null)
-		Cur.Position = 0
-		If Cur.RowCount <> 0 Then
-			For i = 0 To Cur.ColumnCount - 1
-				If Cur.GetColumnName(i) <> Null Then
-					If Cur.GetColumnName(i) = column Then
-						results = Cur.GetString2(i)
-						Exit
-					End If
-				End If
-			Next
-		End If
-	End If
-	
-	Cur.Close
-	
-	Return results
-	
-End Sub
+'	'if viewing by gallery
+'	If uri.StartsWith("content://media/") Then
+'		Dim i As Int = uri.LastIndexOf("/")
+'		Dim id As String = uri.SubString(i + 1)
+'		Uri1.Parse(uri)
+'		Cur = cr.Query(Uri1, Null, "_id = ?", Array As String(id), Null)
+'		Cur.Position = 0
+'		If Cur.RowCount <> 0 Then
+''			For i = 0 To Cur.ColumnCount - 1
+'				If Cur.GetColumnName(i) <> Null Then
+'					If Cur.GetColumnName(i) = column Then
+'						results = Cur.GetString2(i)
+'						Exit
+'					End If
+'				End If
+'			Next
+'		End If
+'	Else
+'		Uri1.Parse(uri)
+'		Cur = cr.Query(Uri1, Null, Null, Null, Null)
+'		Cur.Position = 0
+'		If Cur.RowCount <> 0 Then
+'			For i = 0 To Cur.ColumnCount - 1
+'				If Cur.GetColumnName(i) <> Null Then
+'					If Cur.GetColumnName(i) = column Then
+'						results = Cur.GetString2(i)
+'						Exit
+'					End If
+'				End If
+'			Next
+'		End If
+'	End If
+'	
+'	Cur.Close
+'	
+'	Return results
+'	
+'End Sub
