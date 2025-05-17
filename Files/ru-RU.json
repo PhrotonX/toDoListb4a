@@ -59,6 +59,7 @@
 	"error_opening_task_group_editor": "Ошибка при открытии редактора групп задач.",
 	"error_obtaining_file": "Ошибка при получении файла!",
 	"failed_to_save_task_group": "Не удалось сохранить группу задач",
+	"failed_to_delete_task_group": "Не удалось удалить группу задач",
 	"failed_to_retrieve_group_icon": "Не удалось получить значок группы",
 	"filename_of_attachment": "Имя файла вложения",
 	"filter_by": "Фильтровать по",

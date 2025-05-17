@@ -59,6 +59,7 @@
 	"error_opening_task_group_editor": "Error al abrir el editor de grupos de tareas.",
 	"error_obtaining_file": "¡Error al obtener el archivo!",
 	"failed_to_save_task_group": "Error al guardar el grupo de tareas",
+	"failed_to_delete_task_group": "No se pudo eliminar el grupo de tareas",
 	"failed_to_retrieve_group_icon": "Error al recuperar el icono del grupo",
 	"filename_of_attachment": "Nombre del archivo adjunto",
 	"filter_by": "Filtrar por",

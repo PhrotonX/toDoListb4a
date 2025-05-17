@@ -59,6 +59,7 @@
 	"error_opening_task_group_editor": "Error sa pagbubukas ng task group editor.",
 	"error_obtaining_file": "Error sa pagkuha ng file!",
 	"failed_to_save_task_group": "Nabigong i-save ang task group",
+	"failed_to_delete_task_group": "Nabigong tanggalin ang task group",
 	"failed_to_retrieve_group_icon": "Nabigong kunin ang icon ng grupo",
 	"filename_of_attachment": "Filename ng Attachment",
 	"filter_by": "I-filter Ayon sa",

@@ -59,6 +59,7 @@
 	"error_opening_task_group_editor": "打开任务组编辑器时出错。",
 	"error_obtaining_file": "获取文件时出错！",
 	"failed_to_save_task_group": "保存任务组失败",
+	"failed_to_delete_task_group": "删除任务组失败",
 	"failed_to_retrieve_group_icon": "无法检索组图标",
 	"filename_of_attachment": "附件文件名",
 	"filter_by": "筛选方式",

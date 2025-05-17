@@ -59,6 +59,7 @@
 	"error_opening_task_group_editor": "Error opening task group editor.",
 	"error_obtaining_file": "Error obtaining file!",
 	"failed_to_save_task_group": "Failed to save task group",
+	"failed_to_delete_task_group": "Failed to delete task group",
 	"failed_to_retrieve_group_icon": "Failed to retrieve group icon",
 	"filename_of_attachment": "Filename of Attachment",
 	"filter_by": "Filter By",

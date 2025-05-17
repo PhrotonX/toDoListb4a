@@ -59,6 +59,7 @@
 	"error_opening_task_group_editor": "Míle yang kamalian keng pamagbúkas ning editor ning grupung gawangáu.",
 	"error_obtaining_file": "Míle yang kamalian keng pamángilala kareng file!",
 	"failed_to_save_task_group": "E akayáng isálâ ing grupung gawangáu",
+	"failed_to_delete_task_group": "E akayáng mabura ing grupung gawangáu",
 	"failed_to_retrieve_group_icon": "E akayáng kuá ing icon ning grupu",
 	"filename_of_attachment": "Lagyu ning kalakip a file",
 	"filter_by": "Saliksík agpang king",

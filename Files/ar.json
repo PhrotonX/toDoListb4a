@@ -59,6 +59,7 @@
 	"error_opening_task_group_editor": "خطأ في فتح محرر مجموعة المهام.",
 	"error_obtaining_file": "خطأ في الحصول على الملف!",
 	"failed_to_save_task_group": "فشل حفظ مجموعة المهام",
+	"failed_to_delete_task_group": "فشل حذف مجموعة المهام",
 	"failed_to_retrieve_group_icon": "فشل استرداد رمز المجموعة",
 	"filename_of_attachment": "اسم ملف المرفق",
 	"filter_by": "تصفية حسب",

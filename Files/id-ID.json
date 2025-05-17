@@ -59,6 +59,7 @@
 	"error_opening_task_group_editor": "Kesalahan membuka editor grup tugas.",
 	"error_obtaining_file": "Kesalahan mendapatkan berkas!",
 	"failed_to_save_task_group": "Gagal menyimpan grup tugas",
+	"failed_to_delete_task_group": "Gagal menghapus grup tugas",
 	"failed_to_retrieve_group_icon": "Gagal mengambil ikon grup",
 	"filename_of_attachment": "Nama Berkas Lampiran",
 	"filter_by": "Saring Berdasarkan",
