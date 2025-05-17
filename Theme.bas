@@ -31,7 +31,9 @@ Public Sub SetUp(darkMode As Boolean)
 		m_textColor = Colors.RGB(73, 93, 143)
 		m_foregroundColor = Colors.RGB(224, 234, 255)
 	Else
-		
+		m_primaryColor = Colors.RGB(36, 36, 36)
+		m_textColor = Colors.RGB(255, 255, 255)
+		m_foregroundColor = Colors.RGB(53, 53, 53)
 	End If
 	
 End Sub
