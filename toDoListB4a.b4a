@@ -45,18 +45,19 @@ File48=settingsabout.bal
 File49=settingshelp.bal
 File5=AdvancedSettingsLayout.bal
 File50=settingslayout.bal
-File51=solid_white.png
-File52=stock4.png
-File53=sviewlayout.bal
-File54=TaskItemLayout.bal
-File55=taskviewlayout.bal
-File56=taskviewscrolllayout.bal
-File57=test.bal
-File58=tl-PH.json
-File59=YELLOW.png
+File51=smiley.png
+File52=solid_white.png
+File53=stock4.png
+File54=sviewlayout.bal
+File55=TaskItemLayout.bal
+File56=taskviewlayout.bal
+File57=taskviewscrolllayout.bal
+File58=test.bal
+File59=tl-PH.json
 File6=ar.json
-File60=YELLOW-SELECTED.png
-File61=zh-CN.json
+File60=YELLOW.png
+File61=YELLOW-SELECTED.png
+File62=zh-CN.json
 File7=AttachmentItemLayout.bal
 File8=AttachmentListLayout.bal
 File9=BLUE.png
@@ -118,6 +119,7 @@ FileGroup59=Default Group
 FileGroup6=Default Group
 FileGroup60=Default Group
 FileGroup61=Default Group
+FileGroup62=Default Group
 FileGroup7=Default Group
 FileGroup8=Default Group
 FileGroup9=Default Group
@@ -191,7 +193,7 @@ Module6=AttachmentViewHolder
 Module7=AttachmentViewModel
 Module8=DatabaseUtils
 Module9=Date
-NumberOfFiles=61
+NumberOfFiles=62
 NumberOfLibraries=16
 NumberOfModules=52
 Version=13.1
@@ -377,6 +379,8 @@ Sub Globals
 	Private radioSortByDD As RadioButton
 	Private radioSortByPrio As RadioButton
 	Private lblTitle As Label
+	Private lblSmiley As Label
+	Private pnlNewGroup As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -744,7 +748,7 @@ Private Sub LoadItems()
 			' Add items into the list view by binding the viewholder and the data.
 			
 			ToDoList.Add(CreateItem(viewHolder), viewHolder)
-			viewHolder.Root.SetColorAndBorder(Colors.White, 1, Colors.White, 15)
+			viewHolder.Root.SetColorAndBorder(Colors.z, 1, Colors.White, 15)
 			' Bind the currently referenced vieHolder that ToDoList points to into there
 			' currently iterated data.
 			BindItem(item, repeatItem, viewHolder)
@@ -776,6 +780,7 @@ Private Sub LoadItems()
 			pnlEmptyTasks.RemoveAllViews
 			pnlEmptyTasks.BringToFront
 			pnlEmptyTasks.LoadLayout("emptytasks")
+			lblSmiley.TextSize = 25%y
 			pnlEmptyTasks.Visible = True
 
 	' Make the counting information plural if possible.
@@ -1137,10 +1142,10 @@ Private Sub OnLoadTaskGroups(items As List)
 		viewHolder.Name.Text = item.GetTitle
 		viewHolder.Icon.Text = item.GetIcon
 
-		viewHolder.Root.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		viewHolder.BackPanel.SetColorAndBorder(Colors.White, 0, Colors.White, 0)
-		viewHolder.Icon.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		viewHolder.Name.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		viewHolder.Root.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
+		viewHolder.BackPanel.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
+		viewHolder.Icon.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
+		viewHolder.Name.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
 		
 		clvItems.Add(p, viewHolder)
 	Next

@@ -44,6 +44,7 @@ Sub Globals
 	
 	Private svAttachments As ScrollView
 	Private clvAttachments As CustomListView
+	Private pnlTaskViewBar As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -53,17 +54,8 @@ Sub Activity_Create(FirstTime As Boolean)
 
 	' Add the TaskViewScrollLayout as the view of taskView of the ScrollView in TaskViewLayout.
 	taskView.Panel.LoadLayout("TaskViewScrollLayout")
-	
-	' Other supplementary code for UI design.
-	Dim c As Canvas
-	c.Initialize(Label1)
-	Dim borderColor As Int = Colors.RGB(209, 209, 209)
-	Dim borderHeight As Int = 1dip
+	pnlTaskViewBar.Elevation = 10
 
-	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, _ 
-		borderHeight)
-
-	Label1.Invalidate
 End Sub
 
 Private Sub button_design
