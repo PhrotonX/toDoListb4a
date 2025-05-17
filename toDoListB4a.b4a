@@ -748,8 +748,8 @@ Private Sub LoadItems()
 					Case Else:
 						' If the Next item Is marked As completed, Then add subGroup "Completed"
 						If item.Done == True And itr == "" Then
-							CreateSubGroup("Completed", Colors.RGB(0, 0, 0), 18)
-							itr = "Completed"
+							CreateSubGroup(Starter.Lang.Get("completed"), Colors.RGB(0, 0, 0), 18)
+							itr = Starter.Lang.Get("completed")
 						End If
 				End Select
 			End If
@@ -1212,7 +1212,7 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 		
 		' Include the edit group button for custom lists.
 		If menuListView.Size < 4 Then	
-			menuListView.AddSingleLine2("	Edit Group", 3)
+			menuListView.AddSingleLine2("	" & Starter.Lang.Get("edit_group"), 3)
 		End If
 		
 		' Get the associated group based on the ID stored in the clicked view holder of the nav drawer.
@@ -1255,13 +1255,13 @@ Private Sub OnLoadTaskDescription(item As Group)
 		If item.GetDescription <> "" Then
 			GroupDescription.Text = item.GetDescription
 		Else
-			GroupDescription.Text = "No task group description"
+			GroupDescription.Text = Starter.Lang.Get("no_description")
 		End If
 		
 		GroupDescription.TextSize = 16
 		GroupLineDecor.Visible = False
 	Else
-		GroupDescription.Text = "My Tasks"
+		GroupDescription.Text = Starter.Lang.Get("my_tasks")
 		GroupDescription.TextSize = 22
 		GroupLineDecor.Visible = True
 	End If
@@ -1625,7 +1625,7 @@ Private Sub spnGroupName_ItemClick (Position As Int, Value As Object)
 		ToastMessageShow("Value: " & Value, False)
 	End If
 	
-	If Value == "Tasks" Then
+	If Value == Starter.Lang.Get("tasks") Then
 		m_query.SetGroupID(0)
 	Else
 		Dim groupId As Int = Starter.GroupViewModelInstance.GetGroupByTitle(Value).GetID
