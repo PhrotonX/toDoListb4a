@@ -80,8 +80,8 @@ Sub CheckInstanceState
 			Case EDITOR_RESULT_CANCEL:
 				' Display an error if a result other than SAVE and CANCEL has been received.
 			Case Else:
-				MsgboxAsync("Invalid result!" & CRLF & _
-			InstanceState.Get(EXTRA_EDITOR_RESULT), "Alert!")
+				MsgboxAsync(Lang.Get("invalid_result") & CRLF & _
+			InstanceState.Get(EXTRA_EDITOR_RESULT), Lang.Get("alert") & "!")
 		End Select
 	
 		' Remove the editor result extra from the bundle to avoid application state-related issues.
