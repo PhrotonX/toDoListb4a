@@ -385,6 +385,13 @@ Sub Globals
 	Private btnCancel As Button
 	Private btnConfirm As Button
 	Private lblSortBy As Label
+	Private lblRepeatFri As Label
+	Private lblRepeatMon As Label
+	Private lblRepeatSat As Label
+	Private lblRepeatSun As Label
+	Private lblRepeatThu As Label
+	Private lblRepeatTue As Label
+	Private lblRepeatWed As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -430,7 +437,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	End If
 	
 	m_taskObj.Initialize()
-	m_repeatObj.Initialize()
+	m_repeatObj.Initialize(Starter.Lang)
 End Sub
 
 Sub Activity_Resume
@@ -453,6 +460,46 @@ End Sub
 
 Private Sub OnLoadText
 	
+End Sub
+
+Private Sub OnLoadSearchText
+	lblFilterFilterBy.Text = Starter.Lang.Get("filter_by") & ":"
+	lblRepeatFri.Text = Starter.Lang.Get("friday_abbr")
+	lblRepeatSat.Text = Starter.Lang.Get("saturday_abbr")
+	lblRepeatSun.Text = Starter.Lang.Get("sunday_abbr")
+	lblRepeatMon.Text = Starter.Lang.Get("monday_abbr")
+	lblRepeatTue.Text = Starter.Lang.Get("tuesday_abbr")
+	lblRepeatWed.Text = Starter.Lang.Get("wednesday_abbr")
+	lblRepeatThu.Text = Starter.Lang.Get("thursday_abbr")
+	lblSearchSearchBy.Text = Starter.Lang.Get("search_by")
+	'lblSortBy.Text = Starter.Lang.Get("sort_by") & ":"
+	lblSortOrderBy.Text = Starter.Lang.Get("order_by") & ":"
+	'lblTitle.Text = Starter.Lang.Get("title") & ":"
+	radioFilterByPriorityCritical.Text = Starter.Lang.Get("critical")
+	radioFilterByPriorityHigh.Text = Starter.Lang.Get("high")
+	radioFilterByPriorityMedium.Text = Starter.Lang.Get("medium")
+	radioFilterByPriorityLow.Text = Starter.Lang.Get("low")
+	radioSearchByTitle.Text = Starter.Lang.Get("title")
+	radioSearchByNotes.Text = Starter.Lang.Get("notes")
+	radioSearchByFilename.Text = Starter.Lang.Get("filename_of_attachment")
+	radioSortOrderByNone.Text = Starter.Lang.Get("none")
+	radioSortOrderByAscending.Text = Starter.Lang.Get("ascending")
+	radioSortOrderByDescending.Text = Starter.Lang.Get("descending")
+	checkFilterByPriority.Text = Starter.Lang.Get("priority")
+	checkFilterByRepeat.Text = Starter.Lang.Get("repeat")
+	checkFilterByDueDate.Text = Starter.Lang.Get("due_date")
+	checkFilterByGroup.Text = Starter.Lang.Get("group")
+	checkDeleted.Text = Starter.Lang.Get("deleted")
+	radioDueSpecificDate.Text = Starter.Lang.Get("specific_date")
+	radioDueSpecificDateRange.Text = Starter.Lang.Get("specific_date_range")
+	radioDueSpecificDateGroup.Text = Starter.Lang.Get("specific_date_group")
+	'btnCancel.Text = Starter.Lang.Get("cancel")
+	'btnConfirm.Text = Starter.Lang.Get("confirm")
+	searchEditText.Hint = Starter.Lang.Get("search")
+	editDateYear.Text = Starter.Lang.Get("year")
+	editRangeYearFrom.Text = Starter.Lang.Get("year")
+	editRangeYearTo.Text = Starter.Lang.Get("year")
+	'titleLabel.Text = Starter.Lang.Get("title")
 End Sub
 
 ' Only run if Android SDK version is >= 31.
@@ -633,7 +680,7 @@ Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewH
 		viewHolder.TaskInfo.Text = item.GetGlance(item.GetPriorityInfo, repeatItem.GetRepeatInfo)
 	Else
 		If Starter.SettingsViewModelInstance.IsDetailedDueDateEnabled() And SavedSmartList <> SMART_LIST_PLANNED Then
-			viewHolder.TaskInfo.Text = item.GetGlance(item.GetDueDate.IdentifyDate, repeatItem.GetRepeatInfo)
+			viewHolder.TaskInfo.Text = item.GetGlance(Starter.Lang.Get(item.GetDueDate.IdentifyDate), repeatItem.GetRepeatInfo)
 		Else
 			viewHolder.TaskInfo.Text = item.GetGlance(item.GetDueDate.GetFormattedDate2, repeatItem.GetRepeatInfo)
 		End If
@@ -757,7 +804,7 @@ Private Sub LoadItems()
 			' Add items into the list view by binding the viewholder and the data.
 			
 			ToDoList.Add(CreateItem(viewHolder), viewHolder)
-			viewHolder.Root.SetColorAndBorder(Colors.z, 1, Colors.White, 15)
+			viewHolder.Root.SetColorAndBorder(Colors.White, 1, Colors.White, 15)
 			' Bind the currently referenced vieHolder that ToDoList points to into there
 			' currently iterated data.
 			BindItem(item, repeatItem, viewHolder)
@@ -1284,6 +1331,9 @@ Private Sub searchBtn_Click
 		searchFragment.SetLayout(mainFragment.Left, mainFragment.Top, mainFragment.Width, mainFragment.Height)
 		svSearchBody.SetLayout(searchFragment.Left, 0, searchFragment.Width, searchFragment.Height)
 		svSearchBody.Panel.LoadLayout("searchFragmentSVLayout")
+		
+		OnLoadSearchText
+		
 		EditTextTransparentUnderline
 		pnlSearchSeparator1.SetLayout(50dip, pnlSearchSeparator1.Top, 100%x - 100dip, 2dip)
 		pnlSearchSeparator2.SetLayout(50dip, pnlSearchSeparator2.Top, 100%x - 100dip, 2dip)
@@ -1451,7 +1501,6 @@ Private Sub enterBtn_Click
 	
 	drawerButton.Text = Chr(0xE5CD)
 End Sub
-
 
 Private Sub btnCancel_Click
 	sortMsgBox_disappear
@@ -1625,7 +1674,7 @@ Private Sub spnGroupName_ItemClick (Position As Int, Value As Object)
 		ToastMessageShow("Value: " & Value, False)
 	End If
 	
-	If Value == Starter.Lang.Get("tasks") Then
+	If Value == FormHelper.DEFAULT_TASK_NAME Then
 		m_query.SetGroupID(0)
 	Else
 		Dim groupId As Int = Starter.GroupViewModelInstance.GetGroupByTitle(Value).GetID
