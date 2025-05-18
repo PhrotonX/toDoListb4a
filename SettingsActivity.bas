@@ -44,6 +44,10 @@ Sub Globals
 	Private spnLanguage As Spinner
 	Private lblSettings As Label
 	Private lblTaskSettings As Label
+	Private lblAbout As Label
+	Private lblHelp As Label
+	Private pnlAbout As Panel
+	Private pnlHelp As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -161,8 +165,8 @@ Private Sub lbl24hrFormat_Click
 End Sub
 
 Private Sub lblAdvancedSettings_Click
-	pnlAdvancedSettings.SetColorAnimated(250, Colors.White, Colors.LightGray)
-	pnlAdvancedSettings.SetColorAnimated(250, Colors.LightGray, Colors.White)
+	pnlAdvancedSettings.SetColorAnimated(250, Colors.Transparent, Colors.LightGray)
+	pnlAdvancedSettings.SetColorAnimated(250, Colors.LightGray, Colors.Transparent)
 	StartActivity(AdvancedSettingsActivity)
 End Sub
 
@@ -212,4 +216,16 @@ Private Sub spnLanguage_ItemClick (Position As Int, Value As Object)
 		Starter.Lang.Initialize(Starter.SettingsViewModelInstance)
 	End If
 	
+End Sub
+
+Private Sub lblHelp_Click
+	pnlHelp.SetColorAnimated(250, Colors.Transparent, Colors.LightGray)
+	pnlHelp.SetColorAnimated(250, Colors.LightGray, Colors.Transparent)
+	StartActivity(SettingsHelp)
+End Sub
+
+Private Sub lblAbout_Click
+	pnlAbout.SetColorAnimated(250, Colors.Transparent, Colors.LightGray)
+	pnlAbout.SetColorAnimated(250, Colors.LightGray, Colors.Transparent)
+	StartActivity(SettingsAbout)
 End Sub
