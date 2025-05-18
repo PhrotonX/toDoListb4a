@@ -1189,8 +1189,8 @@ Sub LoadDrawerItems
 		drawertitlebar.Color = Colors.RGB(244,246,250)
 		pnlItems.Color = Colors.RGB(244,246,250)
 		lblTitle.TextColor = Colors.RGB(68,68,68)
-		lblNewGroup.TextColor = Colors.Black
-		lblGroupIcon.TextColor = Colors.Black
+		lblNewGroup.TextColor = Colors.RGB(68,68,68)
+		lblGroupIcon.TextColor = Colors.RGB(68,68,68)
 		imgLogo.Bitmap = LoadBitmap(File.DirAssets, "486023921_623831243812785_3842496593750662642_n (1).png")
 		lblNewGroup.Invalidate
 		lblGroupIcon.Invalidate
@@ -1319,8 +1319,8 @@ Private Sub OnLoadTaskGroups(items As List)
 		viewHolder.Name.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
 		
 		If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
-			viewHolder.Icon.TextColor = Colors.RGB(36,36,36)
-			viewHolder.Name.TextColor = Colors.RGB(36,36,36)
+			viewHolder.Icon.TextColor = Colors.RGB(68,68,68)
+			viewHolder.Name.TextColor = Colors.RGB(68,68,68)
 		Else
 			viewHolder.Icon.TextColor = Theme.ForegroundText
 			viewHolder.Name.TextColor = Theme.ForegroundText

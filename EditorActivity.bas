@@ -809,8 +809,8 @@ Private Sub Darkmode
 		radioPriorityLow.TextColor = Colors.RGB(28,28,28)
 		editNotes.TextColor = Colors.Black
 		editTitle.TextColor = Colors.Black
-		editNotes.HintColor = Colors.LightGray
-		editTitle.HintColor = Colors.LightGray
+		editNotes.HintColor = Colors.DarkGray
+		editTitle.HintColor = Colors.DarkGray
 		
 		pnlEdit.Color = Colors.RGB(232,236,245)
 		pnlNotes.Color = Colors.RGB(232,236,245)
