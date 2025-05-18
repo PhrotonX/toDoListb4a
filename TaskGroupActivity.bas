@@ -62,13 +62,17 @@ Sub Globals
 	Private btnAddGrpSave As Button
 	Private lblAddGrp As Label
 	
-	Private pnlAddGrpBar As Panel
 	Private btnAddGrpCancel As Button
 	Private btnAddGrpSave As Button
 	Private btnGrpDelete As Button
 	Private lblIcons As Label
 	Private lblNotes As Label
 	Private lblTitle As Label
+	Private pnlGrpDelete As Panel
+	Private pnlAddGrpNotes As Panel
+	Private pnlAddGrpTitle As Panel
+	Private pnlColors As Panel
+	Private pnlIcons As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -139,6 +143,8 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
+	
+	
 	' Turn color brown option into yellow if dark mode is enabled.
 	If Starter.SettingsViewModelInstance.IsDarkModeEnabled Then
 		tiles(Theme.COLOR_BROWN).Tag = "YELLOW"
@@ -169,6 +175,7 @@ Sub Activity_Resume
 	Log("TaskGroupActivity.Activity_Resume Color" & m_group.GetColor)
 	Log("TaskGroupActivity.Activity_Resume Icon" & m_group.GetIcon)
 
+	Darkmode
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -413,4 +420,62 @@ Private Sub btnGrpDelete_Click
 			Log(LastException)
 		End Try
 	End If
+End Sub
+
+Private Sub Darkmode
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		pnlAddGrpBar.Color = Colors.RGB(75,93,140)
+		svAddGrpBody.Color = Colors.RGB(244,246,250)
+		
+		lblAddGrp.TextColor = Colors.White
+		btnAddGrpCancel.TextColor = Colors.White
+		btnAddGrpSave.TextColor = Colors.White
+		
+		lblTitle.TextColor = Colors.RGB(28,28,28)
+		lblNotes.TextColor = Colors.RGB(28,28,28)
+		lblColor.TextColor = Colors.RGB(28,28,28)
+		lblIcons.TextColor = Colors.RGB(28,28,28)
+		lblCreatedAt.TextColor = Colors.RGB(28,28,28)
+		lblUpdatedAt.TextColor = Colors.RGB(28,28,28)
+		
+		pnlAddGrpTitle.Color = Colors.RGB(232,236,245)
+		pnlAddGrpNotes.Color = Colors.RGB(232,236,245)
+		lblColor.TextColor = Colors.RGB(28,28,28)
+		pnlColors.Color = Colors.Transparent
+		pnlIcons.Color = Colors.Transparent
+		
+		editAddGrpTitle.TextColor = Theme.Foregroundtext
+		editNotes.TextColor = Theme.Foregroundtext
+		
+		editAddGrpTitle.HintColor = Colors.LightGray
+		editNotes.HintColor = Colors.LightGray
+	Else
+		pnlAddGrpBar.Color = Colors.RGB(28,28,28)
+		'pnlAddGrpBar.Color = Colors.Green
+		svAddGrpBody.Color = Theme.DarkbackgroundColor
+		
+		lblAddGrp.TextColor = Theme.ForegroundText
+		btnAddGrpCancel.TextColor = Theme.ForegroundText
+		btnAddGrpSave.TextColor = Theme.ForegroundText
+		
+		lblTitle.TextColor = Theme.ForegroundText
+		lblNotes.TextColor = Theme.ForegroundText
+		lblColor.TextColor = Theme.ForegroundText
+		lblIcons.TextColor = Theme.ForegroundText
+		lblCreatedAt.TextColor = Theme.ForegroundText
+		lblUpdatedAt.TextColor = Theme.ForegroundText
+		
+		pnlAddGrpTitle.Color = Theme.RootColor
+		pnlAddGrpNotes.Color = Theme.RootColor
+		lblColor.TextColor = Theme.ForegroundText
+		pnlColors.Color = Colors.Transparent
+		pnlIcons.Color = Colors.Transparent
+		
+		editAddGrpTitle.TextColor = Theme.Foregroundtext
+		editNotes.TextColor = Theme.Foregroundtext
+		
+		editAddGrpTitle.HintColor = Colors.LightGray
+		editNotes.HintColor = Colors.LightGray
+	End If
+	
 End Sub

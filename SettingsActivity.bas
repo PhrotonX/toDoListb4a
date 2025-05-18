@@ -12,7 +12,6 @@ Version=10.2
 Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
-
 End Sub
 
 Sub Globals
@@ -48,6 +47,8 @@ Sub Globals
 	Private lblHelp As Label
 	Private pnlAbout As Panel
 	Private pnlHelp As Panel
+	Private pnlTaskSettings As Panel
+	Private pnlGeneralSettings As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -78,6 +79,7 @@ End Sub
 
 Sub Activity_Resume
 	LoadSettings
+	DarkMode
 End Sub
 
 Sub LoadSettings
@@ -91,6 +93,44 @@ End Sub
 
 Sub button_design
 	pnlSettingsBar.Elevation = 10
+End Sub
+
+Sub DarkMode
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		pnlSettingsBar.Color = Colors.RGB(241,241,241)
+		lblSettings.TextColor = Colors.Black
+		btnBack.TextColor = Colors.RGB(67,67,67)
+		svMain.Color = Colors.RGB(241,241,241)
+		lblTaskSettings.TextColor = Colors.Black
+		lblGeneralSettings.TextColor = Colors.Black
+		lblDetailedDueDate.TextColor = Colors.Black
+		lblTaskCompletionSound.TextColor = Colors.Black
+		lbl24hrFormat.TextColor = Colors.Black
+		lblDarkMode.TextColor = Colors.Black
+		lblLanguage.TextColor = Colors.Black
+		lblAdvancedSettings.TextColor = Colors.Black
+		lblHelp.TextColor = Colors.Black
+		lblAbout.TextColor = Colors.Black
+		pnlTaskSettings.Color = Colors.White
+		pnlGeneralSettings.Color = Colors.White
+	Else
+		pnlSettingsBar.Color = Colors.RGB(28,28,28)
+		lblSettings.TextColor = Theme.ForegroundText
+		btnBack.TextColor = Theme.ForegroundText
+		svMain.Color = Theme.DarkbackgroundColor
+		lblTaskSettings.TextColor = Theme.ForegroundText
+		lblGeneralSettings.TextColor = Theme.ForegroundText
+		lblDetailedDueDate.TextColor = Theme.ForegroundText
+		lblTaskCompletionSound.TextColor = Theme.ForegroundText
+		lbl24hrFormat.TextColor = Theme.ForegroundText
+		lblDarkMode.TextColor = Theme.ForegroundText
+		lblLanguage.TextColor = Theme.ForegroundText
+		lblAdvancedSettings.TextColor = Theme.ForegroundText
+		lblHelp.TextColor = Theme.ForegroundText
+		lblAbout.TextColor = Theme.ForegroundText
+		pnlTaskSettings.Color = Theme.RootColor
+		pnlGeneralSettings.Color = Theme.RootColor
+	End If
 End Sub
 
 Sub btnBack_Click

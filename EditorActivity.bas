@@ -106,6 +106,25 @@ Sub Globals
 	Private pnlTitlelbl As Panel
 	Private reminderlbl As Label
 	Private btnSave As Button
+	Private pnlContainerCheckRepeat As Panel
+	Private pnlContainerRepeat As Panel
+	Private ImageView3 As ImageView
+	Private pnlAttachments As Panel
+	Private pnlContainerDueDate As Panel
+	Private pnlContainerReminder As Panel
+	Private pnlContainerSpnSnooze As Panel
+	Private pnlContainerSpnTaskGroup As Panel
+	Private pnlDay As Panel
+	Private pnlDueDatelbl As Panel
+	Private pnlEdit As Panel
+	Private pnlMonth As Panel
+	Private pnlNotes As Panel
+	Private PnlPriority As Panel
+	Private pnlSpinReminderHour As Panel
+	Private pnlSpinReminderMarker As Panel
+	Private pnlSpinReminderMinute As Panel
+	Private pnlYear As Panel
+	Private btnCancel As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -116,6 +135,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	m_pendingAttachmentDelete.Initialize
 	
 	editorScrollView.Panel.LoadLayout("EditorScrollLayout")
+	
+	pnlContainerCheckRepeat.Left = (pnlContainerRepeat.Width - pnlContainerCheckRepeat.Width) / 2
+	pnlContainerLblRepeat.Left = (pnlContainerRepeat.Width - pnlContainerLblRepeat.Width) / 2
 	
 	OnLoadText
 	
@@ -323,7 +345,7 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-
+	darkmode
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -358,7 +380,7 @@ Private Sub OnLoadText
 	radioPriorityLow.Text = Starter.Lang.Get("low")
 	
 	btnClearAll.Text = Starter.Lang.Get("clear_all")
-	btnClearDueDate.Text = Starter.Lang.Get("clear")
+	btnClearDueDate.Text = Starter.Lang.Get("clear_uppercase")
 	btnClearNotes.Text = Starter.Lang.Get("clear_uppercase")
 	btnClearTitle.Text = Starter.Lang.Get("clear_uppercase")
 	btnPriorityClear.Text = Starter.Lang.Get("clear_uppercase")
@@ -755,4 +777,81 @@ End Sub
 Private Sub btnClearNotes_Click
 	editNotes.Text = ""
 	m_task.SetNotes("")
+End Sub
+
+Private Sub Darkmode
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		pnlEditorBar.Color = Colors.RGB(75,93,140)
+		lblAddTask.TextColor = Colors.White
+		btnCancel.TextColor = Colors.White
+		btnSave.TextColor = Colors.White
+		editorScrollView.Color = Colors.RGB(244,246,250)
+		
+		lblTitle.TextColor = Colors.RGB(28,28,28)
+		lblNotes.TextColor = Colors.RGB(28,28,28)
+		lblDueDate.TextColor = Colors.RGB(28,28,28)
+		lblPrority.TextColor = Colors.RGB(28,28,28)
+		lblRepeat.TextColor = Colors.RGB(28,28,28)
+		reminderlbl.TextColor = Colors.RGB(28,28,28)
+		lblSnooze.TextColor = Colors.RGB(28,28,28)
+		lblTaskGroup.TextColor = Colors.RGB(28,28,28)
+		lblAttachments.TextColor = Colors.RGB(28,28,28)
+		lblRepeatSun.TextColor = Colors.RGB(28,28,28)
+		lblRepeatMon.TextColor = Colors.RGB(28,28,28)
+		lblRepeatTue.TextColor = Colors.RGB(28,28,28)
+		lblRepeatWed.TextColor = Colors.RGB(28,28,28)
+		lblRepeatThu.TextColor = Colors.RGB(28,28,28)
+		lblRepeatFri.TextColor = Colors.RGB(28,28,28)
+		lblRepeatSat.TextColor = Colors.RGB(28,28,28)
+		radioPriorityCritical.TextColor = Colors.RGB(28,28,28)
+		radioPriorityHigh.TextColor = Colors.RGB(28,28,28)
+		radioPriorityMedium.TextColor = Colors.RGB(28,28,28)
+		radioPriorityLow.TextColor = Colors.RGB(28,28,28)
+		editNotes.TextColor = Colors.Black
+		editTitle.TextColor = Colors.Black
+		editNotes.HintColor = Colors.LightGray
+		editTitle.HintColor = Colors.LightGray
+		
+		pnlEdit.Color = Colors.RGB(232,236,245)
+		pnlNotes.Color = Colors.RGB(232,236,245)
+		PnlPriority.Color = Colors.RGB(232,236,245)
+		pnlAttachments.Color = Colors.RGB(232,236,245)
+	Else
+		pnlEditorBar.Color = Colors.RGB(28,28,28)
+		lblAddTask.TextColor = Theme.ForegroundText
+		btnCancel.TextColor = Theme.ForegroundText
+		btnSave.TextColor = Theme.ForegroundText
+		editorScrollView.Color = Theme.DarkbackgroundColor
+		
+		lblTitle.TextColor = Theme.ForegroundText
+		lblNotes.TextColor = Theme.ForegroundText
+		lblDueDate.TextColor = Theme.ForegroundText
+		lblPrority.TextColor = Theme.ForegroundText
+		lblRepeat.TextColor = Theme.ForegroundText
+		reminderlbl.TextColor = Theme.ForegroundText
+		lblSnooze.TextColor = Theme.ForegroundText
+		lblTaskGroup.TextColor = Theme.ForegroundText
+		lblAttachments.TextColor = Theme.ForegroundText
+		lblRepeatSun.TextColor = Theme.ForegroundText
+		lblRepeatMon.TextColor = Theme.ForegroundText
+		lblRepeatTue.TextColor = Theme.ForegroundText
+		lblRepeatWed.TextColor = Theme.ForegroundText
+		lblRepeatThu.TextColor = Theme.ForegroundText
+		lblRepeatFri.TextColor = Theme.ForegroundText
+		lblRepeatSat.TextColor = Theme.ForegroundText
+		radioPriorityCritical.TextColor = Theme.ForegroundText
+		radioPriorityHigh.TextColor = Theme.ForegroundText
+		radioPriorityMedium.TextColor = Theme.ForegroundText
+		radioPriorityLow.TextColor = Theme.ForegroundText
+		editNotes.TextColor = Theme.ForegroundText
+		editTitle.TextColor = Theme.ForegroundText
+		editNotes.HintColor = Colors.LightGray
+		editTitle.HintColor = Colors.LightGray
+		
+		pnlEdit.Color = Theme.RootColor
+		pnlNotes.Color = Theme.RootColor
+		PnlPriority.Color = Theme.RootColor
+		pnlAttachments.Color = Theme.RootColor
+	End If
+	
 End Sub

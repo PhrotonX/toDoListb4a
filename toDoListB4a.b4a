@@ -5,59 +5,60 @@ File11=brown.png
 File12=brown-selected.png
 File13=canvas.bal
 File14=done_sound.mp3
-File15=draweritems.bal
-File16=drawerlayout.bal
-File17=EditorLayout.bal
-File18=EditorScrollLayout.bal
-File19=emptytasks.bal
+File15=drawercolorlight.png
+File16=draweritems.bal
+File17=drawerlayout.bal
+File18=EditorLayout.bal
+File19=EditorScrollLayout.bal
 File2=486023921_623831243812785_3842496593750662642_n (1).png
-File20=en-US.json
-File21=es-ES.json
-File22=folder.png
-File23=GREEN.png
-File24=GREEN-SELECTED.png
-File25=groupTasksLayout.bal
-File26=groupTasksSVLayout.bal
-File27=helpitems.bal
-File28=ic_launcher.png
-File29=ic_launcher_small.png
+File20=emptytasks.bal
+File21=en-US.json
+File22=es-ES.json
+File23=folder.png
+File24=GREEN.png
+File25=GREEN-SELECTED.png
+File26=groupTasksLayout.bal
+File27=groupTasksSVLayout.bal
+File28=helpitems.bal
+File29=ic_launcher.png
 File3=486023921_623831243812785_3842496593750662642_n.jpg
-File30=ic_launcher_xl.png
-File31=id-ID.json
-File32=INDIGO.png
-File33=INDIGO-SELECTED.png
-File34=Layout.bal
-File35=newfragment.bal
-File36=ORANGE.png
-File37=ORANGE-SELECTED.PNG
-File38=pam.json
-File39=pencil.png
+File30=ic_launcher_small.png
+File31=ic_launcher_xl.png
+File32=id-ID.json
+File33=INDIGO.png
+File34=INDIGO-SELECTED.png
+File35=Layout.bal
+File36=newfragment.bal
+File37=ORANGE.png
+File38=ORANGE-SELECTED.PNG
+File39=pam.json
 File4=aboutitems.bal
-File40=PINK.png
-File41=PINK-SELECTED.png
-File42=RED.png
-File43=RED-SELECTED.png
-File44=ru-RU.json
-File45=searchByLayout.bal
-File46=searchFragmentSVLayout.bal
-File47=separatorlayout.bal
-File48=settingsabout.bal
-File49=settingshelp.bal
+File40=pencil.png
+File41=PINK.png
+File42=PINK-SELECTED.png
+File43=RED.png
+File44=RED-SELECTED.png
+File45=ru-RU.json
+File46=searchByLayout.bal
+File47=searchFragmentSVLayout.bal
+File48=separatorlayout.bal
+File49=settingsabout.bal
 File5=AdvancedSettingsLayout.bal
-File50=settingslayout.bal
-File51=smiley.png
-File52=solid_white.png
-File53=stock4.png
-File54=sviewlayout.bal
-File55=TaskItemLayout.bal
-File56=taskviewlayout.bal
-File57=taskviewscrolllayout.bal
-File58=test.bal
-File59=tl-PH.json
+File50=settingshelp.bal
+File51=settingslayout.bal
+File52=smiley.png
+File53=solid_white.png
+File54=stock4.png
+File55=sviewlayout.bal
+File56=TaskItemLayout.bal
+File57=taskviewlayout.bal
+File58=taskviewscrolllayout.bal
+File59=test.bal
 File6=ar.json
-File60=YELLOW.png
-File61=YELLOW-SELECTED.png
-File62=zh-CN.json
+File60=tl-PH.json
+File61=YELLOW.png
+File62=YELLOW-SELECTED.png
+File63=zh-CN.json
 File7=AttachmentItemLayout.bal
 File8=AttachmentListLayout.bal
 File9=BLUE.png
@@ -120,6 +121,7 @@ FileGroup6=Default Group
 FileGroup60=Default Group
 FileGroup61=Default Group
 FileGroup62=Default Group
+FileGroup63=Default Group
 FileGroup7=Default Group
 FileGroup8=Default Group
 FileGroup9=Default Group
@@ -193,7 +195,7 @@ Module6=AttachmentViewHolder
 Module7=AttachmentViewModel
 Module8=DatabaseUtils
 Module9=Date
-NumberOfFiles=62
+NumberOfFiles=63
 NumberOfLibraries=16
 NumberOfModules=52
 Version=13.1
@@ -396,6 +398,24 @@ Sub Globals
 	Private imgLogo As ImageView
 	Private lblToDoList As Label
 	Private pnlSplashScreen As Panel
+	Private searchBtn As Button
+	Private lblEmptyTasks As Label
+	Private drawertitlebar As Panel
+	Private pnlContainerSearchEditText As Panel
+	Private enterBtn As Button
+	Private pnlContainerLblRepeat As Panel
+	Private pnlSpnDateDay As Panel
+	Private pnlSpnDateMonth As Panel
+	Private pnlEditDateYear As Panel
+	Private pnlSpinRangeMonthFrom As Panel
+	Private pnlSpinRangeDayFrom As Panel
+	Private pnlEditRangeYearFrom As Panel
+	Private pnlSpinRangeMonthTo As Panel
+	Private pnlSpinRangeDayTo As Panel
+	Private pnlEditRangeYearTo As Panel
+	Private pnlSearchContainer As Panel
+	Private pnlSortOrderBy As Panel
+	Private pnlAllFilterBy As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -666,6 +686,7 @@ Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewH
 	viewHolder.TaskCheckbox.Text = item.GetTitle
 	' Bind the glance information
 	
+	
 	If m_query.GetSearchBy == m_query.FIELD_ATTACHMENT_FILENAME Then
 		Dim results As List = Starter.AttachmentViewModelInstance.GetSearchedAttachments(item.GetId, _ 
 			m_query.GetSearchValue(m_query.SEARCH_QUERY_ITEM_SEARCH_BY))
@@ -707,10 +728,27 @@ Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewH
 	' Bind the panel into the view holder.
 	viewHolder.TaskPanel = pnlClickArea
 	
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		viewHolder.TaskInfo.TextColor = Colors.RGB(91,91,91)
+		viewHolder.TaskCheckbox.TextColor = Colors.Black
+		Dim lbl As Label = viewHolder.TaskPanel.GetView(0)
+		lbl.TextColor = Colors.RGB(67,67,67)
+	
+	Else
+		viewHolder.TaskInfo.TextColor = Theme.ForegroundText
+		viewHolder.TaskCheckbox.TextColor = Theme.ForegroundText
+		Dim lbl As Label = viewHolder.TaskPanel.GetView(0)
+		lbl.TextColor = Theme.ForegroundText
+		
+	End If
+	
 	' Bind the checked value. Must be placed in this part in order since this
 	' triggers the chkToDoItem_CheckedChange event.
 	viewHolder.TaskCheckbox.Checked = item.Done
 End Sub
+
+
+
 
 ' Loads the items.
 Private Sub LoadItems()
@@ -820,7 +858,15 @@ Private Sub LoadItems()
 			' Add items into the list view by binding the viewholder and the data.
 			
 			ToDoList.Add(CreateItem(viewHolder), viewHolder)
-			viewHolder.Root.SetColorAndBorder(Colors.White, 1, Colors.White, 15)
+			
+			If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+				viewHolder.Root.SetColorAndBorder(Colors.White, 1, Colors.White, 15)
+	
+			Else
+				viewHolder.Root.SetColorAndBorder(Theme.RootColor, 1, Theme.RootColor, 15)
+	
+			End If
+			'viewHolder.Root.SetColorAndBorder(Colors.White, 1, Colors.White, 15)
 			' Bind the currently referenced vieHolder that ToDoList points to into there
 			' currently iterated data.
 			BindItem(item, repeatItem, viewHolder)
@@ -875,8 +921,16 @@ Private Sub CreateSubGroup(title As String, color As Int, textSize As Int)
 	Else
 		subGroup.Root.Height = 70
 	End If
+	
 	subGroup.Name.TextSize = textSize
-	subGroup.Name.TextColor = color
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+	
+		subGroup.Name.TextColor = color
+	Else
+		subGroup.Name.TextColor = Theme.ForegroundText
+	End If
+	
+
 
 	ToDoList.Add(subGroup.BuildView(), subGroup)
 End Sub
@@ -972,6 +1026,32 @@ Private Sub OnHideMenuListViewItem()
 End Sub
 
 Private Sub sortMsgBox
+	
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		pnlSortDialogue.Color = Colors.White
+		lblSortBy.TextColor = Colors.RGB(96,96,96)
+		radioNone.TextColor = Colors.RGB(96,96,96)
+		radioAsc.TextColor = Colors.RGB(96,96,96)
+		radioDesc.TextColor = Colors.RGB(96,96,96)
+		radioSortByNone.TextColor = Colors.RGB(96,96,96)
+		radioSortByCreaion.TextColor = Colors.RGB(96,96,96)
+		radioSortByTitle.TextColor = Colors.RGB(96,96,96)
+		radioSortByDD.TextColor = Colors.RGB(96,96,96)
+		radioSortByPrio.TextColor = Colors.RGB(96,96,96)
+	Else
+		pnlSortDialogue.Color = Theme.RootColor
+		lblSortBy.TextColor = Theme.ForegroundText
+		radioNone.TextColor = Theme.ForegroundText
+		radioAsc.TextColor = Theme.ForegroundText
+		radioDesc.TextColor = Theme.ForegroundText
+		radioSortByNone.TextColor = Theme.ForegroundText
+		radioSortByCreaion.TextColor = Theme.ForegroundText
+		radioSortByTitle.TextColor = Theme.ForegroundText
+		radioSortByDD.TextColor = Theme.ForegroundText
+		radioSortByPrio.TextColor = Theme.ForegroundText
+	End If
+	
+	
 	pnlSortDialoguebg.BringToFront
 	pnlSortDialoguebg.Elevation = 20
 	pnlSortDialoguebg.SetVisibleAnimated(250, True)
@@ -1104,6 +1184,28 @@ Sub LoadDrawerItems
 	clvItems.sv.ScrollViewInnerPanel.Color = xui.Color_Transparent
 	clvItems.sv.Color = xui.Color_Transparent
 	
+	
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		drawertitlebar.Color = Colors.RGB(244,246,250)
+		pnlItems.Color = Colors.RGB(244,246,250)
+		lblTitle.TextColor = Colors.RGB(68,68,68)
+		lblNewGroup.TextColor = Colors.Black
+		lblGroupIcon.TextColor = Colors.Black
+		imgLogo.Bitmap = LoadBitmap(File.DirAssets, "486023921_623831243812785_3842496593750662642_n (1).png")
+		lblNewGroup.Invalidate
+		lblGroupIcon.Invalidate
+	Else
+		drawertitlebar.Color = Theme.RootColor
+		pnlItems.Color = Theme.RootColor
+		lblTitle.TextColor = Theme.ForegroundText
+		lblNewGroup.TextColor = Theme.ForegroundText
+		lblGroupIcon.TextColor = Theme.ForegroundText
+		lblNewGroup.Invalidate
+		lblGroupIcon.Invalidate
+		imgLogo.Bitmap = LoadBitmap(File.DirAssets, "drawercolorlight.png")
+	End If
+	
+	
 	Dim items As List
 	items.Initialize
 	
@@ -1216,6 +1318,14 @@ Private Sub OnLoadTaskGroups(items As List)
 		viewHolder.Icon.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
 		viewHolder.Name.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
 		
+		If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+			viewHolder.Icon.TextColor = Colors.RGB(36,36,36)
+			viewHolder.Name.TextColor = Colors.RGB(36,36,36)
+		Else
+			viewHolder.Icon.TextColor = Theme.ForegroundText
+			viewHolder.Name.TextColor = Theme.ForegroundText
+		End If
+		
 		clvItems.Add(p, viewHolder)
 	Next
 End Sub
@@ -1304,12 +1414,33 @@ Private Sub OnLoadPage(item As Group)
 		LoadItems
 		
 		Starter.CheckInstanceState
-		pnlTitleBar.Color = Theme.GetPrimaryColor(item.GetColor)
-		mainFragment.Color = Theme.GetBackgroundColor(item.GetColor)
+		
+		If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+			pnlTitleBar.Color = Theme.GetPrimaryColor(item.GetColor)
+			mainFragment.Color = Theme.GetBackgroundColor(item.GetColor)
+			drawerButton.TextColor = Colors.White
+			titleLabel.TextColor = Colors.White
+			searchBtn.TextColor = Colors.White
+			menuBtn.TextColor = Colors.White
+		Else
+			pnlTitleBar.Color = Colors.RGB(28,28,28)
+			mainFragment.Color = Theme.DarkbackgroundColor
+			drawerButton.TextColor = Theme.GetTextColor(item.GetColor)
+			titleLabel.TextColor = Theme.GetTextColor(item.GetColor)
+			searchBtn.TextColor = Theme.GetTextColor(item.GetColor)
+			menuBtn.TextColor = Theme.GetTextColor(item.GetColor)
+			lblEmptyTasks.TextColor = Theme.ForegroundText
+			lblSmiley.TextColor = Theme.ForegroundText
+			btnAdd.Background = Theme.btnRootColor
+			btnAdd.TextColor = Theme.ForegroundText
+		End If
+		
+	
+			
 End Sub
 
 Private Sub OnLoadTaskDescription(item As Group)
-	GroupDescription.TextColor = Theme.GetPrimaryColor(item.GetColor)
+	GroupDescription.TextColor = Theme.GetTextColor(item.GetColor)
 	
 	If SavedSmartList <> SMART_LIST_MY_DAY Then
 		If item.GetDescription <> "" Then
@@ -1353,9 +1484,27 @@ Private Sub searchBtn_Click
 		searchFragment.SetVisibleAnimated(150, True)
 		searchFragment.BringToFront
 		
+		If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+			searchcontentLight
+		Else
+			searchcontentDark
+		End If
+		
+		
 		Sleep(150)
 		mainFragment.Visible = False
 		pnlTitleBar.Visible = False
+		
+		pnlContainerFilterByCheckRepeat.Left = (pnlFilterByRepeat.Width - pnlContainerFilterByCheckRepeat.Width) / 2
+		pnlContainerLblRepeat.Left = (pnlFilterByRepeat.Width - pnlContainerLblRepeat.Width) / 2
+		
+		pnlDueSpecificDate.Left = (pnlFilterByDueDate.Width - pnlDueSpecificDate.Width) / 2
+		pnlDueSpecificDateRangeFrom.Left = (pnlFilterByDueDate.Width - pnlDueSpecificDateRangeFrom.Width) / 2
+		pnlDueSpecificDateRangeTo.Left = (pnlFilterByDueDate.Width - pnlDueSpecificDateRangeTo.Width) / 2
+		pnlDueSpecificDateGroup.Left = (pnlFilterByDueDate.Width - pnlDueSpecificDateGroup.Width) / 2
+		
+		
+		
 		
 		LoadSearchItems
 
@@ -1915,4 +2064,99 @@ Private Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consum
 			Return True
 		End If
 	End If
+End Sub
+
+
+Private Sub searchcontentDark
+	pnlSearch.Color = Colors.RGB(28,28,28)
+	pnlContainerSearchEditText.Color = Colors.RGB(51,51,54)
+	backBtn.TextColor = Theme.ForegroundText
+	enterBtn.TextColor = Theme.ForegroundText
+	searchEditText.TextColor = Theme.ForegroundText
+	searchEditText.HintColor = Colors.RGB(191,191,191)
+	lblSearchSearchBy.TextColor = Theme.ForegroundText
+	lblSortOrderBy.TextColor = Theme.ForegroundText
+	lblFilterFilterBy.TextColor = Theme.ForegroundText
+	svSearchBody.Color = Theme.DarkbackgroundColor
+	radioSearchByTitle.TextColor = Theme.ForegroundText
+	radioSearchByNotes.TextColor = Theme.ForegroundText
+	radioSearchByFilename.TextColor = Theme.ForegroundText
+	radioSortOrderByNone.TextColor = Theme.ForegroundText
+	radioSortOrderByAscending.TextColor = Theme.ForegroundText
+	radioSortOrderByDescending.TextColor = Theme.ForegroundText
+	checkFilterByPriority.TextColor = Theme.ForegroundText
+	radioFilterByPriorityCritical.TextColor = Theme.ForegroundText
+	radioFilterByPriorityHigh.TextColor = Theme.ForegroundText
+	radioFilterByPriorityMedium.TextColor = Theme.ForegroundText
+	radioFilterByPriorityLow.TextColor = Theme.ForegroundText
+	checkFilterByRepeat.TextColor = Theme.ForegroundText
+	
+	lblRepeatSun.TextColor = Theme.ForegroundText
+	lblRepeatMon.TextColor = Theme.ForegroundText
+	lblRepeatTue.TextColor = Theme.ForegroundText
+	lblRepeatWed.TextColor = Theme.ForegroundText
+	lblRepeatThu.TextColor = Theme.ForegroundText
+	lblRepeatFri.TextColor = Theme.ForegroundText
+	lblRepeatSat.TextColor = Theme.ForegroundText
+	
+	checkFilterByDueDate.TextColor = Theme.ForegroundText
+	
+	radioDueSpecificDate.TextColor = Theme.ForegroundText
+	radioDueSpecificDateRange.TextColor = Theme.ForegroundText
+	radioDueSpecificDateGroup.TextColor = Theme.ForegroundText
+	checkFilterByGroup.TextColor = Theme.ForegroundText
+	checkDeleted.TextColor = Theme.ForegroundText
+	
+	'pnlAllFilterBy.Color = Colors.RGB(156,168,190)
+	
+
+	
+
+End Sub
+
+Private Sub searchcontentLight
+	pnlSearch.Color = Colors.RGB(241,241,241)
+	pnlContainerSearchEditText.Color = Colors.RGB(248,248,248)
+	backBtn.TextColor = Colors.Black
+	enterBtn.TextColor = Colors.Black
+	searchEditText.TextColor = Colors.Black
+	searchEditText.HintColor = Colors.LightGray
+	lblSearchSearchBy.TextColor = Colors.Black
+	lblSortOrderBy.TextColor = Colors.Black
+	lblFilterFilterBy.TextColor = Colors.Black
+	svSearchBody.Color = Colors.RGB(241,241,241)
+	radioSearchByTitle.TextColor = Colors.Black
+	radioSearchByNotes.TextColor = Colors.Black
+	radioSearchByFilename.TextColor = Colors.Black
+	radioSortOrderByNone.TextColor = Colors.Black
+	radioSortOrderByAscending.TextColor = Colors.Black
+	radioSortOrderByDescending.TextColor = Colors.Black
+	checkFilterByPriority.TextColor = Colors.Black
+	radioFilterByPriorityCritical.TextColor = Colors.Black
+	radioFilterByPriorityHigh.TextColor = Colors.Black
+	radioFilterByPriorityMedium.TextColor = Colors.Black
+	radioFilterByPriorityLow.TextColor = Colors.Black
+	checkFilterByRepeat.TextColor = Colors.Black
+	
+	lblRepeatSun.TextColor = Colors.Black
+	lblRepeatMon.TextColor = Colors.Black
+	lblRepeatTue.TextColor = Colors.Black
+	lblRepeatWed.TextColor = Colors.Black
+	lblRepeatThu.TextColor = Colors.Black
+	lblRepeatFri.TextColor = Colors.Black
+	lblRepeatSat.TextColor = Colors.Black
+	
+	checkFilterByDueDate.TextColor = Colors.Black
+	
+	radioDueSpecificDate.TextColor = Colors.Black
+	radioDueSpecificDateRange.TextColor = Colors.Black
+	radioDueSpecificDateGroup.TextColor = Colors.Black
+	checkFilterByGroup.TextColor = Colors.Black
+	checkDeleted.TextColor = Colors.Black
+	
+	'pnlAllFilterBy.Color = Colors.RGB(156,168,190)
+	
+
+	
+
 End Sub
