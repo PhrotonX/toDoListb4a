@@ -61,6 +61,10 @@ Sub Globals
 	Private viewTitleLbl As Label
 	Private lblTask As Label
 	Private btnEdit As Button
+	Private hsvCanvas As HorizontalScrollView
+	Private Panel1 As Panel
+	Private pnlAttachments As Panel
+	Private pnlCanvas As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -74,6 +78,7 @@ Sub Activity_Create(FirstTime As Boolean)
 
 	OnLoadTasks
 End Sub
+
 
 Private Sub OnLoadTasks()
 	lblTask.Text = Starter.Lang.Get("task")
@@ -103,6 +108,7 @@ Private Sub button_design
 End Sub
 
 Sub Activity_Resume
+	Darkmode
 	' Prevent instance errors.
 	Starter.CheckInstanceState
 	
@@ -328,4 +334,100 @@ Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
 	Dim viewHolder As AttachmentViewHolder = Value
 
 	Starter.AttachmentViewModelInstance.OpenAttachment(viewHolder.ID)
+End Sub
+
+Private Sub Darkmode
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		lblTask.TextColor = Colors.White
+		btnBack.TextColor = Colors.White
+		btnEdit.TextColor = Colors.White
+		
+		taskView.Color = Colors.RGB(244,246,250)
+		pnlTaskViewBar.Color = Colors.RGB(75,93,140)
+		
+		viewTitleLbl.TextColor = Colors.RGB(33,37,41)
+		viewNotesLbl.TextColor = Colors.RGB(33,37,41)
+		viewDueDateLbl.TextColor = Colors.RGB(33,37,41)
+		viewPriorityLbl.TextColor = Colors.RGB(33,37,41)
+		viewReminderlbl.TextColor = Colors.RGB(33,37,41)
+		viewRepeatLbl.TextColor = Colors.RGB(33,37,41)
+		viewSnoozeLbl.TextColor = Colors.RGB(33,37,41)
+		lblListofCanvas.TextColor = Colors.RGB(33,37,41)
+		lblListofAttachments.TextColor = Colors.RGB(33,37,41)
+		viewTaskGrouplbl.TextColor = Colors.RGB(33,37,41)
+		viewCreatedAtLbl.TextColor = Colors.RGB(33,37,41)
+		viewModifiedlbl.TextColor = Colors.RGB(33,37,41)
+		Panel1.Color = Theme.RootColor
+		viewTitle.TextColor = Colors.RGB(33,37,41)
+		viewNotes.TextColor = Colors.RGB(33,37,41)
+		viewDueDate.TextColor = Colors.RGB(33,37,41)
+		viewPriority.TextColor = Colors.RGB(33,37,41)
+		viewReminders.TextColor = Colors.RGB(33,37,41)
+		viewRepeat.TextColor = Colors.RGB(33,37,41)
+		viewSnooze.TextColor = Colors.RGB(33,37,41)
+		hsvCanvas.Color = Colors.RGB(232,236,245)
+		svAttachments.Color = Colors.RGB(232,236,245)
+		viewTaskGroup.TextColor = Colors.RGB(33,37,41)
+		viewCreatedAt.TextColor = Colors.RGB(33,37,41)
+		viewModifiedAt.TextColor = Colors.RGB(33,37,41)
+		
+		
+		viewTitle.Color = Colors.Transparent
+		Panel1.Color = Colors.RGB(232,236,245)
+		viewNotes.Color = Colors.RGB(232,236,245)
+		viewDueDate.Color = Colors.RGB(232,236,245)
+		viewPriority.Color = Colors.RGB(232,236,245)
+		viewReminders.Color = Colors.RGB(232,236,245)
+		viewRepeat.Color = Colors.RGB(232,236,245)
+		viewSnooze.Color = Colors.RGB(232,236,245)
+		viewTaskGroup.Color = Colors.RGB(232,236,245)
+		viewCreatedAt.Color = Colors.RGB(232,236,245)
+		viewModifiedAt.Color = Colors.RGB(232,236,245)
+	Else
+		lblTask.TextColor = Theme.ForegroundText
+		btnBack.TextColor = Theme.ForegroundText
+		btnEdit.TextColor = Theme.ForegroundText
+		
+		taskView.Color = Theme.DarkbackgroundColor
+		pnlTaskViewBar.Color = Colors.RGB(28,28,28)
+		
+		viewTitleLbl.TextColor = Theme.ForegroundText
+		viewNotesLbl.TextColor = Theme.ForegroundText
+		viewDueDateLbl.TextColor = Theme.ForegroundText
+		viewPriorityLbl.TextColor = Theme.ForegroundText
+		viewReminderlbl.TextColor = Theme.ForegroundText
+		viewRepeatLbl.TextColor = Theme.ForegroundText
+		viewSnoozeLbl.TextColor = Theme.ForegroundText
+		lblListofCanvas.TextColor = Theme.ForegroundText
+		lblListofAttachments.TextColor = Theme.ForegroundText
+		viewTaskGrouplbl.TextColor = Theme.ForegroundText
+		viewCreatedAtLbl.TextColor = Theme.ForegroundText
+		viewModifiedlbl.TextColor = Theme.ForegroundText
+		Panel1.Color = Theme.RootColor
+		viewTitle.TextColor = Theme.ForegroundText
+		viewNotes.TextColor = Theme.ForegroundText
+		viewDueDate.TextColor = Theme.ForegroundText
+		viewPriority.TextColor = Theme.ForegroundText
+		viewReminders.TextColor = Theme.ForegroundText
+		viewRepeat.TextColor = Theme.ForegroundText
+		viewSnooze.TextColor = Theme.ForegroundText
+		hsvCanvas.Color = Theme.RootColor
+		svAttachments.Color = Theme.RootColor
+		viewTaskGroup.TextColor = Theme.ForegroundText
+		viewCreatedAt.TextColor = Theme.ForegroundText
+		viewModifiedAt.TextColor = Theme.ForegroundText
+		
+		
+		viewTitle.Color = Theme.RootColor
+		viewNotes.Color = Theme.RootColor
+		viewDueDate.Color = Theme.RootColor
+		viewPriority.Color = Theme.RootColor
+		viewReminders.Color = Theme.RootColor
+		viewRepeat.Color = Theme.RootColor
+		viewSnooze.Color = Theme.RootColor
+		viewTaskGroup.Color = Theme.RootColor
+		viewCreatedAt.Color = Theme.RootColor
+		viewModifiedAt.Color = Theme.RootColor
+	End If
+	
 End Sub

@@ -31,6 +31,8 @@ Sub Globals
 	Private switchDebug As B4XSwitch
 	Private switchExperimental As B4XSwitch
 	Private lblImport As Label
+	Private pnlAdvancedSettingsBar As Panel
+	Private pnlTaskSettings As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -46,6 +48,7 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
+	Darkmode
 	LoadSettings
 End Sub
 
@@ -63,8 +66,8 @@ Private Sub btnBack_Click
 End Sub
 
 Private Sub lblResetApp_Click
-	pnlResetApp.SetColorAnimated(50, Colors.White, Colors.LightGray)
-	pnlResetApp.SetColorAnimated(150, Colors.LightGray, Colors.White)
+	pnlResetApp.SetColorAnimated(50, Colors.Transparent, Colors.LightGray)
+	pnlResetApp.SetColorAnimated(150, Colors.LightGray, Colors.Transparent)
 	Dim result As Int
 	result = Msgbox2(Starter.Lang.Get("reset_app_warning"), Starter.Lang.Get("reset_app") & "?", Starter.Lang.Get("yes"), _ 
 		Starter.Lang.Get("cancel"), Starter.Lang.Get("no"), Null)
@@ -97,8 +100,8 @@ Private Sub lblResetApp_Click
 End Sub
 
 Private Sub lblImport_Click
-	pnlImport.SetColorAnimated(50, Colors.White, Colors.LightGray)
-	pnlImport.SetColorAnimated(150, Colors.LightGray, Colors.White)
+	pnlImport.SetColorAnimated(50, Colors.Transparent, Colors.LightGray)
+	pnlImport.SetColorAnimated(150, Colors.LightGray, Colors.Transparent)
 	
 	Msgbox2Async(Starter.Lang.Get("import_question_info") & CRLF & CRLF & _
 	Starter.Lang.Get("import_question_info_2") & CRLF & CRLF & _
@@ -112,8 +115,8 @@ Private Sub lblImport_Click
 End Sub
 
 Private Sub lblExportDatabase_Click
-	pnlExport.SetColorAnimated(50, Colors.White, Colors.LightGray)
-	pnlExport.SetColorAnimated(150, Colors.LightGray, Colors.White)
+	pnlExport.SetColorAnimated(50, Colors.Transparent, Colors.LightGray)
+	pnlExport.SetColorAnimated(150, Colors.LightGray, Colors.Transparent)
 End Sub
 
 Private Sub switchExperimental_ValueChanged (Value As Boolean)
@@ -184,4 +187,33 @@ Private Sub OnSwitchExperimentalMode(Value As Boolean)
 	Else
 		Starter.SettingsViewModelInstance.SetExperimentalMode(Value)
 	End If
+End Sub
+
+Private Sub Darkmode
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		pnlAdvancedSettingsBar.Color = Colors.RGB(241,241,241)
+		btnBack.TextColor = Colors.RGB(67,67,67)
+		pnlTaskSettings.Color = Colors.White
+		
+		lblAdvancedSettings.Textcolor = Colors.Black
+		lblDebug.Textcolor = Colors.Black
+		lblExperimental.Textcolor = Colors.Black
+		lblImport.Textcolor = Colors.Black
+		lblExportDatabase.Textcolor = Colors.Black
+		lblResetApp.Textcolor = Colors.Black
+		Activity.Color = Colors.RGB(241,241,241)
+	Else
+		pnlAdvancedSettingsBar.Color = Colors.RGB(28,28,28)
+		btnBack.TextColor = Theme.ForegroundText
+		pnlTaskSettings.Color = Theme.RootColor
+		
+		lblAdvancedSettings.Textcolor = Theme.ForegroundText
+		lblDebug.Textcolor = Theme.ForegroundText
+		lblExperimental.Textcolor = Theme.ForegroundText
+		lblImport.Textcolor = Theme.ForegroundText
+		lblExportDatabase.Textcolor = Theme.ForegroundText
+		lblResetApp.Textcolor = Theme.ForegroundText
+		Activity.Color = Theme.DarkbackgroundColor
+	End If
+	
 End Sub
