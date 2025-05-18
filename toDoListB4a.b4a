@@ -203,7 +203,7 @@ Version=13.1
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 13
-	#VersionName: v2.0.0.9 alpha
+	#VersionName: v2.0.0.10 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -2056,12 +2056,17 @@ End Sub
 Private Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the event
 	Dim Answ As Int
 	If KeyCode = KeyCodes.KEYCODE_BACK Then
-		Answ = Msgbox2(Starter.Lang.Get("quit_confirm"), Starter.Lang.Get("alert"), _ 
-			Starter.Lang.Get("yes"), "", Starter.Lang.Get("no"), Null)
-		If Answ = DialogResponse.POSITIVE Then
-			Return False
-		Else
+		If drawer.LeftOpen Then
+			drawer.LeftOpen = False
 			Return True
+		Else
+			Answ = Msgbox2(Starter.Lang.Get("quit_confirm"), Starter.Lang.Get("alert"), _
+			Starter.Lang.Get("yes"), "", Starter.Lang.Get("no"), Null)
+			If Answ = DialogResponse.POSITIVE Then
+				Return False
+			Else
+				Return True
+			End If
 		End If
 	End If
 End Sub
