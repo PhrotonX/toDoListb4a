@@ -459,6 +459,8 @@ Sub Activity_PermissionResult (Permission As String, Result As Boolean)
 	End If
 End Sub
 
+
+
 Private Sub OnLoadText
 	' Sort Dialog text
 	lblSortBy.Text = Starter.Lang.Get("sort_by") & ":"

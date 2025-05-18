@@ -36,6 +36,7 @@ Sub Globals
 	Private name3Lbl As Label
 	Private name4Lbl As Label
 	Private name5Lbl As Label
+	Private imgAppIcon As ImageView
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -44,7 +45,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	Activity.LoadLayout("settingsabout")
 	svAbout.Panel.LoadLayout("aboutItems")
-	button_design
+	CenterView(Activity)
 	
 	OnLoadText
 End Sub
@@ -65,18 +66,8 @@ Private Sub OnLoadText
 	membersLbl.Text = Starter.Lang.Get("members")
 End Sub
 
-Sub button_design
-	Dim transparentBg As ColorDrawable
-	transparentBg.Initialize(Colors.Transparent, 0)
-	aboutBack.Background = transparentBg
-	
-	Dim c As Canvas
-	c.Initialize(aboutLabel)
-	Dim borderColor As Int = Colors.RGB(209, 209, 209)
-	Dim borderHeight As Int = 1dip
-
-	
-	c.DrawLine(0, aboutLabel.Height - borderHeight / 2, aboutLabel.Width, aboutLabel.Height - borderHeight / 2, borderColor, borderHeight)
-
-	aboutLabel.Invalidate
+Sub CenterView(parent As Panel)
+	imgAppIcon.Left = (parent.Width - imgAppIcon.Width) / 2
+	lblAppTitle.Left = (parent.Width - lblAppTitle.Width) / 2
+	'view.Top = (parent.Height - view.Height) / 2
 End Sub

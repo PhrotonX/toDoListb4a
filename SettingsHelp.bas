@@ -34,7 +34,6 @@ Sub Activity_Create(FirstTime As Boolean)
 	'Activity.LoadLayout("Layout1")
 	Activity.LoadLayout("settingshelp")
 	svHelp.Panel.LoadLayout("helpItems")
-	button_design
 
 	OnLoadText
 End Sub
@@ -62,22 +61,7 @@ Private Sub OnLoadText
 							Starter.Lang.Get("troubleshooting_4")
 End Sub
 
-Sub button_design
-	Dim transparentBg As ColorDrawable
-	transparentBg.Initialize(Colors.Transparent, 0)
-	helpBack.Background = transparentBg
-	
-	
-	Dim c As Canvas
-	c.Initialize(helpLabel)
-	Dim borderColor As Int = Colors.RGB(209, 209, 209)
-	Dim borderHeight As Int = 1dip
 
-	
-	c.DrawLine(0, helpLabel.Height - borderHeight / 2, helpLabel.Width, helpLabel.Height - borderHeight / 2, borderColor, borderHeight)
-
-	helpLabel.Invalidate
-End Sub
 
 Sub helpBack_Click
 	Activity.Finish
