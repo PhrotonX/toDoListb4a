@@ -393,6 +393,9 @@ Sub Globals
 	Private lblRepeatTue As Label
 	Private lblRepeatWed As Label
 	Private lblNewGroup As Label
+	Private imgLogo As ImageView
+	Private lblToDoList As Label
+	Private pnlSplashScreen As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -458,6 +461,7 @@ Sub Activity_PermissionResult (Permission As String, Result As Boolean)
 		End If
 	End If
 End Sub
+
 
 
 
