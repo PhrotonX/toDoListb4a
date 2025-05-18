@@ -110,7 +110,11 @@ Private Sub lblImport_Click
 	Starter.Lang.Get("continue"), Starter.Lang.Get("cancel"),"", Null, False)
 	Wait For Msgbox_Result (Result As Int)
 	If Result = DialogResponse.POSITIVE Then
-		
+		' Open a file picker.
+		Private filepicker As ContentChooser
+	
+		filepicker.Initialize("filepicker")
+		filepicker.Show("application/vnd.sqlite3", "Choose database")
 	End If
 End Sub
 
