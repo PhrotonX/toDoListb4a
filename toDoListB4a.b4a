@@ -294,6 +294,8 @@ Sub Globals
 	Private m_taskObj As ToDo
 	Private m_repeatObj As Repeat
 	
+	Private m_isSearchPanelOn As Boolean
+	
 
 	Private pnlSortDialogue As Panel
 	Private pnlSortDialoguebg As Panel
@@ -1461,6 +1463,8 @@ End Sub
 Private Sub searchBtn_Click
 	If button_handling Then
 		
+		m_isSearchPanelOn = True
+		
 		If GetDeviceLayoutValues.Scale > 2 Then
 			svSearchBody.Panel.Height = 6400
 		End If
@@ -1637,6 +1641,8 @@ Private Sub OnHideSearchPanel
 		pnlSearch.SendToBack
 		searchFragment.SendToBack
 		svSearchBody.Panel.RemoveAllViews
+		
+		m_isSearchPanelOn = False
 	End If
 End Sub
 
@@ -2058,6 +2064,12 @@ Private Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consum
 	If KeyCode = KeyCodes.KEYCODE_BACK Then
 		If drawer.LeftOpen Then
 			drawer.LeftOpen = False
+			Return True
+		Else If m_isSearchPanelOn Then
+			OnHideSearchPanel
+			Return True
+		Else If SavedSmartList == SMART_LIST_SEARCH Then
+			OnLoadPage(smartLists(SMART_LIST_ALL))
 			Return True
 		Else
 			Answ = Msgbox2(Starter.Lang.Get("quit_confirm"), Starter.Lang.Get("alert"), _
