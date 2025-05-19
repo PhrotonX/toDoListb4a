@@ -27,6 +27,10 @@ Public Sub GetAllAttachments() As List
 	Return m_database.AttachmentDao().GetAttachments("", "")
 End Sub
 
+Public Sub GetSearchedAttachments(task_id As Long, query As String) As List
+	Return m_database.AttachmentDao().GetSearchedAttachments(task_id, query)
+End Sub
+
 Public Sub GetTaskAttachments(task_id As Long) As List
 	Return m_database.AttachmentDao().GetTaskAttachments(task_id)
 End Sub

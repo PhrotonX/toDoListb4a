@@ -44,6 +44,27 @@ Sub Globals
 	
 	Private svAttachments As ScrollView
 	Private clvAttachments As CustomListView
+	Private pnlTaskViewBar As Panel
+	Private lblListofAttachments As Label
+	Private lblListofCanvas As Label
+	Private viewCreatedAtLbl As Label
+	Private viewDueDateLbl As Label
+	Private viewModifiedlbl As Label
+	Private viewNotesLbl As Label
+	Private viewPriorityLbl As Label
+	Private viewReminderlbl As Label
+	Private viewReminders As Label
+	Private viewRepeatLbl As Label
+	Private viewSnooze As Label
+	Private viewSnoozeLbl As Label
+	Private viewTaskGrouplbl As Label
+	Private viewTitleLbl As Label
+	Private lblTask As Label
+	Private btnEdit As Button
+	Private hsvCanvas As HorizontalScrollView
+	Private Panel1 As Panel
+	Private pnlAttachments As Panel
+	Private pnlCanvas As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -53,17 +74,28 @@ Sub Activity_Create(FirstTime As Boolean)
 
 	' Add the TaskViewScrollLayout as the view of taskView of the ScrollView in TaskViewLayout.
 	taskView.Panel.LoadLayout("TaskViewScrollLayout")
+	pnlTaskViewBar.Elevation = 10
+
+	OnLoadTasks
+End Sub
+
+
+Private Sub OnLoadTasks()
+	lblTask.Text = Starter.Lang.Get("task")
+	btnEdit.Text = Starter.Lang.Get("edit_uppercase")
 	
-	' Other supplementary code for UI design.
-	Dim c As Canvas
-	c.Initialize(Label1)
-	Dim borderColor As Int = Colors.RGB(209, 209, 209)
-	Dim borderHeight As Int = 1dip
-
-	c.DrawLine(0, Label1.Height - borderHeight / 2, Label1.Width, Label1.Height - borderHeight / 2, borderColor, _ 
-		borderHeight)
-
-	Label1.Invalidate
+	viewCreatedAtLbl.Text = Starter.Lang.Get("created_at")
+	viewModifiedlbl.Text = Starter.Lang.Get("updated_at")
+	viewTitleLbl.Text = Starter.Lang.Get("title")
+	viewNotesLbl.Text = Starter.Lang.Get("notes")
+	viewDueDateLbl.Text = Starter.Lang.Get("due_date")
+	viewPriorityLbl.Text = Starter.Lang.Get("priority")
+	viewReminderlbl.Text = Starter.Lang.Get("reminder")
+	viewRepeatLbl.Text = Starter.Lang.Get("repeat")
+	viewSnoozeLbl.Text = Starter.Lang.Get("snooze")
+	viewTaskGrouplbl.Text = Starter.Lang.Get("task_group")
+	lblListofCanvas.Text = Starter.Lang.Get("canvas")
+	lblListofAttachments.Text = Starter.Lang.Get("attachments")
 End Sub
 
 Private Sub button_design
@@ -76,6 +108,7 @@ Private Sub button_design
 End Sub
 
 Sub Activity_Resume
+	Darkmode
 	' Prevent instance errors.
 	Starter.CheckInstanceState
 	
@@ -123,15 +156,44 @@ Sub Activity_Resume
 		
 		' Display the retrieved task into the views.
 		viewTitle.Text = m_task.GetTitle
+		
 		viewTitle.Checked = m_task.Done
-		viewNotes.Text = m_task.GetNotes
-		viewRepeat.Text = m_repeat.GetRepeatInfo
-		viewPriority.Text = m_task.GetPriorityInfo
-		viewDueDate.Text = m_task.GetDueDate.GetFormattedDate
+		
+		' Notes
+		If m_task.GetNotes == "" Then
+			viewNotes.Text = Starter.Lang.Get("none")
+		Else
+			viewNotes.Text = m_task.GetNotes
+		End If
+		
+		' Repeat
+		If m_repeat.GetRepeatInfo == "" Then
+			viewRepeat.Text = Starter.Lang.Get("none")
+		Else
+			viewRepeat.Text = m_repeat.GetRepeatInfo
+		End If
+		
+		' Reminder
+		If m_task.IsReminderEnabled == True Then
+			Dim reminderStr As String = m_task.Reminder.GetFormattedTime(Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+			If reminderStr == "" Then
+				viewReminders.Text = Starter.Lang.Get("none")
+			Else
+				viewReminders.Text = reminderStr
+			End If
+		Else
+			viewReminders.Text = Starter.Lang.Get("off")
+		End If
+		
+		
+		viewSnooze.Text = Starter.Lang.Get(m_task.Snooze.GetSnoozeInfo)
+		
+		viewPriority.Text = Starter.Lang.Get(m_task.GetPriorityInfo)
+		viewDueDate.Text = m_task.GetDueDate.GetFormattedDate(Starter.Lang)
 		viewCreatedAt.Text = m_task.GetCreatedAt.GetFormattedDateAndTime( _
-			Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+			Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
 		viewModifiedAt.Text = m_task.GetUpdatedAt.GetFormattedDateAndTime( _
-			Starter.SettingsViewModelInstance.Is24HourFormatEnabled)
+			Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
 			
 		LoadAttachments
 		
@@ -170,13 +232,20 @@ Private Sub btnEdit_Click
 End Sub
 
 ' Make update transactions into the database if checkbox tick occured.
-Private Sub viewTitle_CheckedChange(Checked As Boolean)
-	' Toggle the completions status of the task
-	m_task.Done = Checked
+Private Sub viewTitle_CheckedChange(Checked As Boolean)	
+	If m_task.Done <> Checked Then
+		' Toggle the completions status of the task
+		m_task.Done = Checked
+		
+		' Play task completion sound.
+		If Checked Then
+			Starter.TaskViewModelInstance.PlayTaskCompletionSound
+		End If
 	
-	' Update the task to reflect changes with the completion value.
-	Starter.TaskViewModelInstance.UpdateTask(m_task)
-	Starter.RepeatViewModelInstance.CalculateSchedule(m_task)
+		' Update the task to reflect changes with the completion value.
+		Starter.TaskViewModelInstance.UpdateTask(m_task)
+		Starter.RepeatViewModelInstance.CalculateSchedule(m_task)
+	End If
 End Sub
 
 Private Sub pnlAttachmentRoot_Click
@@ -265,4 +334,100 @@ Private Sub clvAttachments_ItemClick (Index As Int, Value As Object)
 	Dim viewHolder As AttachmentViewHolder = Value
 
 	Starter.AttachmentViewModelInstance.OpenAttachment(viewHolder.ID)
+End Sub
+
+Private Sub Darkmode
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		lblTask.TextColor = Colors.White
+		btnBack.TextColor = Colors.White
+		btnEdit.TextColor = Colors.White
+		
+		taskView.Color = Colors.RGB(244,246,250)
+		pnlTaskViewBar.Color = Colors.RGB(75,93,140)
+		
+		viewTitleLbl.TextColor = Colors.RGB(33,37,41)
+		viewNotesLbl.TextColor = Colors.RGB(33,37,41)
+		viewDueDateLbl.TextColor = Colors.RGB(33,37,41)
+		viewPriorityLbl.TextColor = Colors.RGB(33,37,41)
+		viewReminderlbl.TextColor = Colors.RGB(33,37,41)
+		viewRepeatLbl.TextColor = Colors.RGB(33,37,41)
+		viewSnoozeLbl.TextColor = Colors.RGB(33,37,41)
+		lblListofCanvas.TextColor = Colors.RGB(33,37,41)
+		lblListofAttachments.TextColor = Colors.RGB(33,37,41)
+		viewTaskGrouplbl.TextColor = Colors.RGB(33,37,41)
+		viewCreatedAtLbl.TextColor = Colors.RGB(33,37,41)
+		viewModifiedlbl.TextColor = Colors.RGB(33,37,41)
+		Panel1.Color = Theme.RootColor
+		viewTitle.TextColor = Colors.RGB(33,37,41)
+		viewNotes.TextColor = Colors.RGB(33,37,41)
+		viewDueDate.TextColor = Colors.RGB(33,37,41)
+		viewPriority.TextColor = Colors.RGB(33,37,41)
+		viewReminders.TextColor = Colors.RGB(33,37,41)
+		viewRepeat.TextColor = Colors.RGB(33,37,41)
+		viewSnooze.TextColor = Colors.RGB(33,37,41)
+		hsvCanvas.Color = Colors.RGB(232,236,245)
+		svAttachments.Color = Colors.RGB(232,236,245)
+		viewTaskGroup.TextColor = Colors.RGB(33,37,41)
+		viewCreatedAt.TextColor = Colors.RGB(33,37,41)
+		viewModifiedAt.TextColor = Colors.RGB(33,37,41)
+		
+		
+		viewTitle.Color = Colors.Transparent
+		Panel1.Color = Colors.RGB(232,236,245)
+		viewNotes.Color = Colors.RGB(232,236,245)
+		viewDueDate.Color = Colors.RGB(232,236,245)
+		viewPriority.Color = Colors.RGB(232,236,245)
+		viewReminders.Color = Colors.RGB(232,236,245)
+		viewRepeat.Color = Colors.RGB(232,236,245)
+		viewSnooze.Color = Colors.RGB(232,236,245)
+		viewTaskGroup.Color = Colors.RGB(232,236,245)
+		viewCreatedAt.Color = Colors.RGB(232,236,245)
+		viewModifiedAt.Color = Colors.RGB(232,236,245)
+	Else
+		lblTask.TextColor = Theme.ForegroundText
+		btnBack.TextColor = Theme.ForegroundText
+		btnEdit.TextColor = Theme.ForegroundText
+		
+		taskView.Color = Theme.DarkbackgroundColor
+		pnlTaskViewBar.Color = Colors.RGB(28,28,28)
+		
+		viewTitleLbl.TextColor = Theme.ForegroundText
+		viewNotesLbl.TextColor = Theme.ForegroundText
+		viewDueDateLbl.TextColor = Theme.ForegroundText
+		viewPriorityLbl.TextColor = Theme.ForegroundText
+		viewReminderlbl.TextColor = Theme.ForegroundText
+		viewRepeatLbl.TextColor = Theme.ForegroundText
+		viewSnoozeLbl.TextColor = Theme.ForegroundText
+		lblListofCanvas.TextColor = Theme.ForegroundText
+		lblListofAttachments.TextColor = Theme.ForegroundText
+		viewTaskGrouplbl.TextColor = Theme.ForegroundText
+		viewCreatedAtLbl.TextColor = Theme.ForegroundText
+		viewModifiedlbl.TextColor = Theme.ForegroundText
+		Panel1.Color = Theme.RootColor
+		viewTitle.TextColor = Theme.ForegroundText
+		viewNotes.TextColor = Theme.ForegroundText
+		viewDueDate.TextColor = Theme.ForegroundText
+		viewPriority.TextColor = Theme.ForegroundText
+		viewReminders.TextColor = Theme.ForegroundText
+		viewRepeat.TextColor = Theme.ForegroundText
+		viewSnooze.TextColor = Theme.ForegroundText
+		hsvCanvas.Color = Theme.RootColor
+		svAttachments.Color = Theme.RootColor
+		viewTaskGroup.TextColor = Theme.ForegroundText
+		viewCreatedAt.TextColor = Theme.ForegroundText
+		viewModifiedAt.TextColor = Theme.ForegroundText
+		
+		
+		viewTitle.Color = Theme.RootColor
+		viewNotes.Color = Theme.RootColor
+		viewDueDate.Color = Theme.RootColor
+		viewPriority.Color = Theme.RootColor
+		viewReminders.Color = Theme.RootColor
+		viewRepeat.Color = Theme.RootColor
+		viewSnooze.Color = Theme.RootColor
+		viewTaskGroup.Color = Theme.RootColor
+		viewCreatedAt.Color = Theme.RootColor
+		viewModifiedAt.Color = Theme.RootColor
+	End If
+	
 End Sub

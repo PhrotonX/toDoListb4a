@@ -62,6 +62,8 @@ Sub Process_Globals
 	Public Provider As FileProvider
 	Public Permissions As RuntimePermissions
 	Public Phone As Phone
+	
+	Public Lang As LanguageManager
 End Sub
 
 Sub CheckInstanceState
@@ -78,8 +80,8 @@ Sub CheckInstanceState
 			Case EDITOR_RESULT_CANCEL:
 				' Display an error if a result other than SAVE and CANCEL has been received.
 			Case Else:
-				MsgboxAsync("Invalid result!" & CRLF & _
-			InstanceState.Get(EXTRA_EDITOR_RESULT), "Alert!")
+				MsgboxAsync(Lang.Get("invalid_result") & CRLF & _
+			InstanceState.Get(EXTRA_EDITOR_RESULT), Lang.Get("alert") & "!")
 		End Select
 	
 		' Remove the editor result extra from the bundle to avoid application state-related issues.
@@ -96,7 +98,11 @@ Sub Service_Create
 	' Initialize the variables
 	InstanceState.Initialize
 	
-	ToDoDatabaseViewModelInstance.Initialize
+	SettingsViewModelInstance.Initialize
+	
+	Lang.Initialize(SettingsViewModelInstance)
+	
+	ToDoDatabaseViewModelInstance.Initialize(Lang)
 	ToDoFileSystemInstance.Initialize
 	
 	taskRepo.Initialize(ToDoDatabaseViewModelInstance.GetInstance)
@@ -110,7 +116,7 @@ Sub Service_Create
 	GroupViewModelInstance.Initialize(groupRepo)
 	RepeatViewModelInstance.Initialize(repeatRepo)
 	
-	SettingsViewModelInstance.Initialize()
+	
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)

@@ -1,52 +1,67 @@
 ﻿Build1=Default,com.cm.todolist
 File1=3528206.png
-File10=drawerlayout.bal
-File11=EditorLayout.bal
-File12=EditorScrollLayout.bal
-File13=emptytasks.bal
-File14=folder.png
-File15=GREEN.png
-File16=GREEN-SELECTED.png
-File17=groupTasksLayout.bal
-File18=groupTasksSVLayout.bal
-File19=helpitems.bal
+File10=BLUE-SELECTED.png
+File11=brown.png
+File12=brown-selected.png
+File13=canvas.bal
+File14=done_sound.mp3
+File15=drawercolorlight.png
+File16=draweritems.bal
+File17=drawerlayout.bal
+File18=EditorLayout.bal
+File19=EditorScrollLayout.bal
 File2=486023921_623831243812785_3842496593750662642_n (1).png
-File20=ic_launcher.png
-File21=ic_launcher_small.png
-File22=ic_launcher_xl.png
-File23=INDIGO.png
-File24=INDIGO-SELECTED.png
-File25=Layout.bal
-File26=newfragment.bal
-File27=ORANGE.png
-File28=ORANGE-SELECTED.PNG
-File29=pencil.png
-File3=aboutitems.bal
-File30=PINK.png
-File31=PINK-SELECTED.png
-File32=RED.png
-File33=RED-SELECTED.png
-File34=searchByLayout.bal
-File35=searchFragmentSVLayout.bal
-File36=separatorlayout.bal
-File37=settingsabout.bal
-File38=settingshelp.bal
-File39=settingslayout.bal
-File4=AttachmentItemLayout.bal
-File40=solid_white.png
-File41=stock4.png
-File42=sviewlayout.bal
-File43=TaskItemLayout.bal
-File44=taskviewlayout.bal
-File45=taskviewscrolllayout.bal
-File46=test.bal
-File47=YELLOW.png
-File48=YELLOW-SELECTED.png
-File5=AttachmentListLayout.bal
-File6=BLUE.png
-File7=BLUE-SELECTED.png
-File8=canvas.bal
-File9=draweritems.bal
+File20=emptytasks.bal
+File21=en-US.json
+File22=es-ES.json
+File23=folder.png
+File24=GREEN.png
+File25=GREEN-SELECTED.png
+File26=groupTasksLayout.bal
+File27=groupTasksSVLayout.bal
+File28=helpitems.bal
+File29=ic_launcher.png
+File3=486023921_623831243812785_3842496593750662642_n.jpg
+File30=ic_launcher_small.png
+File31=ic_launcher_xl.png
+File32=id-ID.json
+File33=INDIGO.png
+File34=INDIGO-SELECTED.png
+File35=Layout.bal
+File36=newfragment.bal
+File37=ORANGE.png
+File38=ORANGE-SELECTED.PNG
+File39=pam.json
+File4=aboutitems.bal
+File40=pencil.png
+File41=PINK.png
+File42=PINK-SELECTED.png
+File43=RED.png
+File44=RED-SELECTED.png
+File45=ru-RU.json
+File46=searchByLayout.bal
+File47=searchFragmentSVLayout.bal
+File48=separatorlayout.bal
+File49=settingsabout.bal
+File5=AdvancedSettingsLayout.bal
+File50=settingshelp.bal
+File51=settingslayout.bal
+File52=smiley.png
+File53=solid_white.png
+File54=stock4.png
+File55=sviewlayout.bal
+File56=TaskItemLayout.bal
+File57=taskviewlayout.bal
+File58=taskviewscrolllayout.bal
+File59=test.bal
+File6=ar.json
+File60=tl-PH.json
+File61=YELLOW.png
+File62=YELLOW-SELECTED.png
+File63=zh-CN.json
+File7=AttachmentItemLayout.bal
+File8=AttachmentListLayout.bal
+File9=BLUE.png
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
@@ -90,8 +105,23 @@ FileGroup45=Default Group
 FileGroup46=Default Group
 FileGroup47=Default Group
 FileGroup48=Default Group
+FileGroup49=Default Group
 FileGroup5=Default Group
+FileGroup50=Default Group
+FileGroup51=Default Group
+FileGroup52=Default Group
+FileGroup53=Default Group
+FileGroup54=Default Group
+FileGroup55=Default Group
+FileGroup56=Default Group
+FileGroup57=Default Group
+FileGroup58=Default Group
+FileGroup59=Default Group
 FileGroup6=Default Group
+FileGroup60=Default Group
+FileGroup61=Default Group
+FileGroup62=Default Group
+FileGroup63=Default Group
 FileGroup7=Default Group
 FileGroup8=Default Group
 FileGroup9=Default Group
@@ -103,6 +133,7 @@ Library12=sql
 Library13=xcustomlistview
 Library14=xui
 Library15=xui views
+Library16=json
 Library2=b4xdrawer
 Library3=contentresolver
 Library4=core
@@ -112,65 +143,67 @@ Library7=keyvaluestore
 Library8=nb6
 Library9=phone
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="24"~\n~android:targetSdkVersion="33" />~\n~<supports-screens android:largeScreens="true" ~\n~	android:debuggable="true"~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.READ_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~  android:name="android.permission.MANAGE_EXTERNAL_STORAGE"~\n~  android:maxSdkVersion="33" />~\n~)~\n~AddPermission("android.permission.SCHEDULE_EXACT_ALARM")~\n~AddApplicationText(~\n~  <provider~\n~  android:name="android.support.v4.content.FileProvider"~\n~  android:authorities="$PACKAGE$.provider"~\n~  android:exported="false"~\n~  android:grantUriPermissions="true">~\n~  <meta-data~\n~  android:name="android.support.FILE_PROVIDER_PATHS"~\n~  android:resource="@xml/provider_paths"/>~\n~  </provider>~\n~)~\n~CreateResource(xml, provider_paths,~\n~   <files-path name="name" path="" />~\n~)~\n~~\n~#BridgeLogger: True~\n~'End of default text.~\n~
-Module1=Attachment
-Module10=DaysOfTheWeek
-Module11=Dimen
-Module12=EditorActivity
-Module13=FileUtils
-Module14=FormHelper
-Module15=Group
-Module16=GroupDao
-Module17=GroupRepository
-Module18=GroupViewHolder
-Module19=GroupViewModel
-Module2=AttachmentDao
-Module20=Repeat
-Module21=RepeatDao
-Module22=RepeatRepository
-Module23=RepeatViewModel
-Module24=SettingsAbout
-Module25=SettingsActivity
-Module26=SettingsHelp
-Module27=SettingsRepository
-Module28=SettingsViewModel
-Module29=Snooze
-Module3=AttachmentFileRepository
-Module30=Starter
-Module31=SubGroupViewHolder
-Module32=TaskDao
-Module33=TaskGroupActivity
-Module34=TaskNotificationCompat
-Module35=TaskNotificationCompleteReceiver
-Module36=TaskNotificationDismissReceiver
-Module37=TaskNotificationScheduler
-Module38=TaskNotificationService
-Module39=TaskNotificationSnoozeReceiver
-Module4=AttachmentRepository
-Module40=TaskQuery
-Module41=TaskRepository
-Module42=TaskViewerActivity
-Module43=TaskViewHolder
-Module44=TaskViewModel
-Module45=Theme
-Module46=Time
-Module47=ToDo
-Module48=ToDoDatabase
-Module49=ToDoDatabaseViewModel
-Module5=AttachmentViewHolder
-Module50=ToDoFileSystem
-Module6=AttachmentViewModel
-Module7=DatabaseUtils
-Module8=Date
-Module9=DateAndTime
-NumberOfFiles=48
-NumberOfLibraries=15
-NumberOfModules=50
+Module1=AdvancedSettingsActivity
+Module10=DateAndTime
+Module11=DaysOfTheWeek
+Module12=Dimen
+Module13=EditorActivity
+Module14=FileUtils
+Module15=FormHelper
+Module16=Group
+Module17=GroupDao
+Module18=GroupRepository
+Module19=GroupViewHolder
+Module2=Attachment
+Module20=GroupViewModel
+Module21=LanguageManager
+Module22=Repeat
+Module23=RepeatDao
+Module24=RepeatRepository
+Module25=RepeatViewModel
+Module26=SettingsAbout
+Module27=SettingsActivity
+Module28=SettingsHelp
+Module29=SettingsRepository
+Module3=AttachmentDao
+Module30=SettingsViewModel
+Module31=Snooze
+Module32=Starter
+Module33=SubGroupViewHolder
+Module34=TaskDao
+Module35=TaskGroupActivity
+Module36=TaskNotificationCompat
+Module37=TaskNotificationCompleteReceiver
+Module38=TaskNotificationDismissReceiver
+Module39=TaskNotificationScheduler
+Module4=AttachmentFileRepository
+Module40=TaskNotificationService
+Module41=TaskNotificationSnoozeReceiver
+Module42=TaskQuery
+Module43=TaskRepository
+Module44=TaskViewerActivity
+Module45=TaskViewHolder
+Module46=TaskViewModel
+Module47=Theme
+Module48=Time
+Module49=ToDo
+Module5=AttachmentRepository
+Module50=ToDoDatabase
+Module51=ToDoDatabaseViewModel
+Module52=ToDoFileSystem
+Module6=AttachmentViewHolder
+Module7=AttachmentViewModel
+Module8=DatabaseUtils
+Module9=Date
+NumberOfFiles=63
+NumberOfLibraries=16
+NumberOfModules=52
 Version=13.1
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 13
-	#VersionName: v2.0.0.7 alpha
+	#VersionName: v2.0.0.9 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -188,6 +221,18 @@ Sub Process_Globals
 	Private xui As XUI
 	
 	Private m_savedGroup As Group
+	
+	Public Const SMART_LIST_NONE As Int = -1
+	Public Const SMART_LIST_MY_DAY As Int = 0
+	Public Const SMART_LIST_TASKS As Int = 1
+	Public Const SMART_LIST_PLANNED As Int = 2
+	Public Const SMART_LIST_COMPLETED As Int = 3
+	Public Const SMART_LIST_ALL As Int = 4
+	Public Const SMART_LIST_TRASH As Int = 5
+	Public Const SMART_LIST_SEARCH As Int = 6
+	Public Const SMART_LIST_ARRAY_SIZE As Int = 7
+	
+	Public SavedSmartList As Int = SMART_LIST_MY_DAY
 End Sub
 
 Sub Globals
@@ -226,16 +271,6 @@ Sub Globals
 	Private Panel1 As Panel
 	Private pnlmenuListView As Panel
 	
-	Private Const SMART_LIST_NONE As Int = -1
-	Private Const SMART_LIST_MY_DAY As Int = 0
-	Private Const SMART_LIST_TASKS As Int = 1
-	Private Const SMART_LIST_PLANNED As Int = 2
-	Private Const SMART_LIST_COMPLETED As Int = 3
-	Private Const SMART_LIST_ALL As Int = 4
-	Private Const SMART_LIST_TRASH As Int = 5
-	Private Const SMART_LIST_SEARCH As Int = 6
-	Private Const SMART_LIST_ARRAY_SIZE As Int = 7
-	
 	Private smartLists(SMART_LIST_ARRAY_SIZE) As Group
 	
 	Private Const MENU_ITEM_REFRESH As Int = 0
@@ -243,8 +278,9 @@ Sub Globals
 	Private Const MENU_ITEM_SETTINGS As Int = 2
 	Private Const MENU_ITEM_EDIT_GROUP As Int = 3
 	Private Const MENU_ITEM_CLEAR_SEARCH As Int = 4
+	
+	Private m_sortingByPriority As Boolean = False
 
-	Private m_savedSmartList As Int = SMART_LIST_MY_DAY
 	'Private m_savedSearchByDueDateIdentifer As String = ""
 	'Private m_savedSearchByDueDateRange1 As Date
 	'Private m_savedSearchByDueDateRange2 As Date
@@ -336,15 +372,62 @@ Sub Globals
 	Private spinRangeMonthFrom As Spinner
 	Private spinRangeMonthTo As Spinner
 	Private checkDeleted As CheckBox
+	Private pnlEmptyTasks As Panel
+	Private radioSortByNone As RadioButton
+	Private radioNone As RadioButton
+	Private radioAsc As RadioButton
+	Private radioDesc As RadioButton
+	Private radioSortByCreaion As RadioButton
+	Private radioSortByDD As RadioButton
+	Private radioSortByPrio As RadioButton
+	Private lblTitle As Label
+	Private lblSmiley As Label
+	Private pnlNewGroup As Panel
+	Private backBtn As Button
+	Private btnCancel As Button
+	Private btnConfirm As Button
+	Private lblSortBy As Label
+	Private lblRepeatFri As Label
+	Private lblRepeatMon As Label
+	Private lblRepeatSat As Label
+	Private lblRepeatSun As Label
+	Private lblRepeatThu As Label
+	Private lblRepeatTue As Label
+	Private lblRepeatWed As Label
+	Private lblNewGroup As Label
+	Private imgLogo As ImageView
+	Private lblToDoList As Label
+	Private pnlSplashScreen As Panel
+	Private searchBtn As Button
+	Private lblEmptyTasks As Label
+	Private drawertitlebar As Panel
+	Private pnlContainerSearchEditText As Panel
+	Private enterBtn As Button
+	Private pnlContainerLblRepeat As Panel
+	Private pnlSpnDateDay As Panel
+	Private pnlSpnDateMonth As Panel
+	Private pnlEditDateYear As Panel
+	Private pnlSpinRangeMonthFrom As Panel
+	Private pnlSpinRangeDayFrom As Panel
+	Private pnlEditRangeYearFrom As Panel
+	Private pnlSpinRangeMonthTo As Panel
+	Private pnlSpinRangeDayTo As Panel
+	Private pnlEditRangeYearTo As Panel
+	Private pnlSearchContainer As Panel
+	Private pnlSortOrderBy As Panel
+	Private pnlAllFilterBy As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
+
 	'ToDoList.AnimationDuration = 0
 	clvItems.Initialize(Me, "clvItems")
 	drawer.Initialize(Me, "Drawer", Activity, 300dip)
 	drawer.CenterPanel.LoadLayout("layout")
 	mainFragment.LoadLayout("newFragment")
 	drawer.LeftPanel.LoadLayout("drawerLayout")
+	
+	OnLoadText
 	
 	listview_init
 	
@@ -358,12 +441,11 @@ Sub Activity_Create(FirstTime As Boolean)
 	If Starter.Phone.SdkVersion >= 31 Then
 		Dim am As JavaObject = GetAlarmManager
 		If am.RunMethod("canScheduleExactAlarms", Null).As(Boolean) == False Then
-			Msgbox2Async("This application may not work correctly if is not granted with a special access" & _
-					" to Alarms & Reminders permission." & CRLF & CRLF & "To enable this permission, go to Settings >" & _
-					" Apps > Special app access > Alarms & reminders > To Do List Application > Allow setting alarms " & _ 
-					"And reminders." & CRLF & CRLF & "Click 'Open Settings' button to continue or click 'Cancel' to " & _ 
-					"exit this Application.", "Some permissions are disabled For this Application.", "Open Settings", _ 
-					"Cancel", "", Null, False)
+			Msgbox2Async(Starter.Lang.Get("notification_permission_warning_1") & CRLF & CRLF & _
+				Starter.Lang.Get("notification_permission_warning_2") & CRLF & CRLF & _ 
+				Starter.Lang.Get("notification_permission_warning_3"), _ 
+				Starter.Lang.Get("notification_permission_warning_title"), Starter.Lang.Get("open_settings"), _ 
+				Starter.Lang.Get("cancel"), "", Null, False)
 				
 			Wait For Msgbox_Result (MsgBoxResult As Int)
 			If MsgBoxResult == DialogResponse.POSITIVE Then
@@ -379,28 +461,11 @@ Sub Activity_Create(FirstTime As Boolean)
 	End If
 	
 	m_taskObj.Initialize()
-	m_repeatObj.Initialize()
+	m_repeatObj.Initialize(Starter.Lang)
 End Sub
 
 Sub Activity_Resume
-	If m_savedSmartList == SMART_LIST_NONE Then
-		'ToastMessageShow("Saved group ID: " & m_savedGroup.GetID, False)
-		'Dim newGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_savedGroup.GetID)
-		'Log(newGroup)
-		
-		'm_savedGroup = newGroup
-		'OnLoadPage(newGroup)
-		
-		If TaskGroupActivity.LastSavedGroup <> Null Then
-			m_savedGroup = TaskGroupActivity.LastSavedGroup
-			TaskGroupActivity.LastSavedGroup = Null
-			OnLoadPage(m_savedGroup)
-		End If
-		
-	Else
-		OnLoadPage(m_savedGroup)
-	End If
-	
+	OnRefresh	
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -410,11 +475,65 @@ End Sub
 Sub Activity_PermissionResult (Permission As String, Result As Boolean)
 	If Starter.SettingsViewModelInstance.IsDebugModeEnabled() == True Then
 		If Result == True Then
-			ToastMessageShow("Permission granted for " & Permission, False)
+			ToastMessageShow(Starter.Lang.Get("permission_granted") & Permission, False)
 		Else
-			ToastMessageShow("Permission failed to grant for " & Permission, False)
+			ToastMessageShow(Starter.Lang.Get("permission_failed_to_grant") & Permission, False)
 		End If
 	End If
+End Sub
+
+
+
+
+Private Sub OnLoadText
+	' Sort Dialog text
+	lblSortBy.Text = Starter.Lang.Get("sort_by") & ":"
+	radioNone.Text = Starter.Lang.Get("none")
+	radioAsc.Text = Starter.Lang.Get("ascending")
+	radioDesc.Text = Starter.Lang.Get("descending")
+	radioSortByNone.Text = Starter.Lang.Get("none") & Starter.Lang.Get("default_parenthesis")
+	radioSortByCreaion.Text = Starter.Lang.Get("by_creation")
+	radioSortByTitle.Text = Starter.Lang.Get("by_title")
+	radioSortByDD.Text = Starter.Lang.Get("by_due_date")
+	radioSortByPrio.Text = Starter.Lang.Get("by_priority")
+	
+	btnCancel.Text = Starter.Lang.Get("cancel")
+	btnConfirm.Text = Starter.Lang.Get("confirm")
+End Sub
+
+Private Sub OnLoadSearchText
+	lblFilterFilterBy.Text = Starter.Lang.Get("filter_by") & ":"
+	lblRepeatFri.Text = Starter.Lang.Get("friday_abbr")
+	lblRepeatSat.Text = Starter.Lang.Get("saturday_abbr")
+	lblRepeatSun.Text = Starter.Lang.Get("sunday_abbr")
+	lblRepeatMon.Text = Starter.Lang.Get("monday_abbr")
+	lblRepeatTue.Text = Starter.Lang.Get("tuesday_abbr")
+	lblRepeatWed.Text = Starter.Lang.Get("wednesday_abbr")
+	lblRepeatThu.Text = Starter.Lang.Get("thursday_abbr")
+	lblSearchSearchBy.Text = Starter.Lang.Get("search_by")
+	lblSortOrderBy.Text = Starter.Lang.Get("order_by") & ":"
+	radioFilterByPriorityCritical.Text = Starter.Lang.Get("critical")
+	radioFilterByPriorityHigh.Text = Starter.Lang.Get("high")
+	radioFilterByPriorityMedium.Text = Starter.Lang.Get("medium")
+	radioFilterByPriorityLow.Text = Starter.Lang.Get("low")
+	radioSearchByTitle.Text = Starter.Lang.Get("title")
+	radioSearchByNotes.Text = Starter.Lang.Get("notes")
+	radioSearchByFilename.Text = Starter.Lang.Get("filename_of_attachment")
+	radioSortOrderByNone.Text = Starter.Lang.Get("none")
+	radioSortOrderByAscending.Text = Starter.Lang.Get("ascending")
+	radioSortOrderByDescending.Text = Starter.Lang.Get("descending")
+	checkFilterByPriority.Text = Starter.Lang.Get("priority")
+	checkFilterByRepeat.Text = Starter.Lang.Get("repeat")
+	checkFilterByDueDate.Text = Starter.Lang.Get("due_date")
+	checkFilterByGroup.Text = Starter.Lang.Get("group")
+	checkDeleted.Text = Starter.Lang.Get("deleted")
+	radioDueSpecificDate.Text = Starter.Lang.Get("specific_date")
+	radioDueSpecificDateRange.Text = Starter.Lang.Get("specific_date_range")
+	radioDueSpecificDateGroup.Text = Starter.Lang.Get("specific_date_group")
+	searchEditText.Hint = Starter.Lang.Get("search")
+	editDateYear.Text = Starter.Lang.Get("year")
+	editRangeYearFrom.Text = Starter.Lang.Get("year")
+	editRangeYearTo.Text = Starter.Lang.Get("year")
 End Sub
 
 ' Only run if Android SDK version is >= 31.
@@ -462,12 +581,18 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 		' Update the checked value of the task.
 		item.Done = Checked
 		
+		' Play task completion sound.
+		If Checked Then
+			Starter.TaskViewModelInstance.PlayTaskCompletionSound
+		End If
+		
+		' Toggle the completions status of the task
 		Starter.TaskViewModelInstance.UpdateTask(item)
 		Starter.RepeatViewModelInstance.CalculateSchedule(item)
 	End If
 	
 	If m_query.IsSortingEnabled() == False Then
-		Select m_savedSmartList:
+		Select SavedSmartList:
 			Case SMART_LIST_PLANNED:
 				If Checked == True Then
 					' Hide the completed task if the current smart list is in "Planned"
@@ -560,16 +685,70 @@ Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewH
 	' Bind the task title
 	viewHolder.TaskCheckbox.Text = item.GetTitle
 	' Bind the glance information
-	viewHolder.TaskInfo.Text = item.GetGlance(repeatItem.GetRepeatInfo)
+	
+	
+	If m_query.GetSearchBy == m_query.FIELD_ATTACHMENT_FILENAME Then
+		Dim results As List = Starter.AttachmentViewModelInstance.GetSearchedAttachments(item.GetId, _ 
+			m_query.GetSearchValue(m_query.SEARCH_QUERY_ITEM_SEARCH_BY))
+			
+		Dim resultStr As String = ""
+		
+		If results.IsInitialized Then
+			Dim attachmentObj As Attachment = results.Get(0)
+			If attachmentObj.IsInitialized Then
+				resultStr =  attachmentObj.GetFilename
+			Else
+				resultStr = Starter.Lang.Get("attachment_found")
+			End If
+			
+		End If
+		
+		viewHolder.TaskInfo.Text = item.GetGlance(resultStr, repeatItem.GetRepeatInfo)
+	Else If m_query.GetSearchBy == m_query.FIELD_NOTES Then
+		Dim cutString As String = item.GetNotes
+		If cutString.Length > 35 Then
+			cutString = cutString.SubString2(0, 35) & "..."
+		End If
+		viewHolder.TaskInfo.Text = item.GetGlance(cutString, repeatItem.GetRepeatInfo)
+	Else If m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_PRIORITY) Or _
+		m_sortingByPriority == True Then
+		viewHolder.TaskInfo.Text = item.GetGlance(Starter.Lang.Get(item.GetPriorityInfo), repeatItem.GetRepeatInfo)
+	Else
+		If Starter.SettingsViewModelInstance.IsDetailedDueDateEnabled() == False And SavedSmartList <> _ 
+			SMART_LIST_PLANNED Then
+			viewHolder.TaskInfo.Text = item.GetGlance(Starter.Lang.Get(item.GetDueDate.IdentifyDate), _ 
+			repeatItem.GetRepeatInfo)
+		Else
+			viewHolder.TaskInfo.Text = item.GetGlance(item.GetDueDate.GetFormattedDate2, repeatItem.GetRepeatInfo)
+		End If
+	End If
+	
 	' Make a reference to the task_id from the database.
 	viewHolder.ID = item.GetId
 	' Bind the panel into the view holder.
 	viewHolder.TaskPanel = pnlClickArea
 	
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		viewHolder.TaskInfo.TextColor = Colors.RGB(91,91,91)
+		viewHolder.TaskCheckbox.TextColor = Colors.Black
+		Dim lbl As Label = viewHolder.TaskPanel.GetView(0)
+		lbl.TextColor = Colors.RGB(67,67,67)
+	
+	Else
+		viewHolder.TaskInfo.TextColor = Theme.ForegroundText
+		viewHolder.TaskCheckbox.TextColor = Theme.ForegroundText
+		Dim lbl As Label = viewHolder.TaskPanel.GetView(0)
+		lbl.TextColor = Theme.ForegroundText
+		
+	End If
+	
 	' Bind the checked value. Must be placed in this part in order since this
 	' triggers the chkToDoItem_CheckedChange event.
 	viewHolder.TaskCheckbox.Checked = item.Done
 End Sub
+
+
+
 
 ' Loads the items.
 Private Sub LoadItems()
@@ -585,14 +764,14 @@ Private Sub LoadItems()
 	
 	'm_tasks = Starter.TaskViewModelInstance.FindTasksByRepeat(repeat, True)
 	
-	If m_savedSmartList <> SMART_LIST_SEARCH Then
+	If SavedSmartList <> SMART_LIST_SEARCH Then
 		m_query.SetGroupID(m_savedGroup.GetID)
 	End If
 	
 	' Obtain all tasks from the database, depending on the smart list mode.
 	m_query.SetSearchIsDeleted(False)
 	
-	Select m_savedSmartList:
+	Select SavedSmartList:
 		Case SMART_LIST_MY_DAY:
 			m_tasks = Starter.TaskViewModelInstance.GetTasksToday(m_query)
 		Case SMART_LIST_TASKS:
@@ -617,7 +796,7 @@ Private Sub LoadItems()
 					m_query.DateEnd.SetYear(editRangeYearTo.Text)
 			End Select
 			
-			GroupDescription.Text = "Results for " & searchEditText.Text
+			GroupDescription.Text = Starter.Lang.Get("results_for") & searchEditText.Text
 			GroupLineDecor.Visible = False
 			
 			Dim groupId As Int = m_query.GetGroupID()
@@ -657,7 +836,7 @@ Private Sub LoadItems()
 			
 			' Create subgroups.
 			If m_query.IsSortingEnabled() == False Then
-				Select m_savedSmartList:
+				Select SavedSmartList:
 					Case SMART_LIST_PLANNED:
 						Dim currentDateIdentification As String = item.GetDueDate.IdentifyDate
 					
@@ -670,8 +849,8 @@ Private Sub LoadItems()
 					Case Else:
 						' If the Next item Is marked As completed, Then add subGroup "Completed"
 						If item.Done == True And itr == "" Then
-							CreateSubGroup("Completed", Colors.RGB(0, 0, 0), 18)
-							itr = "Completed"
+							CreateSubGroup(Starter.Lang.Get("completed"), Colors.RGB(0, 0, 0), 18)
+							itr = Starter.Lang.Get("completed")
 						End If
 				End Select
 			End If
@@ -679,7 +858,15 @@ Private Sub LoadItems()
 			' Add items into the list view by binding the viewholder and the data.
 			
 			ToDoList.Add(CreateItem(viewHolder), viewHolder)
-			viewHolder.Root.SetColorAndBorder(Colors.White, 1, Colors.White, 15)
+			
+			If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+				viewHolder.Root.SetColorAndBorder(Colors.White, 1, Colors.White, 15)
+	
+			Else
+				viewHolder.Root.SetColorAndBorder(Theme.RootColor, 1, Theme.RootColor, 15)
+	
+			End If
+			'viewHolder.Root.SetColorAndBorder(Colors.White, 1, Colors.White, 15)
 			' Bind the currently referenced vieHolder that ToDoList points to into there
 			' currently iterated data.
 			BindItem(item, repeatItem, viewHolder)
@@ -691,7 +878,7 @@ Private Sub LoadItems()
 	Dim text As String
 	Dim count As Int
 	' Add the item count information
-	Select m_savedSmartList
+	Select SavedSmartList
 		' Planned and Completed has a unique way of counting items.
 		Case SMART_LIST_PLANNED:
 			count = Starter.TaskViewModelInstance.LastCountedIncompleteTasks
@@ -701,13 +888,17 @@ Private Sub LoadItems()
 			count = m_tasks.Size
 	End Select
 	
-	
-	text = count & " task"
-	' Make the counting information plural if possible.
-	If count > 1 Then
-		text = text & "(s)"
+	If count < 1 Then
+		pnlEmptyTasks.RemoveAllViews
+		pnlEmptyTasks.BringToFront
+		pnlEmptyTasks.LoadLayout("emptytasks")
+		lblSmiley.TextSize = 25%y
+		pnlEmptyTasks.Visible = True
+	Else
+		text = count & " " & Starter.Lang.Get("tasks_found")
+		pnlEmptyTasks.SendToBack
+		pnlEmptyTasks.Visible = False
 	End If
-	text = text & " found"
 	
 	CreateSubGroup(text, Colors.RGB(91, 91, 91), 16)
 	
@@ -725,9 +916,21 @@ Private Sub CreateSubGroup(title As String, color As Int, textSize As Int)
 	Dim subGroup As SubGroupViewHolder
 	subGroup.Initialize(xui)
 	subGroup.Name.Text = title
-	subGroup.Root.Height = 70
+	If GetDeviceLayoutValues.Scale > 2 Then
+		subGroup.Root.Height = 120
+	Else
+		subGroup.Root.Height = 70
+	End If
+	
 	subGroup.Name.TextSize = textSize
-	subGroup.Name.TextColor = color
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+	
+		subGroup.Name.TextColor = color
+	Else
+		subGroup.Name.TextColor = Theme.ForegroundText
+	End If
+	
+
 
 	ToDoList.Add(subGroup.BuildView(), subGroup)
 End Sub
@@ -735,13 +938,13 @@ End Sub
 ' Load the menu items.
 Private Sub listview_init
 	menuListView.Visible = True
-	menuListView.AddSingleLine2("	Refresh", 0)
-	menuListView.AddSingleLine2("	Sort", 1)
-	menuListView.AddSingleLine2("	Settings", 2)
+	menuListView.AddSingleLine2("	" & Starter.Lang.Get("refresh"), 0)
+	menuListView.AddSingleLine2("	" & Starter.Lang.Get("sort"), 1)
+	menuListView.AddSingleLine2("	" & Starter.Lang.Get("settings"), 2)
 	
 	menuListView.SingleLineLayout.Label.TextSize = 16
 	menuListView.SingleLineLayout.Label.TextColor = Colors.Black
-	menuListView.SingleLineLayout.ItemHeight = 70
+	menuListView.SingleLineLayout.ItemHeight = (menuListView.Height / 3)
 		
 	Dim cd As ColorDrawable
 	cd.Initialize(Colors.White, 3dip)
@@ -770,7 +973,7 @@ Sub menuBtn_Click
 		pnlMenuBgTouch.BringToFront
 		pnlMenuBgTouch.Elevation = 20
 		pnlmenuListView.SetVisibleAnimated(250, True)
-		pnlmenuListView.Elevation = 20
+		pnlmenuListView.Elevation = 40
 		menuListView.BringToFront
 		pnlmenuListView.BringToFront
 		pnlmenuListView.SetLayoutAnimated(250, menuListViewItemsize.Left, menuListViewItemsize.Top, _
@@ -796,14 +999,14 @@ End Sub
 Private Sub menuListView_ItemClick (Position As Int, Value As Object)
 	Select Position
 		Case MENU_ITEM_REFRESH:
-			
+			OnRefresh
 		Case MENU_ITEM_SORT:
 			sortMsgBox
 		Case MENU_ITEM_SETTINGS:
 			StartActivity(SettingsActivity)
 		Case MENU_ITEM_EDIT_GROUP:
 			Log("m_savedGroup: " & m_savedGroup)
-			ToastMessageShow("m_savedGroup ID: " & m_savedGroup.GetID, False)
+			'ToastMessageShow("m_savedGroup ID: " & m_savedGroup.GetID, False)
 			
 			Starter.InstanceState.Put(Starter.EXTRA_TASK_GROUP_EDITOR_MODE, Starter.TASK_GROUP_EDITOR_MODE_EDIT)
 			Starter.InstanceState.Put(Starter.EXTRA_EDITOR_GROUP_ID, m_savedGroup.GetID)
@@ -823,6 +1026,32 @@ Private Sub OnHideMenuListViewItem()
 End Sub
 
 Private Sub sortMsgBox
+	
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		pnlSortDialogue.Color = Colors.White
+		lblSortBy.TextColor = Colors.RGB(96,96,96)
+		radioNone.TextColor = Colors.RGB(96,96,96)
+		radioAsc.TextColor = Colors.RGB(96,96,96)
+		radioDesc.TextColor = Colors.RGB(96,96,96)
+		radioSortByNone.TextColor = Colors.RGB(96,96,96)
+		radioSortByCreaion.TextColor = Colors.RGB(96,96,96)
+		radioSortByTitle.TextColor = Colors.RGB(96,96,96)
+		radioSortByDD.TextColor = Colors.RGB(96,96,96)
+		radioSortByPrio.TextColor = Colors.RGB(96,96,96)
+	Else
+		pnlSortDialogue.Color = Theme.RootColor
+		lblSortBy.TextColor = Theme.ForegroundText
+		radioNone.TextColor = Theme.ForegroundText
+		radioAsc.TextColor = Theme.ForegroundText
+		radioDesc.TextColor = Theme.ForegroundText
+		radioSortByNone.TextColor = Theme.ForegroundText
+		radioSortByCreaion.TextColor = Theme.ForegroundText
+		radioSortByTitle.TextColor = Theme.ForegroundText
+		radioSortByDD.TextColor = Theme.ForegroundText
+		radioSortByPrio.TextColor = Theme.ForegroundText
+	End If
+	
+	
 	pnlSortDialoguebg.BringToFront
 	pnlSortDialoguebg.Elevation = 20
 	pnlSortDialoguebg.SetVisibleAnimated(250, True)
@@ -932,10 +1161,10 @@ Public Sub OnChkboxViewAreaClick(percentage As Int, viewHolder As TaskViewHolder
 End Sub
 
 Private Sub drawerButton_Click
-	If m_savedSmartList == SMART_LIST_SEARCH Then
+	If SavedSmartList == SMART_LIST_SEARCH Then
 		OnClearSearchQuery
 		
-		m_savedSmartList = SMART_LIST_ALL
+		SavedSmartList = SMART_LIST_ALL
 		
 		' Go to the "All" smart list by default.
 		m_savedGroup = smartLists(SMART_LIST_ALL)
@@ -955,6 +1184,28 @@ Sub LoadDrawerItems
 	clvItems.sv.ScrollViewInnerPanel.Color = xui.Color_Transparent
 	clvItems.sv.Color = xui.Color_Transparent
 	
+	
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		drawertitlebar.Color = Colors.RGB(244,246,250)
+		pnlItems.Color = Colors.RGB(244,246,250)
+		lblTitle.TextColor = Colors.RGB(68,68,68)
+		lblNewGroup.TextColor = Colors.RGB(68,68,68)
+		lblGroupIcon.TextColor = Colors.RGB(68,68,68)
+		imgLogo.Bitmap = LoadBitmap(File.DirAssets, "486023921_623831243812785_3842496593750662642_n (1).png")
+		lblNewGroup.Invalidate
+		lblGroupIcon.Invalidate
+	Else
+		drawertitlebar.Color = Theme.RootColor
+		pnlItems.Color = Theme.RootColor
+		lblTitle.TextColor = Theme.ForegroundText
+		lblNewGroup.TextColor = Theme.ForegroundText
+		lblGroupIcon.TextColor = Theme.ForegroundText
+		lblNewGroup.Invalidate
+		lblGroupIcon.Invalidate
+		imgLogo.Bitmap = LoadBitmap(File.DirAssets, "drawercolorlight.png")
+	End If
+	
+	
 	Dim items As List
 	items.Initialize
 	
@@ -962,33 +1213,33 @@ Sub LoadDrawerItems
 		obj.Initialize(-1)
 	Next
 	
-	smartLists(0).SetTitle("My Day")
+	smartLists(0).SetTitle(Starter.Lang.Get("my_day"))
 	smartLists(0).SetIcon("")
 	
-	smartLists(1).SetTitle("Tasks")
+	smartLists(1).SetTitle(Starter.Lang.Get("tasks"))
 	smartLists(1).SetIcon("")
-	smartLists(1).SetDescription("List of ungrouped tasks")
+	smartLists(1).SetDescription(Starter.Lang.Get("tasks_description"))
 	
-	smartLists(2).SetTitle("Planned")
+	smartLists(2).SetTitle(Starter.Lang.Get("planned"))
 	smartLists(2).SetIcon("")
 	smartLists(2).SetColor(Theme.COLOR_BLUE)
-	smartLists(2).SetDescription("List of incomplete tasks")
+	smartLists(2).SetDescription(Starter.Lang.Get("planned_description"))
 	
-	smartLists(3).SetTitle("Completed")
+	smartLists(3).SetTitle(Starter.Lang.Get("completed"))
 	smartLists(3).SetIcon("")
 	smartLists(3).SetColor(Theme.COLOR_GREEN)
-	smartLists(3).SetDescription("List of complete tasks")
+	smartLists(3).SetDescription(Starter.Lang.Get("completed_description"))
 	
-	smartLists(4).SetTitle("All")
+	smartLists(4).SetTitle(Starter.Lang.Get("all"))
 	smartLists(4).SetIcon("")
-	smartLists(4).SetDescription("List of all tasks")
+	smartLists(4).SetDescription(Starter.Lang.Get("all_description"))
 	
-	smartLists(5).SetTitle("Trash")
+	smartLists(5).SetTitle(Starter.Lang.Get("trash"))
 	smartLists(5).SetIcon("")
 	smartLists(5).SetColor(Theme.COLOR_RED)
-	smartLists(5).SetDescription("List of deleted tasks")
+	smartLists(5).SetDescription(Starter.Lang.Get("trash_description"))
 	
-	smartLists(6).SetTitle("Search")
+	smartLists(6).SetTitle(Starter.Lang.Get("search"))
 	smartLists(6).SetIcon(Chr(0xE8B6))
 
 	Dim itr As Int = 0
@@ -1036,11 +1287,18 @@ Sub LoadDrawerItems
 	
 End Sub
 
+Private Sub OnLoadDrawerText
+	lblTitle.Text = Starter.Lang.Get("app_title")
+	lblNewGroup.Text = Starter.Lang.Get("new_group")
+End Sub
+
 Private Sub OnLoadTaskGroups(items As List)
 	For Each item As Group In items
 		Dim p As B4XView = xui.CreatePanel("")
 		p.SetLayoutAnimated(0, 0, 0, 100%x, 60dip)
 		p.LoadLayout("drawerItems")
+		
+		OnLoadDrawerText
 		
 		Dim viewHolder As GroupViewHolder
 		viewHolder.Initialize
@@ -1055,13 +1313,29 @@ Private Sub OnLoadTaskGroups(items As List)
 		viewHolder.Name.Text = item.GetTitle
 		viewHolder.Icon.Text = item.GetIcon
 
-		viewHolder.Root.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		viewHolder.BackPanel.SetColorAndBorder(Colors.White, 0, Colors.White, 0)
-		viewHolder.Icon.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
-		viewHolder.Name.SetColorAndBorder(Colors.White, 0, Colors.Transparent, 0)
+		viewHolder.Root.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
+		viewHolder.BackPanel.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
+		viewHolder.Icon.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
+		viewHolder.Name.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 0)
+		
+		If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+			viewHolder.Icon.TextColor = Colors.RGB(68,68,68)
+			viewHolder.Name.TextColor = Colors.RGB(68,68,68)
+		Else
+			viewHolder.Icon.TextColor = Theme.ForegroundText
+			viewHolder.Name.TextColor = Theme.ForegroundText
+		End If
 		
 		clvItems.Add(p, viewHolder)
 	Next
+End Sub
+
+Private Sub OnRefresh
+	If SavedSmartList == SMART_LIST_NONE Then
+		OnLoadPage(m_savedGroup)
+	Else
+		OnLoadPage(smartLists(SavedSmartList))
+	End If
 End Sub
 
 Private Sub OnClearSearchQuery
@@ -1085,7 +1359,6 @@ End Sub
 ' Function for task group click.
 Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	Dim viewHolder As GroupViewHolder = Value
-	
 	If viewHolder.IsSeparator == True Then
 		' Reset selection to previous item
 		clvItems.GetPanel(Index).Color = xui.Color_Transparent
@@ -1095,7 +1368,7 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 	' 0 ID for groups cannot exist on the database. Therefore, it is reserved
 	' for special groups such as smart lists.
 	If viewHolder.ID <= 0 Then
-		m_savedSmartList = Index
+		SavedSmartList = Index
 		
 		' Remove the edit group button for smart lists.
 		If menuListView.Size > 3 Then
@@ -1105,11 +1378,11 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 		m_savedGroup = smartLists(Index)
 		OnLoadPage(m_savedGroup)
 	Else
-		m_savedSmartList = SMART_LIST_NONE
+		SavedSmartList = SMART_LIST_NONE
 		
 		' Include the edit group button for custom lists.
 		If menuListView.Size < 4 Then	
-			menuListView.AddSingleLine2("	Edit Group", 3)
+			menuListView.AddSingleLine2("	" & Starter.Lang.Get("edit_group"), 3)
 		End If
 		
 		' Get the associated group based on the ID stored in the clicked view holder of the nav drawer.
@@ -1118,45 +1391,68 @@ Private Sub clvItems_ItemClick (Index As Int, Value As Object)
 		m_savedGroup = groupObj
 		OnLoadPage(m_savedGroup)
 	End If
+	
 End Sub
 
 Private Sub OnLoadPage(item As Group)	
 	LoadDrawerItems
 	drawer.LeftOpen = False
 	
-	mainFragment.RemoveAllViews
-	mainFragment.LoadLayout("newFragment")
 	
-	' Remove all items to update data and avoid data duplication.
-	ToDoList.Clear
-	
-	pnlTitleBar.Color = Theme.GetPrimaryColor(item.GetColor)
-	mainFragment.Color = Theme.GetBackgroundColor(item.GetColor)
-	
-	titleLabel.Text = item.GetTitle
-	Log("Title: " & item.GetTitle)
-	
-	OnLoadTaskDescription(item)	
+		mainFragment.RemoveAllViews
+		mainFragment.LoadLayout("newFragment")
+		
+		' Remove all items to update data and avoid data duplication.
+		ToDoList.Clear
+		
+		
+		titleLabel.Text = item.GetTitle
+		Log("Title: " & item.GetTitle)
+		
+		OnLoadTaskDescription(item)	
 
-	LoadItems
+		LoadItems
+		
+		Starter.CheckInstanceState
+		
+		If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+			pnlTitleBar.Color = Theme.GetPrimaryColor(item.GetColor)
+			mainFragment.Color = Theme.GetBackgroundColor(item.GetColor)
+			drawerButton.TextColor = Colors.White
+			titleLabel.TextColor = Colors.White
+			searchBtn.TextColor = Colors.White
+			menuBtn.TextColor = Colors.White
+		Else
+			pnlTitleBar.Color = Colors.RGB(28,28,28)
+			mainFragment.Color = Theme.DarkbackgroundColor
+			drawerButton.TextColor = Theme.GetTextColor(item.GetColor)
+			titleLabel.TextColor = Theme.GetTextColor(item.GetColor)
+			searchBtn.TextColor = Theme.GetTextColor(item.GetColor)
+			menuBtn.TextColor = Theme.GetTextColor(item.GetColor)
+			lblEmptyTasks.TextColor = Theme.ForegroundText
+			lblSmiley.TextColor = Theme.ForegroundText
+			btnAdd.Background = Theme.btnRootColor
+			btnAdd.TextColor = Theme.ForegroundText
+		End If
+		
 	
-	Starter.CheckInstanceState
+			
 End Sub
 
 Private Sub OnLoadTaskDescription(item As Group)
-	GroupDescription.TextColor = Theme.GetPrimaryColor(item.GetColor)
+	GroupDescription.TextColor = Theme.GetTextColor(item.GetColor)
 	
-	If m_savedSmartList <> SMART_LIST_MY_DAY Then
+	If SavedSmartList <> SMART_LIST_MY_DAY Then
 		If item.GetDescription <> "" Then
 			GroupDescription.Text = item.GetDescription
 		Else
-			GroupDescription.Text = "No task group description"
+			GroupDescription.Text = Starter.Lang.Get("no_description")
 		End If
 		
 		GroupDescription.TextSize = 16
 		GroupLineDecor.Visible = False
 	Else
-		GroupDescription.Text = "My Tasks"
+		GroupDescription.Text = Starter.Lang.Get("my_tasks")
 		GroupDescription.TextSize = 22
 		GroupLineDecor.Visible = True
 	End If
@@ -1164,6 +1460,12 @@ End Sub
 
 Private Sub searchBtn_Click
 	If button_handling Then
+		
+		If GetDeviceLayoutValues.Scale > 2 Then
+			svSearchBody.Panel.Height = 6400
+		End If
+		
+		
 		pnlTitleBar.Elevation = 0
 		pnlSearch.SetLayout(pnlTitleBar.Left, pnlTitleBar.Top, pnlTitleBar.Width, pnlTitleBar.Height)
 		pnlSearch.SetVisibleAnimated(150, True)
@@ -1173,15 +1475,36 @@ Private Sub searchBtn_Click
 		searchFragment.SetLayout(mainFragment.Left, mainFragment.Top, mainFragment.Width, mainFragment.Height)
 		svSearchBody.SetLayout(searchFragment.Left, 0, searchFragment.Width, searchFragment.Height)
 		svSearchBody.Panel.LoadLayout("searchFragmentSVLayout")
+		
+		OnLoadSearchText
+		
 		EditTextTransparentUnderline
 		pnlSearchSeparator1.SetLayout(50dip, pnlSearchSeparator1.Top, 100%x - 100dip, 2dip)
 		pnlSearchSeparator2.SetLayout(50dip, pnlSearchSeparator2.Top, 100%x - 100dip, 2dip)
 		searchFragment.SetVisibleAnimated(150, True)
 		searchFragment.BringToFront
 		
+		If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+			searchcontentLight
+		Else
+			searchcontentDark
+		End If
+		
+		
 		Sleep(150)
 		mainFragment.Visible = False
 		pnlTitleBar.Visible = False
+		
+		pnlContainerFilterByCheckRepeat.Left = (pnlFilterByRepeat.Width - pnlContainerFilterByCheckRepeat.Width) / 2
+		pnlContainerLblRepeat.Left = (pnlFilterByRepeat.Width - pnlContainerLblRepeat.Width) / 2
+		
+		pnlDueSpecificDate.Left = (pnlFilterByDueDate.Width - pnlDueSpecificDate.Width) / 2
+		pnlDueSpecificDateRangeFrom.Left = (pnlFilterByDueDate.Width - pnlDueSpecificDateRangeFrom.Width) / 2
+		pnlDueSpecificDateRangeTo.Left = (pnlFilterByDueDate.Width - pnlDueSpecificDateRangeTo.Width) / 2
+		pnlDueSpecificDateGroup.Left = (pnlFilterByDueDate.Width - pnlDueSpecificDateGroup.Width) / 2
+		
+		
+		
 		
 		LoadSearchItems
 
@@ -1334,13 +1657,12 @@ Private Sub enterBtn_Click
 	' Set the query values
 	m_query.SetSearchBy(searchEditText.Text)
 	
-	m_savedSmartList = SMART_LIST_SEARCH
-	m_savedGroup = smartLists(m_savedSmartList)
+	SavedSmartList = SMART_LIST_SEARCH
+	m_savedGroup = smartLists(SavedSmartList)
 	OnLoadPage(m_savedGroup)
 	
 	drawerButton.Text = Chr(0xE5CD)
 End Sub
-
 
 Private Sub btnCancel_Click
 	sortMsgBox_disappear
@@ -1363,20 +1685,29 @@ Private Sub sortMsgBox_disappear
 	pnlSortDialogue.SendToBack
 End Sub
 
+Private Sub radioSortByNone_CheckedChange(Checked As Boolean)
+	m_query.SetSortField(m_query.FIELD_TASK_ID)
+	m_sortingByPriority = False
+End Sub
+
 Private Sub radioSortByTitle_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_TITLE)
+	m_sortingByPriority = False
 End Sub
 
-Private Sub radioSortByPriority_CheckedChange(Checked As Boolean)
+Private Sub radioSortByPrio_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_PRIORITY)
+	m_sortingByPriority = Checked
 End Sub
 
-Private Sub radioSortByDueDate_CheckedChange(Checked As Boolean)
+Private Sub radioSortByDD_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_DUE_DATE)
+	m_sortingByPriority = False
 End Sub
 
-Private Sub radioSortByCreation_CheckedChange(Checked As Boolean)
+Private Sub radioSortByCreaion_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_CREATED_AT)
+	m_sortingByPriority = False
 End Sub
 
 Private Sub radioSortOrderDescending_CheckedChange(Checked As Boolean)
@@ -1505,7 +1836,7 @@ Private Sub spnGroupName_ItemClick (Position As Int, Value As Object)
 		ToastMessageShow("Value: " & Value, False)
 	End If
 	
-	If Value == "Tasks" Then
+	If Value == FormHelper.DEFAULT_TASK_NAME Then
 		m_query.SetGroupID(0)
 	Else
 		Dim groupId As Int = Starter.GroupViewModelInstance.GetGroupByTitle(Value).GetID
@@ -1708,4 +2039,124 @@ End Sub
 
 Private Sub checkDeleted_CheckedChange(Checked As Boolean)
 	m_query.SetSearchIsDeleted(Checked)
+End Sub
+
+Private Sub radioNone_CheckedChange(Checked As Boolean)
+	m_query.SetSortOrder(m_query.ORDER_NONE)
+End Sub
+
+Private Sub radioDesc_CheckedChange(Checked As Boolean)
+	m_query.SetSortOrder(m_query.ORDER_DESC)
+End Sub
+
+Private Sub radioAsc_CheckedChange(Checked As Boolean)
+	m_query.SetSortOrder(m_query.ORDER_ASC)
+End Sub
+
+Private Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the event
+	Dim Answ As Int
+	If KeyCode = KeyCodes.KEYCODE_BACK Then
+		Answ = Msgbox2(Starter.Lang.Get("quit_confirm"), Starter.Lang.Get("alert"), _ 
+			Starter.Lang.Get("yes"), "", Starter.Lang.Get("no"), Null)
+		If Answ = DialogResponse.POSITIVE Then
+			Return False
+		Else
+			Return True
+		End If
+	End If
+End Sub
+
+
+Private Sub searchcontentDark
+	pnlSearch.Color = Colors.RGB(28,28,28)
+	pnlContainerSearchEditText.Color = Colors.RGB(51,51,54)
+	backBtn.TextColor = Theme.ForegroundText
+	enterBtn.TextColor = Theme.ForegroundText
+	searchEditText.TextColor = Theme.ForegroundText
+	searchEditText.HintColor = Colors.RGB(191,191,191)
+	lblSearchSearchBy.TextColor = Theme.ForegroundText
+	lblSortOrderBy.TextColor = Theme.ForegroundText
+	lblFilterFilterBy.TextColor = Theme.ForegroundText
+	svSearchBody.Color = Theme.DarkbackgroundColor
+	radioSearchByTitle.TextColor = Theme.ForegroundText
+	radioSearchByNotes.TextColor = Theme.ForegroundText
+	radioSearchByFilename.TextColor = Theme.ForegroundText
+	radioSortOrderByNone.TextColor = Theme.ForegroundText
+	radioSortOrderByAscending.TextColor = Theme.ForegroundText
+	radioSortOrderByDescending.TextColor = Theme.ForegroundText
+	checkFilterByPriority.TextColor = Theme.ForegroundText
+	radioFilterByPriorityCritical.TextColor = Theme.ForegroundText
+	radioFilterByPriorityHigh.TextColor = Theme.ForegroundText
+	radioFilterByPriorityMedium.TextColor = Theme.ForegroundText
+	radioFilterByPriorityLow.TextColor = Theme.ForegroundText
+	checkFilterByRepeat.TextColor = Theme.ForegroundText
+	
+	lblRepeatSun.TextColor = Theme.ForegroundText
+	lblRepeatMon.TextColor = Theme.ForegroundText
+	lblRepeatTue.TextColor = Theme.ForegroundText
+	lblRepeatWed.TextColor = Theme.ForegroundText
+	lblRepeatThu.TextColor = Theme.ForegroundText
+	lblRepeatFri.TextColor = Theme.ForegroundText
+	lblRepeatSat.TextColor = Theme.ForegroundText
+	
+	checkFilterByDueDate.TextColor = Theme.ForegroundText
+	
+	radioDueSpecificDate.TextColor = Theme.ForegroundText
+	radioDueSpecificDateRange.TextColor = Theme.ForegroundText
+	radioDueSpecificDateGroup.TextColor = Theme.ForegroundText
+	checkFilterByGroup.TextColor = Theme.ForegroundText
+	checkDeleted.TextColor = Theme.ForegroundText
+	
+	'pnlAllFilterBy.Color = Colors.RGB(156,168,190)
+	
+
+	
+
+End Sub
+
+Private Sub searchcontentLight
+	pnlSearch.Color = Colors.RGB(241,241,241)
+	pnlContainerSearchEditText.Color = Colors.RGB(248,248,248)
+	backBtn.TextColor = Colors.Black
+	enterBtn.TextColor = Colors.Black
+	searchEditText.TextColor = Colors.Black
+	searchEditText.HintColor = Colors.LightGray
+	lblSearchSearchBy.TextColor = Colors.Black
+	lblSortOrderBy.TextColor = Colors.Black
+	lblFilterFilterBy.TextColor = Colors.Black
+	svSearchBody.Color = Colors.RGB(241,241,241)
+	radioSearchByTitle.TextColor = Colors.Black
+	radioSearchByNotes.TextColor = Colors.Black
+	radioSearchByFilename.TextColor = Colors.Black
+	radioSortOrderByNone.TextColor = Colors.Black
+	radioSortOrderByAscending.TextColor = Colors.Black
+	radioSortOrderByDescending.TextColor = Colors.Black
+	checkFilterByPriority.TextColor = Colors.Black
+	radioFilterByPriorityCritical.TextColor = Colors.Black
+	radioFilterByPriorityHigh.TextColor = Colors.Black
+	radioFilterByPriorityMedium.TextColor = Colors.Black
+	radioFilterByPriorityLow.TextColor = Colors.Black
+	checkFilterByRepeat.TextColor = Colors.Black
+	
+	lblRepeatSun.TextColor = Colors.Black
+	lblRepeatMon.TextColor = Colors.Black
+	lblRepeatTue.TextColor = Colors.Black
+	lblRepeatWed.TextColor = Colors.Black
+	lblRepeatThu.TextColor = Colors.Black
+	lblRepeatFri.TextColor = Colors.Black
+	lblRepeatSat.TextColor = Colors.Black
+	
+	checkFilterByDueDate.TextColor = Colors.Black
+	
+	radioDueSpecificDate.TextColor = Colors.Black
+	radioDueSpecificDateRange.TextColor = Colors.Black
+	radioDueSpecificDateGroup.TextColor = Colors.Black
+	checkFilterByGroup.TextColor = Colors.Black
+	checkDeleted.TextColor = Colors.Black
+	
+	'pnlAllFilterBy.Color = Colors.RGB(156,168,190)
+	
+
+	
+
 End Sub

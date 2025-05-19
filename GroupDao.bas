@@ -17,8 +17,8 @@ Public Sub Initialize(sql As SQL)
 End Sub
 
 ' count- Supported values: CHECK_ON_INSERT, CHECK_ON_UPDATE
-Public Sub CheckForDuplicates(item As Group, count As Int) As Boolean
-	If m_sql.ExecQuerySingleResult("SELECT count(*) FROM groups WHERE title = '" & item.GetTitle & "';") >= count Then
+Public Sub CheckForDuplicates(item As String, count As Int) As Boolean
+	If m_sql.ExecQuerySingleResult("SELECT count(*) FROM groups WHERE title = '" & item & "';") >= count Then
 		Return True
 	Else
 		Return False
@@ -30,7 +30,7 @@ Public Sub InsertGroup(item As Group) As Boolean
 	
 	m_sql.BeginTransaction
 	Try
-		If CheckForDuplicates(item, CHECK_ON_INSERT) Then
+		If CheckForDuplicates(item.GetTitle, CHECK_ON_INSERT) Then
 			result = False
 		Else
 			m_sql.ExecNonQuery("INSERT INTO groups(title, description, color, icon, icon_pos, " & _ 
@@ -177,7 +177,7 @@ Public Sub UpdateGroup(item As Group) As Boolean
 	Dim Result As Boolean
 	m_sql.BeginTransaction
 	Try
-		If CheckForDuplicates(item, CHECK_ON_UPDATE) Then
+		If CheckForDuplicates(item.GetTitle, CHECK_ON_UPDATE) Then
 			Result = False
 		Else
 			Dim query As String = "UPDATE groups SET " & CRLF & _

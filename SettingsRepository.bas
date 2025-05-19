@@ -12,13 +12,22 @@ Sub Class_Globals
 	Private Const SETTINGS_KEY_APP_TITLE As String = "app_title"
 	Private Const SETTINGS_KEY_DARK_MODE As String = "dark_mode"
 	Private Const SETTINGS_KEY_DEBUG_MODE As String = "debug_mode"
+	Private Const SETTINGS_KEY_DETAILED_DUE_DATE As String = "detailed_due_date"
 	Private Const SETTINGS_KEY_EXPERIMENTAL_MODE As String = "experimental_mode"
 	Private Const SETTINGS_KEY_LANGUAGE As String = "language"
 	Private Const SETTINGS_KEY_TASK_COMPLETION_SOUND As String = "task_completion_sound"
 	Private Const SETTINGS_KEY_24_HOUR_FORMAT As String = "24_hour_format"
-	Private Const 
 	
-	Private Const DEFAULT_LANGUAGE As String = "en_us"
+	Public Const LANGUAGE_AL_LOGHA_AL_3ARABIYAH As String = "ar"
+	Public Const LANGUAGE_ENGLISH As String = "en-US"
+	Public Const LANGUAGE_TAGALOG As String = "tl-PH"
+	Public Const LANGUAGE_KAPAMPANGAN As String = "pam"
+	Public Const LANGUAGE_ESPANOL As String = "es-ES"
+	Public Const LANGUAGE_HANYU As String = "zh-CN"
+	Public Const LANGUAGE_RUSSKIY As String = "ru-RU"
+	Public Const LANGUAGE_BAHASA_INDONESIA As String = "id-ID"
+	
+	Public Const DEFAULT_LANGUAGE As String = LANGUAGE_ENGLISH
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -37,6 +46,7 @@ Public Sub LoadDefaults()
 	
 	SetDarkMode(False)
 	SetDebugMode(False)
+	SetDetailedDueDate(False)
 	SetLanguage(DEFAULT_LANGUAGE)
 	SetTaskCompletionSound(True)
 	SetExperimentalMode(False)
@@ -45,6 +55,10 @@ End Sub
 
 Public Sub IsDebugModeEnabled() As Boolean
 	Return m_kvs.Get(SETTINGS_KEY_DEBUG_MODE)
+End Sub
+
+Public Sub IsDetailedDueDateEnabled() As Boolean
+	Return m_kvs.Get(SETTINGS_KEY_DETAILED_DUE_DATE)
 End Sub
 
 Public Sub IsDarkModeEnabled() As Boolean
@@ -56,7 +70,7 @@ Public Sub IsExperimentalModeEnabled() As Boolean
 End Sub
 
 Public Sub GetLanguage() As String
-	Return m_kvs.Get(SETTINGS_KEY_EXPERIMENTAL_MODE)
+	Return m_kvs.Get(SETTINGS_KEY_LANGUAGE)
 End Sub
 
 Public Sub IsTaskCompetionSoundEnabled() As Boolean
@@ -94,6 +108,10 @@ End Sub
 
 Public Sub SetDebugMode(value As Boolean)
 	m_kvs.Put(SETTINGS_KEY_DEBUG_MODE, value)
+End Sub
+
+Public Sub SetDetailedDueDate(value As Boolean)
+	m_kvs.Put(SETTINGS_KEY_DETAILED_DUE_DATE, value)
 End Sub
 
 Public Sub SetDarkMode(value As Boolean)

@@ -23,7 +23,8 @@ Sub Process_Globals
 	Public TaskViewModelInstance As TaskViewModel
 	Public RepeatViewModelInstance As RepeatViewModel
 
-	'Public SettingsViewModelInstance As SettingsViewModel
+	Public SettingsViewModelInstance As SettingsViewModel
+	Public Lang As LanguageManager
 	
 	Public Const ACTION_TASK_NOTIFICATION_DISMISS As String = Application.PackageName & ".ACTION_TASK_NOTIFICATION_DISMISS"
 	Public Const CHANNEL_TASK_NOTIFICATION As String = "Task Notification"
@@ -40,8 +41,10 @@ Sub Service_Start (StartingIntent As Intent)
 	Service.StopAutomaticForeground 'Call this when the background task completes (if there is one)
 	Log("=========================================")
 	
+	SettingsViewModelInstance.Initialize
+	Lang.Initialize(SettingsViewModelInstance)
 	' Initialize the database.
-	ToDoDatabaseInstance.Initialize
+	ToDoDatabaseInstance.Initialize(Lang)
 	taskRepo.Initialize(ToDoDatabaseInstance)
 	TaskViewModelInstance.Initialize(taskRepo)
 	repeatRepo.Initialize(ToDoDatabaseInstance)
@@ -78,12 +81,12 @@ Sub Service_Start (StartingIntent As Intent)
 			notificationBuilder.ShowBadge(True)
 			notificationBuilder.SmallIcon(LoadBitmap(File.DirAssets, "ic_launcher_small.png"))
 			notificationBuilder.AutoCancel(True)
-			
-			notificationBuilder.AddButtonAction(Null, "Dismiss", TaskNotificationDismissReceiver, repeatItem.GetID(0))
+			notificationBuilder.ShowWhen(repeatItem.GetSchedule(0) + task.Reminder.GetUnixTime)
+			notificationBuilder.AddButtonAction(Null, Lang.Get("dismiss"), TaskNotificationDismissReceiver, repeatItem.GetID(0))
 			If task.Snooze.GetSnooze <> task.Snooze.SNOOZE_OFF Then
-				notificationBuilder.AddButtonAction(Null, "Snooze", TaskNotificationSnoozeReceiver, repeatItem.GetID(0))
+				notificationBuilder.AddButtonAction(Null, Lang.Get("snooze"), TaskNotificationSnoozeReceiver, repeatItem.GetID(0))
 			End If
-			notificationBuilder.AddButtonAction(Null, "Complete", TaskNotificationCompleteReceiver, repeatItem.GetID(0))
+			notificationBuilder.AddButtonAction(Null, Lang.Get("complete"), TaskNotificationCompleteReceiver, repeatItem.GetID(0))
 			notificationBuilder.DeleteAction(TaskNotificationDismissReceiver, repeatItem.GetID(0))
 	
 			notification = notificationBuilder.Build(GetTitle(task), task.GetNotes, _
@@ -151,7 +154,7 @@ Private Sub GetTitle(item As ToDo) As Object
 	
 	Select item.GetPriority
 		Case item.PRIORITY_CRITICAL:
-			Return cs.Initialize().Bold.Color(Colors.RGB(255, 0, 0)).Append("Critical: " & item.GetTitle)
+			Return cs.Initialize().Bold.Color(Colors.RGB(255, 0, 0)).Append(Lang.Get("critical") & ": " & item.GetTitle)
 		Case Else:
 			Return item.GetTitle
 	End Select

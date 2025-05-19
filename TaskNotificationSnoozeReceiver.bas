@@ -15,14 +15,18 @@ Sub Process_Globals
 	Public TaskViewModelInstance As TaskViewModel
 	Public RepeatViewModelInstance As RepeatViewModel
 
-	'Public SettingsViewModelInstance As SettingsViewModel
+	Public SettingsViewModelInstance As SettingsViewModel
+	Public Lang As LanguageManager
 End Sub
 
 'Called when an intent is received. 
 'Do not assume that anything else, including the starter service, has run before this method.
 Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 	' Initialize the database.
-	ToDoDatabaseInstance.Initialize
+	SettingsViewModelInstance.Initialize
+	Lang.Initialize(SettingsViewModelInstance)
+	
+	ToDoDatabaseInstance.Initialize(Lang)
 	taskRepo.Initialize(ToDoDatabaseInstance)
 	repeatRepo.Initialize(ToDoDatabaseInstance)
 	TaskViewModelInstance.Initialize(taskRepo)
@@ -41,7 +45,6 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 		
 		Dim item As ToDo = TaskViewModelInstance.GetTask(itemId)
 		
-		nb.Cancel(itemId)
 		If item.IsInitialized Then
 			' Reschedule the task based on the snooze value and the current time.
 			
@@ -62,6 +65,11 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 					RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(currentDayOfTheWeek), _
 					repeatItem.GetSchedule(currentDayOfTheWeek))
 					
+					ToastMessageShow(Lang.Get("task_snoozed") & " (" & item.Snooze.GetSnoozeText(item.Snooze.GetSnooze) & ")", True)
+					
+					nb.Cancel(notificationId)
+		
+					'Run the task notification scheduler service to start the next scheduled task.
 					StartServiceAtExact(TaskNotificationService, calculatedTime, True)
 				End If
 				

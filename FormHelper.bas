@@ -29,18 +29,18 @@ Public Sub PopulateDate(spnMonth As Spinner, spnDay As Spinner)
 	For i = 0 To 12
 		' If i is equal to 0, then add a hint text as an option
 		If i == 0 Then
-			spnMonth.Add(SPINNER_DUE_DATE_MONTH_HINT_TEXT)
+			spnMonth.Add(Starter.Lang.Get("select_month_here"))
 			Continue
 		End If
 		' Retrieves the month name based on the iteration value and add it to the spinner.
-		spnMonth.Add(dateObj.GetMonthFromNum(i))
+		spnMonth.Add(Starter.Lang.Get(dateObj.GetMonthFromNum(i)))
 	Next
 	
 	' Populate with days. Include the 0 value or null.
 	For i = 0 To 31
 		' If i is equal to 0, then add a hint text as an option
 		If i == 0 Then
-			spnDay.Add(SPINNER_DUE_DATE_DAY_HINT_TEXT)
+			spnDay.Add(Starter.Lang.Get("select_day_here"))
 			Continue
 		End If
 		' Sets the current iteration value as a day.
@@ -54,18 +54,18 @@ Public Sub PopulateDateRange(spnDateRange As Spinner)
 	
 	spnDateRange.Clear
 	
-	spnDateRange.Add("Select date range...")
-	spnDateRange.Add(dateObj.DATE_A_LONG_TIME_AGO)
-	spnDateRange.Add(dateObj.DATE_EARLIER)
-	spnDateRange.Add(dateObj.DATE_LAST_WEEK)
-	spnDateRange.Add(dateObj.DATE_EARLIER_THIS_WEEK)
-	spnDateRange.Add(dateObj.DATE_YESTERDAY)
-	spnDateRange.Add(dateObj.DATE_TODAY)
-	spnDateRange.Add(dateObj.DATE_TOMORROW)
-	spnDateRange.Add(dateObj.DATE_THIS_WEEK)
-	spnDateRange.Add(dateObj.DATE_NEXT_WEEK)
-	spnDateRange.Add(dateObj.DATE_LATER)
-	spnDateRange.Add(dateObj.DATE_A_LONG_TIME_FROM_NOW)
+	spnDateRange.Add(Starter.Lang.Get("select_date_range"))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_A_LONG_TIME_AGO))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_EARLIER))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_LAST_WEEK))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_EARLIER_THIS_WEEK))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_YESTERDAY))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_TODAY))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_TOMORROW))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_THIS_WEEK))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_NEXT_WEEK))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_LATER))
+	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_A_LONG_TIME_FROM_NOW))
 End Sub
 
 Public Sub PopulateTime(spnHour As Spinner, spnMinute As Spinner, spnMarker As Spinner)
@@ -109,19 +109,19 @@ Public Sub PopulateSnooze(spnSnooze As Spinner)
 	' Clear the items before adding new items.
 	spnSnooze.Clear
 	
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_OFF))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_MINUTE))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_3_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_10_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_15_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_20_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_30_MINUTES))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_HOUR))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_2_HOURS))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_HOURS))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_12_HOURS))
-	spnSnooze.Add(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_DAY))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_OFF)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_MINUTE)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_3_MINUTES)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_MINUTES)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_10_MINUTES)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_15_MINUTES)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_20_MINUTES)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_30_MINUTES)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_HOUR)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_2_HOURS)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_5_HOURS)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_12_HOURS)))
+	spnSnooze.Add(Starter.Lang.Get(snoozeObj.GetSnoozeText(snoozeObj.SNOOZE_1_DAY)))
 End Sub
 
 ' Populates the task group spinner based on the database contents.
@@ -143,13 +143,14 @@ Public Sub SetMonthValue(spnMonth As Spinner, dateObj As Date, Position As Int)
 	' Retrieve the item as string from the Spinner.
 	Dim monthStr As String = spnMonth.GetItem(Position)
 	
-	If monthStr == SPINNER_DUE_DATE_MONTH_HINT_TEXT Then
+	If monthStr ==  Starter.Lang.Get("select_month_here") Then
 		' If the month value that is clicked is invalid, then clear the month
 		' value that is set into m-task.
 		dateObj.SetMonth(0)
 	Else
 		' Convert the month String retrieved from the spinner into an int.
-		Dim month As Int = dateObj.GetNumericMonth(monthStr)
+		'Dim month As Int = dateObj.GetNumericMonth(monthStr)
+		Dim month As Int = Position
 		
 		' Set the month value into the task based on the month item that is
 		' clicked from the spinner.
@@ -160,7 +161,7 @@ End Sub
 Public Sub SetDayValue(spnDay As Spinner, dateObj As Date, Position As Int)
 	Dim day As String = spnDay.GetItem(Position)
 	
-	If day == SPINNER_DUE_DATE_DAY_HINT_TEXT Then
+	If day == Starter.Lang.Get("select_day_here") Then
 		' If the day value that is clicked is invalid, then clear the day
 		' value that is set into m-task.
 		dateObj.SetDay(0)
@@ -175,12 +176,12 @@ End Sub
 ' Validation to check if editTitle is empty.
 Public Sub ValidateTitle(taskObj As ToDo, editTitle As EditText) As Boolean
 	If editTitle.Text == "" Then
-		MsgboxAsync("Title cannot be empty!", "Error")
+		MsgboxAsync(Starter.Lang.Get("validation_error_title_empty"), Starter.Lang.Get("error"))
 		Return False
 	End If
 	
 	If editTitle.Text.Length >= 255 Then
-		MsgboxAsync("Title cannot be larger than 255!", "Error")
+		MsgboxAsync(Starter.Lang.Get("validation_error_title_255"), Starter.Lang.Get("error"))
 		Return False
 	End If
 	Return True
@@ -191,7 +192,7 @@ Public Sub ValidatePriority(rdCritical As RadioButton, rdHigh As RadioButton, rd
 	rdLow As RadioButton) As Boolean
 	If rdCritical.Checked == False And rdHigh.Checked == False _
 	And rdMedium.Checked == False And rdLow.Checked == False Then
-		MsgboxAsync("Priority cannot be empty!", "Error")
+		MsgboxAsync(Starter.Lang.Get("validation_error_priority_empty"), Starter.Lang.Get("error"))
 		Return False
 	End If
 	
@@ -203,7 +204,7 @@ Public Sub ValidateDate(dateObj As Date, editYear As EditText) As Boolean
 	' Primarily validate the due date year field if null before taking another validation if
 	' the date is a valid date.
 	If editYear.Text.Trim = "" Then
-		MsgboxAsync("Due date field cannot be empty!", "Error")
+		MsgboxAsync(Starter.Lang.Get("validation_error_due_date_empty"), Starter.Lang.Get("error"))
 		Return False
 	Else
 		' Save the due date year value.
@@ -219,21 +220,21 @@ End Sub
 Private Sub OnValidateDate(dateObj As Date) As Boolean
 	' Check if the date is unset. Unset values cannot be valid.
 	If dateObj.IsUnset Then
-		MsgboxAsync("Due date cannot be empty", "Error")
+		MsgboxAsync(Starter.Lang.Get("validation_error_due_date_empty"), Starter.Lang.Get("error"))
 		Return False
 	End If
 	
 	' Check if the year input is valid. The input only supports from years 1970 until 2038.
 	If dateObj.IsRangeValid() == False Then
-		MsgboxAsync("Due date is beyond the supported range: " & CRLF & _
-		"January 1, 1970 to January 19, 2038", "Error")	
+		MsgboxAsync(Starter.Lang.Get("validation_error_due_date_supported_range") & ": " & CRLF & _ 
+		Starter.Lang.Get("validation_error_due_date_supported_range_2"), Starter.Lang.Get("error"))	
 		Return False
 	End If
 	
 	' Check for malformations within the date. The date could be on the valid range 1970 to 2038
 	' but malformed date such as January -20, 2023 or February 29, 2025.
 	If dateObj.IsDateValid() == False Then
-		MsgboxAsync("Due date is not valid", "Error")
+		MsgboxAsync(Starter.Lang.Get("validation_error_due_date_not_valid"), Starter.Lang.Get("error"))
 		Return False
 	End If
 	

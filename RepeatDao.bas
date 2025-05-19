@@ -6,11 +6,15 @@ Version=13.1
 @EndOfDesignText@
 Sub Class_Globals
 	Private m_sql As SQL
+	
+	Private m_lang As LanguageManager
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
-Public Sub Initialize(sql As SQL)
+Public Sub Initialize(sql As SQL, lang As LanguageManager)
 	m_sql = sql
+	
+	m_lang = lang
 End Sub
 
 Public Sub InsertTaskRepeat(task_id As Long, item As Repeat) As Boolean
@@ -59,7 +63,8 @@ End Sub
 Public Sub GetNextTaskRepeat(task_id As Long) As Repeat
 	Return OnGetTaskRepeat("SELECT * FROM repeat JOIN task_repeat " & CRLF & _
 		" ON task_repeat.repeat_id = repeat.repeat_id " & CRLF & _
-		" WHERE task_repeat.task_id = " & task_id & " AND repeat.schedule > 0 ORDER BY schedule Asc LIMIT 1")
+		" WHERE task_repeat.task_id = " & task_id & " AND repeat.schedule > 0 " & _ 
+		" ORDER BY schedule Asc LIMIT 1")
 End Sub
 
 Public Sub GetTaskIdFromRepeat(repeat_id As Long) As Long
@@ -91,7 +96,8 @@ End Sub
 
 ' Returns only single repeat item. Indexes 1-6 cannot be accessed other than 0.
 Public Sub GetFirstScheduledRepeat() As Repeat
-	Return OnGetTaskRepeat("SELECT * FROM repeat WHERE schedule > 0 ORDER BY schedule ASC LIMIT 1")
+	Return OnGetTaskRepeat("SELECT * FROM repeat WHERE schedule > 0 ORDER BY schedule " & _ 
+		" ASC LIMIT 1")
 End Sub
 
 Public Sub OnGetTaskRepeat(query As String) As Repeat
@@ -104,7 +110,7 @@ Public Sub OnGetTaskRepeat(query As String) As Repeat
 		Dim Cursor As Cursor
 		Cursor = m_sql.ExecQuery(query)
 		
-		item.Initialize()
+		item.Initialize(m_lang)
 		
 		' Iterate the cursor or each rows. This iteration checks if days Sunday to Saturday have
 		' thier repeat option enabled.

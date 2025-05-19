@@ -6,11 +6,18 @@ Version=13.1
 @EndOfDesignText@
 Sub Class_Globals
 	Private m_database As ToDoDatabase
+	
+	Public Const CHECK_ON_INSERT As Int = 1
+	Public Const CHECK_ON_UPDATE As Int = 2
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize(database As ToDoDatabase)
 	m_database = database
+End Sub
+
+Public Sub CheckForDuplicates(item As String, count As Int) As Boolean
+	Return m_database.GroupDao().CheckForDuplicates(item, count)
 End Sub
 
 Public Sub InsertGroup(item As Group) As Boolean
