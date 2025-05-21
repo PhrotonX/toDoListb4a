@@ -840,7 +840,7 @@ Private Sub LoadItems()
 			If m_query.IsSortingEnabled() == False Then
 				Select SavedSmartList:
 					Case SMART_LIST_PLANNED:
-						Dim currentDateIdentification As String = item.GetDueDate.IdentifyDate
+						Dim currentDateIdentification As String = Starter.Lang.Get(item.GetDueDate.IdentifyDate)
 					
 						If itr <> currentDateIdentification And item.Done == False Then
 							itr = currentDateIdentification
@@ -920,9 +920,9 @@ Private Sub CreateSubGroup(title As String, color As Int, textSize As Int)
 	subGroup.Initialize(xui)
 	subGroup.Name.Text = title
 	If GetDeviceLayoutValues.Scale > 2 Then
-		subGroup.Root.Height = 120
+		subGroup.Root.Height = 160
 	Else
-		subGroup.Root.Height = 70
+		subGroup.Root.Height = 80
 	End If
 	
 	subGroup.Name.TextSize = textSize
