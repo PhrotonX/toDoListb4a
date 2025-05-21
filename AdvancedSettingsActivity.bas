@@ -147,6 +147,7 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 			Starter.ToDoDatabaseViewModelInstance.CloseDatabase
 		
 			File.Delete(File.DirInternal, "todo_db.db")
+			
 			Starter.ToDoFileSystemInstance.CopyFileFromUriToInternal("todo_db.db", Dir, FileName, File.DirInternal)
 			
 			Starter.ToDoDatabaseViewModelInstance.Initialize(Starter.Lang)
