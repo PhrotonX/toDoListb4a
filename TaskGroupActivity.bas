@@ -475,8 +475,8 @@ Private Sub Darkmode
 		editAddGrpTitle.TextColor = Theme.Foregroundtext
 		editNotes.TextColor = Theme.Foregroundtext
 		
-		editAddGrpTitle.HintColor = Colors.LightGray
-		editNotes.HintColor = Colors.LightGray
+		editAddGrpTitle.HintColor = Colors.Black
+		editNotes.HintColor = Colors.Black
 	End If
 	
 End Sub

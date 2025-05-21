@@ -67,10 +67,12 @@ Sub Activity_Create(FirstTime As Boolean)
 	button_design
 	
 	lbl24hrFormat.Text = Starter.Lang.Get("24_hour_format")
+	lblAbout.Text = Starter.Lang.Get("about")
 	lblAdvancedSettings.Text = Starter.Lang.Get("advanced_settings")
 	lblDarkMode.Text = Starter.Lang.Get("dark_mode")
 	lblDetailedDueDate.Text = Starter.Lang.Get("detailed_due_date")
 	lblGeneralSettings.Text = Starter.Lang.Get("general_settings")
+	lblHelp.Text = Starter.Lang.Get("help")
 	lblLanguage.Text = Starter.Lang.Get("language")
 	lblSettings.Text = Starter.Lang.Get("settings")
 	lblTaskCompletionSound.Text = Starter.Lang.Get("task_completion_sound")
