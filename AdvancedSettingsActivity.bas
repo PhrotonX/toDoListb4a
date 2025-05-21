@@ -33,6 +33,8 @@ Sub Globals
 	Private lblImport As Label
 	Private pnlAdvancedSettingsBar As Panel
 	Private pnlTaskSettings As Panel
+	
+	Private ion As Object
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -46,13 +48,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	lblImport.Text = Starter.Lang.Get("import_database")
 	lblResetApp.Text = Starter.Lang.Get("reset_app")
 	
-	lblImport.Enabled = Starter.SettingsViewModelInstance.IsExperimentalModeEnabled
-	lblExportDatabase.Enabled = Starter.SettingsViewModelInstance.IsExperimentalModeEnabled
+	LoadExperimentalSettings(Starter.SettingsViewModelInstance.IsExperimentalModeEnabled)
 	
-	If Starter.SettingsViewModelInstance.IsExperimentalModeEnabled == False Then
-		lblImport.TextColor = Colors.Gray
-		lblExportDatabase.TextColor = Colors.Gray
-	End If
 End Sub
 
 Sub Activity_Resume
@@ -67,6 +64,24 @@ End Sub
 Private Sub LoadSettings
 	switchDebug.Value = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
 	switchExperimental.Value = Starter.SettingsViewModelInstance.IsExperimentalModeEnabled()
+End Sub
+
+Private Sub LoadExperimentalSettings(value As Boolean)
+	lblImport.Enabled = value
+	lblExportDatabase.Enabled = value
+	
+	If value == False Then
+		lblImport.TextColor = Colors.Gray
+		lblExportDatabase.TextColor = Colors.Gray
+	Else
+		If Starter.SettingsViewModelInstance.IsDarkModeEnabled Then
+			lblImport.TextColor = Theme.ForegroundText
+			lblExportDatabase.TextColor = Theme.ForegroundText
+		Else
+			lblImport.TextColor = Colors.Black
+			lblExportDatabase.TextColor = Colors.Black
+		End If
+	End If
 End Sub
 
 Private Sub btnBack_Click
@@ -126,9 +141,39 @@ Private Sub lblImport_Click
 	End If
 End Sub
 
+Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As String)
+	If Success Then
+		Try
+			Starter.ToDoDatabaseViewModelInstance.CloseDatabase
+		
+			File.Delete(File.DirInternal, "todo_db.db")
+			
+			Starter.ToDoFileSystemInstance.CopyFileFromUriToInternal("todo_db.db", Dir, FileName, File.DirInternal)
+			
+			Starter.ToDoDatabaseViewModelInstance.Initialize(Starter.Lang)
+			
+			MsgboxAsync(Starter.Lang.Get("reset_complete"), Starter.Lang.Get("import_success"))
+		Catch
+			Log(LastException)
+			
+			MsgboxAsync(Starter.Lang.Get(LastException.Message), Starter.Lang.Get("import_failed"))
+		End Try
+		
+	End If
+End Sub
+
 Private Sub lblExportDatabase_Click
 	pnlExport.SetColorAnimated(50, Colors.Transparent, Colors.LightGray)
 	pnlExport.SetColorAnimated(150, Colors.LightGray, Colors.Transparent)
+	
+	Wait For (SaveAs(File.OpenInput(File.DirInternal, "todo_db.db"), "application/vnd.sqlite3", "todo_db.db")) _ 
+		Complete (Success As Boolean)
+	
+	If Success Then
+		MsgboxAsync(Starter.Lang.Get("export_success"), Starter.Lang.Get("alert"))
+	Else
+		MsgboxAsync(Starter.Lang.Get("export_failed"), Starter.Lang.Get("error"))
+	End If
 End Sub
 
 Private Sub switchExperimental_ValueChanged (Value As Boolean)
@@ -193,11 +238,14 @@ Private Sub OnSwitchExperimentalMode(Value As Boolean)
 		If Result = DialogResponse.POSITIVE Then
 			Starter.SettingsViewModelInstance.SetExperimentalMode(Value)
 			switchExperimental.Value = Value
+			LoadExperimentalSettings(Value)
 		Else
 			switchExperimental.Value = False
+			LoadExperimentalSettings(False)
 		End If
 	Else
 		Starter.SettingsViewModelInstance.SetExperimentalMode(Value)
+		LoadExperimentalSettings(False)
 	End If
 End Sub
 
@@ -210,8 +258,6 @@ Private Sub Darkmode
 		lblAdvancedSettings.Textcolor = Colors.Black
 		lblDebug.Textcolor = Colors.Black
 		lblExperimental.Textcolor = Colors.Black
-		lblImport.Textcolor = Colors.Black
-		lblExportDatabase.Textcolor = Colors.Black
 		lblResetApp.Textcolor = Colors.Black
 		Activity.Color = Colors.RGB(241,241,241)
 	Else
@@ -222,10 +268,47 @@ Private Sub Darkmode
 		lblAdvancedSettings.Textcolor = Theme.ForegroundText
 		lblDebug.Textcolor = Theme.ForegroundText
 		lblExperimental.Textcolor = Theme.ForegroundText
-		lblImport.Textcolor = Theme.ForegroundText
-		lblExportDatabase.Textcolor = Theme.ForegroundText
 		lblResetApp.Textcolor = Theme.ForegroundText
 		Activity.Color = Theme.DarkbackgroundColor
 	End If
 	
+End Sub
+
+' ===============================================================================================================
+' The code below is a part of the SaveAs library from the B4A developer, but this library is not yet compiled into
+' an actual library.
+' ===============================================================================================================
+Sub SaveAs (Source As InputStream, MimeType As String, Title As String) As ResumableSub
+	Dim intent As Intent
+	intent.Initialize("android.intent.action.CREATE_DOCUMENT", "")
+	intent.AddCategory("android.intent.category.OPENABLE")
+	intent.PutExtra("android.intent.extra.TITLE", Title)
+	intent.SetType(MimeType)
+	StartActivityForResult(intent)
+	Wait For ion_Event (MethodName As String, Args() As Object)
+	If -1 = Args(0) Then 'resultCode = RESULT_OK
+		Dim result As Intent = Args(1)
+		Dim jo As JavaObject = result
+		Dim ctxt As JavaObject
+		Dim ContentResolver As JavaObject = ctxt.InitializeContext.RunMethodJO("getContentResolver", Null)
+		Dim out As OutputStream = ContentResolver.RunMethod("openOutputStream", Array(jo.RunMethod("getData", Null), "wt")) 'wt = Write+Trim
+		File.Copy2(Source, out)
+		out.Close
+		Return True
+	End If
+	Return False
+End Sub
+
+Sub StartActivityForResult(i As Intent)
+	Dim jo As JavaObject = GetBA
+	ion = jo.CreateEvent("anywheresoftware.b4a.IOnActivityResult", "ion", Null)
+	jo.RunMethod("startActivityForResult", Array(ion, i))
+End Sub
+
+Sub GetBA As Object
+	Dim jo As JavaObject
+	Dim cls As String = Me
+	cls = cls.SubString("class ".Length)
+	jo.InitializeStatic(cls)
+	Return jo.GetField("processBA")
 End Sub
