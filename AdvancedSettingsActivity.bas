@@ -45,6 +45,14 @@ Sub Activity_Create(FirstTime As Boolean)
 	lblExportDatabase.Text = Starter.Lang.Get("export_database")
 	lblImport.Text = Starter.Lang.Get("import_database")
 	lblResetApp.Text = Starter.Lang.Get("reset_app")
+	
+	lblImport.Enabled = Starter.SettingsViewModelInstance.IsExperimentalModeEnabled
+	lblExportDatabase.Enabled = Starter.SettingsViewModelInstance.IsExperimentalModeEnabled
+	
+	If Starter.SettingsViewModelInstance.IsExperimentalModeEnabled == False Then
+		lblImport.TextColor = Colors.Gray
+		lblExportDatabase.TextColor = Colors.Gray
+	End If
 End Sub
 
 Sub Activity_Resume

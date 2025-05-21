@@ -73,6 +73,8 @@ Sub Globals
 	Private pnlAddGrpTitle As Panel
 	Private pnlColors As Panel
 	Private pnlIcons As Panel
+	Private ImageView3 As ImageView
+	Private btnOpenCanvas As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -444,11 +446,11 @@ Private Sub Darkmode
 		pnlColors.Color = Colors.Transparent
 		pnlIcons.Color = Colors.Transparent
 		
-		editAddGrpTitle.TextColor = Theme.Foregroundtext
-		editNotes.TextColor = Theme.Foregroundtext
+		editAddGrpTitle.TextColor = Colors.Black
+		editNotes.TextColor = Colors.Black
 		
-		editAddGrpTitle.HintColor = Colors.DarkGray
-		editNotes.HintColor = Colors.DarkGray
+		'editAddGrpTitle.HintColor = Colors.Black
+		'editNotes.HintColor = Colors.Black
 		
 	Else
 		pnlAddGrpBar.Color = Colors.RGB(28,28,28)
@@ -472,11 +474,11 @@ Private Sub Darkmode
 		pnlColors.Color = Colors.Transparent
 		pnlIcons.Color = Colors.Transparent
 		
-		editAddGrpTitle.TextColor = Theme.Foregroundtext
-		editNotes.TextColor = Theme.Foregroundtext
+		editAddGrpTitle.TextColor = Colors.White
+		editNotes.TextColor = Colors.White
 		
-		editAddGrpTitle.HintColor = Colors.Black
-		editNotes.HintColor = Colors.Black
+		editAddGrpTitle.HintColor = Colors.RGB(128, 128, 128)
+		editNotes.HintColor = Colors.RGB(128, 128, 128)
 	End If
 	
 End Sub
