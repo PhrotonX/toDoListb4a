@@ -621,7 +621,11 @@ Private Sub OnAddAttachment(item As Attachment)
 	viewHolder.Root = panel
 	'viewHolder.Icon = imgAttachmentIcon
 	viewHolder.AttachmentLabel = lblAttachmentFileName
-	viewHolder.AttachmentLabel.Text = item.GetFilename
+	If item.GetFilename.Length > 45 Then
+		viewHolder.AttachmentLabel.Text = item.GetFilename.SubString2(0, 44) & "..."
+	Else
+		viewHolder.AttachmentLabel.Text = item.GetFilename
+	End If
 	viewHolder.OpenButton = btnAttachmentOpen
 	viewHolder.OpenButton.Visible = False
 	viewHolder.DeleteButton = btnAttachmentRemove
