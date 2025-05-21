@@ -203,7 +203,7 @@ Version=13.1
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 13
-	#VersionName: v2.0.0.9 alpha
+	#VersionName: v2.0.0.10 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -293,6 +293,8 @@ Sub Globals
 	' Used for task query only
 	Private m_taskObj As ToDo
 	Private m_repeatObj As Repeat
+	
+	Private m_isSearchPanelOn As Boolean
 	
 
 	Private pnlSortDialogue As Panel
@@ -1162,19 +1164,23 @@ End Sub
 
 Private Sub drawerButton_Click
 	If SavedSmartList == SMART_LIST_SEARCH Then
-		OnClearSearchQuery
-		
-		SavedSmartList = SMART_LIST_ALL
-		
-		' Go to the "All" smart list by default.
-		m_savedGroup = smartLists(SMART_LIST_ALL)
-		OnLoadPage(m_savedGroup)
+		ClearSearchQuery
 	Else
 		If button_handling Then
 			drawer.LeftOpen = True
 		End If
 	End If
 	
+End Sub
+
+Private Sub ClearSearchQuery
+	OnClearSearchQuery
+		
+	SavedSmartList = SMART_LIST_ALL
+		
+	' Go to the "All" smart list by default.
+	m_savedGroup = smartLists(SMART_LIST_ALL)
+	OnLoadPage(m_savedGroup)
 End Sub
 
 Sub LoadDrawerItems
@@ -1461,6 +1467,8 @@ End Sub
 Private Sub searchBtn_Click
 	If button_handling Then
 		
+		m_isSearchPanelOn = True
+		
 		If GetDeviceLayoutValues.Scale > 2 Then
 			svSearchBody.Panel.Height = 6400
 		End If
@@ -1637,6 +1645,8 @@ Private Sub OnHideSearchPanel
 		pnlSearch.SendToBack
 		searchFragment.SendToBack
 		svSearchBody.Panel.RemoveAllViews
+		
+		m_isSearchPanelOn = False
 	End If
 End Sub
 
@@ -2056,12 +2066,23 @@ End Sub
 Private Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consume the event
 	Dim Answ As Int
 	If KeyCode = KeyCodes.KEYCODE_BACK Then
-		Answ = Msgbox2(Starter.Lang.Get("quit_confirm"), Starter.Lang.Get("alert"), _ 
-			Starter.Lang.Get("yes"), "", Starter.Lang.Get("no"), Null)
-		If Answ = DialogResponse.POSITIVE Then
-			Return False
-		Else
+		If drawer.LeftOpen Then
+			drawer.LeftOpen = False
 			Return True
+		Else If m_isSearchPanelOn Then
+			OnHideSearchPanel
+			Return True
+		Else If SavedSmartList == SMART_LIST_SEARCH Then
+			ClearSearchQuery
+			Return True
+		Else
+			Answ = Msgbox2(Starter.Lang.Get("quit_confirm"), Starter.Lang.Get("alert"), _
+			Starter.Lang.Get("yes"), "", Starter.Lang.Get("no"), Null)
+			If Answ = DialogResponse.POSITIVE Then
+				Return False
+			Else
+				Return True
+			End If
 		End If
 	End If
 End Sub
