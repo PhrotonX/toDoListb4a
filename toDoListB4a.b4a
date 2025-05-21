@@ -921,13 +921,8 @@ Private Sub LoadItems()
 		lblSmiley.TextSize = 25%y
 		pnlEmptyTasks.Visible = True
 		
-		If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
-			lblEmptyTasks.TextColor = Theme.ForegroundText
-			lblSmiley.TextColor = Theme.ForegroundText
-		Else
-			lblEmptyTasks.TextColor = Theme.GetTextColor(m_savedGroup.GetColor)
-			lblSmiley.TextColor = Theme.GetTextColor(m_savedGroup.GetColor)
-		End If
+		lblEmptyTasks.TextColor = Theme.GetTextColor(m_savedGroup.GetColor)
+		lblSmiley.TextColor = Theme.GetTextColor(m_savedGroup.GetColor)
 	Else
 		text = count & " " & Starter.Lang.Get("tasks_found")
 		pnlEmptyTasks.SendToBack

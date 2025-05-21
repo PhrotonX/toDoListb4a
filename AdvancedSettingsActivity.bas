@@ -46,13 +46,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	lblImport.Text = Starter.Lang.Get("import_database")
 	lblResetApp.Text = Starter.Lang.Get("reset_app")
 	
-	lblImport.Enabled = Starter.SettingsViewModelInstance.IsExperimentalModeEnabled
-	lblExportDatabase.Enabled = Starter.SettingsViewModelInstance.IsExperimentalModeEnabled
+	LoadExperimentalSettings(Starter.SettingsViewModelInstance.IsExperimentalModeEnabled)
 	
-	If Starter.SettingsViewModelInstance.IsExperimentalModeEnabled == False Then
-		lblImport.TextColor = Colors.Gray
-		lblExportDatabase.TextColor = Colors.Gray
-	End If
 End Sub
 
 Sub Activity_Resume
@@ -67,6 +62,24 @@ End Sub
 Private Sub LoadSettings
 	switchDebug.Value = Starter.SettingsViewModelInstance.IsDebugModeEnabled()
 	switchExperimental.Value = Starter.SettingsViewModelInstance.IsExperimentalModeEnabled()
+End Sub
+
+Private Sub LoadExperimentalSettings(value As Boolean)
+	lblImport.Enabled = value
+	lblExportDatabase.Enabled = value
+	
+	If value == False Then
+		lblImport.TextColor = Colors.Gray
+		lblExportDatabase.TextColor = Colors.Gray
+	Else
+		If Starter.SettingsViewModelInstance.IsDarkModeEnabled Then
+			lblImport.TextColor = Theme.ForegroundText
+			lblExportDatabase.TextColor = Theme.ForegroundText
+		Else
+			lblImport.TextColor = Colors.Black
+			lblExportDatabase.TextColor = Colors.Black
+		End If
+	End If
 End Sub
 
 Private Sub btnBack_Click
@@ -193,11 +206,14 @@ Private Sub OnSwitchExperimentalMode(Value As Boolean)
 		If Result = DialogResponse.POSITIVE Then
 			Starter.SettingsViewModelInstance.SetExperimentalMode(Value)
 			switchExperimental.Value = Value
+			LoadExperimentalSettings(Value)
 		Else
 			switchExperimental.Value = False
+			LoadExperimentalSettings(False)
 		End If
 	Else
 		Starter.SettingsViewModelInstance.SetExperimentalMode(Value)
+		LoadExperimentalSettings(False)
 	End If
 End Sub
 
@@ -210,8 +226,6 @@ Private Sub Darkmode
 		lblAdvancedSettings.Textcolor = Colors.Black
 		lblDebug.Textcolor = Colors.Black
 		lblExperimental.Textcolor = Colors.Black
-		lblImport.Textcolor = Colors.Black
-		lblExportDatabase.Textcolor = Colors.Black
 		lblResetApp.Textcolor = Colors.Black
 		Activity.Color = Colors.RGB(241,241,241)
 	Else
@@ -222,8 +236,6 @@ Private Sub Darkmode
 		lblAdvancedSettings.Textcolor = Theme.ForegroundText
 		lblDebug.Textcolor = Theme.ForegroundText
 		lblExperimental.Textcolor = Theme.ForegroundText
-		lblImport.Textcolor = Theme.ForegroundText
-		lblExportDatabase.Textcolor = Theme.ForegroundText
 		lblResetApp.Textcolor = Theme.ForegroundText
 		Activity.Color = Theme.DarkbackgroundColor
 	End If
