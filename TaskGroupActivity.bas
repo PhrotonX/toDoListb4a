@@ -161,13 +161,15 @@ Sub Activity_Resume
 	editAddGrpTitle.Text = m_group.GetTitle()
 	editNotes.Text = m_group.GetDescription()
 	
-	' Load the default color.
+	' Mark the loaded group color as selected.
 	UpdateTileImage(tiles(m_group.GetColor()), True)
+	selectedTileIndex = m_group.GetColor()
 	
 	Log("Load: m_group.GetIconPos: " & m_group.GetIconPos)
 	
 	' Mark the loaded group icon as selected.
 	icons(OnLoadGroupIcon(m_group.GetIconPos)).Color = Colors.LightGray
+	selectedIconsIndex = m_group.GetIconPos
 	
 	lblCreatedAt.Text = Starter.Lang.Get("created_at") & ": " & m_group.CreatedAt.GetFormattedDateAndTime( _
 		Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
