@@ -894,6 +894,7 @@ Private Sub LoadItems()
 		pnlEmptyTasks.RemoveAllViews
 		pnlEmptyTasks.BringToFront
 		pnlEmptyTasks.LoadLayout("emptytasks")
+		lblEmptyTasks.Text = Starter.Lang.Get("no_tasks_info")
 		lblSmiley.TextSize = 25%y
 		pnlEmptyTasks.Visible = True
 	Else
