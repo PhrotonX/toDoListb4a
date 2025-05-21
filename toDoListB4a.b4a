@@ -918,16 +918,20 @@ End Sub
 Private Sub CreateSubGroup(title As String, color As Int, textSize As Int)
 	Dim subGroup As SubGroupViewHolder
 	subGroup.Initialize(xui)
-	subGroup.Name.Text = title
-	If GetDeviceLayoutValues.Scale > 2 Then
-		subGroup.Root.Height = 160
+	If Starter.SettingsViewModelInstance.GetLanguage == Starter.SettingsViewModelInstance.SETTING_LANG_AL_LOGHA_AL_3ARABIYAH Then
+		' Increase space For arabic To avoid layout issues.
+		subGroup.Name.Text = "         " & title
 	Else
-		subGroup.Root.Height = 80
+		subGroup.Name.Text = title
 	End If
 	
+	If GetDeviceLayoutValues.Scale > 2 Then
+		subGroup.Root.Height = 180
+	Else
+		subGroup.Root.Height = 90
+	End If
 	subGroup.Name.TextSize = textSize
 	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
-	
 		subGroup.Name.TextColor = color
 	Else
 		subGroup.Name.TextColor = Theme.ForegroundText
