@@ -792,7 +792,7 @@ Private Sub LoadItems()
 	End If
 	
 	' Obtain all tasks from the database, depending on the smart list mode.
-	If SavedSmartList == SMART_LIST_SEARCH Then
+	If SavedSmartList <> SMART_LIST_SEARCH Then
 		m_query.SetSearchIsDeleted(False)
 	End If
 	
@@ -921,7 +921,7 @@ Private Sub LoadItems()
 		lblSmiley.TextSize = 25%y
 		pnlEmptyTasks.Visible = True
 		
-		If Starter.SettingsViewModelInstance.IsDarkModeEnabled == True Then
+		If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
 			lblEmptyTasks.TextColor = Theme.ForegroundText
 			lblSmiley.TextColor = Theme.ForegroundText
 		Else
@@ -1667,7 +1667,15 @@ Private Sub RefillSearchFields
 	End If
 	
 	' Fill-up Deleted Field
-	checkDeleted.Checked = m_query.GetSearchValue(m_query.SEARCH_QUERY_ITEM_IS_DELETED)
+	Dim deletedFieldStr As String = m_query.GetSearchValue(m_query.SEARCH_QUERY_ITEM_IS_DELETED)
+	If deletedFieldStr == "" Or deletedFieldStr == " " Or deletedFieldStr == "false" _ 
+		Or deletedFieldStr == "0"  Then
+		checkDeleted.Checked = False
+	Else
+		checkDeleted.Checked = True
+	End If
+	
+	
 End Sub
 
 Private Sub backBtn_Click
