@@ -1164,19 +1164,23 @@ End Sub
 
 Private Sub drawerButton_Click
 	If SavedSmartList == SMART_LIST_SEARCH Then
-		OnClearSearchQuery
-		
-		SavedSmartList = SMART_LIST_ALL
-		
-		' Go to the "All" smart list by default.
-		m_savedGroup = smartLists(SMART_LIST_ALL)
-		OnLoadPage(m_savedGroup)
+		ClearSearchQuery
 	Else
 		If button_handling Then
 			drawer.LeftOpen = True
 		End If
 	End If
 	
+End Sub
+
+Private Sub ClearSearchQuery
+	OnClearSearchQuery
+		
+	SavedSmartList = SMART_LIST_ALL
+		
+	' Go to the "All" smart list by default.
+	m_savedGroup = smartLists(SMART_LIST_ALL)
+	OnLoadPage(m_savedGroup)
 End Sub
 
 Sub LoadDrawerItems
@@ -2069,7 +2073,7 @@ Private Sub Activity_KeyPress (KeyCode As Int) As Boolean 'Return True to consum
 			OnHideSearchPanel
 			Return True
 		Else If SavedSmartList == SMART_LIST_SEARCH Then
-			OnLoadPage(smartLists(SMART_LIST_ALL))
+			ClearSearchQuery
 			Return True
 		Else
 			Answ = Msgbox2(Starter.Lang.Get("quit_confirm"), Starter.Lang.Get("alert"), _
