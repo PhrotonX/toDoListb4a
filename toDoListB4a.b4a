@@ -261,6 +261,11 @@ Sub Globals
 	Public Const TASK_UNCHECKED_TEXT_COLOR As Int = Colors.RGB(0, 0, 0)
 	Public Const TASK_UNCHECKED_ROOT_COLOR As Int = Colors.RGB(255, 255, 255)	
 	
+	Public Const TASK_CHECKED_ROOT_COLOR_DARK As Int = Colors.RGB(25, 25, 25)
+	Public Const TASK_CHECKED_TEXT_COLOR_DARK As Int = Colors.RGB(105, 105, 105)
+	Public Const TASK_UNCHECKED_TEXT_COLOR_DARK As Int = Colors.RGB(255, 255, 255)
+	Public Const TASK_UNCHECKED_ROOT_COLOR_DARK As Int = Colors.RGB(27, 28, 28)
+	
 	Private pnlSearch As Panel
 	Private pnlTitleBar As Panel
 	Private searchFragment As Panel
@@ -533,9 +538,9 @@ Private Sub OnLoadSearchText
 	radioDueSpecificDateRange.Text = Starter.Lang.Get("specific_date_range")
 	radioDueSpecificDateGroup.Text = Starter.Lang.Get("specific_date_group")
 	searchEditText.Hint = Starter.Lang.Get("search")
-	editDateYear.Text = Starter.Lang.Get("year")
-	editRangeYearFrom.Text = Starter.Lang.Get("year")
-	editRangeYearTo.Text = Starter.Lang.Get("year")
+	editDateYear.Hint = Starter.Lang.Get("year")
+	editRangeYearFrom.Hint = Starter.Lang.Get("year")
+	editRangeYearTo.Hint = Starter.Lang.Get("year")
 End Sub
 
 ' Only run if Android SDK version is >= 31.
@@ -646,18 +651,34 @@ Private Sub chkToDoItem_CheckedChange(Checked As Boolean)
 	End If
 	
 	' Add visual indicator that the task has been changed
-	If Checked == True Then
-		' Make the items return to its original look after the task is marked as
-		' incomplete.
-		viewHolder.TaskCheckbox.TextColor = TASK_CHECKED_TEXT_COLOR
-		viewHolder.TaskInfo.TextColor = TASK_CHECKED_TEXT_COLOR
-		viewHolder.Root.Color = TASK_CHECKED_ROOT_COLOR
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
+		If Checked == True Then
+			' Make the items return to its original look after the task is marked as
+			' incomplete.
+			viewHolder.TaskCheckbox.TextColor = TASK_CHECKED_TEXT_COLOR
+			viewHolder.TaskInfo.TextColor = TASK_CHECKED_TEXT_COLOR
+			viewHolder.Root.Color = TASK_CHECKED_ROOT_COLOR
+		Else
+			' Make the items looks slightly lighter after task completion.
+			viewHolder.TaskCheckbox.TextColor = TASK_UNCHECKED_TEXT_COLOR
+			viewHolder.TaskInfo.TextColor = TASK_UNCHECKED_TEXT_COLOR
+			viewHolder.Root.Color = TASK_UNCHECKED_ROOT_COLOR
+		End If
 	Else
-		' Make the items looks slightly lighter after task completion.
-		viewHolder.TaskCheckbox.TextColor = TASK_UNCHECKED_TEXT_COLOR
-		viewHolder.TaskInfo.TextColor = TASK_UNCHECKED_TEXT_COLOR
-		viewHolder.Root.Color = TASK_UNCHECKED_ROOT_COLOR
+		If Checked == True Then
+			' Make the items return to its original look after the task is marked as
+			' incomplete.
+			viewHolder.TaskCheckbox.TextColor = TASK_CHECKED_TEXT_COLOR_DARK
+			viewHolder.TaskInfo.TextColor = TASK_CHECKED_TEXT_COLOR_DARK
+			viewHolder.Root.Color = TASK_CHECKED_ROOT_COLOR_DARK
+		Else
+			' Make the items looks slightly lighter after task completion.
+			viewHolder.TaskCheckbox.TextColor = TASK_UNCHECKED_TEXT_COLOR_DARK
+			viewHolder.TaskInfo.TextColor = TASK_UNCHECKED_TEXT_COLOR_DARK
+			viewHolder.Root.Color = TASK_UNCHECKED_ROOT_COLOR_DARK
+		End If
 	End If
+	
 End Sub
 
 ' Creates and returns a panel for items loaded into the ToDoList.
@@ -771,7 +792,9 @@ Private Sub LoadItems()
 	End If
 	
 	' Obtain all tasks from the database, depending on the smart list mode.
-	m_query.SetSearchIsDeleted(False)
+	If SavedSmartList == SMART_LIST_SEARCH Then
+		m_query.SetSearchIsDeleted(False)
+	End If
 	
 	Select SavedSmartList:
 		Case SMART_LIST_MY_DAY:
@@ -897,6 +920,14 @@ Private Sub LoadItems()
 		lblEmptyTasks.Text = Starter.Lang.Get("no_tasks_info")
 		lblSmiley.TextSize = 25%y
 		pnlEmptyTasks.Visible = True
+		
+		If Starter.SettingsViewModelInstance.IsDarkModeEnabled == True Then
+			lblEmptyTasks.TextColor = Theme.ForegroundText
+			lblSmiley.TextColor = Theme.ForegroundText
+		Else
+			lblEmptyTasks.TextColor = Theme.GetTextColor(m_savedGroup.GetColor)
+			lblSmiley.TextColor = Theme.GetTextColor(m_savedGroup.GetColor)
+		End If
 	Else
 		text = count & " " & Starter.Lang.Get("tasks_found")
 		pnlEmptyTasks.SendToBack
@@ -1116,7 +1147,12 @@ Sub pnlViewArea_Touch (Action As Int, X As Float, Y As Float)
 			hasMoved = False
 			
 			' Set the main click color.
-			viewHolder.Root.SetColorAnimated(50, Colors.White, Colors.Gray)
+			If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
+				viewHolder.Root.SetColorAnimated(50, Colors.White, Colors.Gray)
+			Else
+				viewHolder.Root.SetColorAnimated(50, Theme.RootColor, Colors.Gray)
+			End If
+			
             
 		Case Activity.ACTION_MOVE 'sets bgcolor of pnl to white or gray if touch is held and moved
 			If Not(hasMoved) Then
@@ -1158,12 +1194,22 @@ End Sub
 ' Used to process the click style of panels above the checkbox of tasks.
 Public Sub OnChkboxViewAreaClick(percentage As Int, viewHolder As TaskViewHolder)
 	' Touch color differs whether the item is marked as complete or not.
-	If viewHolder.TaskCheckbox.Checked Then
-		' Execute if task is marked as complete
-		viewHolder.Root.SetColorAnimated(percentage, Colors.Gray, TASK_CHECKED_ROOT_COLOR)
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
+		If viewHolder.TaskCheckbox.Checked Then
+			' Execute if task is marked as complete
+			viewHolder.Root.SetColorAnimated(percentage, Colors.Gray, TASK_CHECKED_ROOT_COLOR)
+		Else
+			' Execute if task is not marked as complete
+			viewHolder.Root.SetColorAnimated(percentage, Colors.Gray, TASK_UNCHECKED_ROOT_COLOR)
+		End If
 	Else
-		' Execute if task is not marked as complete
-		viewHolder.Root.SetColorAnimated(percentage, Colors.Gray, TASK_UNCHECKED_ROOT_COLOR)
+		If viewHolder.TaskCheckbox.Checked Then
+			' Execute if task is marked as complete
+			viewHolder.Root.SetColorAnimated(percentage, Colors.Gray, TASK_CHECKED_ROOT_COLOR_DARK)
+		Else
+			' Execute if task is not marked as complete
+			viewHolder.Root.SetColorAnimated(percentage, Colors.Gray, TASK_UNCHECKED_ROOT_COLOR_DARK)
+		End If
 	End If
 End Sub
 
@@ -1441,8 +1487,6 @@ Private Sub OnLoadPage(item As Group)
 			titleLabel.TextColor = Theme.GetTextColor(item.GetColor)
 			searchBtn.TextColor = Theme.GetTextColor(item.GetColor)
 			menuBtn.TextColor = Theme.GetTextColor(item.GetColor)
-			lblEmptyTasks.TextColor = Theme.ForegroundText
-			lblSmiley.TextColor = Theme.ForegroundText
 			btnAdd.Background = Theme.btnRootColor
 			btnAdd.TextColor = Theme.ForegroundText
 		End If
@@ -2137,8 +2181,6 @@ Private Sub searchcontentDark
 	'pnlAllFilterBy.Color = Colors.RGB(156,168,190)
 	
 
-	
-
 End Sub
 
 Private Sub searchcontentLight
@@ -2182,8 +2224,4 @@ Private Sub searchcontentLight
 	checkDeleted.TextColor = Colors.Black
 	
 	'pnlAllFilterBy.Color = Colors.RGB(156,168,190)
-	
-
-	
-
 End Sub
