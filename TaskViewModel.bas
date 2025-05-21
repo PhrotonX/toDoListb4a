@@ -159,7 +159,7 @@ Public Sub GetTasksCompleted(query As TaskQuery) As List
 	results.Initialize
 	
 	For Each item As ToDo In tasks
-		If item.Done Then
+		If item.Done And item.IsDeleted == False Then
 			results.Add(item)
 			
 			m_completeTaskCtr = m_completeTaskCtr + 1

@@ -65,6 +65,9 @@ Sub Globals
 	Private Panel1 As Panel
 	Private pnlAttachments As Panel
 	Private pnlCanvas As Panel
+	
+	Private m_attachmentScrollIndex As Int = -1
+	Private lblAttachmentIcon As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -265,11 +268,12 @@ Private Sub btnAttachmentOpen_Click
 End Sub
 
 Private Sub LoadAttachments
+	clvAttachments.Clear
 	' Load the attachments list layout.
-	svAttachments.Panel.LoadLayout("attachmentlistlayout")
+	'svAttachments.Panel.LoadLayout("attachmentlistlayout")
 	
-	Log("svAttachments: " & svAttachments)
-	Log("svAttachments.Panel: " & svAttachments.Panel)
+	'Log("svAttachments: " & svAttachments)
+	'Log("svAttachments.Panel: " & svAttachments.Panel)
 
 	Dim attachments As List = Starter.AttachmentViewModelInstance.GetTaskAttachments(m_task.GetId())
 	
@@ -301,6 +305,16 @@ Private Sub OnAddAttachment(item As Attachment)
 	' Hide the remove button for attachments. Attachments cannot be edited within TaskViewerActivity.
 	viewHolder.DeleteButton.Visible = False
 	viewHolder.ID = item.GetID
+	
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
+		lblAttachmentFileName.TextColor = Colors.RGB(33,37,41)
+		lblAttachmentIcon.TextColor = Colors.RGB(33,37,41)
+		pnlAttachmentRoot.Color = Colors.White
+	Else
+		lblAttachmentIcon.TextColor = Theme.ForegroundText
+		lblAttachmentFileName.TextColor = Theme.ForegroundText
+		pnlAttachmentRoot.Color = Colors.Black
+	End If
 	
 	clvAttachments.Add(panel, viewHolder)
 	
@@ -366,7 +380,7 @@ Private Sub Darkmode
 		viewRepeat.TextColor = Colors.RGB(33,37,41)
 		viewSnooze.TextColor = Colors.RGB(33,37,41)
 		hsvCanvas.Color = Colors.RGB(232,236,245)
-		svAttachments.Color = Colors.RGB(232,236,245)
+		'svAttachments.Color = Colors.RGB(232,236,245)
 		viewTaskGroup.TextColor = Colors.RGB(33,37,41)
 		viewCreatedAt.TextColor = Colors.RGB(33,37,41)
 		viewModifiedAt.TextColor = Colors.RGB(33,37,41)
@@ -383,6 +397,8 @@ Private Sub Darkmode
 		viewTaskGroup.Color = Colors.RGB(232,236,245)
 		viewCreatedAt.Color = Colors.RGB(232,236,245)
 		viewModifiedAt.Color = Colors.RGB(232,236,245)
+		
+		pnlAttachments.Color = Colors.RGB(232,236,245)
 	Else
 		lblTask.TextColor = Theme.ForegroundText
 		btnBack.TextColor = Theme.ForegroundText
@@ -412,7 +428,7 @@ Private Sub Darkmode
 		viewRepeat.TextColor = Theme.ForegroundText
 		viewSnooze.TextColor = Theme.ForegroundText
 		hsvCanvas.Color = Theme.RootColor
-		svAttachments.Color = Theme.RootColor
+		'svAttachments.Color = Theme.RootColor
 		viewTaskGroup.TextColor = Theme.ForegroundText
 		viewCreatedAt.TextColor = Theme.ForegroundText
 		viewModifiedAt.TextColor = Theme.ForegroundText
@@ -428,6 +444,24 @@ Private Sub Darkmode
 		viewTaskGroup.Color = Theme.RootColor
 		viewCreatedAt.Color = Theme.RootColor
 		viewModifiedAt.Color = Theme.RootColor
+		
+		pnlAttachments.Color = Theme.RootColor
 	End If
 	
+End Sub
+
+Private Sub btnAttachmentUp_Click
+	If m_attachmentScrollIndex > 0 Then
+		m_attachmentScrollIndex = m_attachmentScrollIndex - 1
+		
+		clvAttachments.ScrollToItem (m_attachmentScrollIndex)
+	End If
+End Sub
+
+Private Sub btnAttachmentDown_Click
+	If m_attachmentScrollIndex < clvAttachments.Size - 1 Then
+		m_attachmentScrollIndex = m_attachmentScrollIndex + 1
+		
+		clvAttachments.ScrollToItem (m_attachmentScrollIndex)
+	End If
 End Sub

@@ -125,6 +125,9 @@ Sub Globals
 	Private pnlSpinReminderMinute As Panel
 	Private pnlYear As Panel
 	Private btnCancel As Button
+	
+	Private m_attachmentScrollIndex As Int = -1
+	Private lblAttachmentIcon As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -345,7 +348,7 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-	darkmode
+	Darkmode
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -391,6 +394,7 @@ Private Sub OnLoadText
 	btnMoveToTrash.Text = Starter.Lang.Get("move_to_trash")
 	btnSave.Text = Starter.Lang.Get("save_uppercase")
 	btnOpenCanvas.Text = Starter.Lang.Get("canvas")
+	btnDelete.Text = Starter.Lang.Get("delete")
 	
 	toggleReminder.TextOn = Starter.Lang.Get("on_uppercase")
 	toggleReminder.TextOff = Starter.Lang.Get("off_uppercase")
@@ -592,6 +596,8 @@ Private Sub ClearRadioButtons
 End Sub
 
 Private Sub LoadAttachments
+	clvAttachments.Clear
+	
 	Dim attachments As List = Starter.AttachmentViewModelInstance.GetTaskAttachments(m_task.GetId())
 	
 	If attachments.IsInitialized Then
@@ -621,6 +627,16 @@ Private Sub OnAddAttachment(item As Attachment)
 	viewHolder.DeleteButton = btnAttachmentRemove
 	viewHolder.ID = item.GetID
 	'viewHolder.Icon.Gravity = Gravity.FILL
+	
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
+		lblAttachmentFileName.TextColor = Colors.RGB(33,37,41)
+		lblAttachmentIcon.TextColor = Colors.RGB(33,37,41)
+		pnlAttachmentRoot.Color = Colors.White
+	Else
+		lblAttachmentIcon.TextColor = Theme.ForegroundText
+		lblAttachmentFileName.TextColor = Theme.ForegroundText
+		pnlAttachmentRoot.Color = Colors.Black
+	End If
 	
 	clvAttachments.Add(panel, viewHolder)
 End Sub
@@ -854,4 +870,20 @@ Private Sub Darkmode
 		pnlAttachments.Color = Theme.RootColor
 	End If
 	
+End Sub
+
+Private Sub btnAttachmentUp_Click
+	If m_attachmentScrollIndex > 0 Then
+		m_attachmentScrollIndex = m_attachmentScrollIndex - 1
+		
+		clvAttachments.ScrollToItem (m_attachmentScrollIndex)
+	End If
+End Sub
+
+Private Sub btnAttachmentDown_Click
+	If m_attachmentScrollIndex < clvAttachments.Size - 1 Then
+		m_attachmentScrollIndex = m_attachmentScrollIndex + 1
+		
+		clvAttachments.ScrollToItem (m_attachmentScrollIndex)
+	End If
 End Sub
