@@ -750,7 +750,7 @@ Private Sub btnRestore_Click
 End Sub
 
 Private Sub btnMoveToTrash_Click
-	Msgbox2Async(Starter.Lang.Get("task_move_to_trash_questions"), Starter.Lang.Get("alert"), _
+	Msgbox2Async(Starter.Lang.Get("task_move_to_trash_question"), Starter.Lang.Get("alert"), _
 	Starter.Lang.Get("yes"), Starter.Lang.Get("cancel"), Starter.Lang.Get("no"), _
 	Null, True)
 	Wait For Msgbox_Result (Result As Int)

@@ -144,6 +144,9 @@ End Sub
 
 ' Move logic to repository.
 Public Sub GetTasksCompleted(query As TaskQuery) As List
+	m_completeTaskCtr = 0
+	m_incompleteTaskCtr = 0
+	
 	Dim tasks As List
 	
 	If query.IsSortingEnabled() Then
@@ -159,7 +162,7 @@ Public Sub GetTasksCompleted(query As TaskQuery) As List
 		If item.Done Then
 			results.Add(item)
 			
-			m_incompleteTaskCtr = m_incompleteTaskCtr + 1
+			m_completeTaskCtr = m_completeTaskCtr + 1
 		End If
 	Next
 	
@@ -225,12 +228,12 @@ Public Sub GetUngroupedTasks(query As TaskQuery) As List
 End Sub
 
 ' Used for completed tasks.
-Public Sub LastCountedCompleteTasks
+Public Sub LastCountedCompleteTasks As Int
 	Return m_completeTaskCtr
 End Sub
 
 ' Used for planned tasks.
-Public Sub LastCountedIncompleteTasks
+Public Sub LastCountedIncompleteTasks As Int
 	Return m_incompleteTaskCtr
 End Sub
 

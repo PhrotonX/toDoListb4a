@@ -73,6 +73,8 @@ Sub Globals
 	Private pnlAddGrpTitle As Panel
 	Private pnlColors As Panel
 	Private pnlIcons As Panel
+	Private ImageView3 As ImageView
+	Private btnOpenCanvas As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -159,13 +161,15 @@ Sub Activity_Resume
 	editAddGrpTitle.Text = m_group.GetTitle()
 	editNotes.Text = m_group.GetDescription()
 	
-	' Load the default color.
+	' Mark the loaded group color as selected.
 	UpdateTileImage(tiles(m_group.GetColor()), True)
+	selectedTileIndex = m_group.GetColor()
 	
 	Log("Load: m_group.GetIconPos: " & m_group.GetIconPos)
 	
 	' Mark the loaded group icon as selected.
 	icons(OnLoadGroupIcon(m_group.GetIconPos)).Color = Colors.LightGray
+	selectedIconsIndex = m_group.GetIconPos
 	
 	lblCreatedAt.Text = Starter.Lang.Get("created_at") & ": " & m_group.CreatedAt.GetFormattedDateAndTime( _
 		Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
@@ -444,11 +448,11 @@ Private Sub Darkmode
 		pnlColors.Color = Colors.Transparent
 		pnlIcons.Color = Colors.Transparent
 		
-		editAddGrpTitle.TextColor = Theme.Foregroundtext
-		editNotes.TextColor = Theme.Foregroundtext
+		editAddGrpTitle.TextColor = Colors.Black
+		editNotes.TextColor = Colors.Black
 		
-		editAddGrpTitle.HintColor = Colors.DarkGray
-		editNotes.HintColor = Colors.DarkGray
+		'editAddGrpTitle.HintColor = Colors.Black
+		'editNotes.HintColor = Colors.Black
 		
 	Else
 		pnlAddGrpBar.Color = Colors.RGB(28,28,28)
@@ -472,11 +476,11 @@ Private Sub Darkmode
 		pnlColors.Color = Colors.Transparent
 		pnlIcons.Color = Colors.Transparent
 		
-		editAddGrpTitle.TextColor = Theme.Foregroundtext
-		editNotes.TextColor = Theme.Foregroundtext
+		editAddGrpTitle.TextColor = Colors.White
+		editNotes.TextColor = Colors.White
 		
-		editAddGrpTitle.HintColor = Colors.LightGray
-		editNotes.HintColor = Colors.LightGray
+		editAddGrpTitle.HintColor = Colors.RGB(128, 128, 128)
+		editNotes.HintColor = Colors.RGB(128, 128, 128)
 	End If
 	
 End Sub
