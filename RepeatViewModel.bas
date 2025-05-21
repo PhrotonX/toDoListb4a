@@ -147,6 +147,7 @@ Private Sub OnCalculateSchedule(item As Repeat) As Map
 			
 			result.Put(item.GetID(j), timeObj)
 			
+			Log("TaskNotification.OnCalculateSchedule() timeObj: " & timeObj)
 			Log("TaskNotification.OnCalculateSchedule() Day of the week ID: " & item.GetDayID(j))
 		End If
 		

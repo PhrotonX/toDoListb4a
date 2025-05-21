@@ -42,7 +42,7 @@ Sub Process_Globals
 	
 	'Public ToDoDatabaseInstance As ToDoDatabase
 	Public ToDoDatabaseViewModelInstance As ToDoDatabaseViewModel
-	Private ToDoFileSystemInstance As ToDoFileSystem
+	Public ToDoFileSystemInstance As ToDoFileSystem
 	
 	' Repository instances
 	Private taskRepo As TaskRepository

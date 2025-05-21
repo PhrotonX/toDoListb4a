@@ -65,7 +65,8 @@ Private Sub Receiver_Receive (FirstTime As Boolean, StartingIntent As Intent)
 					RepeatViewModelInstance.UpdateSingleRepeatSchedule(repeatItem.GetID(currentDayOfTheWeek), _
 					repeatItem.GetSchedule(currentDayOfTheWeek))
 					
-					ToastMessageShow(Lang.Get("task_snoozed") & " (" & item.Snooze.GetSnoozeText(item.Snooze.GetSnooze) & ")", True)
+					ToastMessageShow(Lang.Get("task_snoozed") & " (" & _ 
+						Lang.Get(item.Snooze.GetSnoozeText(item.Snooze.GetSnooze)) & ")", True)
 					
 					nb.Cancel(notificationId)
 		
