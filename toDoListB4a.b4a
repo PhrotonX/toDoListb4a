@@ -1339,6 +1339,7 @@ End Sub
 
 Private Sub OnRefresh
 	If SavedSmartList == SMART_LIST_NONE Then
+		m_savedGroup = Starter.GroupViewModelInstance.GetGroup(m_savedGroup.GetID)
 		OnLoadPage(m_savedGroup)
 	Else
 		OnLoadPage(smartLists(SavedSmartList))
