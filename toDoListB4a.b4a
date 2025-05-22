@@ -1881,7 +1881,10 @@ Private Sub checkFilterByGroup_CheckedChange(Checked As Boolean)
 		m_query.UnsetSearchGroupID()
 	End If
 	
-	SetRadioButtonsEnabled(pnlFilterByGroupName, Checked)
+	If radioSearchByFilename.Checked == False Then
+		SetRadioButtonsEnabled(pnlFilterByGroupName, Checked)
+	End If
+	
 End Sub
 
 Private Sub radioDueSpecificDateRange_CheckedChange(Checked As Boolean)
