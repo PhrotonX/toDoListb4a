@@ -292,7 +292,7 @@ Private Sub OnAddAttachment(item As Attachment)
 		
 	panel.SetLayoutAnimated(0, 0, 0, 100%x, 65dip)
 	panel.LoadLayout("AttachmentItemLayout")
-	panel.SetColorAndBorder(Theme.ForegroundColor, 0, Theme.ForegroundColor, 0)
+	panel.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 15dip)
 	
 	Dim viewHolder As AttachmentViewHolder
 	viewHolder.Initialize
@@ -310,14 +310,18 @@ Private Sub OnAddAttachment(item As Attachment)
 	viewHolder.DeleteButton.Visible = False
 	viewHolder.ID = item.GetID
 	
+	Dim b4xPanel As B4XView = pnlAttachmentRoot
+	
 	If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
 		lblAttachmentFileName.TextColor = Colors.RGB(33,37,41)
 		lblAttachmentIcon.TextColor = Colors.RGB(33,37,41)
-		pnlAttachmentRoot.Color = Colors.RGB(232,236,245)
+		'pnlAttachmentRoot.Color = Colors.White
+		b4xPanel.SetColorAndBorder(Colors.White, 0, Colors.White, 15dip)
 	Else
 		lblAttachmentIcon.TextColor = Theme.ForegroundText
 		lblAttachmentFileName.TextColor = Theme.ForegroundText
-		pnlAttachmentRoot.Color = Theme.RootColor
+		'pnlAttachmentRoot.Color = Colors.Black
+		b4xPanel.SetColorAndBorder(Colors.Black, 0, Colors.Black, 15dip)
 	End If
 	
 	clvAttachments.Add(panel, viewHolder)
