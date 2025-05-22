@@ -227,6 +227,8 @@
 	"faq": "FREQUENTLY ASKED QUESTIONS",
 	"paragraph_faq": "If you run into any issues, spot bugs, or have suggestions for how we can improve, please get in touch with the developers. Your feedback is super important and helps us make the app even better!",
 	"about_dev": "DEVELOPER INFO",
+	"about_attrib": "ATTRIBUTIONS",
+	"para_sfx": "Task Complete Sound Effect",
 	"para_dev": "This app was built as a college group project in Don Honorio Ventura State University under BSCS-2A with simplicity and user-friendliness in mind. It doesn’t collect, store, or sync any data online, ensuring that your tasks remain private and accessible only on your device.",
 	"leader": "LEADER",
 	"members": "MEMBERS",

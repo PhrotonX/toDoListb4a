@@ -116,6 +116,7 @@ End Sub
 
 Public Sub SetDarkMode(value As Boolean)
 	m_kvs.Put(SETTINGS_KEY_DARK_MODE, value)
+	Theme.SetUp(value)
 End Sub
 
 Public Sub SetExperimentalMode(value As Boolean)

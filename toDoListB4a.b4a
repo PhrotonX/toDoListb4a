@@ -203,7 +203,7 @@ Version=13.1
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 13
-	#VersionName: v2.0.0.10 alpha
+	#VersionName: v2.0.0.11 alpha
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -2227,4 +2227,13 @@ Private Sub searchcontentLight
 	checkDeleted.TextColor = Colors.Black
 	
 	'pnlAllFilterBy.Color = Colors.RGB(156,168,190)
+End Sub
+
+
+Private Sub btnAttachmentUp_Click
+	
+End Sub
+
+Private Sub btnAttachmentDown_Click
+	
 End Sub

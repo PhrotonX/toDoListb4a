@@ -30,6 +30,7 @@ Sub Globals
 	Private m_task As ToDo
 	Private m_repeat As Repeat
 	Private m_group As Group
+	Private m_selectedColor As Int = Theme.COLOR_DEFAULT
 	
 	' Attachment that are pending for saving.
 	Private m_pendingAttachmentInsert As List
@@ -125,6 +126,9 @@ Sub Globals
 	Private pnlSpinReminderMinute As Panel
 	Private pnlYear As Panel
 	Private btnCancel As Button
+	
+	Private m_attachmentScrollIndex As Int = -1
+	Private lblAttachmentIcon As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -162,7 +166,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	' Fill the spinners with data
 	FormHelper.PopulateDate(spinnerDueDateMonth, spinnerDueDateDay)
-	FormHelper.PopulateTime(spnReminderHour, spnReminderMinute, spnReminderMarker)
+	FormHelper.PopulateTime(spnReminderHour, spnReminderMinute, spnReminderMarker, pnlSpinReminderMarker)
 	FormHelper.PopulateSnooze(spnSnooze)
 	
 	' Load the task groups
@@ -179,6 +183,11 @@ Sub Activity_Create(FirstTime As Boolean)
 		' Retrieve the data stored in the database based on itemId.
 		m_task = Starter.TaskViewModelInstance.GetTask(itemId)
 		m_group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_task.GetId)
+		If m_group.GetID > 0 Then
+			m_selectedColor = m_group.GetColor
+		Else
+			m_group.SetColor(Theme.COLOR_DEFAULT)
+		End If
 		
 		If m_group.IsInitialized == False Then
 			m_group.Initialize(0)
@@ -269,7 +278,10 @@ Sub Activity_Create(FirstTime As Boolean)
 			m_group = Starter.GroupViewModelInstance.GetGroup(groupId)
 			If m_group.IsInitialized Then
 				spnTaskGroup.SelectedIndex = spnTaskGroup.IndexOf(m_group.GetTitle())
+				m_selectedColor = m_group.GetColor
 			End If
+		Else
+			m_selectedColor = Theme.COLOR_DEFAULT
 		End If
 		
 		' Set the current date as the default value of due date fields.
@@ -345,7 +357,8 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-	darkmode
+	Darkmode
+	OnLoadGroupColor(m_selectedColor)
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -391,6 +404,7 @@ Private Sub OnLoadText
 	btnMoveToTrash.Text = Starter.Lang.Get("move_to_trash")
 	btnSave.Text = Starter.Lang.Get("save_uppercase")
 	btnOpenCanvas.Text = Starter.Lang.Get("canvas")
+	btnDelete.Text = Starter.Lang.Get("delete")
 	
 	toggleReminder.TextOn = Starter.Lang.Get("on_uppercase")
 	toggleReminder.TextOff = Starter.Lang.Get("off_uppercase")
@@ -592,6 +606,8 @@ Private Sub ClearRadioButtons
 End Sub
 
 Private Sub LoadAttachments
+	clvAttachments.Clear
+	
 	Dim attachments As List = Starter.AttachmentViewModelInstance.GetTaskAttachments(m_task.GetId())
 	
 	If attachments.IsInitialized Then
@@ -599,6 +615,10 @@ Private Sub LoadAttachments
 		For Each item As Attachment In attachments
 			OnAddAttachment(item)
 		Next
+		For Each item As Attachment In m_pendingAttachmentInsert
+			OnAddAttachment(item)
+		Next
+		
 	End If
 	
 End Sub
@@ -606,21 +626,38 @@ End Sub
 Private Sub OnAddAttachment(item As Attachment)
 	Dim panel As B4XView = xui.CreatePanel("")
 		
-	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
+	panel.SetLayoutAnimated(0, 0, 0, 100%x, 65dip)
 	panel.LoadLayout("AttachmentItemLayout")
-	panel.SetColorAndBorder(Theme.ForegroundColor, 0, Theme.ForegroundColor, 0)
+	panel.SetColorAndBorder(Colors.Transparent, 0, Colors.Transparent, 15dip)
 	
 	Dim viewHolder As AttachmentViewHolder
 	viewHolder.Initialize
 	viewHolder.Root = panel
 	'viewHolder.Icon = imgAttachmentIcon
 	viewHolder.AttachmentLabel = lblAttachmentFileName
-	viewHolder.AttachmentLabel.Text = item.GetFilename
+	If item.GetFilename.Length > 45 Then
+		viewHolder.AttachmentLabel.Text = item.GetFilename.SubString2(0, 44) & "..."
+	Else
+		viewHolder.AttachmentLabel.Text = item.GetFilename
+	End If
 	viewHolder.OpenButton = btnAttachmentOpen
 	viewHolder.OpenButton.Visible = False
 	viewHolder.DeleteButton = btnAttachmentRemove
 	viewHolder.ID = item.GetID
 	'viewHolder.Icon.Gravity = Gravity.FILL
+	
+	Dim b4xPanel As B4XView = pnlAttachmentRoot
+	
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
+		lblAttachmentFileName.TextColor = Colors.RGB(33,37,41)
+		lblAttachmentIcon.TextColor = Colors.RGB(33,37,41)
+		b4xPanel.SetColorAndBorder(Colors.ARGB(16, 0, 0, 0), 0, _
+			Colors.ARGB(16, 0, 0, 0), 15dip)
+	Else
+		lblAttachmentIcon.TextColor = Theme.ForegroundText
+		lblAttachmentFileName.TextColor = Theme.ForegroundText
+		b4xPanel.SetColorAndBorder(Colors.Black, 0, Colors.Black, 15dip)
+	End If
 	
 	clvAttachments.Add(panel, viewHolder)
 End Sub
@@ -716,7 +753,15 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 End Sub
 
 Private Sub spnTaskGroup_ItemClick (Position As Int, Value As Object)
-	
+	' Change activity color based on clicked task group.
+	If Position > 0 Then
+		Dim groupObj As Group = Starter.GroupViewModelInstance.GetGroupByTitle(Value)
+		OnLoadGroupColor(groupObj.GetColor)
+		m_selectedColor = groupObj.GetColor
+	Else
+		OnLoadGroupColor(Theme.COLOR_DEFAULT)
+		m_selectedColor = Theme.COLOR_DEFAULT
+	End If
 End Sub
 
 Private Sub toggleReminder_CheckedChange(Checked As Boolean)
@@ -734,6 +779,12 @@ Private Sub OnToggleReminder(Checked As Boolean)
 	
 	If Checked = False Then
 		toggleReminder.TextColor = Colors.Gray
+	Else
+		If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
+			toggleReminder.TextColor = Theme.GetPrimaryColor(m_selectedColor)
+		Else
+			toggleReminder.TextColor = Theme.GetTextColor(m_selectedColor)
+		End If
 	End If
 End Sub
 
@@ -779,6 +830,54 @@ Private Sub btnClearNotes_Click
 	m_task.SetNotes("")
 End Sub
 
+Private Sub OnLoadGroupColor(groupColor As Int)
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		pnlEditorBar.Color = Theme.GetPrimaryColor(groupColor)
+		editorScrollView.Color = Theme.GetBackgroundColor(groupColor)
+		
+		pnlEdit.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlNotes.Color = Theme.GetBackgroundColor2(groupColor)
+		PnlPriority.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlAttachments.Color = Theme.GetBackgroundColor2(groupColor)
+		
+		pnlSpinReminderHour.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlSpinReminderMarker.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlSpinReminderMinute.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlContainerSpnTaskGroup.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlContainerSpnSnooze.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlDay.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlMonth.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlYear.Color = Theme.GetBackgroundColor2(groupColor)
+		
+		spnReminderHour.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		spnReminderMarker.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		spnReminderMinute.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		spnTaskGroup.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		spnSnooze.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		spinnerDueDateDay.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		spinnerDueDateMonth.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		
+		btnClearTitle.TextColor = Theme.GetPrimaryColor(groupColor)
+		btnClearNotes.TextColor = Theme.GetPrimaryColor(groupColor)
+		btnClearDueDate.TextColor = Theme.GetPrimaryColor(groupColor)
+		btnPriorityClear.TextColor = Theme.GetPrimaryColor(groupColor)
+		btnRepeatClear.TextColor = Theme.GetPrimaryColor(groupColor)
+		toggleReminder.TextColor = Theme.GetPrimaryColor(groupColor)
+	Else
+		lblAddTask.TextColor = Theme.GetTextColor(groupColor)
+		btnCancel.TextColor = Theme.GetTextColor(groupColor)
+		btnSave.TextColor = Theme.GetTextColor(groupColor)
+		
+		btnClearTitle.TextColor = Theme.GetTextColor(groupColor)
+		btnClearNotes.TextColor = Theme.GetTextColor(groupColor)
+		btnClearDueDate.TextColor = Theme.GetTextColor(groupColor)
+		btnPriorityClear.TextColor = Theme.GetTextColor(groupColor)
+		btnRepeatClear.TextColor = Theme.GetTextColor(groupColor)
+		toggleReminder.TextColor = Theme.GetTextColor(groupColor)
+	End If
+End Sub
+
+' Set dark mode colors, along with fallback colors.
 Private Sub Darkmode
 	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
 		pnlEditorBar.Color = Colors.RGB(75,93,140)
@@ -852,6 +951,48 @@ Private Sub Darkmode
 		pnlNotes.Color = Theme.RootColor
 		PnlPriority.Color = Theme.RootColor
 		pnlAttachments.Color = Theme.RootColor
+		
+		pnlSpinReminderHour.Color = Theme.RootColor
+		pnlSpinReminderMarker.Color = Theme.RootColor
+		pnlSpinReminderMinute.Color = Theme.RootColor
+		pnlContainerSpnTaskGroup.Color = Theme.RootColor
+		pnlContainerSpnSnooze.Color = Theme.RootColor
+		pnlDay.Color = Theme.RootColor
+		pnlMonth.Color = Theme.RootColor
+		pnlYear.Color = Theme.RootColor
+		
+		spnReminderHour.TextColor = Colors.White
+		spnReminderMarker.TextColor = Colors.White
+		spnReminderMinute.TextColor = Colors.White
+		spnTaskGroup.TextColor = Colors.White
+		spnSnooze.TextColor = Colors.White
+		spinnerDueDateDay.TextColor = Colors.White
+		spinnerDueDateMonth.TextColor = Colors.White
+		editDueDateYear.TextColor = Colors.White
+		
+		spnReminderHour.DropdownBackgroundColor = Theme.RootColor
+		spnReminderMarker.DropdownBackgroundColor = Theme.RootColor
+		spnReminderMinute.DropdownBackgroundColor = Theme.RootColor
+		spnTaskGroup.DropdownBackgroundColor = Theme.RootColor
+		spnSnooze.DropdownBackgroundColor = Theme.RootColor
+		spinnerDueDateDay.DropdownBackgroundColor = Theme.RootColor
+		spinnerDueDateMonth.DropdownBackgroundColor = Theme.RootColor
 	End If
 	
+End Sub
+
+Private Sub btnAttachmentUp_Click
+	If m_attachmentScrollIndex > 0 Then
+		m_attachmentScrollIndex = m_attachmentScrollIndex - 1
+		
+		clvAttachments.ScrollToItem (m_attachmentScrollIndex)
+	End If
+End Sub
+
+Private Sub btnAttachmentDown_Click
+	If m_attachmentScrollIndex < clvAttachments.Size - 1 Then
+		m_attachmentScrollIndex = m_attachmentScrollIndex + 1
+		
+		clvAttachments.ScrollToItem (m_attachmentScrollIndex)
+	End If
 End Sub
