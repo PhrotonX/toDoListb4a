@@ -165,12 +165,17 @@ Public Sub SetSearchBy(value As String)
 		m_searchQueryItem(SEARCH_QUERY_ITEM_SEARCH_BY) = m_searchByField & " LIKE '%" & value & "%'"
 	End If
 	
-	m_value(SEARCH_QUERY_ITEM_IS_DELETED) = value
+	m_value(SEARCH_QUERY_ITEM_SEARCH_BY) = value
 End Sub
 
 ' Supported values: FIELD_TITLE (default) and FIELD_NOTES
 Public Sub SetSearchByField(field As String)
 	m_searchByField = field
+	
+	If field == FIELD_TITLE Or field == FIELD_NOTES Then
+		m_joinQueryItem(JOIN_QUERY_ITEM_ATTACHMENT) = ""
+	End If
+	
 End Sub
 
 Private Sub SetSearchAttachmentFileName(query As String)
@@ -453,9 +458,6 @@ Private Sub OnBuildSearchQueryForDate()
 		Case DUE_DATE_MODE_SEARCH_BY_RANGE:
 			OnSetSearchDueDateRange(DateBegin.GetUnixTime, DateEnd.GetUnixTime)
 		Case DUE_DATE_MODE_SEARCH_BY_GROUP:
-			If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
-				Log("OnBuildSearchQueryForDate() SEARCH_QUERY_ITEM_SEARCH_DUE_DATE_BY_GROUP is not implemented.")
-			End If
 		Case DUE_DATE_MODE_SEARCH_NONE:
 			Return
 	End Select
@@ -464,43 +466,39 @@ End Sub
 Private Sub OnBuildSearchQueryForRepeat()
 	' Set the join clause.
 	m_joinQueryItem(JOIN_QUERY_ITEM_REPEAT) = " JOIN " & TABLE_TASK_REPEAT & _
-		" ON " & TABLE_TASK_REPEAT & "." & FIELD_TASK_ID & EQ _ 
-		& TABLE_TASK & "." & FIELD_TASK_ID & _
-		" JOIN " & TABLE_REPEAT & _ 
-		" ON " & TABLE_TASK_REPEAT & "." & FIELD_REPEAT_ID & EQ _ 
-		& TABLE_REPEAT & "." & FIELD_REPEAT_ID
-	
+        " ON " & TABLE_TASK_REPEAT & "." & FIELD_TASK_ID & EQ _
+        & TABLE_TASK & "." & FIELD_TASK_ID & _
+        " JOIN " & TABLE_REPEAT & _
+        " ON " & TABLE_TASK_REPEAT & "." & FIELD_REPEAT_ID & EQ _
+        & TABLE_REPEAT & "." & FIELD_REPEAT_ID
+
 	Dim counter As Int = 0
 	Dim selectedRepeat As String = "("
 	For itr = 0 To 6
 		If m_searchRepeat(itr) == True Then
-			If counter == 0 Then
+			If counter = 0 Then
 				selectedRepeat = selectedRepeat & itr
-			Else If counter >= 0 And counter < 6 Then
-				selectedRepeat = selectedRepeat & ", " & itr & ")"
+			Else
+				selectedRepeat = selectedRepeat & ", " & itr
 			End If
-			
 			counter = counter + 1
 		End If
 	Next
-	
-	If counter <= 1 Then
-		selectedRepeat = selectedRepeat & ")"
-	End If
-	
+
+	selectedRepeat = selectedRepeat & ")"
+
 	' Set the where clause.
-	If selectedRepeat <> "()" Then
-		m_searchQueryItem(SEARCH_QUERY_ITEM_REPEAT_QUERY) = TABLE_REPEAT & "." & FIELD_REPEAT_DAY_ID & " IN " & _ 
-		selectedRepeat & " AND " & TABLE_REPEAT & "." & FIELD_REPEAT_ENABLED & EQ & _ 
-		DatabaseUtils.BoolToInt(True)
+	If counter > 0 Then
+		m_searchQueryItem(SEARCH_QUERY_ITEM_REPEAT_QUERY) = TABLE_REPEAT & "." & FIELD_REPEAT_DAY_ID & " IN " & _
+            selectedRepeat & " AND " & TABLE_REPEAT & "." & FIELD_REPEAT_ENABLED & EQ & _
+            DatabaseUtils.BoolToInt(True)
 	Else
-		m_searchQueryItem(SEARCH_QUERY_ITEM_REPEAT_QUERY) = TABLE_REPEAT & "." & FIELD_REPEAT_DAY_ID & _ 
-		" IN (0, 1, 2, 3, 4, 5, 6) AND " & TABLE_REPEAT & "." & FIELD_REPEAT_ENABLED & EQ & _
-		DatabaseUtils.BoolToInt(False)
+		m_searchQueryItem(SEARCH_QUERY_ITEM_REPEAT_QUERY) = TABLE_REPEAT & "." & FIELD_REPEAT_DAY_ID & _
+            " IN (0, 1, 2, 3, 4, 5, 6) AND " & TABLE_REPEAT & "." & FIELD_REPEAT_ENABLED & EQ & _
+            DatabaseUtils.BoolToInt(False)
 	End If
-	
-	
 End Sub
+
 
 Public Sub UnsetTaskId()
 	m_searchQueryItem(SEARCH_QUERY_ITEM_TASK_ID) = ""

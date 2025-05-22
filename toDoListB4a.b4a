@@ -203,7 +203,7 @@ Version=13.1
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 13
-	#VersionName: v2.0.1
+	#VersionName: v2.0.2
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -1860,14 +1860,17 @@ End Sub
 
 Private Sub checkFilterByGroup_CheckedChange(Checked As Boolean)
 	If Checked Then
-		Dim groupId As Int = spnGroupName.SelectedIndex
-		groupId = spnGroupName.SelectedIndex
-		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
-			Log("Selected group index: " & groupId)
-		End If
-		'm_query.SetGroupID(0)
+		If radioSearchByFilename.Checked == False Then
+			Dim groupId As Int = spnGroupName.SelectedIndex
+			groupId = spnGroupName.SelectedIndex
+			If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
+				Log("Selected group index: " & groupId)
+			End If
+			'm_query.SetGroupID(0)
 		
-		m_query.SetGroupIDEnabled(True)
+			m_query.SetGroupIDEnabled(True)
+		End If
+		
 	Else
 		If Starter.SettingsViewModelInstance.IsDebugModeEnabled Then
 			Log("Unset!")
@@ -1878,7 +1881,10 @@ Private Sub checkFilterByGroup_CheckedChange(Checked As Boolean)
 		m_query.UnsetSearchGroupID()
 	End If
 	
-	SetRadioButtonsEnabled(pnlFilterByGroupName, Checked)
+	If radioSearchByFilename.Checked == False Then
+		SetRadioButtonsEnabled(pnlFilterByGroupName, Checked)
+	End If
+	
 End Sub
 
 Private Sub radioDueSpecificDateRange_CheckedChange(Checked As Boolean)
@@ -1927,7 +1933,9 @@ Private Sub spnDateMonth_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Private Sub spnDateGroup_ItemClick (Position As Int, Value As Object)
-	m_query.SetSearchDueDateRange(Value)
+	Dim dateObj As Date
+	dateObj.Initialize(0, 0, 0)
+	m_query.SetSearchDueDateRange(dateObj.GetDateIdentificationStr(Position))
 End Sub
 
 Private Sub spnDateDay_ItemClick (Position As Int, Value As Object)
@@ -1948,14 +1956,17 @@ End Sub
 
 Private Sub radioSearchByTitle_CheckedChange(Checked As Boolean)
 	m_query.SetSearchByField(m_query.FIELD_TITLE)
+	spnGroupName.Enabled = True
 End Sub
 
 Private Sub radioSearchByNotes_CheckedChange(Checked As Boolean)
 	m_query.SetSearchByField(m_query.FIELD_NOTES)
+	spnGroupName.Enabled = True
 End Sub
 
 Private Sub radioSearchByFilename_CheckedChange(Checked As Boolean)
 	m_query.SetSearchByField(m_query.FIELD_ATTACHMENT_FILENAME)
+	spnGroupName.Enabled = False
 End Sub
 
 Private Sub radioFilterByPriorityMedium_CheckedChange(Checked As Boolean)
