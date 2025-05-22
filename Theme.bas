@@ -161,13 +161,37 @@ Public Sub GetBackgroundColor2(colorIndex As Int) As Int
 			Return Colors.rgb(255, 224, 178)   ' Orange Tone ~95
 		Case COLOR_BROWN:
 			If m_darkMode Then
-				Return Colors.rgb(255, 253, 231)
+				Return Colors.rgb(255, 253, 231)	' Yellow
 			Else
 				Return Colors.rgb(215, 204, 200)   ' Brown Tone ~95
 			End If
 			
 		Case Else, COLOR_INDIGO:
 			Return Colors.rgb(197, 202, 233)   ' Indigo Tone ~95
+	End Select
+End Sub
+
+Public Sub GetBackgroundColor3(colorIndex As Int) As Int
+	Select colorIndex:
+		Case COLOR_RED:
+			Return Colors.rgb(239, 154, 154)
+		Case COLOR_BLUE:
+			Return Colors.rgb(144, 202, 249)
+		Case COLOR_GREEN:
+			Return Colors.rgb(165, 214, 167)
+		Case COLOR_PINK:
+			Return Colors.rgb(244, 143, 177)
+		Case COLOR_ORANGE:
+			Return Colors.rgb(255, 204, 128)
+		Case COLOR_BROWN:
+			If m_darkMode Then
+				Return Colors.rgb(255, 245, 157) ' Yellow
+			Else
+				Return Colors.rgb(188, 170, 164) ' Brown
+			End If
+			
+		Case Else, COLOR_INDIGO:
+			Return Colors.rgb(159, 168, 218)   ' Indigo Tone ~95
 	End Select
 End Sub
 

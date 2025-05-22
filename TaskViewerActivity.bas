@@ -29,6 +29,8 @@ Sub Globals
 	Private viewCreatedAt As Label
 	Private viewModifiedAt As Label
 	
+	Private m_selectedColor As Int = Theme.COLOR_DEFAULT
+	
 	' This variable is responsible for handling the current data that can be used for performing
 	' CRUD into the database.
 	Private m_task As ToDo
@@ -199,12 +201,13 @@ Sub Activity_Resume
 			Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
 		viewModifiedAt.Text = m_task.GetUpdatedAt.GetFormattedDateAndTime( _
 			Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang)
-			
-		LoadAttachments
 		
+		' Load group to load color and group title
 		Dim taskGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_task.GetId())
 		If taskGroup.IsInitialized Then
 			viewTaskGroup.Text = taskGroup.GetTitle
+			
+			m_selectedColor = taskGroup.GetColor
 			
 			If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
 				pnlTaskViewBar.Color = Theme.GetPrimaryColor(taskGroup.GetColor)
@@ -232,6 +235,8 @@ Sub Activity_Resume
 		Else
 			viewTaskGroup.Text = Starter.GroupViewModelInstance.DefaultGroup().GetTitle()
 		End If
+		
+		LoadAttachments
 	Else
 		Activity.Finish
 	End If
@@ -342,7 +347,8 @@ Private Sub OnAddAttachment(item As Attachment)
 		lblAttachmentFileName.TextColor = Colors.RGB(33,37,41)
 		lblAttachmentIcon.TextColor = Colors.RGB(33,37,41)
 		'pnlAttachmentRoot.Color = Colors.White
-		b4xPanel.SetColorAndBorder(Colors.White, 0, Colors.White, 15dip)
+		b4xPanel.SetColorAndBorder(Colors.ARGB(16, 0, 0, 0), 0, _
+			Colors.ARGB(16, 0, 0, 0), 15dip)
 	Else
 		lblAttachmentIcon.TextColor = Theme.ForegroundText
 		lblAttachmentFileName.TextColor = Theme.ForegroundText

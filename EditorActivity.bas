@@ -615,6 +615,10 @@ Private Sub LoadAttachments
 		For Each item As Attachment In attachments
 			OnAddAttachment(item)
 		Next
+		For Each item As Attachment In m_pendingAttachmentInsert
+			OnAddAttachment(item)
+		Next
+		
 	End If
 	
 End Sub
@@ -647,7 +651,8 @@ Private Sub OnAddAttachment(item As Attachment)
 	If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
 		lblAttachmentFileName.TextColor = Colors.RGB(33,37,41)
 		lblAttachmentIcon.TextColor = Colors.RGB(33,37,41)
-		b4xPanel.SetColorAndBorder(Colors.White, 0, Colors.White, 15dip)
+		b4xPanel.SetColorAndBorder(Colors.ARGB(16, 0, 0, 0), 0, _
+			Colors.ARGB(16, 0, 0, 0), 15dip)
 	Else
 		lblAttachmentIcon.TextColor = Theme.ForegroundText
 		lblAttachmentFileName.TextColor = Theme.ForegroundText
