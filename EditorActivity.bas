@@ -165,7 +165,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	' Fill the spinners with data
 	FormHelper.PopulateDate(spinnerDueDateMonth, spinnerDueDateDay)
-	FormHelper.PopulateTime(spnReminderHour, spnReminderMinute, spnReminderMarker)
+	FormHelper.PopulateTime(spnReminderHour, spnReminderMinute, spnReminderMarker, pnlSpinReminderMarker)
 	FormHelper.PopulateSnooze(spnSnooze)
 	
 	' Load the task groups
