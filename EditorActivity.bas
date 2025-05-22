@@ -30,6 +30,7 @@ Sub Globals
 	Private m_task As ToDo
 	Private m_repeat As Repeat
 	Private m_group As Group
+	Private m_selectedColor As Int = Theme.COLOR_DEFAULT
 	
 	' Attachment that are pending for saving.
 	Private m_pendingAttachmentInsert As List
@@ -182,6 +183,11 @@ Sub Activity_Create(FirstTime As Boolean)
 		' Retrieve the data stored in the database based on itemId.
 		m_task = Starter.TaskViewModelInstance.GetTask(itemId)
 		m_group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_task.GetId)
+		If m_group.GetID > 0 Then
+			m_selectedColor = m_group.GetColor
+		Else
+			m_group.SetColor(Theme.COLOR_DEFAULT)
+		End If
 		
 		If m_group.IsInitialized == False Then
 			m_group.Initialize(0)
@@ -272,7 +278,10 @@ Sub Activity_Create(FirstTime As Boolean)
 			m_group = Starter.GroupViewModelInstance.GetGroup(groupId)
 			If m_group.IsInitialized Then
 				spnTaskGroup.SelectedIndex = spnTaskGroup.IndexOf(m_group.GetTitle())
+				m_selectedColor = m_group.GetColor
 			End If
+		Else
+			m_selectedColor = Theme.COLOR_DEFAULT
 		End If
 		
 		' Set the current date as the default value of due date fields.
@@ -349,6 +358,7 @@ End Sub
 
 Sub Activity_Resume
 	Darkmode
+	OnLoadGroupColor(m_selectedColor)
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -738,7 +748,15 @@ Private Sub filepicker_Result (Success As Boolean, Dir As String, FileName As St
 End Sub
 
 Private Sub spnTaskGroup_ItemClick (Position As Int, Value As Object)
-	
+	' Change activity color based on clicked task group.
+	If Position > 0 Then
+		Dim groupObj As Group = Starter.GroupViewModelInstance.GetGroupByTitle(Value)
+		OnLoadGroupColor(groupObj.GetColor)
+		m_selectedColor = groupObj.GetColor
+	Else
+		OnLoadGroupColor(Theme.COLOR_DEFAULT)
+		m_selectedColor = Theme.COLOR_DEFAULT
+	End If
 End Sub
 
 Private Sub toggleReminder_CheckedChange(Checked As Boolean)
@@ -756,6 +774,12 @@ Private Sub OnToggleReminder(Checked As Boolean)
 	
 	If Checked = False Then
 		toggleReminder.TextColor = Colors.Gray
+	Else
+		If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
+			toggleReminder.TextColor = Theme.GetPrimaryColor(m_selectedColor)
+		Else
+			toggleReminder.TextColor = Theme.GetTextColor(m_selectedColor)
+		End If
 	End If
 End Sub
 
@@ -801,6 +825,54 @@ Private Sub btnClearNotes_Click
 	m_task.SetNotes("")
 End Sub
 
+Private Sub OnLoadGroupColor(groupColor As Int)
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		pnlEditorBar.Color = Theme.GetPrimaryColor(groupColor)
+		editorScrollView.Color = Theme.GetBackgroundColor(groupColor)
+		
+		pnlEdit.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlNotes.Color = Theme.GetBackgroundColor2(groupColor)
+		PnlPriority.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlAttachments.Color = Theme.GetBackgroundColor2(groupColor)
+		
+		pnlSpinReminderHour.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlSpinReminderMarker.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlSpinReminderMinute.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlContainerSpnTaskGroup.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlContainerSpnSnooze.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlDay.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlMonth.Color = Theme.GetBackgroundColor2(groupColor)
+		pnlYear.Color = Theme.GetBackgroundColor2(groupColor)
+		
+		spnReminderHour.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		spnReminderMarker.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		spnReminderMinute.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		spnTaskGroup.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		spnSnooze.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		spinnerDueDateDay.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		spinnerDueDateMonth.DropdownBackgroundColor = Theme.GetBackgroundColor2(groupColor)
+		
+		btnClearTitle.TextColor = Theme.GetPrimaryColor(groupColor)
+		btnClearNotes.TextColor = Theme.GetPrimaryColor(groupColor)
+		btnClearDueDate.TextColor = Theme.GetPrimaryColor(groupColor)
+		btnPriorityClear.TextColor = Theme.GetPrimaryColor(groupColor)
+		btnRepeatClear.TextColor = Theme.GetPrimaryColor(groupColor)
+		toggleReminder.TextColor = Theme.GetPrimaryColor(groupColor)
+	Else
+		lblAddTask.TextColor = Theme.GetTextColor(groupColor)
+		btnCancel.TextColor = Theme.GetTextColor(groupColor)
+		btnSave.TextColor = Theme.GetTextColor(groupColor)
+		
+		btnClearTitle.TextColor = Theme.GetTextColor(groupColor)
+		btnClearNotes.TextColor = Theme.GetTextColor(groupColor)
+		btnClearDueDate.TextColor = Theme.GetTextColor(groupColor)
+		btnPriorityClear.TextColor = Theme.GetTextColor(groupColor)
+		btnRepeatClear.TextColor = Theme.GetTextColor(groupColor)
+		toggleReminder.TextColor = Theme.GetTextColor(groupColor)
+	End If
+End Sub
+
+' Set dark mode colors, along with fallback colors.
 Private Sub Darkmode
 	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
 		pnlEditorBar.Color = Colors.RGB(75,93,140)
