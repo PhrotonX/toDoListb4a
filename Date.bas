@@ -38,6 +38,35 @@ Public Sub Initialize(month As Int, DAY As Int, year As Int)
 	m_year = year
 End Sub
 
+Public Sub GetDateIdentificationStr(itemIndex As Int) As String
+	Select itemIndex
+		Case 1:
+			Return DATE_A_LONG_TIME_AGO
+		Case 2:
+			Return DATE_EARLIER
+		Case 3:
+			Return DATE_LAST_WEEK
+		Case 4:
+			Return DATE_EARLIER_THIS_WEEK
+		Case 5:
+			Return DATE_YESTERDAY
+		Case 6:
+			Return DATE_TODAY
+		Case 7:
+			Return DATE_TOMORROW
+		Case 8:
+			Return DATE_THIS_WEEK
+		Case 9:
+			Return DATE_NEXT_WEEK
+		Case 10:
+			Return DATE_LATER
+		Case 11:
+			Return DATE_A_LONG_TIME_FROM_NOW
+		Case Else:
+			Return "error"
+	End Select
+End Sub
+
 ' Identifies date if it is a long time ago, earlier, last week, earlier this week, yesterday, today, tomorrow,
 ' this week, next, week, later, or a long time from now in a string data type.
 ' This function compares dates relatively.
