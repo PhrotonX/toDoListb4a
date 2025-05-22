@@ -22,6 +22,29 @@ Sub Globals
 
 	Private svAbout As ScrollView
 	Private aboutLabel As Label
+	Private aboutContact As Label
+	Private aboutDev As Label
+	Private aboutWhat As Label
+	Private membersLbl As Label
+	Private paraContact As Label
+	Private paraDev As Label
+	Private paraWhat As Label
+	Private lblAppTitle As Label
+	Private leaderLbl As Label
+	Private name1Lbl As Label
+	Private name2Lbl As Label
+	Private name3Lbl As Label
+	Private name4Lbl As Label
+	Private name5Lbl As Label
+	Private imgAppIcon As ImageView
+	Private Panel1 As Panel
+	Private pnlContact As Panel
+	Private pnlWhat As Panel
+	Private pnlAbout As Panel
+	Private aboutAttrib As Label
+	Private paraSfx As Label
+	Private lblSfx As Label
+	Private pnlAttrib As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -30,25 +53,98 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	Activity.LoadLayout("settingsabout")
 	svAbout.Panel.LoadLayout("aboutItems")
-	button_design
+	CenterView(Activity)
+	
+	OnLoadText
+End Sub
+
+Sub Activity_Resume
+	Darkmode
 End Sub
 
 Sub aboutBack_Click
 	Activity.Finish
 End Sub
 
-Sub button_design
-	Dim transparentBg As ColorDrawable
-	transparentBg.Initialize(Colors.Transparent, 0)
-	aboutBack.Background = transparentBg
+Private Sub Darkmode
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled() = False Then
+		aboutWhat.TextColor = Colors.Black
+		paraWhat.TextColor = Colors.Black
+		aboutContact.TextColor = Colors.Black
+		aboutAttrib.TextColor = Colors.Black
+		paraSfx.TextColor = Colors.Black
+		lblSfx.TextColor = Colors.Black
+		paraContact.TextColor = Colors.Black
+		aboutDev.TextColor = Colors.Black
+		paraDev.TextColor = Colors.Black
+		lblAppTitle.TextColor = Colors.Black
+		leaderLbl.TextColor = Colors.Black
+		name1Lbl.TextColor = Colors.Black
+		membersLbl.TextColor = Colors.Black
+		name2Lbl.TextColor = Colors.Black
+		name3Lbl.TextColor = Colors.Black
+		name4Lbl.TextColor = Colors.Black
+		name5Lbl.TextColor = Colors.Black
 	
-	Dim c As Canvas
-	c.Initialize(aboutLabel)
-	Dim borderColor As Int = Colors.RGB(209, 209, 209)
-	Dim borderHeight As Int = 1dip
-
+		pnlWhat.Color = Colors.White
+		pnlContact.Color = Colors.White
+		Panel1.Color = Colors.White
+		pnlAttrib.Color = Colors.White
 	
-	c.DrawLine(0, aboutLabel.Height - borderHeight / 2, aboutLabel.Width, aboutLabel.Height - borderHeight / 2, borderColor, borderHeight)
+		svAbout.Color = Colors.RGB(241,241,241)
 
-	aboutLabel.Invalidate
+		pnlAbout.Color = Colors.RGB(241,241,241)
+		aboutLabel.TextColor = Colors.Black
+		aboutBack.TextColor = Colors.RGB(67,67,67)
+	Else
+		aboutWhat.TextColor = Theme.ForegroundText
+		paraWhat.TextColor = Theme.ForegroundText
+		aboutContact.TextColor = Theme.ForegroundText
+		aboutAttrib.TextColor = Theme.ForegroundText
+		paraSfx.TextColor = Theme.ForegroundText
+		lblSfx.TextColor = Theme.ForegroundText
+		paraContact.TextColor = Theme.ForegroundText
+		aboutDev.TextColor = Theme.ForegroundText
+		paraDev.TextColor = Theme.ForegroundText
+		lblAppTitle.TextColor = Theme.ForegroundText
+		leaderLbl.TextColor = Theme.ForegroundText
+		name1Lbl.TextColor = Theme.ForegroundText
+		membersLbl.TextColor = Theme.ForegroundText
+		name2Lbl.TextColor = Theme.ForegroundText
+		name3Lbl.TextColor = Theme.ForegroundText
+		name4Lbl.TextColor = Theme.ForegroundText
+		name5Lbl.TextColor = Theme.ForegroundText
+	
+		pnlWhat.Color = Theme.RootColor
+		pnlContact.Color = Theme.RootColor
+		Panel1.Color = Theme.RootColor
+		pnlAttrib.Color = Theme.RootColor
+	
+		svAbout.Color = Theme.DarkbackgroundColor
+
+		pnlAbout.Color = Colors.RGB(28,28,28)
+		aboutLabel.TextColor = Theme.ForegroundText
+		aboutBack.TextColor = Theme.ForegroundText
+	End If
+	
+End Sub
+
+Private Sub OnLoadText
+	aboutLabel.Text = Starter.Lang.Get("about")
+	aboutWhat.Text = Starter.Lang.Get("about_what")
+	aboutContact.Text = Starter.Lang.Get("faq")
+	aboutDev.Text = Starter.Lang.Get("about_dev")
+	aboutAttrib.Text = Starter.Lang.Get("about_attrib")
+	paraWhat.Text = Starter.Lang.Get("paragraph_what")
+	paraContact.Text = Starter.Lang.Get("paragraph_faq")
+	paraDev.Text = Starter.Lang.Get("para_dev")
+	paraSfx.Text = Starter.Lang.Get("para_sfx")
+	lblAppTitle.Text = Starter.Lang.Get("app_title")
+	membersLbl.Text = Starter.Lang.Get("members")
+End Sub
+
+Sub CenterView(parent As Panel)
+	imgAppIcon.Left = (parent.Width - imgAppIcon.Width) / 2
+	lblAppTitle.Left = (parent.Width - lblAppTitle.Width) / 2
+	'view.Top = (parent.Height - view.Height) / 2
 End Sub

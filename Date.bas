@@ -10,15 +10,73 @@ Sub Class_Globals
 	Private m_month As Int
 	Private m_day As Int
 	Private m_year As Int
+	
+	' A single day in UNIX time is equal to 86,400,000 milliseconds.
+	Public Const DAY_LENGTH As Long = 86400000
+	Public Const LAST_EPOCH_VALUE As Long = 9223372036854775807
+	
+	' Relpace values into property name on JSON-based language files.
+	Public Const DATE_A_LONG_TIME_AGO As String = "a_long_time_ago"
+	Public Const DATE_EARLIER As String = "earlier"
+	Public Const DATE_LAST_WEEK As String = "last_week"
+	Public Const DATE_EARLIER_THIS_WEEK As String = "earlier_this_week"
+	Public Const DATE_YESTERDAY As String = "yesterday"
+	Public Const DATE_TODAY As String = "today"
+	Public Const DATE_TOMORROW As String = "tomorrow"
+	Public Const DATE_THIS_WEEK As String = "this_week"
+	Public Const DATE_NEXT_WEEK As String = "next_week"
+	Public Const DATE_LATER As String = "later"
+	Public Const DATE_A_LONG_TIME_FROM_NOW As String = "a_long_time_from_now"
 End Sub
 
 'Initializes the object.
-' month data shall be "January" - "December"
+' month data shall be "1" - "12"
 ' day data shall be "1" to "31" such that "1" to "9" does not have leading zeroes.
-Public Sub Initialize(month As Int, day As Int, year As Int)
+Public Sub Initialize(month As Int, DAY As Int, year As Int)
 	m_month = month
-	m_day = day
+	m_day = DAY
 	m_year = year
+End Sub
+
+' Identifies date if it is a long time ago, earlier, last week, earlier this week, yesterday, today, tomorrow,
+' this week, next, week, later, or a long time from now in a string data type.
+' This function compares dates relatively.
+Public Sub IdentifyDate() As String
+	Dim ticksSaved As Long = GetUnixTime
+	'Dim ticksNow As Long = DateTime.Now
+	Dim ticksNowRaw As Long = DateTime.Now
+	Dim ticksNow As Long = ticksNowRaw - (ticksNowRaw Mod DAY_LENGTH)
+	
+	' Compare the current UNIX tick to the saved UNIX tick. The multipled day length are d - 1.
+	' E.g. day 0 is today and day 1 is tomorrow.
+	If ticksSaved <= (ticksNow - (DAY_LENGTH * 364)) Then
+		Return DATE_A_LONG_TIME_AGO
+	Else If (ticksNow - (DAY_LENGTH * 364)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 11)) Then
+		Return DATE_EARLIER
+	Else If (ticksNow - (DAY_LENGTH * 11)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 4)) Then
+		Return DATE_LAST_WEEK
+	Else If (ticksNow - (DAY_LENGTH * 4)) < ticksSaved And ticksSaved < (ticksNow - (DAY_LENGTH * 2)) Then
+		Return DATE_EARLIER_THIS_WEEK
+	Else If (ticksNow - (DAY_LENGTH * 2)) < ticksSaved And ticksSaved < (ticksNow - DAY_LENGTH) Then
+		Return DATE_YESTERDAY
+	Else If ticksNow >= ticksSaved And ticksSaved < (ticksNow + DAY_LENGTH) Then
+		Return DATE_TODAY
+	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 2)) Then
+		Return DATE_TOMORROW
+	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 4)) Then
+		Return DATE_THIS_WEEK
+	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 11)) Then
+		Return DATE_NEXT_WEEK
+	Else If ticksNow < ticksSaved And ticksSaved < (ticksNow + (DAY_LENGTH  * 364)) Then
+		Return DATE_LATER
+	Else If (ticksNow + (DAY_LENGTH * 364)) < ticksSaved Then
+		Return DATE_A_LONG_TIME_FROM_NOW
+	End If
+	
+	Return "error"
+	
+	
+	
 End Sub
 
 ' Returns the UNIX variant of the date values set into this object. May result into an error
@@ -32,29 +90,29 @@ End Sub
 ' Gets the numeric value of months, in which the m_month is stored as String.
 Public Sub GetNumericMonth(month As String) As Int
 	Select month
-		Case "January":
+		Case "january":
 			Return 1
-		Case "February":
+		Case "february":
 			Return 2
-		Case "March":
+		Case "march":
 			Return 3
-		Case "April":
+		Case "april":
 			Return 4
-		Case "May":
+		Case "may":
 			Return 5
-		Case "June":
+		Case "june":
 			Return 6
-		Case "July":
+		Case "july":
 			Return 7
-		Case "August":
+		Case "august":
 			Return 8
-		Case "September":
+		Case "september":
 			Return 9
-		Case "October":
+		Case "october":
 			Return 10
-		Case "November":
+		Case "november":
 			Return 11
-		Case "December":
+		Case "december":
 			Return 12
 		Case Else:
 			Return 0
@@ -124,29 +182,29 @@ End Sub
 Public Sub GetMonthFromNum(month As Int) As String
 	Select month
 		Case 1:
-			Return "January"
+			Return "january"
 		Case 2:
-			Return "February"
+			Return "february"
 		Case 3:
-			Return "March"
+			Return "march"
 		Case 4:
-			Return "April"
+			Return "april"
 		Case 5:
-			Return "May"
+			Return "may"
 		Case 6:
-			Return "June"
+			Return "june"
 		Case 7:
-			Return "July"
+			Return "july"
 		Case 8:
-			Return "August"
+			Return "august"
 		Case 9:
-			Return "September"
+			Return "september"
 		Case 10:
-			Return "October"
+			Return "october"
 		Case 11:
-			Return "November"
+			Return "november"
 		Case 12:
-			Return "December"
+			Return "december"
 		Case Else:
 			Return ""
 	End Select
@@ -154,14 +212,18 @@ End Sub
 
 ' Returns the date with the "Month DD, YYYY" format as a String based
 ' on the values set on this date object.
-Public Sub GetFormattedDate As String
-	Return GetMonthFromNum(m_month) & " " & m_day & ", " & m_year
+Public Sub GetFormattedDate(Lang As LanguageManager) As String
+	Return Lang.Get(GetMonthFromNum(m_month)) & " " & m_day & ", " & m_year
 End Sub
 
-' Returns the date with the "Month DD, YYYY" format as a String based
+' Returns the date with the "mm/dd/YYYY" format as a String based
 ' on the values set on this date object.
 Public Sub GetFormattedDate2 As String
 	Return GetMonthWithLeadingZero & "/" & GetNumericDayStr & "/" & m_year
+End Sub
+
+Public Sub GetDateNoTime(ticks As Long) As Long
+	Return ticks - (ticks Mod DAY_LENGTH)
 End Sub
 
 ' Returns the day set into this object.

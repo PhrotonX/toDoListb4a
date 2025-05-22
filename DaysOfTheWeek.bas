@@ -1,25 +1,39 @@
 ﻿B4A=true
 Group=Default Group
 ModulesStructureVersion=1
-Type=Class
+Type=StaticCode
 Version=13.1
 @EndOfDesignText@
-Sub Class_Globals
-	Public Days(7) As String
-End Sub
+'Code module
+'Subs in this code module will be accessible from all modules.
+Sub Process_Globals
+	'These global variables will be declared once when the application starts.
+	'These variables can be accessed from all modules.
 
-'Initializes the object. You can add parameters to this method if needed.
-Public Sub Initialize
-	Days(0) = "Sunday"
-	Days(1) = "Monday"
-	Days(2) = "Tuesday"
-	Days(3) = "Wednesday"
-	Days(4) = "Thursday"
-	Days(5) = "Friday"
-	Days(6) = "Saturday"
 End Sub
 
 ' Cuts the name of the day of the week into three characters
-Public Sub ShortenedDay(day As Int) As String
-	Return Days(day).SubString2(0, 3)
+Public Sub ShortenedDay(Day As Int) As String
+	Return Days(Day).SubString2(0, 3)
+End Sub
+
+Public Sub Days(day As Int) As String
+	Select day:
+		Case 0:
+			Return "sunday"
+		Case 1:
+			Return "monday"
+		Case 2:
+			Return "tuesday"
+		Case 3:
+			Return "wednesday"
+		Case 4:
+			Return "thursday"
+		Case 5:
+			Return "friday"
+		Case 6:
+			Return "saturday"
+		Case Else:
+			Return "error"
+	End Select
 End Sub

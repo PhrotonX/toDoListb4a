@@ -26,6 +26,11 @@ Sub Process_Globals
 	Public Const EDITOR_MODE_EDIT As String = PACKAGE_NAME & ".EDITOR_MODE_EDIT"
 	Public Const EDITOR_MODE_CREATE As String = PACKAGE_NAME & ".EDITOR_MODE_CREATE"
 	
+	' Global variables used for passing extras into TaskGroupActivity.
+	Public Const EXTRA_TASK_GROUP_EDITOR_MODE As String = "EXTRA_TASK_GROUP_EDITOR_MODE"
+	Public Const TASK_GROUP_EDITOR_MODE_EDIT As String = PACKAGE_NAME & ".TASK_GROUP_EDITOR_MODE_EDIT"
+	Public Const TASK_GROUP_EDITOR_MODE_CREATE As String = PACKAGE_NAME & ".TASK_GROUP_EDITOR_MODE_CREATE"
+	
 	' Global variables used for passing extras as a result of EditorActivity.
 	Public Const EXTRA_EDITOR_RESULT As String = "EXTRA_EDITOR_RESULT"
 	Public Const EDITOR_RESULT_SAVE As String = PACKAGE_NAME & ".EDITOR_RESULT_SAVE"
@@ -33,9 +38,32 @@ Sub Process_Globals
 	
 	' Global variable used for identifying the current item of concern.
 	Public Const EXTRA_EDITOR_TASK_ID As String = PACKAGE_NAME & ".EXTRA_EDITOR_TASK_ID"
+	Public Const EXTRA_EDITOR_GROUP_ID As String = PACKAGE_NAME & ".EXTRA_EDITOR_GROUP_ID"
 	
-	' Glocal instance of TaskViewModel where the database can be accessed.
+	'Public ToDoDatabaseInstance As ToDoDatabase
+	Public ToDoDatabaseViewModelInstance As ToDoDatabaseViewModel
+	Public ToDoFileSystemInstance As ToDoFileSystem
+	
+	' Repository instances
+	Private taskRepo As TaskRepository
+	Private attachmentRepo As AttachmentRepository
+	Private attachmentFileRepo As AttachmentFileRepository
+	Private groupRepo As GroupRepository
+	Private repeatRepo As RepeatRepository
+	
+	' Global instance of TaskViewModel where the database can be accessed.
 	Public TaskViewModelInstance As TaskViewModel
+	Public AttachmentViewModelInstance As AttachmentViewModel
+	Public GroupViewModelInstance As GroupViewModel
+	Public RepeatViewModelInstance As RepeatViewModel
+
+	Public SettingsViewModelInstance As SettingsViewModel
+	
+	Public Provider As FileProvider
+	Public Permissions As RuntimePermissions
+	Public Phone As Phone
+	
+	Public Lang As LanguageManager
 End Sub
 
 Sub CheckInstanceState
@@ -52,8 +80,8 @@ Sub CheckInstanceState
 			Case EDITOR_RESULT_CANCEL:
 				' Display an error if a result other than SAVE and CANCEL has been received.
 			Case Else:
-				MsgboxAsync("Invalid result!" & CRLF & _
-			InstanceState.Get(EXTRA_EDITOR_RESULT), "Alert!")
+				MsgboxAsync(Lang.Get("invalid_result") & CRLF & _
+			InstanceState.Get(EXTRA_EDITOR_RESULT), Lang.Get("alert") & "!")
 		End Select
 	
 		' Remove the editor result extra from the bundle to avoid application state-related issues.
@@ -64,10 +92,31 @@ End Sub
 Sub Service_Create
 	'This is the program entry point.
 	'This is a good place to load resources that are not specific to a single activity.
+	
+	Provider.Initialize
 
 	' Initialize the variables
 	InstanceState.Initialize
-	TaskViewModelInstance.Initialize
+	
+	SettingsViewModelInstance.Initialize
+	
+	Lang.Initialize(SettingsViewModelInstance)
+	
+	ToDoDatabaseViewModelInstance.Initialize(Lang)
+	ToDoFileSystemInstance.Initialize
+	
+	taskRepo.Initialize(ToDoDatabaseViewModelInstance.GetInstance)
+	attachmentRepo.Initialize(ToDoDatabaseViewModelInstance.GetInstance)
+	attachmentFileRepo.Initialize(ToDoFileSystemInstance)
+	groupRepo.Initialize(ToDoDatabaseViewModelInstance.GetInstance)
+	repeatRepo.Initialize(ToDoDatabaseViewModelInstance.GetInstance)
+	
+	TaskViewModelInstance.Initialize(taskRepo)
+	AttachmentViewModelInstance.Initialize(attachmentRepo, attachmentFileRepo)
+	GroupViewModelInstance.Initialize(groupRepo)
+	RepeatViewModelInstance.Initialize(repeatRepo)
+	
+	
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)
@@ -81,11 +130,14 @@ End Sub
 'Return true to allow the OS default exceptions handler to handle the uncaught exception.
 Sub Application_Error (Error As Exception, StackTrace As String) As Boolean
 	' Close the database
-	TaskViewModelInstance.Release
+	ToDoDatabaseViewModelInstance.CloseDatabase
 	Return True
 End Sub
 
 Sub Service_Destroy
 	' Close the database
-	TaskViewModelInstance.Release
+	ToDoDatabaseViewModelInstance.CloseDatabase
+	
+	' Close the settings file
+	SettingsViewModelInstance.Close()
 End Sub
