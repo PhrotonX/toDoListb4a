@@ -41,6 +41,10 @@ Sub Globals
 	Private pnlContact As Panel
 	Private pnlWhat As Panel
 	Private pnlAbout As Panel
+	Private aboutAttrib As Label
+	Private paraSfx As Label
+	Private lblSfx As Label
+	Private pnlAttrib As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -67,6 +71,9 @@ Private Sub Darkmode
 		aboutWhat.TextColor = Colors.Black
 		paraWhat.TextColor = Colors.Black
 		aboutContact.TextColor = Colors.Black
+		aboutAttrib.TextColor = Colors.Black
+		paraSfx.TextColor = Colors.Black
+		lblSfx.TextColor = Colors.Black
 		paraContact.TextColor = Colors.Black
 		aboutDev.TextColor = Colors.Black
 		paraDev.TextColor = Colors.Black
@@ -82,6 +89,7 @@ Private Sub Darkmode
 		pnlWhat.Color = Colors.White
 		pnlContact.Color = Colors.White
 		Panel1.Color = Colors.White
+		pnlAttrib.Color = Colors.White
 	
 		svAbout.Color = Colors.RGB(241,241,241)
 
@@ -92,6 +100,9 @@ Private Sub Darkmode
 		aboutWhat.TextColor = Theme.ForegroundText
 		paraWhat.TextColor = Theme.ForegroundText
 		aboutContact.TextColor = Theme.ForegroundText
+		aboutAttrib.TextColor = Theme.ForegroundText
+		paraSfx.TextColor = Theme.ForegroundText
+		lblSfx.TextColor = Theme.ForegroundText
 		paraContact.TextColor = Theme.ForegroundText
 		aboutDev.TextColor = Theme.ForegroundText
 		paraDev.TextColor = Theme.ForegroundText
@@ -107,6 +118,7 @@ Private Sub Darkmode
 		pnlWhat.Color = Theme.RootColor
 		pnlContact.Color = Theme.RootColor
 		Panel1.Color = Theme.RootColor
+		pnlAttrib.Color = Theme.RootColor
 	
 		svAbout.Color = Theme.DarkbackgroundColor
 
@@ -122,9 +134,11 @@ Private Sub OnLoadText
 	aboutWhat.Text = Starter.Lang.Get("about_what")
 	aboutContact.Text = Starter.Lang.Get("faq")
 	aboutDev.Text = Starter.Lang.Get("about_dev")
+	aboutAttrib.Text = Starter.Lang.Get("about_attrib")
 	paraWhat.Text = Starter.Lang.Get("paragraph_what")
 	paraContact.Text = Starter.Lang.Get("paragraph_faq")
 	paraDev.Text = Starter.Lang.Get("para_dev")
+	paraSfx.Text = Starter.Lang.Get("para_sfx")
 	lblAppTitle.Text = Starter.Lang.Get("app_title")
 	membersLbl.Text = Starter.Lang.Get("members")
 End Sub
