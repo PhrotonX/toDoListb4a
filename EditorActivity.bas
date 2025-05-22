@@ -872,6 +872,32 @@ Private Sub Darkmode
 		pnlNotes.Color = Theme.RootColor
 		PnlPriority.Color = Theme.RootColor
 		pnlAttachments.Color = Theme.RootColor
+		
+		pnlSpinReminderHour.Color = Theme.RootColor
+		pnlSpinReminderMarker.Color = Theme.RootColor
+		pnlSpinReminderMinute.Color = Theme.RootColor
+		pnlContainerSpnTaskGroup.Color = Theme.RootColor
+		pnlContainerSpnSnooze.Color = Theme.RootColor
+		pnlDay.Color = Theme.RootColor
+		pnlMonth.Color = Theme.RootColor
+		pnlYear.Color = Theme.RootColor
+		
+		spnReminderHour.TextColor = Colors.White
+		spnReminderMarker.TextColor = Colors.White
+		spnReminderMinute.TextColor = Colors.White
+		spnTaskGroup.TextColor = Colors.White
+		spnSnooze.TextColor = Colors.White
+		spinnerDueDateDay.TextColor = Colors.White
+		spinnerDueDateMonth.TextColor = Colors.White
+		editDueDateYear.TextColor = Colors.White
+		
+		spnReminderHour.DropdownBackgroundColor = Theme.RootColor
+		spnReminderMarker.DropdownBackgroundColor = Theme.RootColor
+		spnReminderMinute.DropdownBackgroundColor = Theme.RootColor
+		spnTaskGroup.DropdownBackgroundColor = Theme.RootColor
+		spnSnooze.DropdownBackgroundColor = Theme.RootColor
+		spinnerDueDateDay.DropdownBackgroundColor = Theme.RootColor
+		spinnerDueDateMonth.DropdownBackgroundColor = Theme.RootColor
 	End If
 	
 End Sub

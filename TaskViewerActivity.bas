@@ -68,7 +68,6 @@ Sub Globals
 	
 	Private m_attachmentScrollIndex As Int = -1
 	Private lblAttachmentIcon As Label
-	Private pnlSpinReminderMarker As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
