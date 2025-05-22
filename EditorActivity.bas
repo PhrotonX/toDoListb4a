@@ -248,7 +248,7 @@ Sub Activity_Create(FirstTime As Boolean)
 			spnReminderMarker.IndexOf(m_task.Reminder.GetMarker)
 			
 		' Load snooze data.
-		spnSnooze.SelectedIndex = spnSnooze.IndexOf(m_task.Snooze.GetSnoozeInfo())
+		spnSnooze.SelectedIndex = spnSnooze.IndexOf(Starter.Lang.Get(m_task.Snooze.GetSnoozeInfo()))
 		
 		' Load the selected task group.
 		spnTaskGroup.SelectedIndex = spnTaskGroup.IndexOf(m_group.GetTitle)
