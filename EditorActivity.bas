@@ -612,7 +612,7 @@ End Sub
 Private Sub OnAddAttachment(item As Attachment)
 	Dim panel As B4XView = xui.CreatePanel("")
 		
-	panel.SetLayoutAnimated(0, 0, 0, 100%x, 70dip)
+	panel.SetLayoutAnimated(0, 0, 0, 100%x, 65dip)
 	panel.LoadLayout("AttachmentItemLayout")
 	panel.SetColorAndBorder(Theme.ForegroundColor, 0, Theme.ForegroundColor, 0)
 	
@@ -635,11 +635,11 @@ Private Sub OnAddAttachment(item As Attachment)
 	If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
 		lblAttachmentFileName.TextColor = Colors.RGB(33,37,41)
 		lblAttachmentIcon.TextColor = Colors.RGB(33,37,41)
-		pnlAttachmentRoot.Color = Colors.White
+		pnlAttachmentRoot.Color = Colors.RGB(232,236,245)
 	Else
 		lblAttachmentIcon.TextColor = Theme.ForegroundText
 		lblAttachmentFileName.TextColor = Theme.ForegroundText
-		pnlAttachmentRoot.Color = Colors.Black
+		pnlAttachmentRoot.Color = Theme.RootColor
 	End If
 	
 	clvAttachments.Add(panel, viewHolder)
