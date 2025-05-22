@@ -180,10 +180,26 @@ Sub Activity_Resume
 	Log("TaskGroupActivity.Activity_Resume Icon" & m_group.GetIcon)
 
 	Darkmode
+	
+	OnChangeGroupColor
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
 	OnSaveGroup
+End Sub
+
+Private Sub OnChangeGroupColor
+	' Set up colors based on group color.
+	If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
+		pnlAddGrpBar.Color = Theme.GetPrimaryColor(m_group.GetColor)
+		svAddGrpBody.Color = Theme.GetBackgroundColor(m_group.GetColor)
+		pnlAddGrpTitle.Color = Theme.GetBackgroundColor2(m_group.GetColor)
+		pnlAddGrpNotes.Color = Theme.GetBackgroundColor2(m_group.GetColor)
+	Else
+		lblAddGrp.TextColor = Theme.GetTextColor(m_group.GetColor)
+		btnAddGrpCancel.TextColor = Theme.GetTextColor(m_group.GetColor)
+		btnAddGrpSave.TextColor = Theme.GetTextColor(m_group.GetColor)
+	End If
 End Sub
 
 Private Sub OnLoadText
@@ -310,6 +326,7 @@ Sub pnlColor_Click
 	
 	' Update the color value of the m_group variable.
 	m_group.SetColor(clickedIndex)
+	OnChangeGroupColor
 End Sub
 
 

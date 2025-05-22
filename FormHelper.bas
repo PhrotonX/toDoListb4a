@@ -68,7 +68,7 @@ Public Sub PopulateDateRange(spnDateRange As Spinner)
 	spnDateRange.Add(Starter.Lang.Get(dateObj.DATE_A_LONG_TIME_FROM_NOW))
 End Sub
 
-Public Sub PopulateTime(spnHour As Spinner, spnMinute As Spinner, spnMarker As Spinner)
+Public Sub PopulateTime(spnHour As Spinner, spnMinute As Spinner, spnMarker As Spinner, pnlMarker As Panel)
 	' Make a time object
 	Dim timeObj As Time
 	timeObj.Initialize(0, 0, 0)
@@ -86,7 +86,9 @@ Public Sub PopulateTime(spnHour As Spinner, spnMinute As Spinner, spnMarker As S
 		
 		' Hide the time marker field if the 24-hour format setting is enabled.
 		spnMarker.Visible = False
+		pnlMarker.Visible = False
 	Else
+		' Add items 1 to 12 into the spinner.
 		For i = 1 To 12
 			spnHour.Add(timeObj.GetNumWithLeadingZero(i))
 		Next
