@@ -9,9 +9,10 @@ Version=13.1
 Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
-	Private m_primaryColor As Int
-	Private m_foregroundColor As Int
-	Private m_textColor As Int
+	Private m_primaryColor As Int = Colors.RGB(73, 93, 143)
+	Private m_foregroundColor As Int = Colors.RGB(224, 234, 255)
+	Private m_textColor As Int = Colors.RGB(73, 93, 143)
+	Private m_darkMode As Boolean = False
 	Private Const BACKGROUND_COLOR_OLD As Int = Colors.RGB(244, 241, 248)
 	
 	' Color indexes based on the color selector 
@@ -26,15 +27,17 @@ Sub Process_Globals
 End Sub
 
 Public Sub SetUp(darkMode As Boolean)
-	If darkMode == False Then
-		m_primaryColor = Colors.RGB(73, 93, 143)
-		m_textColor = Colors.RGB(73, 93, 143)
-		m_foregroundColor = Colors.RGB(224, 234, 255)
-	Else
-		m_primaryColor = Colors.RGB(50, 60, 90)
-		m_textColor = Colors.RGB(50, 60, 90)
-		m_foregroundColor = Colors.RGB(17,17,18)
-	End If
+	'If darkMode == False Then
+	'	m_primaryColor
+	'	m_textColor
+	'	m_foregroundColor 
+	'Else
+	'	m_primaryColor = Colors.RGB(50, 60, 90)
+	'	m_textColor = Colors.RGB(50, 60, 90)
+	'	m_foregroundColor = Colors.RGB(17,17,18)
+	'End If
+	
+	m_darkMode = darkMode
 	
 End Sub
 
@@ -74,17 +77,22 @@ End Sub
 Public Sub GetPrimaryColor(colorIndex As Int) As Int
 	Select colorIndex:
 		Case COLOR_RED:
-			Return Colors.RGB(210, 49, 49)     
+			Return Colors.rgb(244, 67, 54)
 		Case COLOR_BLUE:
-			Return Colors.RGB(55, 105, 248)  
+			Return Colors.rgb(33, 150, 243)
 		Case COLOR_GREEN:
-			Return Colors.RGB(0, 121, 62)      
+			Return Colors.rgb(76, 175, 80)
 		Case COLOR_PINK:
-			Return Colors.RGB(186, 26, 107)     
+			Return Colors.rgb(233, 30, 99)
 		Case COLOR_ORANGE:
-			Return Colors.RGB(217, 85, 5)       
+			Return Colors.rgb(255, 152, 0)
 		Case COLOR_BROWN:
-			Return Colors.RGB(98, 67, 50)      
+			If m_darkMode Then
+				Return Colors.rgb(255, 235, 59)
+			Else
+				Return Colors.rgb(121, 85, 72)
+			End If
+			
 		Case Else, COLOR_INDIGO:
 			Return Colors.RGB(73, 93, 143)
 	End Select
@@ -103,7 +111,12 @@ Public Sub GetTextColor(colorIndex As Int) As Int
 		Case COLOR_ORANGE:
 			Return Colors.RGB(255, 140, 50)     ' Bright orange
 		Case COLOR_BROWN:
-			Return Colors.RGB(190, 120, 80)     ' Bright brown (strong tan)
+			If m_darkMode Then
+				Return Colors.RGB(190, 190, 80)
+			Else
+				Return Colors.RGB(190, 120, 80)     ' Bright brown (strong tan)
+			End If
+			
 		Case Else, COLOR_INDIGO:
 			Return Colors.RGB(120, 150, 255)    ' Bright indigo/blue
 	End Select
@@ -113,7 +126,7 @@ End Sub
 Public Sub GetBackgroundColor(colorIndex As Int) As Int
 	Select colorIndex:
 		Case COLOR_RED:
-			Return Colors.RGB(255, 233, 235)   ' Red Tone ~95
+			Return Colors.RGB(255, 235, 238)   ' Red Tone ~95
 		Case COLOR_BLUE:
 			Return Colors.RGB(227, 242, 253)   ' Blue Tone ~95
 		Case COLOR_GREEN:
@@ -123,11 +136,41 @@ Public Sub GetBackgroundColor(colorIndex As Int) As Int
 		Case COLOR_ORANGE:
 			Return Colors.RGB(255, 243, 224)   ' Orange Tone ~95
 		Case COLOR_BROWN:
-			Return Colors.RGB(239, 235, 233)   ' Brown Tone ~95
+			If m_darkMode Then
+				Return Colors.rgb(255, 235, 59) ' Yellow for dark mode
+			Else
+				Return Colors.RGB(239, 235, 233) ' Brown Tone ~95
+			End If
+			   
 		Case Else, COLOR_INDIGO:
-			Return Colors.RGB(232, 234, 246)   ' Indigo Tone ~95
+			Return Colors.rgb(232, 234, 246)   ' Indigo Tone ~95
 	End Select
 End Sub
+
+Public Sub GetBackgroundColor2(colorIndex As Int) As Int
+	Select colorIndex:
+		Case COLOR_RED:
+			Return Colors.RGB(255, 205, 210)   ' Red Tone ~95
+		Case COLOR_BLUE:
+			Return Colors.RGB(187, 222, 251)   ' Blue Tone ~95
+		Case COLOR_GREEN:
+			Return Colors.RGB(200, 230, 201)   ' Green Tone ~95
+		Case COLOR_PINK:
+			Return Colors.RGB(248, 187, 208)   ' Pink Tone ~95
+		Case COLOR_ORANGE:
+			Return Colors.rgb(255, 224, 178)   ' Orange Tone ~95
+		Case COLOR_BROWN:
+			If m_darkMode Then
+				Return Colors.rgb(255, 253, 231)
+			Else
+				Return Colors.rgb(215, 204, 200)   ' Brown Tone ~95
+			End If
+			
+		Case Else, COLOR_INDIGO:
+			Return Colors.rgb(197, 202, 233)   ' Indigo Tone ~95
+	End Select
+End Sub
+
 
 Public Sub GetDarkPrimaryColor(colorIndex As Int) As Int
 	Select colorIndex:
@@ -142,7 +185,11 @@ Public Sub GetDarkPrimaryColor(colorIndex As Int) As Int
 		Case COLOR_ORANGE:
 			Return Colors.RGB(140, 60, 10)      ' Dark orange
 		Case COLOR_BROWN:
-			Return Colors.RGB(70, 50, 35)       ' Dark brown
+			If m_darkMode Then
+				Return Colors.RGB(70, 70, 35)       ' Dark yellow
+			Else
+				Return Colors.RGB(70, 50, 35)       ' Dark brown
+			End If
 		Case Else, COLOR_INDIGO:
 			Return Colors.RGB(50, 60, 90)       ' Dark indigo
 	End Select

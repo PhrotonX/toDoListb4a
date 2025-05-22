@@ -68,6 +68,8 @@ Sub Globals
 	
 	Private m_attachmentScrollIndex As Int = -1
 	Private lblAttachmentIcon As Label
+	Private btnAttachmentUp As Button
+	Private btnAttachmentDown As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -203,6 +205,30 @@ Sub Activity_Resume
 		Dim taskGroup As Group = Starter.GroupViewModelInstance.GetGroupByTaskId(m_task.GetId())
 		If taskGroup.IsInitialized Then
 			viewTaskGroup.Text = taskGroup.GetTitle
+			
+			If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
+				pnlTaskViewBar.Color = Theme.GetPrimaryColor(taskGroup.GetColor)
+				
+				taskView.Color = Theme.GetBackgroundColor(taskGroup.GetColor)
+				
+				Panel1.Color = Theme.GetBackgroundColor2(taskGroup.GetColor)
+				viewNotes.Color = Theme.GetBackgroundColor2(taskGroup.GetColor)
+				viewDueDate.Color = Theme.GetBackgroundColor2(taskGroup.GetColor)
+				viewPriority.Color = Theme.GetBackgroundColor2(taskGroup.GetColor)
+				viewReminders.Color = Theme.GetBackgroundColor2(taskGroup.GetColor)
+				viewRepeat.Color = Theme.GetBackgroundColor2(taskGroup.GetColor)
+				viewSnooze.Color = Theme.GetBackgroundColor2(taskGroup.GetColor)
+				viewTaskGroup.Color = Theme.GetBackgroundColor2(taskGroup.GetColor)
+				viewCreatedAt.Color = Theme.GetBackgroundColor2(taskGroup.GetColor)
+				viewModifiedAt.Color = Theme.GetBackgroundColor2(taskGroup.GetColor)
+		
+				pnlAttachments.Color = Theme.GetBackgroundColor2(taskGroup.GetColor)
+			Else
+				lblTask.TextColor = Theme.GetTextColor(taskGroup.GetColor)
+				
+				btnEdit.TextColor = Theme.GetTextColor(taskGroup.GetColor)
+				btnBack.TextColor = Theme.GetTextColor(taskGroup.GetColor)
+			End If
 		Else
 			viewTaskGroup.Text = Starter.GroupViewModelInstance.DefaultGroup().GetTitle()
 		End If

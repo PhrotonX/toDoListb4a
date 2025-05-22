@@ -136,6 +136,13 @@ Sub Activity_Create(FirstTime As Boolean)
 				
 				' Change the title
 				lblAddGrp.Text = Starter.Lang.Get("edit_group")
+				
+				If Starter.SettingsViewModelInstance.IsDarkModeEnabled == False Then
+					pnlAddGrpBar.Color = Theme.GetPrimaryColor(m_group.GetColor)
+					svAddGrpBody.Color = Colors.RGB(244,246,250)
+					pnlAddGrpTitle.Color = Colors.RGB(232,236,245)
+					pnlAddGrpNotes.Color = Colors.RGB(232,236,245)
+				End If
 			End If
 			
 		Case Else:
