@@ -203,7 +203,7 @@ Version=13.1
 #Region  Project Attributes 
 	#ApplicationLabel: To Do List
 	#VersionCode: 13
-	#VersionName: v2.0.0.11 alpha
+	#VersionName: v2.0.1
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -285,6 +285,7 @@ Sub Globals
 	Private Const MENU_ITEM_CLEAR_SEARCH As Int = 4
 	
 	Private m_sortingByPriority As Boolean = False
+	Private m_sortingByCreationDate As Boolean = False
 
 	'Private m_savedSearchByDueDateIdentifer As String = ""
 	'Private m_savedSearchByDueDateRange1 As Date
@@ -736,6 +737,9 @@ Private Sub BindItem(item As ToDo, repeatItem As Repeat, viewHolder As TaskViewH
 	Else If m_query.IsSearchingFieldEnabled(m_query.SEARCH_QUERY_ITEM_PRIORITY) Or _
 		m_sortingByPriority == True Then
 		viewHolder.TaskInfo.Text = item.GetGlance(Starter.Lang.Get(item.GetPriorityInfo), repeatItem.GetRepeatInfo)
+	Else If m_sortingByCreationDate == True Then
+		viewHolder.TaskInfo.Text = item.GetGlance(item.GetCreatedAt.GetFormattedDateAndTime( _ 
+			Starter.SettingsViewModelInstance.Is24HourFormatEnabled, Starter.Lang), "")
 	Else
 		If Starter.SettingsViewModelInstance.IsDetailedDueDateEnabled() == False And SavedSmartList <> _ 
 			SMART_LIST_PLANNED Then
@@ -821,7 +825,7 @@ Private Sub LoadItems()
 					m_query.DateEnd.SetYear(editRangeYearTo.Text)
 			End Select
 			
-			GroupDescription.Text = Starter.Lang.Get("results_for") & searchEditText.Text
+			GroupDescription.Text = Starter.Lang.Get("results_for") & " " & searchEditText.Text
 			GroupLineDecor.Visible = False
 			
 			Dim groupId As Int = m_query.GetGroupID()
@@ -1401,6 +1405,9 @@ Private Sub OnClearSearchQuery
 	
 	m_query.Initialize
 	
+	radioNone.Checked = True
+	radioSortByNone.Checked = True
+	
 End Sub
 
 Private Sub pnlNewGroup_Click
@@ -1751,26 +1758,31 @@ End Sub
 Private Sub radioSortByNone_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_TASK_ID)
 	m_sortingByPriority = False
+	m_sortingByCreationDate = False
 End Sub
 
 Private Sub radioSortByTitle_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_TITLE)
 	m_sortingByPriority = False
+	m_sortingByCreationDate = False
 End Sub
 
 Private Sub radioSortByPrio_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_PRIORITY)
 	m_sortingByPriority = Checked
+	m_sortingByCreationDate = False
 End Sub
 
 Private Sub radioSortByDD_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_DUE_DATE)
 	m_sortingByPriority = False
+	m_sortingByCreationDate = False
 End Sub
 
 Private Sub radioSortByCreaion_CheckedChange(Checked As Boolean)
 	m_query.SetSortField(m_query.FIELD_CREATED_AT)
 	m_sortingByPriority = False
+	m_sortingByCreationDate = Checked
 End Sub
 
 Private Sub radioSortOrderDescending_CheckedChange(Checked As Boolean)
